@@ -1,0 +1,5 @@
+to run:
+mvn spring-boot:run
+
+to use the token:
+curl 127.0.0.1:8182/search -H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtb21vIiwiX19fUk9MRV9VU0VSIjoiUk9MRV9VU0VSIiwiZXhwIjoxNTkzNDcwMDYzLCJpYXQiOjE1OTM0NTIwNjN9.8216lBMUmDzMwbd45230Cki6qJDh1XVk71VcRKyAnRcshqUPn6ufxlhUa28si6azFN1hzJB5Va6U5WXrroRF9Q"

@@ -1,0 +1,4 @@
+org/fao/geonet/searching/WebApp.class
+org/fao/geonet/searching/JwtRequestFilter.class
+org/fao/geonet/searching/SecurityConfigurer.class
+org/fao/geonet/searching/HelloController.class

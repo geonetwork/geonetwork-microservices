@@ -1,0 +1,5 @@
+org/fao/geonet/authorizing/JwtRequest.class
+org/fao/geonet/authorizing/JwtAuthenticationController.class
+org/fao/geonet/authorizing/WebApp.class
+org/fao/geonet/authorizing/JwtResponse.class
+org/fao/geonet/authorizing/SecurityConfigurer.class

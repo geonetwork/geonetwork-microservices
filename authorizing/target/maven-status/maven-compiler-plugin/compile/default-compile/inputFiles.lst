@@ -1,0 +1,5 @@
+/home/cmangeat/sources/geonetwork-microservices/authorizing/src/main/java/org/fao/geonet/authorizing/JwtAuthenticationController.java
+/home/cmangeat/sources/geonetwork-microservices/authorizing/src/main/java/org/fao/geonet/authorizing/JwtResponse.java
+/home/cmangeat/sources/geonetwork-microservices/authorizing/src/main/java/org/fao/geonet/authorizing/WebApp.java
+/home/cmangeat/sources/geonetwork-microservices/authorizing/src/main/java/org/fao/geonet/authorizing/SecurityConfigurer.java
+/home/cmangeat/sources/geonetwork-microservices/authorizing/src/main/java/org/fao/geonet/authorizing/JwtRequest.java
