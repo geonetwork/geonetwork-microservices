@@ -8,15 +8,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>searching</artifactId>
     <packaging>war</packaging>
-
-    <name>searching webapp</name>
+    <name>GeoNetwork search app</name>
     <url>http://geonetwork-opensource.org</url>
 
     <properties>
-
     </properties>
 
     <dependencies>

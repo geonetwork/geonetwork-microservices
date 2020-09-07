@@ -16,7 +16,7 @@ public class HelloController {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
         List<Integer> viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-        return "Greetings from Spring Boot! " + name + ", " + viewingGroup.stream().map(x -> Integer.toString(x)).collect(Collectors.joining("|"));
+        return "Search service called. You are authenticated as " + name + ", " + viewingGroup.stream().map(x -> Integer.toString(x)).collect(Collectors.joining("|"));
     }
 
 }
