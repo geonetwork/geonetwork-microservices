@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: geonetwork-configuration-service
+  profiles:
+    active:
+      - native
+  security:
+    user:
+      name: gn
+      password: gn
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+server:
+  port: 9999
