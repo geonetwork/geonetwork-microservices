@@ -17,6 +17,7 @@
     <spring-boot.version>2.2.3.RELEASE</spring-boot.version>
     <spring-cloud.version>Hoxton.SR7</spring-cloud.version>
     <openapi-generator-version>4.3.1</openapi-generator-version>
+    <geonetwork.version>4.0.0-alpha.2</geonetwork.version>
   </properties>
 
   <parent>
@@ -29,9 +30,10 @@
   <modules>
     <module>routing</module>
     <module>configuring</module>
-    <module>authorizing</module>
-    <module>searching</module>
     <module>common-security</module>
+    <module>authorizing</module>
+    <module>indexing</module>
+    <module>searching</module>
   </modules>
 
   <dependencyManagement>
@@ -59,11 +61,22 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-config</artifactId>
     </dependency>
+
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt</artifactId>
       <version>0.9.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>

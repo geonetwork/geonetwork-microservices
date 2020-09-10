@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: gn-indexing-service
+  profiles:
+    active: dev
+  security:
+    user:
+      name: gn
+      password: gn
+  cloud:
+    config:
+      uri: http://localhost:9999
+      name: geonetwork
+      username: gn
+      password: gn
+server:
+  port: 9997
+management:
+  metrics:
+    export:
+      elastic:
+        index: gn-metrics
+        step: 10s
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
