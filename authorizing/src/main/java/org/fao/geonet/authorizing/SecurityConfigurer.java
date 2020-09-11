@@ -13,21 +13,21 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.inMemoryAuthentication().withUser("momo")
-                .password("{noop}password").roles("USER");
-    }
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth)
+      throws Exception {
+    auth.inMemoryAuthentication().withUser("momo")
+        .password("{noop}password").roles("USER");
+  }
 
-    @Bean
-    public AuthenticationManager customAuthenticationManager() throws Exception {
-        return authenticationManager();
-    }
+  @Bean
+  public AuthenticationManager customAuthenticationManager() throws Exception {
+    return authenticationManager();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable();
+  }
 }
 

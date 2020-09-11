@@ -11,19 +11,22 @@ import org.springframework.context.annotation.Bean;
 @RefreshScope
 public class GnRoutingApp {
 
-    @Bean
-    public RouteLocator myRoutes(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route(p -> p
-                        .path("/authenticate")
-                        .uri("http://127.0.0.1:9998/authenticate"))
-                .route(p -> p
-                        .path("/search")
-                        .uri("http://127.0.0.1:9990/search"))
-                .build();
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(GnRoutingApp.class, args);
+  }
 
-    public static void main(String[] args) {
-        SpringApplication.run(GnRoutingApp.class, args);
-    }
+  /**
+   * Register gateway routes.
+   */
+  @Bean
+  public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+    return builder.routes()
+      .route(p -> p
+        .path("/authenticate")
+        .uri("http://127.0.0.1:9998/authenticate"))
+      .route(p -> p
+        .path("/search")
+        .uri("http://127.0.0.1:9990/search"))
+      .build();
+  }
 }
