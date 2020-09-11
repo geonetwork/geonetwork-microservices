@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @Import({JwtTokenUtil.class, HelloController.class})
 public class GnSearchApp {
 
-    public static void main(String[] args) {
-        SpringApplication.run(GnSearchApp.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(GnSearchApp.class, args);
+  }
 }

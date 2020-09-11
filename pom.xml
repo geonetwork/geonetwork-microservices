@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.geonetwork-opensource</groupId>
   <artifactId>microservices</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>GeoNetwork mirco services</name>
+  <name>GeoNetwork micro services</name>
   <url>http://geonetwork-opensource.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jetty.version>9.4.27.v20200227</jetty.version>
-<!--    <java.version>11</java.version>-->
+    <!--    <java.version>11</java.version>-->
     <spring-boot.version>2.2.3.RELEASE</spring-boot.version>
     <spring-cloud.version>Hoxton.SR7</spring-cloud.version>
     <openapi-generator-version>4.3.1</openapi-generator-version>
@@ -70,4 +70,73 @@
       <version>${openapi-generator-version}</version>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <!-- Use -Drelax property to avoid:
+* findbug
+* checkstyle
+* and tests. -->
+    <profile>
+      <id>relax-build</id>
+      <activation>
+        <property>
+          <name>relax</name>
+        </property>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+    <profile>
+      <id>full-build</id>
+      <activation>
+        <property>
+          <name>!relax</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>3.0.4</version>
+            <executions>
+              <execution>
+                <id>findbugs</id>
+                <goals>
+                  <goal>findbugs</goal>
+                </goals>
+                <phase>test</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <xmlOutput>true</xmlOutput>
+              <xmlOutputDirectory>target/site</xmlOutputDirectory>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>3.1.1</version>
+            <executions>
+              <execution>
+                <id>check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>test</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <configLocation>google_checks.xml</configLocation>
+              <logViolationsToConsole>true</logViolationsToConsole>
+              <maxAllowedViolations>0</maxAllowedViolations>
+              <violationSeverity>warning</violationSeverity>
+              <encoding>UTF-8</encoding>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

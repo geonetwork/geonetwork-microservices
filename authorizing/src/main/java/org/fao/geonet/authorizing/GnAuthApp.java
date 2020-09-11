@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @Import({SecurityConfigurer.class, JwtAuthenticationController.class, JwtTokenUtil.class})
 public class GnAuthApp {
 
-    public static void main(String[] args) {
-        SpringApplication.run(GnAuthApp.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(GnAuthApp.class, args);
+  }
 }
