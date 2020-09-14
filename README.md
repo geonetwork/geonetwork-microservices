@@ -8,6 +8,7 @@ Currently, the services are focused on:
 * [Authorizing by using JWT](authorizing/README.md)
 * [Searching](authorizing/README.md)
 * [Routing](routing/README.md)
+* [OGC API Records](ogc-api-records/README.md)
 
 
 First start the configuration service, then the others.
