@@ -15,4 +15,8 @@ public class IndexRecord extends IndexDocument {
   public IndexRecord(Metadata dbRecord) {
     // Use XSLT or Java to extract properties
   }
+
+  public IndexRecord() {
+
+  }
 }

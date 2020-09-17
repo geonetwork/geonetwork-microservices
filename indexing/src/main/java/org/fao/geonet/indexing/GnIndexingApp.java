@@ -1,12 +1,14 @@
 package org.fao.geonet.indexing;
 
 import java.util.Locale;
+import org.fao.geonet.batch.BatchConfiguration;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.LocaleResolver;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
     basePackages = "org.fao.geonet.repository",
     repositoryBaseClass = GeonetRepositoryImpl.class
 )
+@ComponentScan("org.fao.geonet")
 @RefreshScope
 public class GnIndexingApp {
 

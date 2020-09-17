@@ -13,6 +13,8 @@ spring:
       name: geonetwork
       username: gn
       password: gn
+  batch:
+    initialize-schema: always
 server:
   port: 9997
 management:

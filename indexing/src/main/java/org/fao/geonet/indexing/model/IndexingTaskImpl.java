@@ -54,8 +54,9 @@ public class IndexingTaskImpl implements IndexingTask {
       description = "Time to index a record")
   public void index(Metadata dbRecord) {
     System.out.println(String.format(
-        "Indexing record: %s.",
-        dbRecord.getUuid()));
+        "Indexing record %s in thread %s",
+        dbRecord.getUuid(),
+        Thread.currentThread().getName()));
     try {
       Thread.sleep(300);
     } catch (InterruptedException e) {
