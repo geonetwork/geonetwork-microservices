@@ -1,5 +1,6 @@
 package org.fao.geonet.indexing;
 
+import java.util.Locale;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,34 +12,41 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import java.util.Locale;
 
 @SpringBootApplication
 @EntityScan(basePackages = {
-        "org.fao.geonet.domain"
+    "org.fao.geonet.domain"
 })
 @EnableJpaRepositories(
-        basePackages = "org.fao.geonet.repository",
-        repositoryBaseClass = GeonetRepositoryImpl.class
+    basePackages = "org.fao.geonet.repository",
+    repositoryBaseClass = GeonetRepositoryImpl.class
 )
 @RefreshScope
 public class GnIndexingApp {
-    public static void main(String[] args) {
-        SpringApplication.run(GnIndexingApp.class, args);
-    }
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.ENGLISH);
-        return localeResolver;
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(GnIndexingApp.class, args);
+  }
 
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        messageSource.setBasenames("messages");
-        return messageSource;
-    }
+  /**
+   * Experiment localized message.
+   */
+  @Bean
+  public LocaleResolver localeResolver() {
+    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+    localeResolver.setDefaultLocale(Locale.ENGLISH);
+    return localeResolver;
+  }
+
+
+  /**
+   * Experiment localized message.
+   */
+  @Bean
+  public ResourceBundleMessageSource messageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setUseCodeAsDefaultMessage(true);
+    messageSource.setBasenames("messages");
+    return messageSource;
+  }
 }

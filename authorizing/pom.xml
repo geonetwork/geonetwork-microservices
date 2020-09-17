@@ -3,13 +3,13 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>microservices</artifactId>
+    <artifactId>gn-cloud-microservices</artifactId>
     <groupId>org.geonetwork-opensource</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>authorizing</artifactId>
+  <artifactId>gn-cloud-authorizing</artifactId>
   <packaging>war</packaging>
   <name>GeoNetwork authorizing app</name>
   <url>http://geonetwork-opensource.org</url>
@@ -48,7 +48,7 @@
     </dependency>
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>
-      <artifactId>common-security</artifactId>
+      <artifactId>gn-cloud-common-security</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>

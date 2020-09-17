@@ -8,5 +8,5 @@ import lombok.ToString;
 @Setter
 @ToString
 public abstract class IndexDocument {
-    private String id;
+  private String id;
 }

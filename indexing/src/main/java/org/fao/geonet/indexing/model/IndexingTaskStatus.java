@@ -1,7 +1,7 @@
 package org.fao.geonet.indexing.model;
 
 public enum IndexingTaskStatus {
-    PENDING,
-    RUNNING,
-    COMPLETED
+  PENDING,
+  RUNNING,
+  COMPLETED
 }
