@@ -15,6 +15,9 @@ spring:
       password: gn
   batch:
     initialize-schema: always
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
 server:
   port: 9997
 management:
@@ -27,3 +30,12 @@ management:
     web:
       exposure:
         include: health, metrics, prometheus
+camel:
+  springboot:
+    name: ServicesRest
+  component:
+    servlet:
+      mapping:
+        context-path: /api/*
+      http-binding:
+logging.level.org.fao.geonet.indexing: DEBUG

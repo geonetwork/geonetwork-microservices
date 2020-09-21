@@ -14,7 +14,6 @@ public class Index {
   private IndexType type;
 
   Path getConfigFile() {
-
     return null;
   }
 }

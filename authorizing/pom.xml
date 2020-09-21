@@ -54,13 +54,8 @@
     </dependency>
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>
-
       <artifactId>gn-domain</artifactId>
       <version>${geonetwork.version}</version>
-      <scope>system</scope>
-      <systemPath>
-        ${user.home}/.m2/repository/org/geonetwork-opensource/gn-domain/4.0.0-alpha.2/gn-domain-4.0.0-alpha.2.jar
-      </systemPath>
     </dependency>
   </dependencies>
 

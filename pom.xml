@@ -14,8 +14,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jetty.version>9.4.27.v20200227</jetty.version>
     <!--    <java.version>11</java.version>-->
-    <spring-boot.version>2.2.3.RELEASE</spring-boot.version>
+    <spring-boot.version>2.2.8.RELEASE</spring-boot.version>
     <spring-cloud.version>Hoxton.SR7</spring-cloud.version>
+    <elasticsearch.version>7.9.0</elasticsearch.version>
     <openapi-generator-version>4.3.1</openapi-generator-version>
     <geonetwork.version>4.0.0-alpha.2</geonetwork.version>
   </properties>
@@ -23,13 +24,14 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.3.RELEASE</version>
+    <version>2.2.8.RELEASE</version>
     <relativePath/>
   </parent>
 
   <modules>
     <module>routing</module>
     <module>configuring</module>
+    <module>common-utility</module>
     <module>common-security</module>
     <module>authorizing</module>
     <module>indexing</module>

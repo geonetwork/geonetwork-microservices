@@ -19,12 +19,13 @@
   <dependencies>
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>
+      <artifactId>gn-cloud-common-utility</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geonetwork-opensource</groupId>
       <artifactId>gn-domain</artifactId>
       <version>${geonetwork.version}</version>
-      <scope>system</scope>
-      <systemPath>
-        ${user.home}/.m2/repository/org/geonetwork-opensource/gn-domain/4.0.0-alpha.2/gn-domain-4.0.0-alpha.2.jar
-      </systemPath>
     </dependency>
 
     <!--
@@ -35,10 +36,6 @@
       <groupId>org.geonetwork-opensource</groupId>
       <artifactId>gn-common</artifactId>
       <version>${geonetwork.version}</version>
-      <scope>system</scope>
-      <systemPath>
-        ${user.home}/.m2/repository/org/geonetwork-opensource/gn-common/4.0.0-alpha.2/gn-common-4.0.0-alpha.2.jar
-      </systemPath>
     </dependency>
 
     <!-- Domain dependency required -->
@@ -62,7 +59,6 @@
       <artifactId>joda-time</artifactId>
       <version>2.10.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -95,6 +91,46 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-batch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jpa-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-groovy-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>7.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rest-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-sql-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servlet-starter</artifactId>
+      <version>3.0.0-RC3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer-starter</artifactId>
+      <version>3.0.0-RC3</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

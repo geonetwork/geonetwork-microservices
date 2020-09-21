@@ -1,7 +1,6 @@
 package org.fao.geonet.indexing;
 
 import java.util.Locale;
-import org.fao.geonet.batch.BatchConfiguration;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
