@@ -21,11 +21,18 @@ spring:
 server:
   port: 9997
 management:
+  health:
+    ldap:
+      enabled: false
   metrics:
-    export:
-      elastic:
-        index: gn-metrics
-        step: 10s
+#    export:
+#      elastic:
+#        index: gn-metrics
+#        step: 10s
+#        host: http://localhost:9200
+    tags:
+      host: localhost
+      application: GeoNetwork
   endpoints:
     web:
       exposure:
@@ -37,5 +44,6 @@ camel:
     servlet:
       mapping:
         context-path: /api/*
-      http-binding:
+    micrometer:
+      metrics-registry:
 logging.level.org.fao.geonet.indexing: DEBUG

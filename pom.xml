@@ -19,6 +19,8 @@
     <elasticsearch.version>7.9.0</elasticsearch.version>
     <openapi-generator-version>4.3.1</openapi-generator-version>
     <geonetwork.version>4.0.0-alpha.2</geonetwork.version>
+    <micrometer.version>1.5.5</micrometer.version>
+    <camel.version>3.5.0</camel.version>
   </properties>
 
   <parent>
@@ -44,6 +46,13 @@
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <version>${camel.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -73,10 +82,23 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
+      <version>${micrometer.version}</version>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>
+    <!--<dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-elastic</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>-->
+
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>${elasticsearch.version}</version>
     </dependency>
 
     <dependency>

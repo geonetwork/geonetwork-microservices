@@ -2,6 +2,7 @@ package org.fao.geonet.indexing.controller;
 
 import java.util.Locale;
 import lombok.val;
+import org.apache.camel.CamelContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
