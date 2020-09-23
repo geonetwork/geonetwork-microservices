@@ -15,17 +15,14 @@ import org.fao.geonet.domain.Metadata;
 @XmlRootElement(name = "indexRecord")
 @Data
 public class IndexRecord extends IndexDocument {
-  private String docType = "metadata";
+  private String docType;
+  private String indexingDate;
   private String documentStandard;
+  private String standardName;
   private String metadataIdentifier;
-  //  private  indexingDate;
-  private String mainLanguage = "";
+  private String mainLanguage;
   private List<String> otherLanguages = new ArrayList<>();
-  private String resourceTitle = "";
-
-  Map<String, String> resourceTitleObject;
-
-  //  private MultilingualString resourceTitle;
+  Map<String, String> resourceTitleObject = new HashMap<>();
   private String resourceAbstract = "";
   //  private List<Link> resourceLinks;
 
