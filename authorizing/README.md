@@ -1,6 +1,7 @@
 # Authentication service
 
-Service creating a JWT to be used in other services.
+This service is in charge of checking user privileges using GeoNetwork user repository. Once authenticated, a JSON Web Token (JWT) is created. The token will contain necessary information about the user that may be required for other services to limit requests to the database (eg. user membership is required to build a search filter by the search application).
+
 
 Start the service using:
 ```
