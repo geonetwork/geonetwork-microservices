@@ -8,6 +8,7 @@ Currently, the services are focused on:
 * [Authorizing by using JWT](authorizing/README.md)
 * [Searching](authorizing/README.md)
 * [Routing](routing/README.md)
+* [Indexing](indexing/README.md)
 * [OGC API Records](ogc-api-records/README.md)
 
 
@@ -33,7 +34,6 @@ curl 127.0.0.1:9990/search -H "$gn_auth_header"
 ```
 
 Other areas to experiment:
-* OGC API Records
 * Dependency on GN domain module
 * Indexing machine
 * Harvesting machine
