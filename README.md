@@ -12,7 +12,7 @@ Currently, the services are focused on:
 
 First start the configuration service, then the others.
 
-![Start services](springboot-services-start.png)
+![Start services](doc/img/springboot-services-start.png)
 
 
 Test the service using the token:

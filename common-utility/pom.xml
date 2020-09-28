@@ -8,25 +8,15 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>gn-cloud-common-security</artifactId>
-  <name>GeoNetwork common security</name>
+  <artifactId>gn-cloud-common-utility</artifactId>
+  <name>GeoNetwork common utility</name>
   <url>http://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt</artifactId>
-      <version>0.9.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
+      <version>10.2</version>
     </dependency>
   </dependencies>
 

@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: gn-indexing-service
+  profiles:
+    active: dev
+  security:
+    user:
+      name: gn
+      password: gn
+  cloud:
+    config:
+      uri: http://localhost:9999
+      name: geonetwork
+      username: gn
+      password: gn
+  batch:
+    initialize-schema: always
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+server:
+  port: 9997
+management:
+  health:
+    ldap:
+      enabled: false
+  metrics:
+#    export:
+#      elastic:
+#        index: gn-metrics
+#        step: 10s
+#        host: http://localhost:9200
+    tags:
+      host: localhost
+      application: GeoNetwork
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+camel:
+  springboot:
+    name: ServicesRest
+  component:
+    servlet:
+      mapping:
+        context-path: /api/*
+    micrometer:
+      metrics-registry:
+logging.level.org.fao.geonet.indexing: DEBUG
