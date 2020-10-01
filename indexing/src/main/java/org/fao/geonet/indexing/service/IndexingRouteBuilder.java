@@ -2,7 +2,6 @@ package org.fao.geonet.indexing.service;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
-import javax.enterprise.inject.Produces;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.fao.geonet.common.MetricUtil;
