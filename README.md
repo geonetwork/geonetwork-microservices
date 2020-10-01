@@ -75,6 +75,12 @@ TODO
 
 ## Contributing
 
+To set license header use:
+```shell script
+mvn license:format
+```
+
+
 ## Status
 
 This is a feasibility exploration of moving from GeoNetwork monolith application to a more scalable architecture. The main ideas are:

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) 2020 Open Source Geospatial Foundation - all rights reserved
+    This code is licensed under the GPL 2.0 license,
+    available at the root application directory.
+
+-->
 <mdb:MD_Metadata xmlns:mdb="http://standards.iso.org/iso/19115/-3/mdb/2.0"
                  xmlns:cit="http://standards.iso.org/iso/19115/-3/cit/2.0"
                  xmlns:gcx="http://standards.iso.org/iso/19115/-3/gcx/1.0"
