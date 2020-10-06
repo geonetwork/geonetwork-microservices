@@ -3,6 +3,7 @@
  * This code is licensed under the GPL 2.0 license,
  * available at the root application directory.
  */
+
 package org.fao.geonet.indexing.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

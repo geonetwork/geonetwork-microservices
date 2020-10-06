@@ -3,6 +3,7 @@
  * This code is licensed under the GPL 2.0 license,
  * available at the root application directory.
  */
+
 package org.fao.geonet.indexing.service;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -27,15 +28,20 @@ public class IndexingRouteBuilder extends RouteBuilder {
     String lastIndexingDate = null;
 
     from("rest://get:index/{bucket}/{uuid}")
-        .id("index-one-record")
+        .routeId("index-one-record")
+        .routeGroup("gn-index")
+        .routeDescription("API / Index one record")
         .transform()
         .simple("Indexing ${header.uuid} from bucket ${header.bucket}")
         .setHeader("ID", header("uuid"))
         .to("log:org.fao.geonet.indexing?level=DEBUG")
         .to("seda:register-to-indexing-queue");
 
+
     from("rest://put:index/{bucket}?consumes=application/json")
         .id("index-many-records")
+        .routeGroup("gn-index")
+        .routeDescription("API / Index one record")
         .transform()
         .simple("Indexing ${header.uuid}")
         .to("log:org.fao.geonet.indexing?level=DEBUG")

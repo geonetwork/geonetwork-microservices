@@ -7,7 +7,5 @@ spring:
     config:
       uri: http://localhost:9999
       name: geonetwork
-      username: gn
-      password: gn
 server:
   port: 9991

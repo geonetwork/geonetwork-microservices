@@ -4,10 +4,6 @@ spring:
   profiles:
     active:
       - native
-  security:
-    user:
-      name: gn
-      password: gn
   cloud:
     config:
       server:

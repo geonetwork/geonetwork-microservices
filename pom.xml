@@ -31,6 +31,7 @@
     <!--    <java.version>11</java.version>-->
     <geonetwork.version>4.0.0-alpha.2</geonetwork.version>
     <jetty.version>9.4.27.v20200227</jetty.version>
+    <spring.version>5.2.9.RELEASE</spring.version>
     <spring-boot.version>2.2.8.RELEASE</spring-boot.version>
     <spring-cloud.version>Hoxton.SR7</spring-cloud.version>
     <elasticsearch.version>7.9.0</elasticsearch.version>
@@ -135,6 +136,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
         <version>${camel.version}</version>
@@ -191,22 +198,6 @@
 
     </dependencies>
   </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-config</artifactId>
-    </dependency>
-
-  </dependencies>
 
   <profiles>
     <!-- Use -Drelax property to avoid:

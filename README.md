@@ -46,7 +46,7 @@ Test the service using the token:
 ```shell script
 # Authenticate
 gn_token=$( \
-    curl '127.0.0.1:9998/authenticate' \
+    curl '127.0.0.1:9988/authenticate' \
         --header "Content-Type: application/json" \
         --request POST \
         --data '{"username":"momo","password":"password"}' \
@@ -54,7 +54,7 @@ gn_token=$( \
 
 # Search using the token
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
-curl 127.0.0.1:9990/search -H "$gn_auth_header"
+curl 127.0.0.1:9988/search -H "$gn_auth_header"
 ```
 
 
