@@ -4,9 +4,8 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.model;
+package org.fao.geonet.indexing.service.model;
 
-import java.nio.file.Path;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,12 +13,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Index {
-
-  private String name;
-  private IndexType type;
-
-  Path getConfigFile() {
-    return null;
-  }
+public abstract class IndexDocument {
+  private String id;
 }

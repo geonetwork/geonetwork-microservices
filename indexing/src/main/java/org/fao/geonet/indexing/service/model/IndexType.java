@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.model;
+package org.fao.geonet.indexing.service.model;
 
 public enum IndexType {
   RECORDS,

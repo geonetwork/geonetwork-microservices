@@ -47,9 +47,9 @@ Test the service using the token:
 # Authenticate
 gn_token=$( \
     curl '127.0.0.1:9988/authenticate' \
-        --header "Content-Type: application/json" \
-        --request POST \
-        --data '{"username":"momo","password":"password"}' \
+        -H 'Content-Type: application/json' \
+        -X POST \
+        -d '{"username":"momo","password":"password"}' \
         | jq -r '.token')
 
 # Search using the token
@@ -76,6 +76,7 @@ TODO
 ## Contributing
 
 To set license header use:
+
 ```shell script
 mvn license:format
 ```

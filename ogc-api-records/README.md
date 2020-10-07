@@ -17,7 +17,7 @@ Test the service:
 
 ```shell script
 curl '127.0.0.1:9991/collections/main' \
-        --header "Content-Type: application/json"
+        -H "Content-Type: application/json"
 ```
 
 

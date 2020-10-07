@@ -4,29 +4,37 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.controller;
+package org.fao.geonet.indexing.service.controller;
 
+import java.util.Locale;
+import lombok.val;
 import org.apache.camel.CamelContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "routes")
-public class RouteController {
+@RequestMapping(value = "index")
+public class IndexController {
 
   @Autowired
-  CamelContext camelContext;
+  MessageSource messages;
 
   /**
-   * Reload route configuration.
+   * Index all records.
    */
-  @GetMapping(path = "/reload")
-  public ResponseEntity reload() {
-    camelContext.stop();
-    camelContext.start();
+  @GetMapping(path = "/all")
+  public ResponseEntity indexAll(
+      @RequestHeader(value = "Accept-Language", required = false)
+          String locale
+  ) {
+    String message = messages
+        .getMessage("index.status.available", null, Locale.forLanguageTag(locale));
+
     return ResponseEntity.ok().build();
   }
 }

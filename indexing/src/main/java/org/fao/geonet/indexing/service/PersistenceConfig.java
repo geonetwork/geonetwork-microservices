@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing;
+package org.fao.geonet.indexing.service;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
