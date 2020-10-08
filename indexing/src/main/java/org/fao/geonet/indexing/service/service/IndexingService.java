@@ -42,6 +42,7 @@ import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.indexing.service.exception.IndexingRecordException;
 import org.fao.geonet.indexing.service.model.IndexRecord;
 import org.fao.geonet.indexing.service.model.IndexRecords;
+import org.fao.geonet.indexing.service.model.IndexingReport;
 import org.fao.geonet.repository.MetadataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,9 @@ public class IndexingService {
    */
   public void indexRecords(Exchange e) throws IndexingRecordException {
     Object body = e.getIn().getBody();
+
+    IndexingReport report = new IndexingReport();
+
     List<Integer> ids = new ArrayList<>();
     if (body instanceof List) {
       ids = (List<Integer>) body;
@@ -114,6 +118,8 @@ public class IndexingService {
           ghost.size(),
           ghost.toString()
       ));
+      report.setNumberOfGhostRecords(ghost.size());
+      e.getIn().setHeader("NUMBER_OF_GHOST", report.getNumberOfGhostRecords());
     }
 
     Map<String, List<Metadata>> recordsBySchema = records.stream()
@@ -123,16 +129,24 @@ public class IndexingService {
       LOGGER.info(String.format(
           "Indexing %d records in schema %s", schemaRecords.size(), schema
       ));
-      IndexRecords indexRecords = collectProperties(schema, schemaRecords);
+      IndexRecords indexRecords = collectProperties(schema, schemaRecords, report);
       if (indexRecords.getIndexRecord() != null
           && indexRecords.getIndexRecord().size() > 0) {
-        sendToIndex(indexRecords);
+        sendToIndex(indexRecords, report);
       }
     });
+
+    e.getIn().setHeader("NUMBER_OF_RECORDS_INDEXED", records.size());
+    e.getIn().setHeader("NUMBER_OF_GHOST_RECORDS", report.getNumberOfGhostRecords());
+    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_ERRORS", report.getNumberOfRecordsWithIndexingErrors());
+    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA", report.getNumberOfRecordsWithUnsupportedSchema());
   }
 
 
-  private IndexRecords collectProperties(String schema, List<Metadata> schemaRecords) {
+  private IndexRecords collectProperties(
+      String schema,
+      List<Metadata> schemaRecords,
+      IndexingReport report) {
     String indexingXsltFileName = String.format(
         "xslt/%s-index.xsl",
         schema);
@@ -150,6 +164,7 @@ public class IndexingService {
           IndexRecords.class
       );
     } catch (IOException ioException) {
+      report.setNumberOfRecordsWithUnsupportedSchema(schemaRecords.size());
       LOGGER.error(String.format(
           "Schema %s used by records %s does not exist or does not provide indexing file %s.",
           schema,
@@ -201,7 +216,8 @@ public class IndexingService {
     return bulkRequest;
   }
 
-  private void sendToIndex(IndexRecords indexRecords) {
+  private void sendToIndex(IndexRecords indexRecords,
+      IndexingReport report) {
     BulkRequest bulkRequest = buildBulkRequest(indexRecords);
     try {
       // TODO: Asynchronous?
@@ -219,12 +235,14 @@ public class IndexingService {
             // TODO: Index error document
           }
         });
+        report.setNumberOfRecordsWithIndexingErrors(failureCount.intValue());
         LOGGER.info(String.format(
             "Indexing operation has failures %d.",
             failureCount
         ));
       }
     } catch (ElasticsearchStatusException indexException) {
+      report.setNumberOfRecordsWithIndexingErrors(indexRecords.getIndexRecord().size());
       LOGGER.error(String.format(
           "Error while saving records %d in index. Error is: %s.",
           indexException.getMessage()

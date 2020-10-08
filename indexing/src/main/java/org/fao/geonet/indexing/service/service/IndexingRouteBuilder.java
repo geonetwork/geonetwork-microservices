@@ -25,6 +25,11 @@ public class IndexingRouteBuilder extends RouteBuilder {
   @Value("${gn.indexing.batch.size:20}")
   Integer indexingBatchSize;
 
+  @Getter
+  @Setter
+  @Value("${gn.indexing.threadPool.size:20}")
+  Integer indexingThreadPoolSize;
+
   @Override
   public void configure() throws Exception {
     String lastIndexingDate = null;
@@ -37,10 +42,14 @@ public class IndexingRouteBuilder extends RouteBuilder {
         String.format("micrometer:counter:%s_%s",
             MetricUtil.METRIC_PREFIX,
             "indexing_${header.BUCKET}_numberOfRecordsIndexed");
-    String metricBucketNumberOfRecordsWithError =
+    String metricBucketNumberOfRecordsWithErrors =
         String.format("micrometer:counter:%s_%s",
             MetricUtil.METRIC_PREFIX,
             "indexing_${header.BUCKET}_numberOfRecordsWithError");
+    String metricBucketNumberOfRecordsWithUnsupportedSchema =
+        String.format("micrometer:counter:%s_%s",
+            MetricUtil.METRIC_PREFIX,
+            "indexing_${header.BUCKET}_numberOfRecordsWithUnsupportedSchema");
     String metricBucketTimer =
         String.format("micrometer:timer:%s_%s",
             MetricUtil.METRIC_PREFIX,
@@ -51,6 +60,7 @@ public class IndexingRouteBuilder extends RouteBuilder {
     //        .log(LoggingLevel.ERROR, bucketLoggerName,
     //        "${header.BUCKET} / ${header.ID} / ${exception}")
     //        .to(metricBucketNumberOfRecordsWithError + "?increment=1");
+
 
 
     from("rest://get:index/{bucket}/{uuid}")
@@ -85,12 +95,13 @@ public class IndexingRouteBuilder extends RouteBuilder {
         .to("sql:SELECT id FROM metadata ORDER BY changedate?outputType=StreamList")
         .split(body())
           .setBody(simple("${body[id]}"))
+
           .to(metricBucketNumberOfRecordsFromDb + "?increment=1")
-          .log(LoggingLevel.INFO, LOGGER_NAME, "${header.BUCKET} / ${body} / Indexing ...")
+          .log(LoggingLevel.INFO, LOGGER_NAME, "${header.NUMBER_OF_RECORDS_STREAMED} = ${header.BUCKET} / ${body} / Indexing ...")
           .to("seda:register-to-indexing-queue")
         .end()
         .to(metricBucketTimer + "?action=stop")
-        .transform(constant("Registerd all records in queue"));
+        .transform(simple("Records registered in indexing queue"));
 
     from("rest://delete:index/records")
         .routeId("delete-records-index")
@@ -102,21 +113,25 @@ public class IndexingRouteBuilder extends RouteBuilder {
 
     from("seda:register-to-indexing-queue")
         .aggregate(header("BUCKET"), new GroupedBodyAggregationStrategy())
-          .completionSize(indexingBatchSize)
+          .parallelProcessing()
+          .completionSize(indexingThreadPoolSize)
+          .completionTimeout(10*1000)
           // TODO: What happens when last batch does not reach batch size - add a timeout?
           .to("seda:index-now");
 
 
     from("seda:index-now")
-        .log(LoggingLevel.INFO, LOGGER_NAME, "${header.BUCKET} / Indexing batch ...")
+        .threads(indexingThreadPoolSize)
+        .log(LoggingLevel.INFO, LOGGER_NAME, "${threadName} ${header.BUCKET} / Indexing batch ...")
         .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
         .doTry()
           .bean(IndexingService.class, "indexRecords")
-          .to(metricBucketNumberOfRecordsIndexed + "?increment=1")
-          .log(LoggingLevel.INFO, LOGGER_NAME, "${header.BUCKET} / ${header.ID} / Completed.")
+          .to(metricBucketNumberOfRecordsIndexed + "?increment=${header.NUMBER_OF_RECORDS_INDEXED}")
+          .to(metricBucketNumberOfRecordsWithUnsupportedSchema + "?increment=${header.NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA}")
+          .to(metricBucketNumberOfRecordsWithErrors + "?increment=${header.NUMBER_OF_RECORDS_WITH_ERRORS}")
+          .log(LoggingLevel.INFO, LOGGER_NAME, "${threadName} ${header.BUCKET} / ${header.ID} / ${header.NUMBER_OF_RECORDS_INDEXED} indexed.")
         .doCatch(IndexingRecordException.class)
-          .log(LoggingLevel.ERROR, LOGGER_NAME, "${header.BUCKET} / ${header.ID} / ${exception}")
-          .to(metricBucketNumberOfRecordsWithError + "?increment=1")
+          .log(LoggingLevel.ERROR, LOGGER_NAME, "${threadName} ${header.BUCKET} / ${header.ID} / ${exception}")
         .end()
         .end();
   }

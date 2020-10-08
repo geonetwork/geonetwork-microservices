@@ -324,6 +324,9 @@
               <include>**/*.js</include>
               <include>pom.xml</include>
             </includes>
+            <headerDefinitions>
+              <headerDefinition>doc/license-config.xml</headerDefinition>
+            </headerDefinitions>
           </configuration>
         </plugin>
         <!--

@@ -12,7 +12,7 @@ GeoNetwork microservices is GeoNetwork ready to use in the cloud through dockeri
 
 ## Services architecture
 
-![Start services](doc/img/gnmicroservices.svg)
+![Overall architecture](doc/img/gnmicroservices.svg)
 
 ## Build & run
 
