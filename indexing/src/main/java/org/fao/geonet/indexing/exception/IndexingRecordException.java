@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.service.exception;
+package org.fao.geonet.indexing.exception;
 
 public class IndexingRecordException extends Exception {
   public IndexingRecordException(String errorMessage, Throwable err) {

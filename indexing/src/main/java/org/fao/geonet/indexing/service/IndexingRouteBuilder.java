@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.service.service;
+package org.fao.geonet.indexing.service;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.fao.geonet.common.MetricUtil;
-import org.fao.geonet.indexing.service.exception.IndexingRecordException;
+import org.fao.geonet.indexing.exception.IndexingRecordException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -97,7 +97,8 @@ public class IndexingRouteBuilder extends RouteBuilder {
           .setBody(simple("${body[id]}"))
 
           .to(metricBucketNumberOfRecordsFromDb + "?increment=1")
-          .log(LoggingLevel.INFO, LOGGER_NAME, "${header.NUMBER_OF_RECORDS_STREAMED} = ${header.BUCKET} / ${body} / Indexing ...")
+          .log(LoggingLevel.INFO, LOGGER_NAME,
+              "${header.NUMBER_OF_RECORDS_STREAMED} = ${header.BUCKET} / ${body} / Indexing ...")
           .to("seda:register-to-indexing-queue")
         .end()
         .to(metricBucketTimer + "?action=stop")
@@ -115,7 +116,7 @@ public class IndexingRouteBuilder extends RouteBuilder {
         .aggregate(header("BUCKET"), new GroupedBodyAggregationStrategy())
           .parallelProcessing()
           .completionSize(indexingThreadPoolSize)
-          .completionTimeout(10*1000)
+          .completionTimeout(10 * 1000)
           // TODO: What happens when last batch does not reach batch size - add a timeout?
           .to("seda:index-now");
 
@@ -126,12 +127,18 @@ public class IndexingRouteBuilder extends RouteBuilder {
         .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
         .doTry()
           .bean(IndexingService.class, "indexRecords")
-          .to(metricBucketNumberOfRecordsIndexed + "?increment=${header.NUMBER_OF_RECORDS_INDEXED}")
-          .to(metricBucketNumberOfRecordsWithUnsupportedSchema + "?increment=${header.NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA}")
-          .to(metricBucketNumberOfRecordsWithErrors + "?increment=${header.NUMBER_OF_RECORDS_WITH_ERRORS}")
-          .log(LoggingLevel.INFO, LOGGER_NAME, "${threadName} ${header.BUCKET} / ${header.ID} / ${header.NUMBER_OF_RECORDS_INDEXED} indexed.")
+          .to(metricBucketNumberOfRecordsIndexed
+              + "?increment=${header.NUMBER_OF_RECORDS_INDEXED}")
+          .to(metricBucketNumberOfRecordsWithUnsupportedSchema
+              + "?increment=${header.NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA}")
+          .to(metricBucketNumberOfRecordsWithErrors
+              + "?increment=${header.NUMBER_OF_RECORDS_WITH_ERRORS}")
+          .log(LoggingLevel.INFO, LOGGER_NAME,
+              "${threadName} ${header.BUCKET} / ${header.ID} / "
+                  + "${header.NUMBER_OF_RECORDS_INDEXED} indexed.")
         .doCatch(IndexingRecordException.class)
-          .log(LoggingLevel.ERROR, LOGGER_NAME, "${threadName} ${header.BUCKET} / ${header.ID} / ${exception}")
+          .log(LoggingLevel.ERROR, LOGGER_NAME,
+              "${threadName} ${header.BUCKET} / ${header.ID} / ${exception}")
         .end()
         .end();
   }

@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.service.service;
+package org.fao.geonet.indexing.service;
 
 import static org.elasticsearch.rest.RestStatus.CREATED;
 import static org.elasticsearch.rest.RestStatus.OK;
@@ -39,10 +39,10 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.fao.geonet.common.XsltUtil;
 import org.fao.geonet.domain.AbstractMetadata;
 import org.fao.geonet.domain.Metadata;
-import org.fao.geonet.indexing.service.exception.IndexingRecordException;
-import org.fao.geonet.indexing.service.model.IndexRecord;
-import org.fao.geonet.indexing.service.model.IndexRecords;
-import org.fao.geonet.indexing.service.model.IndexingReport;
+import org.fao.geonet.indexing.exception.IndexingRecordException;
+import org.fao.geonet.indexing.model.IndexRecord;
+import org.fao.geonet.indexing.model.IndexRecords;
+import org.fao.geonet.indexing.model.IndexingReport;
 import org.fao.geonet.repository.MetadataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class IndexingService {
 
   @Getter
   @Setter
-  @Value("${gn.index.records:test}")
+  @Value("${gn.index.records:gn-cloud-records}")
   String index;
 
   @Autowired
@@ -136,14 +136,18 @@ public class IndexingService {
       }
     });
 
-    e.getIn().setHeader("NUMBER_OF_RECORDS_INDEXED", records.size());
-    e.getIn().setHeader("NUMBER_OF_GHOST_RECORDS", report.getNumberOfGhostRecords());
-    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_ERRORS", report.getNumberOfRecordsWithIndexingErrors());
-    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA", report.getNumberOfRecordsWithUnsupportedSchema());
+    e.getIn().setHeader("NUMBER_OF_RECORDS_INDEXED",
+        records.size());
+    e.getIn().setHeader("NUMBER_OF_GHOST_RECORDS",
+        report.getNumberOfGhostRecords());
+    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_ERRORS",
+        report.getNumberOfRecordsWithIndexingErrors());
+    e.getIn().setHeader("NUMBER_OF_RECORDS_WITH_UNSUPPORTED_SCHEMA",
+        report.getNumberOfRecordsWithUnsupportedSchema());
   }
 
 
-  private IndexRecords collectProperties(
+  protected IndexRecords collectProperties(
       String schema,
       List<Metadata> schemaRecords,
       IndexingReport report) {
@@ -184,7 +188,7 @@ public class IndexingService {
    * database of an {@link AbstractMetadata}
    * and return its XML representation as string.
    */
-  public static String collectDbProperties(AbstractMetadata r) {
+  protected static String collectDbProperties(AbstractMetadata r) {
     IndexRecord indexRecord = new IndexRecord(r);
     StringWriter sw = new StringWriter();
     try {

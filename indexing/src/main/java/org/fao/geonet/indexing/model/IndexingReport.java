@@ -4,14 +4,14 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.service.model;
+package org.fao.geonet.indexing.model;
 
 import lombok.Data;
 
 @Data
 public class IndexingReport {
   Integer numberOfRecordsWithUnsupportedSchema = 0;
-  Integer numberOfRecordsWithXSLTransformErrors = 0;
+  Integer numberOfRecordsWithXsltErrors = 0;
   Integer numberOfRecordsWithIndexingErrors = 0;
   Integer numberOfGhostRecords = 0;
 }

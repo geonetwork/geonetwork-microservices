@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.indexing.service.model;
+package org.fao.geonet.indexing.model;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
