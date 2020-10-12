@@ -28,12 +28,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!--    <java.version>11</java.version>-->
+    <java.version>11</java.version><!-- override default value in spring-boot bom -->
     <geonetwork.version>4.0.0-alpha.2</geonetwork.version>
     <jetty.version>9.4.27.v20200227</jetty.version>
-    <spring.version>5.2.9.RELEASE</spring.version>
-    <spring-boot.version>2.2.8.RELEASE</spring-boot.version>
-    <spring-cloud.version>Hoxton.SR7</spring-cloud.version>
+
+    <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+
     <elasticsearch.version>7.9.0</elasticsearch.version>
     <openapi-generator-version>4.3.1</openapi-generator-version>
     <micrometer.version>1.5.5</micrometer.version>
@@ -136,12 +136,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
         <version>${camel.version}</version>
@@ -225,24 +219,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.4</version>
-            <executions>
-              <execution>
-                <id>findbugs</id>
-                <goals>
-                  <goal>findbugs</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-            <configuration>
-              <xmlOutput>true</xmlOutput>
-              <xmlOutputDirectory>target/site</xmlOutputDirectory>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <version>3.1.1</version>
@@ -302,7 +278,6 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot.version}</version>
           <inherited>true</inherited>
           <executions>
             <execution>
@@ -353,5 +328,11 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 </project>
