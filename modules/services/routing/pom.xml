@@ -6,58 +6,42 @@
     available at the root application directory.
 
 -->
+
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>gn-cloud-microservices</artifactId>
+    <artifactId>gn-cloud-services</artifactId>
     <groupId>org.geonetwork-opensource</groupId>
     <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>gn-cloud-authorizing</artifactId>
-  <name>GeoNetwork authorizing app</name>
+  <artifactId>gn-cloud-routing</artifactId>
+  <name>GeoNetwork routing webapp</name>
   <url>http://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-config</artifactId>
+      <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.geonetwork-opensource</groupId>
-      <artifactId>gn-cloud-common-security</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.geonetwork-opensource</groupId>
-      <artifactId>gn-domain</artifactId>
+      <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>spring-boot-starter-web</artifactId>
+          <groupId>org.springframework.boot</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
   <build>
-    <finalName>gn-cloud-authorizing</finalName>
+    <finalName>routing</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
