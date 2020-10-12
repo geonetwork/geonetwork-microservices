@@ -22,6 +22,7 @@ Those components are created with the following requirements:
 * Java 11 JDK
 * Maven
 * Docker
+* [core-geonetwork:4.0.0-alpha.2](https://github.com/geonetwork/core-geonetwork/releases/tag/4.0.0-alpha.2), might need a local build, it's not available on any published maven repository?
 
 ### Building
 
