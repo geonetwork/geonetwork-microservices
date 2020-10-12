@@ -14,7 +14,7 @@
 
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.geonetwork-opensource</groupId>
+  <groupId>org.geonetwork-opensource.cloud</groupId>
   <artifactId>gn-cloud-microservices</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -60,17 +60,17 @@
       </dependency>
 
       <dependency>
-        <groupId>org.geonetwork-opensource</groupId>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
         <artifactId>gn-cloud-common-security</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.geonetwork-opensource</groupId>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
         <artifactId>gn-cloud-common-utility</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.geonetwork-opensource</groupId>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
         <artifactId>gn-ogc-api-records-generated</artifactId>
         <version>${project.version}</version>
       </dependency>
