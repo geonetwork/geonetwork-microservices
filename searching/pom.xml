@@ -8,7 +8,7 @@
 -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>gn-cloud-microservices</artifactId>
     <groupId>org.geonetwork-opensource</groupId>
@@ -16,9 +16,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-searching</artifactId>
-  <packaging>war</packaging>
   <name>GeoNetwork search app</name>
   <url>http://geonetwork-opensource.org</url>
+  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
@@ -63,5 +63,18 @@
 
   <build>
     <finalName>searching</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
