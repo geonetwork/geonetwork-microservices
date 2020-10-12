@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) 2020 Open Source Geospatial Foundation - all rights reserved
+    This code is licensed under the GPL 2.0 license,
+    available at the root application directory.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>gn-cloud-parent</artifactId>
+    <groupId>org.geonetwork-opensource</groupId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>gn-cloud-lib</artifactId>
+  <packaging>pom</packaging>
+  <name>gn-cloud-services</name>
+  <description>Parent pom for geonetwork micro services library modules</description>
+
+  <modules>
+    <module>common-utility</module>
+    <module>common-security</module>
+  </modules>
+
+</project>

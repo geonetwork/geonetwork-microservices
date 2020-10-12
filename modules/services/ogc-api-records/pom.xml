@@ -6,31 +6,21 @@
     available at the root application directory.
 
 -->
-
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>gn-cloud-microservices</artifactId>
+    <artifactId>gn-cloud-services</artifactId>
     <groupId>org.geonetwork-opensource</groupId>
     <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>gn-cloud-common-utility</artifactId>
-  <name>GeoNetwork common utility</name>
+  <artifactId>gn-ogc-api-records</artifactId>
+  <packaging>pom</packaging>
+  <name>OGC API Records</name>
   <url>http://geonetwork-opensource.org</url>
 
-  <dependencies>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>Saxon-HE</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>generated</module>
+    <module>service</module>
+  </modules>
 </project>
