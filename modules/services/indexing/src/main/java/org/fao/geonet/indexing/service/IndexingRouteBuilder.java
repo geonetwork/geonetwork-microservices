@@ -22,7 +22,7 @@ public class IndexingRouteBuilder extends RouteBuilder {
 
   @Getter
   @Setter
-  @Value("${gn.indexing.batch.size:20}")
+  @Value("${gn.indexing.batch.size:100}")
   Integer indexingBatchSize;
 
   @Getter
@@ -115,16 +115,16 @@ public class IndexingRouteBuilder extends RouteBuilder {
     from("seda:register-to-indexing-queue")
         .aggregate(header("BUCKET"), new GroupedBodyAggregationStrategy())
           .parallelProcessing()
-          .completionSize(indexingThreadPoolSize)
+          .completionSize(indexingBatchSize)
           .completionTimeout(10 * 1000)
           // TODO: What happens when last batch does not reach batch size - add a timeout?
           .to("seda:index-now");
 
 
     from("seda:index-now")
-        .threads(indexingThreadPoolSize)
-        .log(LoggingLevel.INFO, LOGGER_NAME, "${threadName} ${header.BUCKET} / Indexing batch ...")
-        .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
+      .threads(indexingThreadPoolSize)
+      .log(LoggingLevel.INFO, LOGGER_NAME, "${threadName} ${header.BUCKET} / Indexing batch ...")
+      .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
         .doTry()
           .bean(IndexingService.class, "indexRecords")
           .to(metricBucketNumberOfRecordsIndexed
@@ -140,6 +140,6 @@ public class IndexingRouteBuilder extends RouteBuilder {
           .log(LoggingLevel.ERROR, LOGGER_NAME,
               "${threadName} ${header.BUCKET} / ${header.ID} / ${exception}")
         .end()
-        .end();
+      .end();
   }
 }

@@ -18,9 +18,20 @@ import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.indexing.model.IndexRecord;
 import org.fao.geonet.indexing.model.IndexRecords;
 import org.fao.geonet.indexing.model.IndexingReport;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@ActiveProfiles("dev")
+//@ComponentScan("org.fao.geonet")
 class IndexRecordTest {
   @Autowired
   IndexingService indexingService;
@@ -42,7 +53,7 @@ class IndexRecordTest {
 
     IndexingReport report = new IndexingReport();
 
-    IndexRecords results = indexingService.collectProperties(
+    IndexRecords results = new IndexingService().collectProperties(
         "iso19139",
         schemaRecords,
         report

@@ -91,6 +91,7 @@ public class IndexRecord extends IndexDocument {
   //      phone: "",
   //      address: "Fribourg, Service du cadastre et de la géomatique (SCG), 1701, CH"
   //  }
+  private List<Contact> contact;
   //  private List<Link> resourceLinks;
 
   // TODO: codelist_characterSet
