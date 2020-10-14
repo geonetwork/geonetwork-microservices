@@ -1,10 +1,9 @@
 # Common configuration properties for all services.
 # Individual service config settins are provided on each service file `<app-name>[-profile].yml`
 # Where <app-name> is the declared spring.application.name on each service's bootstrap.yml file
- 
 jwt.secret: geonetwork
 gn:
-  datadir: /tmp/gn-datadir
+  datadir: ${java.io.tmpdir}/gn-datadir
   url: http://localhost:8080/geonetwork
   index.url: http://localhost:9200
   indexing:
@@ -50,3 +49,7 @@ logging:
     org.springframework.cloud.bus.BusAutoConfiguration: INFO
     org.springframework.cloud.bus.DefaultBusPathMatcher: INFO
     org.springframework.cloud.config.server.environment.NativeEnvironmentRepository: WARN
+
+---
+spring.profiles: dev
+jwt.secret: geonetwork

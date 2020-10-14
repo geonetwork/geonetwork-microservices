@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.config.server.environment.NativeEnvironmentRepository: DEBUG
