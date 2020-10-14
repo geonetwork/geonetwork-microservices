@@ -25,6 +25,7 @@ curl '127.0.0.1:9997/api/index/simpleBatch/511' \
 ```
 
 
+
 ## Metrics
 
 ```
@@ -64,3 +65,27 @@ To be analyzed:
 * What about bulk asynchronous operation?
 * What happens if we configure an Elasticsearch cluster?
 
+
+
+## Events
+
+See https://kafka.apache.org/quickstart to install and start Kafka:
+
+```shell script
+tar -xzf kafka_2.13-2.6.0.tgz
+cd kafka_2.13-2.6.0
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+```
+
+Once Kafka is running, the indexing service will create a `gn_indexing_tasks_stream` topic. A REST endpoint allows to send a message on the topic.
+
+```shell script
+curl '127.0.0.1:9997/index/event'  \
+      -X POST \
+      -H "Accept: application/json" \
+      -H "Content-type: application/json" \
+      -d '{"uuid": [1], "bucket": "e101"}'
+```
+
+The message is consumed by the `EventConsumer` bean and by the camel route. 

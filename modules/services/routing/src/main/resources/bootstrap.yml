@@ -9,3 +9,4 @@ spring:
       name: geonetwork
 server:
   port: 9988
+debug: false

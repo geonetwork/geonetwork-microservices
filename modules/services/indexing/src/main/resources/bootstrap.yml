@@ -9,8 +9,17 @@ spring:
       name: geonetwork
       username: gn
       password: gn
-  batch:
-    initialize-schema: always
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        event-consumer:
+          destination: gn_indexing_tasks_stream
+          contentType: application/json
+        event-producer:
+          destination: gn_indexing_tasks_stream
+          contentType: application/json
   elasticsearch:
     rest:
       uris: http://localhost:9200
@@ -42,4 +51,7 @@ camel:
         context-path: /api/*
     micrometer:
       metrics-registry:
+    kafka:
+      brokers: localhost:9092
 logging.level.org.fao.geonet.indexing: DEBUG
+logging.level.org.springframework.amqp: DEBUG

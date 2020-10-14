@@ -120,6 +120,17 @@ public class IndexingRouteBuilder extends RouteBuilder {
           // TODO: What happens when last batch does not reach batch size - add a timeout?
           .to("seda:index-now");
 
+    //    from("spring-event:data_stream")
+    from("kafka:gn_indexing_tasks_stream")
+      .log(LoggingLevel.INFO, LOGGER_NAME, "Indexing event received")
+      .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
+      .split()
+        .jsonpath("uuid")
+        .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
+        .setHeader("BUCKET", simple("${header.bucket}"))
+        .log(LoggingLevel.INFO, LOGGER_NAME,
+            "${header.BUCKET} / Indexing one record from event ${body} ...")
+        .to("seda:index-now");
 
     from("seda:index-now")
       .threads(indexingThreadPoolSize)
