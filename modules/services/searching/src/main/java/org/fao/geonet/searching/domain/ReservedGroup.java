@@ -29,7 +29,7 @@ public enum ReservedGroup {
   private int id;
 
   private ReservedGroup(int id) {
-    id = id;
+    this.id = id;
   }
 
   /**
