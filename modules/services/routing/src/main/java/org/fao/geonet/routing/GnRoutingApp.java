@@ -6,6 +6,11 @@
 
 package org.fao.geonet.routing;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,12 +26,23 @@ public class GnRoutingApp {
     SpringApplication.run(GnRoutingApp.class, args);
   }
 
+  @Getter
+  @Setter
+  @Value("${gn.url:http://localhost:8080/geonetwork}")
+  private String geonetworkUrl;
+
   /**
    * Register gateway routes.
    */
   @Bean
-  public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+  public RouteLocator myRoutes(RouteLocatorBuilder builder) throws URISyntaxException {
+
+    String geonetworkWebapp = new URI(geonetworkUrl).getPath();
+
     return builder.routes()
+      .route("GeoNetwork route", p -> p
+          .path(geonetworkWebapp + "/**")
+          .uri(geonetworkUrl))
       .route(p -> p
         .path("/authenticate")
         .uri("http://127.0.0.1:9998/authenticate"))
