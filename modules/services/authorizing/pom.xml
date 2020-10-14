@@ -54,6 +54,12 @@
       <groupId>org.geonetwork-opensource</groupId>
       <artifactId>gn-domain</artifactId>
     </dependency>
+
+    <!--  test dependencies  -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

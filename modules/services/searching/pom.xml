@@ -88,10 +88,10 @@
       <version>24.1.1-jre</version>
     </dependency>
 
+    <!--  test dependencies  -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
   </dependencies>
 
