@@ -53,14 +53,23 @@ services:
       EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
       JAVA_OPTS: ${CONFIG_JAVA_OPTS}
       RABBITMQ_HOST: rabbitmq
-      CONFIG_PATH: /opt/app/config
+      CONFIG_PATH: ./config
     networks:
       - gn-cloud-network
     volumes:
-      - ./config:/opt/app/config
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "-m", "1", "http://localhost:8080/actuator/health"]
-#      interval: 1s
-#      timeout: 1s
-#      retries: 15
+      - ./config:/workspace/config
+    ports:
+      - 9999:8080
 
+  auth:
+    image: gn-cloud-authorizing:${TAG}
+    depends_on:
+      - config
+      - rabbitmq
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      JAVA_OPTS: ${AUTH_JAVA_OPTS}
+      RABBITMQ_HOST: rabbitmq
+      CONFIG_PATH: /opt/app/config
+    networks:
+      - gn-cloud-network
