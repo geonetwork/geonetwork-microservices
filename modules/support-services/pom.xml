@@ -22,6 +22,7 @@
   <description>Parent pom for support services</description>
 
   <modules>
+    <module>discovery</module>
     <module>configuring</module>
   </modules>
 
