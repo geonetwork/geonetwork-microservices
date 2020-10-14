@@ -1,0 +1,52 @@
+# Common configuration properties for all services.
+# Individual service config settins are provided on each service file `<app-name>[-profile].yml`
+# Where <app-name> is the declared spring.application.name on each service's bootstrap.yml file
+ 
+jwt.secret: geonetwork
+gn:
+  datadir: /tmp/gn-datadir
+  url: http://localhost:8080/geonetwork
+  index.url: http://localhost:9200
+  indexing:
+    batch.size: 40
+    threadPool.size: 20
+
+# Enable actuator endpoints by default
+management:
+  endpoint:
+    shutdown.enabled: true
+    info.enabled: true
+    health.enabled: true
+  endpoints:
+    enabled-by-default: true
+    web.exposure.include: "*"
+
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_URSER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+  cloud:
+    bus:
+      enabled: true
+      id: ${server.instance-id} # use the same instance id for eureka (see service's bootstrap.yml) and cloud-bus' rabbitmq instance id
+      trace.enabled: false #switch on tracing of acks (default off).
+    stream:
+      bindings:
+        springCloudBusOutput:
+          destination: geonetwork
+        springCloudBusInput:
+          destination: geonetwork
+
+logging:
+  level:
+    root: WARN
+    org.springframework: WARN
+    org.springframework.cloud.bus: INFO
+    # geonetwork roots
+    org.fao.geonet: INFO
+    # bus debugging
+    org.springframework.cloud.bus.BusAutoConfiguration: INFO
+    org.springframework.cloud.bus.DefaultBusPathMatcher: INFO
+    org.springframework.cloud.config.server.environment.NativeEnvironmentRepository: WARN

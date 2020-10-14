@@ -1,0 +1,66 @@
+version: "3.8"
+
+volumes:
+  rabbitmq_data: # volume for rabbitmq data, so it doesn't create an anonymous one on each container
+  
+networks:
+  gn-cloud-network:
+    driver: bridge
+        
+services:
+  # Event broker for spring-cloud-bus event messaging
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - gn-cloud-network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # Eureka service discovery. This is a Discovery First Bootstrap configuration.
+  # The discovery service is the only fixed entry point.
+  # Browse to http://localhost:8761 to check all services are registered.
+  discovery:
+    image: gn-cloud-discovery:${TAG}
+    environment:
+      SERVER_PORT: 8761
+      EUREKA_INSTANCE_HOSTNAME: discovery
+      JAVA_OPTS: ${DISCOVERY_JAVA_OPTS}
+    ports:
+      - 8761:8761 # for development, so services can be run from localhost and find the discovery service running on docker
+    networks:
+      - gn-cloud-network
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "-m", "1", "http://localhost:8761/actuator/health"]
+#      interval: 1s
+#      timeout: 1s
+#      retries: 15
+
+  # Spring Cloud Config service, provides centralized configuration to all
+  # microservices. Being a Discovery First Bootstrap configuration, it'll
+  # register itself with the Eureka discovery service and can be scaled
+  config:
+    image: gn-cloud-configuring:${TAG}
+    depends_on:
+      - discovery
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      JAVA_OPTS: ${CONFIG_JAVA_OPTS}
+      RABBITMQ_HOST: rabbitmq
+      CONFIG_PATH: /opt/app/config
+    networks:
+      - gn-cloud-network
+    volumes:
+      - ./config:/opt/app/config
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "-m", "1", "http://localhost:8080/actuator/health"]
+#      interval: 1s
+#      timeout: 1s
+#      retries: 15
+
