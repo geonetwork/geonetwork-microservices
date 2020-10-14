@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
 import org.fao.geonet.searching.Constants;
+import org.fao.geonet.searching.Constants.IndexFieldNames;
 import org.fao.geonet.searching.domain.Profile;
 import org.fao.geonet.searching.domain.ReservedGroup;
 import org.fao.geonet.searching.domain.ReservedOperation;
@@ -63,11 +64,11 @@ public class SearchResponseProcessor {
       }
 
       // Remove fields with privileges info
-      if (doc.has("_source")) {
-        ObjectNode sourceNode = (ObjectNode) doc.get("_source");
+      if (doc.has(Constants.IndexFieldNames.SOURCE)) {
+        ObjectNode sourceNode = (ObjectNode) doc.get(Constants.IndexFieldNames.SOURCE);
 
         for (ReservedOperation o : ReservedOperation.values()) {
-          sourceNode.remove("op" + o.getId());
+          sourceNode.remove(IndexFieldNames.OP_PREFIX + o.getId());
         }
       }
     });
@@ -83,7 +84,7 @@ public class SearchResponseProcessor {
    * @param selections  List of selected metadata uuids.
    */
   private void addSelectionInfo(ObjectNode doc, Set<String> selections) {
-    final String uuid = getSourceString(doc, Constants.IndexFieldNames.UUID);
+    final String uuid = getSourceFieldAsString(doc, Constants.IndexFieldNames.UUID);
     doc.put(Constants.Elem.SELECTED, selections.contains(uuid));
   }
 
@@ -98,8 +99,8 @@ public class SearchResponseProcessor {
    * @param userInfo    User information.
    */
   private void addUserInfo(ObjectNode doc, UserInfo userInfo)  {
-    final Integer owner = getSourceInteger(doc, Constants.IndexFieldNames.OWNER);
-    final Integer groupOwner = getSourceInteger(doc, Constants.IndexFieldNames.GROUP_OWNER);
+    final Integer owner = getSourceFieldAsInteger(doc, Constants.IndexFieldNames.OWNER);
+    final Integer groupOwner = getSourceFieldAsInteger(doc, Constants.IndexFieldNames.GROUP_OWNER);
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -122,7 +123,8 @@ public class SearchResponseProcessor {
       operations = Sets.newHashSet();
       for (ReservedOperation operation : ReservedOperation.values()) {
         final JsonNode operationNodes =
-            doc.get("_source").get(Constants.IndexFieldNames.OP_PREFIX + operation.getId());
+            doc.get(IndexFieldNames.SOURCE)
+                .get(Constants.IndexFieldNames.OP_PREFIX + operation.getId());
         if (operationNodes != null) {
           ArrayNode opFields = operationNodes.isArray()
               ? (ArrayNode) operationNodes : objectMapper.createArrayNode().add(operationNodes);
@@ -159,25 +161,50 @@ public class SearchResponseProcessor {
     }
   }
 
-  private Integer getInteger(ObjectNode node, String name) {
+  private Integer getFieldValueAsInteger(ObjectNode node, String name) {
     final JsonNode sub = node.get(name);
     return sub != null ? sub.asInt() : null;
   }
 
-  private String getString(ObjectNode node, String name) {
+  private String getFieldValueAsString(ObjectNode node, String name) {
     final JsonNode sub = node.get(name);
     return sub != null ? sub.asText() : null;
   }
 
+  /**
+   * Retrieves a field from the source node as a string value.
+   *
+   * @param node  Node with metadata information.
+   * @param name  Field name to retrieve from the source section.
+   * @return
+   */
+  private String getSourceFieldAsString(ObjectNode node, String name) {
+    final JsonNode sourceNode = node.get(Constants.IndexFieldNames.SOURCE);
 
-  private String getSourceString(ObjectNode node, String name) {
-    final JsonNode sub = node.get("_source").get(name);
-    return sub != null ? sub.asText() : null;
+    if (sourceNode != null) {
+      final JsonNode sub = sourceNode.get(name);
+      return sub != null ? sub.asText() : null;
+    } else {
+      return null;
+    }
   }
 
-  private Integer getSourceInteger(ObjectNode node, String name) {
-    final JsonNode sub = node.get("_source").get(name);
-    return sub != null ? sub.asInt() : null;
+  /**
+   * Retrieves a field from the source node as a integer value.
+   *
+   * @param node  Node with metadata information.
+   * @param name  Field name to retrieve from the source section.
+   * @return
+   */
+  private Integer getSourceFieldAsInteger(ObjectNode node, String name) {
+    final JsonNode sourceNode = node.get(Constants.IndexFieldNames.SOURCE);
+
+    if (sourceNode != null) {
+      final JsonNode sub = node.get(Constants.IndexFieldNames.SOURCE).get(name);
+      return sub != null ? sub.asInt() : null;
+    } else {
+      return null;
+    }
   }
 
   private void addReservedOperation(ObjectNode doc, HashSet<ReservedOperation> operations,
@@ -189,7 +216,8 @@ public class SearchResponseProcessor {
     ObjectMapper objectMapper = new ObjectMapper();
     int groupId = group.getId();
     final JsonNode operationNodes =
-        doc.get("_source").get(Constants.IndexFieldNames.OP_PREFIX + operation.getId());
+        doc.get(Constants.IndexFieldNames.SOURCE)
+            .get(Constants.IndexFieldNames.OP_PREFIX + operation.getId());
     if (operationNodes != null) {
       ArrayNode opFields = operationNodes.isArray()
           ? (ArrayNode) operationNodes : objectMapper.createArrayNode().add(operationNodes);

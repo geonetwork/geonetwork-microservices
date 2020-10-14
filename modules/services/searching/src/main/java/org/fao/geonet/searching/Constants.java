@@ -15,6 +15,7 @@ public final class Constants {
     public static final String OWNER = "owner";
     public static final String GROUP_OWNER = "groupOwner";
     public static final String OP_PREFIX = "op";
+    public static final String SOURCE = "_source";
   }
 
   public static final class Elem {
