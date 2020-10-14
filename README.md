@@ -53,9 +53,16 @@ gn_token=$( \
         -d '{"username":"momo","password":"password"}' \
         | jq -r '.token')
 
-# Search using the token
+# Testing the token
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
 curl 127.0.0.1:9988/search -H "$gn_auth_header"
+
+# Search service
+curl 127.0.0.1:9990/portal/api/search/records/_search \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -X POST \
+    -d '{"from": 0, "size": 0, "query": {"query_string": {"query": "+isTemplate:n"}}}' | jq -r '.hits.total.value'
 ```
 
 
