@@ -70,6 +70,17 @@ services:
       EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
       JAVA_OPTS: ${AUTH_JAVA_OPTS}
       RABBITMQ_HOST: rabbitmq
-      CONFIG_PATH: /opt/app/config
+    networks:
+      - gn-cloud-network
+
+  search:
+    image: gn-cloud-searching:${TAG}
+    depends_on:
+      - config
+      - rabbitmq
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      JAVA_OPTS: ${SEARCH_JAVA_OPTS}
+      RABBITMQ_HOST: rabbitmq
     networks:
       - gn-cloud-network
