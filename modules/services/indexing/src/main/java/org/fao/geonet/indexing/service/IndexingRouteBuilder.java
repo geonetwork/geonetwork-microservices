@@ -140,6 +140,6 @@ public class IndexingRouteBuilder extends RouteBuilder {
           .log(LoggingLevel.ERROR, LOGGER_NAME,
               "${threadName} ${header.BUCKET} / ${header.ID} / ${exception}")
         .end()
-      .end();
+        .end();
   }
 }
