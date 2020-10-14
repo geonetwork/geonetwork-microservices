@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching;
+package org.fao.geonet.searching.controller;
 
 import java.util.List;
 import java.util.Map;
