@@ -4,10 +4,22 @@ spring:
   profiles:
     active:
       - native
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   cloud:
+    bus:
+      enabled: true
     config:
       server:
         native:
           search-locations: classpath:/config
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, bus-refresh, beans, env
 server:
   port: 9999

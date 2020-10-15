@@ -3,16 +3,27 @@ spring:
     name: gn-indexing-service
   profiles:
     active: dev
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     config:
       uri: http://localhost:9999
       name: geonetwork
       username: gn
       password: gn
+    bus:
+      enabled: true
+    refresh:
+      enabled: true
     stream:
-      kafka:
-        binder:
-          brokers: localhost:9092
+      default-binder: rabbit
+#    stream:
+#      kafka:
+#        binder:
+#          brokers: localhost:9092
       bindings:
         event-consumer:
           destination: gn_indexing_tasks_stream
@@ -30,18 +41,18 @@ management:
     ldap:
       enabled: false
   metrics:
-#    export:
-#      elastic:
-#        index: gn-metrics
-#        step: 10s
-#        host: http://localhost:9200
+    #    export:
+    #      elastic:
+    #        index: gn-metrics
+    #        step: 10s
+    #        host: http://localhost:9200
     tags:
       host: localhost
       application: GeoNetwork
   endpoints:
     web:
       exposure:
-        include: health, metrics, prometheus
+        include: health, metrics, prometheus, refresh
 camel:
   springboot:
     name: ServicesRest

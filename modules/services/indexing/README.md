@@ -69,16 +69,21 @@ To be analyzed:
 
 ## Events
 
-See https://kafka.apache.org/quickstart to install and start Kafka:
+2 options analyzed:
+* RabbitMQ
+* Kafka
 
+Spring cloud bus event works with the 2.
+
+The configuration server can push event when config change, to reload the configuration in each microservices using:
 ```shell script
-tar -xzf kafka_2.13-2.6.0.tgz
-cd kafka_2.13-2.6.0
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
+curl -X POST http://localhost:9999/actuator/bus-refresh
 ```
+or webhooks.
 
-Once Kafka is running, the indexing service will create a `gn_indexing_tasks_stream` topic. A REST endpoint allows to send a message on the topic.
+The indexing service create a `gn_indexing_tasks_stream` topic. 
+
+Custom `IndexEvent` was tested. A REST endpoint allows to send a message on the topic.
 
 ```shell script
 curl '127.0.0.1:9997/index/event'  \
@@ -88,4 +93,21 @@ curl '127.0.0.1:9997/index/event'  \
       -d '{"uuid": [1], "bucket": "e101"}'
 ```
 
-The message is consumed by the `EventConsumer` bean and by the camel route. 
+The message is consumed by the `EventConsumer` bean and by the camel route (using kafka or rabbitmq components).
+
+
+To install rabbitmq:
+
+```shell script
+docker pull rabbitmq:3-management
+docker run -d --hostname my-rabbit --name some-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+```
+
+To install kafka, see https://kafka.apache.org/quickstart and start Kafka:
+
+```shell script
+tar -xzf kafka_2.13-2.6.0.tgz
+cd kafka_2.13-2.6.0
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+```

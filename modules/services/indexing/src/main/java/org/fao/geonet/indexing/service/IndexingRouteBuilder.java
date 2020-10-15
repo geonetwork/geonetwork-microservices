@@ -6,6 +6,7 @@
 
 package org.fao.geonet.indexing.service;
 
+import com.rabbitmq.client.ConnectionFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.camel.LoggingLevel;
@@ -14,6 +15,7 @@ import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.fao.geonet.common.MetricUtil;
 import org.fao.geonet.indexing.exception.IndexingRecordException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,6 +31,20 @@ public class IndexingRouteBuilder extends RouteBuilder {
   @Setter
   @Value("${gn.indexing.threadPool.size:20}")
   Integer indexingThreadPoolSize;
+
+
+  /**
+   * RabbitMQ connection configuration.
+   */
+  @Bean
+  public ConnectionFactory connectionFactory() {
+    ConnectionFactory con = new ConnectionFactory();
+    con.setHost("localhost");
+    con.setPort(5672);
+    con.setUsername("guest");
+    con.setPassword("guest");
+    return con;
+  }
 
   @Override
   public void configure() throws Exception {
@@ -120,8 +136,10 @@ public class IndexingRouteBuilder extends RouteBuilder {
           // TODO: What happens when last batch does not reach batch size - add a timeout?
           .to("seda:index-now");
 
-    //    from("spring-event:data_stream")
-    from("kafka:gn_indexing_tasks_stream")
+    //    from("spring-event:gn_indexing_tasks_stream")
+    //    from("kafka:gn_indexing_tasks_stream")
+    from("rabbitmq:gn_indexing_tasks_stream?"
+        + "exchangeType=topic&autoDelete=false&routingKey=gn_indexing_tasks_stream")
       .log(LoggingLevel.INFO, LOGGER_NAME, "Indexing event received")
       .log(LoggingLevel.INFO, LOGGER_NAME, "${body}")
       .split()
