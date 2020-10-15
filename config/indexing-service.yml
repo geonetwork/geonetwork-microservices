@@ -1,5 +1,4 @@
 spring:
-  profiles.active: dev
   elasticsearch.rest.uris: http://elasticsearch:9200
   cloud:
     stream:
@@ -11,6 +10,15 @@ spring:
         event-producer:
           destination: gn_indexing_tasks_stream
           contentType: application/json
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://database:5432/geonetwork
+    username: geonetwork
+    password: geonetwork
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    jpa.generate-ddl: false
+    jpa.hibernate.ddl-auto: none
 management:
   health.ldap.enabled: false
   metrics:
@@ -46,17 +54,10 @@ logging.level.org.springframework.amqp: DEBUG
 spring:
   profiles: local
   elasticsearch.rest.uris: http://localhost:9200
-  datasource.url: jdbc:postgresql://localhost:5432/geonetwork
+  datasource.url: jdbc:postgresql://localhost:55432/geonetwork
 ---
 spring:
   profiles: dev
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    #TODO: externalize to env variables provided by docker-compose.yml
-    url: jdbc:postgresql://database:5432/geonetwork
-    username: geonetwork
-    password: geonetwork
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     jpa.generate-ddl: true
     jpa.hibernate.ddl-auto: update

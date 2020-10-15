@@ -90,6 +90,9 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - gn-cloud-network
+    ports:
+      # expose for local profile without overlapping with a running default postgres port in the host
+      - "55432:5432"
 
   # Event broker for spring-cloud-bus event messaging
   rabbitmq:
