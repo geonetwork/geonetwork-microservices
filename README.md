@@ -29,13 +29,13 @@ Those components are created with the following requirements:
 To build the services:
 
 ```shell script
-mvn clean install
+./mvnw clean install
 ```
 
 For a quicker build, you can skip `checkstyle` and tests with:
 
 ```shell script
-mvn clean install -Drelax
+./mvnw clean install -Drelax
 ```
 
 ### Running
@@ -86,7 +86,7 @@ TODO
 To set license header use:
 
 ```shell script
-mvn license:format
+./mvnw license:format
 ```
 
 
