@@ -1,10 +1,3 @@
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    bus:
-      enabled: true
 server:
   port: 8080
   instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}

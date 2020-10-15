@@ -4,8 +4,8 @@
 jwt.secret: geonetwork
 gn:
   datadir: ${java.io.tmpdir}/gn-datadir
-  url: http://localhost:8080/geonetwork
-  index.url: http://localhost:9200
+  url: http://geonetwork:8080/geonetwork
+  index.url: http://elasticsearch:9200
   indexing:
     batch.size: 40
     threadPool.size: 20
@@ -53,3 +53,11 @@ logging:
 ---
 spring.profiles: dev
 jwt.secret: geonetwork
+---
+# Use this profile when running from the host instead of inside the docker composition, either
+# from the IDE or through mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f <path/to/service/pom.xml>
+spring.profiles: local
+gn:
+  url: http://localhost:8080/geonetwork
+  index.url: http://localhost:9200
+
