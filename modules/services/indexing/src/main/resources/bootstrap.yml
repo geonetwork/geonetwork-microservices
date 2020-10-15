@@ -1,68 +1,32 @@
-spring:
-  application:
-    name: gn-indexing-service
-  profiles:
-    active: dev
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-  cloud:
-    config:
-      uri: http://localhost:9999
-      name: geonetwork
-      username: gn
-      password: gn
-    bus:
-      enabled: true
-    refresh:
-      enabled: true
-    stream:
-      default-binder: rabbit
-#    stream:
-#      kafka:
-#        binder:
-#          brokers: localhost:9092
-      bindings:
-        event-consumer:
-          destination: gn_indexing_tasks_stream
-          contentType: application/json
-        event-producer:
-          destination: gn_indexing_tasks_stream
-          contentType: application/json
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
 server:
-  port: 9997
-management:
-  health:
-    ldap:
-      enabled: false
-  metrics:
-    #    export:
-    #      elastic:
-    #        index: gn-metrics
-    #        step: 10s
-    #        host: http://localhost:9200
-    tags:
-      host: localhost
-      application: GeoNetwork
-  endpoints:
-    web:
-      exposure:
-        include: health, metrics, prometheus, refresh
-camel:
-  springboot:
-    name: ServicesRest
-  component:
-    servlet:
-      mapping:
-        context-path: /api/*
-    micrometer:
-      metrics-registry:
-    kafka:
-      brokers: localhost:9092
-logging.level.org.fao.geonet.indexing: DEBUG
-logging.level.org.springframework.amqp: DEBUG
+  port: 8080
+  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
+spring:
+  application.name: indexing-service
+  main.banner-mode: off
+  cloud:
+    loadbalancer.ribbon.enabled: false # ribbon is in maintenance mode and should be replaced by spring-cloud-loadbalancer
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 20
+      discovery:
+        enabled: true
+        service-id: config-service
+
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+    instance-id: ${server.instance-id}
+    preferIpAddress: true
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 30
+  client:
+    enabled: true
+    registerWithEureka: true
+    fetchRegistry: true
+    registry-fetch-interval-seconds: 30
+    serviceUrl:
+      defaultZone: ${eureka.server.url:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
