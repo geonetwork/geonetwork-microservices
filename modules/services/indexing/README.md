@@ -59,7 +59,7 @@ gn.indexing.threadPool.size=20
 
 Metrics are exposed during processing: 
 
-![Indexing experiment](../doc/img/indexing-experiment.png)
+![Indexing experiment](../../../doc/img/indexing-experiment.png)
 
 To be analyzed:
 * What about bulk asynchronous operation?
