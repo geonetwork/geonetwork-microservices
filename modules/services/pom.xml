@@ -63,7 +63,7 @@
     <module>authorizing</module>
     <module>indexing</module>
     <module>searching</module>
-    <module>routing</module>
+    <module>gateway</module>
     <module>ogc-api-records</module>
   </modules>
 
