@@ -86,11 +86,8 @@ The indexing service create a `gn_indexing_tasks_stream` topic.
 Custom `IndexEvent` was tested. A REST endpoint allows to send a message on the topic.
 
 ```shell script
-curl '127.0.0.1:9997/index/event'  \
-      -X POST \
-      -H "Accept: application/json" \
-      -H "Content-type: application/json" \
-      -d '{"uuid": [1], "bucket": "e101"}'
+# POST to /index/event/{bucket}/{uuid}
+curl -X POST '127.0.0.1:9997/index/event/e0101/1'
 ```
 
 The message is consumed by the `EventConsumer` bean and by the camel route (using kafka or rabbitmq components).

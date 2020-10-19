@@ -6,28 +6,34 @@
 package org.fao.geonet.indexing.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHeaders;
+import org.springframework.cloud.bus.BusProperties;
+import org.springframework.cloud.bus.ConditionalOnBusEnabled;
+import org.springframework.cloud.bus.event.RemoteApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MimeTypeUtils;
 
 @Service
 public class EventStreamService {
 
-  @Autowired
-  private EventStream eventStream;
+  private static final String DESTINATION_ALL_SERVICES = null;
+
+  private @Autowired ApplicationEventPublisher eventPublisher;
+
+  private @Autowired BusProperties busProperties;
 
   /**
-   * Produce an indexing event.
+   * Publishes an {@link IndexEvent}. Being a {@link RemoteApplicationEvent}, if
+   * spring-bus {@link ConditionalOnBusEnabled is enabled}, it will automatically
+   * be distributed to all nodes in the cluster.
+   * 
+   * @see EventConsumer
    */
-  public Boolean produceEvent(IndexEvent indexEvent) {
-    System.out.println("Producing events --> uuid: "
-        + indexEvent.getUuid()
-        + " bucket: " + indexEvent.getBucket());
-    MessageChannel messageChannel = eventStream.producer();
-    return messageChannel.send(MessageBuilder.withPayload(indexEvent)
-        .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON).build());
-
+  public void produceEvent(String bucket, String uuid) {
+    System.out.println("Producing events --> uuid: " + uuid + " bucket: " + bucket);
+    String originService = busProperties.getId();
+    IndexEvent event = new IndexEvent(this, originService, DESTINATION_ALL_SERVICES);
+    event.setBucket(bucket);
+    event.setUuid(uuid);
+    eventPublisher.publishEvent(event);
   }
 }

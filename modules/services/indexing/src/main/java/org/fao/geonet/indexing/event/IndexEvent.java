@@ -1,6 +1,10 @@
 package org.fao.geonet.indexing.event;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.cloud.bus.event.RemoteApplicationEvent;
 
 /**
  * Indexing event is used to add elements to the indexing queue.
@@ -8,18 +12,28 @@ import lombok.Data;
  * <p>
  * Can contains:
  * <ul>
- *   <li>A list of UUIDs</li>
- *   <li>A bucket identifier</li>
- *   <li>if none of them, will trigger a complete indexing task.</li>
+ * <li>A list of UUIDs</li>
+ * <li>A bucket identifier</li>
+ * <li>if none of them, will trigger a complete indexing task.</li>
  * </ul>
  * </p>
  */
-@Data
-public class IndexEvent {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class IndexEvent extends RemoteApplicationEvent {
+  private static final long serialVersionUID = 862037593554999167L;
 
-  String[] uuid;
-  String bucket;
+  private @Getter @Setter String uuid;
+  private @Getter @Setter String bucket;
 
+  /**
+   * Default constructor for de-serialization.
+   */
   public IndexEvent() {
+    super();
+  }
+
+  public IndexEvent(Object source, String originService, String destinationService) {
+    super(source, originService, destinationService);
   }
 }

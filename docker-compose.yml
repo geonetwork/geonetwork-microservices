@@ -67,6 +67,8 @@ services:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - gn-cloud-network
+    ports:
+      - "9200:9200"
 
   kibana:
     image: kibana:7.9.0
