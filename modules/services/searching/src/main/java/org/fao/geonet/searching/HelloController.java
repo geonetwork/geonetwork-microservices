@@ -6,10 +6,10 @@
 
 package org.fao.geonet.searching;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.security.core.context.SecurityContextHolder;
+import java.security.Principal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,12 +20,8 @@ public class HelloController {
    * Search.
    */
   @RequestMapping("/search")
-  public String search() {
-    String name = SecurityContextHolder.getContext().getAuthentication().getName();
-    Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-    List<Integer> viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-    return "Search service called. You are authenticated as " + name + ", "
-        + viewingGroup.stream().map(x -> Integer.toString(x)).collect(Collectors.joining("|"));
+  public String search(@AuthenticationPrincipal String name, Authentication authentication, OAuth2Authentication oAuth2Authentication, Principal principal) {
+    return "Search service called. You are authenticated as " + name + ", " + oAuth2Authentication.getAuthorities().stream().findFirst().get().getAuthority();
   }
 
 }

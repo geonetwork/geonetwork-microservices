@@ -7,5 +7,6 @@ spring:
     config:
       uri: http://localhost:9999
       name: geonetwork
+debug: true
 server:
   port: 9990

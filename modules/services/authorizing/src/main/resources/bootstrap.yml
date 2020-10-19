@@ -9,3 +9,8 @@ spring:
       name: geonetwork
 server:
   port: 9998
+security:
+  oauth2:
+    client:
+      client-id: first-client
+      client-secret: noonewilleverguess
