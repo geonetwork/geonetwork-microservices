@@ -1,0 +1,3 @@
+---
+spring.profiles: local
+server.port: 9996
