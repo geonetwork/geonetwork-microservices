@@ -1,11 +1,68 @@
+server:
+  compression:
+    enabled: true
+# Configure routes to services. See https://cloud.spring.io/spring-cloud-gateway/single/spring-cloud-gateway.html
+management:
+  endpoint:
+    gateway:
+      enabled: true # default value
+    info:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway, info, health
 spring:
-logging.level.org.fao.geonet.gateway: INFO
+  cloud:
+    loadbalancer.ribbon.enabled: false # ribbon is in maintenance mode and should be replaced by spring-cloud-loadbalancer
+    gateway:
+      actuator:
+        verbose:
+          enabled: true
+      routes:
+      # legacy geonetwork routes
+      - id: legacy-geonetwork
+        uri: ${gn.baseurl:http://geonetwork:8080} # refering to the DNS name given in the docker composition, this app has no registered cluster service name
+        predicates:
+        - Path=/geonetwork, /geonetwork/**
+      # auth-service routes
+      - id: authenticate
+        uri: lb://auth-service
+        predicates:
+        - Path=/authenticate
+      # search-service routes
+      - id: search
+        uri: lb://search-service
+        predicates:
+        - Path=/search,/search/**
+      # indexing-service routes
+      - id: indexing
+        uri: lb://indexing-service
+        predicates:
+        - Path=/index/**,/routes/**
+      # ogc-api-records routes
+      - id: ogc-records
+        uri: lb://ogc-records-service
+        # route incoming /api/records/** to ogc-records-service's root path /** 
+        predicates:
+        - Path=/api/records/{segment}
+        filters:
+        - SetPath=/{segment}
+logging:
+  level:
+    root: WARN
+    org.fao.geonet.gateway: INFO
+    com.netflix.discovery: WARN
+    com.netflix.eureka: WARN
 ---
 # Use this profile when running from the host instead of inside the docker composition, either
 # from the IDE or through mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/
 spring:
   profiles: local
 server.port: 9998
+gn.service.geonetwork: http://localhost:8080
 ---
 spring:
   profiles: dev
