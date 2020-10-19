@@ -1,15 +1,5 @@
 spring:
   elasticsearch.rest.uris: http://elasticsearch:9200
-  cloud:
-    stream:
-      kafka.binder.brokers: localhost:9092
-      bindings:
-        event-consumer:
-          destination: gn_indexing_tasks_stream
-          contentType: application/json
-        event-producer:
-          destination: gn_indexing_tasks_stream
-          contentType: application/json
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://database:5432/geonetwork
@@ -55,6 +45,7 @@ spring:
   profiles: local
   elasticsearch.rest.uris: http://localhost:9200
   datasource.url: jdbc:postgresql://localhost:55432/geonetwork
+server.port: 9997
 ---
 spring:
   profiles: dev

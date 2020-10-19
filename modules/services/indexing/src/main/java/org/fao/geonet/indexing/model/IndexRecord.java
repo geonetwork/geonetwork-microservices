@@ -15,10 +15,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.fao.geonet.domain.AbstractMetadata;
 import org.fao.geonet.domain.MetadataDraft;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @XmlRootElement(name = "indexRecord")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IndexRecord extends IndexDocument {
@@ -133,7 +135,7 @@ public class IndexRecord extends IndexDocument {
   //]
 
   //  @JsonAnyGetter
-  private Map<String, String> otherProperties = new HashMap();
+  private Map<String, String> otherProperties = new HashMap<>();
 
   /**
    * Record to be loaded in the index.
