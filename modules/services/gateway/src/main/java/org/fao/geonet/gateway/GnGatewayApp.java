@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.routing;
+package org.fao.geonet.gateway;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,10 +20,10 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @RefreshScope
-public class GnRoutingApp {
+public class GnGatewayApp {
 
   public static void main(String[] args) {
-    SpringApplication.run(GnRoutingApp.class, args);
+    SpringApplication.run(GnGatewayApp.class, args);
   }
 
   @Getter
