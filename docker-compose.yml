@@ -158,6 +158,19 @@ services:
     networks:
       - gn-cloud-network
 
+  gateway:
+    image: gn-cloud-gateway:${TAG}
+    depends_on:
+      - config
+      - rabbitmq
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      RABBITMQ_HOST: rabbitmq
+    networks:
+      - gn-cloud-network
+    ports:
+      - 9900:8080
+
   search:
     image: gn-cloud-searching:${TAG}
     depends_on:

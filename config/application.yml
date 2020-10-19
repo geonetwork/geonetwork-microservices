@@ -56,7 +56,9 @@ jwt.secret: geonetwork
 ---
 # Use this profile when running from the host instead of inside the docker composition, either
 # from the IDE or through mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f <path/to/service/pom.xml>
-spring.profiles: local
+spring:
+  profiles: local
+  rabbitmq.host: localhost
 gn:
   url: http://localhost:8080/geonetwork
   index.url: http://localhost:9200

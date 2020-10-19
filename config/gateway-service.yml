@@ -1,0 +1,11 @@
+spring:
+logging.level.org.fao.geonet.gateway: INFO
+---
+# Use this profile when running from the host instead of inside the docker composition, either
+# from the IDE or through mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/
+spring:
+  profiles: local
+server.port: 9998
+---
+spring:
+  profiles: dev
