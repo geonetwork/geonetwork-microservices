@@ -4,7 +4,7 @@
 jwt.secret: geonetwork
 gn:
   datadir: ${java.io.tmpdir}/gn-datadir
-  url: http://geonetwork:8080/geonetwork
+  baseurl: http://geonetwork:8080
   index.url: http://elasticsearch:9200
   indexing:
     batch.size: 40
@@ -60,6 +60,6 @@ spring:
   profiles: local
   rabbitmq.host: localhost
 gn:
-  url: http://localhost:8080/geonetwork
+  baseurl: http://localhost:8080
   index.url: http://localhost:9200
 
