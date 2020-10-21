@@ -22,7 +22,7 @@ Those components are created with the following requirements:
 * Java 11 JDK
 * Maven
 * Docker
-* [core-geonetwork:4.0.0-alpha.2](https://github.com/geonetwork/core-geonetwork/releases/tag/4.0.0-alpha.2), might need a local build, it's not available on any published maven repository?
+* [core-geonetwork:4.0.0](https://github.com/geonetwork/core-geonetwork/releases/tag/4.0.0), might need a local build, it's not available on any published maven repository?
 
 ### Building
 
@@ -40,14 +40,26 @@ For a quicker build, you can skip `checkstyle` and tests with:
 
 ### Running
 
-TODO
+The simple build command above created the docker images.
+
+Now run the docker composition as follows, the first time it might need to download some additional images for the rabbitmq event broker and the postgresql config database:
+
+```shell script
+docker-compose up -d
+```
+
+Once services are up and running, access GeoNetwork from http://localhost:9900/geonetwork.
+
+Run `docker-compose logs -f` to watch startup progress of all services.
+
+### Calling services
 
 Test the service using the token:
 
 ```shell script
 # Authenticate
 gn_token=$( \
-    curl '127.0.0.1:9988/authenticate' \
+    curl '127.0.0.1:9900/authenticate' \
         -H 'Content-Type: application/json' \
         -X POST \
         -d '{"username":"momo","password":"password"}' \
@@ -55,10 +67,10 @@ gn_token=$( \
 
 # Testing the token
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
-curl 127.0.0.1:9988/search -H "$gn_auth_header"
+curl 127.0.0.1:9900/search -H "$gn_auth_header"
 
 # Search service
-curl 127.0.0.1:9990/portal/api/search/records/_search \
+curl 127.0.0.1:9900/portal/api/search/records/_search \
     -H "Accept: application/json" \
     -H "Content-type: application/json" \
     -X POST \
@@ -71,9 +83,22 @@ curl 127.0.0.1:9990/portal/api/search/records/_search \
 
 Developments are made on https://github.com/geonetwork/geonetwork-microservices
 
-First start the configuration service, then the others.
+To run one service directly without docker, use the `local` profile.
 
-![Start services](doc/img/springboot-services-start.png)
+```shell script
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/
+```
+
+
+To run all services independently, start first rabbitmq, then start apps in order:
+```shell script
+docker run -d --hostname gn-cloud-rabbit --name gn-cloud-rabbit rabbitmq:3
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/discovery
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/configuring
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/support
+...
+```
+
 
 ## Bugs
 
