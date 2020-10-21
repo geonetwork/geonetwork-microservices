@@ -36,7 +36,7 @@ spring:
       - id: search
         uri: lb://search-service
         predicates:
-        - Path=/search,/search/**
+        - Path=/search,/search/**,/portal/**
       # indexing-service routes
       - id: indexing
         uri: lb://indexing-service
