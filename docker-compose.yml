@@ -181,7 +181,16 @@ services:
       RABBITMQ_HOST: rabbitmq
     networks:
       - gn-cloud-network
-
+  index:
+    image: gn-cloud-indexing:${TAG}
+    depends_on:
+      - config
+      - rabbitmq
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      RABBITMQ_HOST: rabbitmq
+    networks:
+      - gn-cloud-network
   ogc-records:
     image: gn-ogc-api-records-service:${TAG}
     depends_on:
