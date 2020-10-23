@@ -22,6 +22,12 @@ spring:
         verbose:
           enabled: true
       routes:
+      - id: home-redirect
+        uri: no://op
+        predicates:
+          - Path=/
+        filters:
+          - RedirectTo=302, /geonetwork
       # legacy geonetwork routes
       - id: legacy-geonetwork
         uri: ${gn.baseurl:http://geonetwork:8080} # refering to the DNS name given in the docker composition, this app has no registered cluster service name
