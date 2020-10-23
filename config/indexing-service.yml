@@ -30,7 +30,7 @@ camel:
   component:
     servlet:
       mapping:
-        context-path: /api/*
+        context-path: /index/tasks/*
     micrometer:
       metrics-registry:
     kafka:
@@ -45,7 +45,6 @@ spring:
   profiles: local
   elasticsearch.rest.uris: http://localhost:9200
   datasource.url: jdbc:postgresql://localhost:55432/geonetwork
-server.port: 9997
 ---
 spring:
   profiles: dev

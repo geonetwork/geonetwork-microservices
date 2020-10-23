@@ -12,15 +12,15 @@ mvn spring-boot:run
 
 ```shell script
 # Remove the index
-curl '127.0.0.1:9997/api/index/records' \
+curl '127.0.0.1:9900/index/tasks/index/records' \
     -X DELETE 
 
 # Index all database records
-curl '127.0.0.1:9997/api/index/all/all' \
+curl '127.0.0.1:9901/index/tasks/index/all/all' \
    -X GET 
 
 # Index one database record
-curl '127.0.0.1:9997/api/index/simpleBatch/511' \
+curl '127.0.0.1:9900/index/tasks/index/simpleBatch/511' \
    -X GET 
 ```
 

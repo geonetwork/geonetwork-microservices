@@ -5,7 +5,9 @@ jwt.secret: geonetwork
 gn:
   datadir: ${java.io.tmpdir}/gn-datadir
   baseurl: http://geonetwork:8080
-  index.url: http://elasticsearch:9200
+  index:
+    url: http://elasticsearch:9200
+    records: gn-records
   indexing:
     batch.size: 40
     threadPool.size: 20

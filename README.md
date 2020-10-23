@@ -48,6 +48,14 @@ Now run the docker composition as follows, the first time it might need to downl
 docker-compose up -d
 ```
 
+If some services fail to start and report config server error:
+```
+gateway_1        | java.lang.IllegalStateException: No instances found of configserver (config-service)
+```
+
+Restart `docker-compose up -d` to launch again the missing services. The config server being up, they will start properly.
+
+
 Once services are up and running, access GeoNetwork from http://localhost:9900/geonetwork.
 
 Run `docker-compose logs -f` to watch startup progress of all services.
@@ -95,8 +103,13 @@ To run all services independently, start first rabbitmq, then start apps in orde
 docker run -d --hostname gn-cloud-rabbit --name gn-cloud-rabbit rabbitmq:3
 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/discovery
 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/configuring
-mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/support
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing
 ...
+```
+
+To work on a microservice, start the docker containers and then run the service separetely:
+```shell script
+SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/searching
 ```
 
 
