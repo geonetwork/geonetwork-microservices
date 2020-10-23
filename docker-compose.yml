@@ -52,7 +52,7 @@ services:
       - gn-cloud-network
 
   elasticsearch:
-    image: elasticsearch:7.9.0
+    image: elasticsearch:7.9.2
     ulimits:
       memlock:
         soft: -1
@@ -71,7 +71,7 @@ services:
       - "9200:9200"
 
   kibana:
-    image: kibana:7.9.0
+    image: kibana:7.9.2
     environment:
       SERVER_NAME: 'kibana'
       ELASTICSEARCH_URL: http://elasticsearch:9200/
