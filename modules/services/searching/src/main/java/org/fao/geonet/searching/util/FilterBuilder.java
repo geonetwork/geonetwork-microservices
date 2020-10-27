@@ -82,7 +82,7 @@ public class FilterBuilder {
 
   /**
    * Document type (metadata, template, subtemplate) filter.
-   * @param type  Metadata type.
+   *
    * @return  Document type filter.
    */
   private String buildDocTypeFilter(String type) {
