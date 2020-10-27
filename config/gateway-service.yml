@@ -37,7 +37,7 @@ spring:
       - id: authenticate
         uri: lb://auth-service
         predicates:
-        - Path=/authenticate
+        - Path=/oauth/**
       # search-service routes
       - id: search
         uri: lb://search-service

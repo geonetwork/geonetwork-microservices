@@ -67,11 +67,10 @@ Test the service using the token:
 ```shell script
 # Authenticate
 gn_token=$( \
-    curl '127.0.0.1:9900/authenticate' \
-        -H 'Content-Type: application/json' \
-        -X POST \
-        -d '{"username":"momo","password":"password"}' \
-        | jq -r '.token')
+    curl test-client:noonewilleverguess@127.0.0.1:9900/oauth/token \
+         -dgrant_type=password -dscope=any \
+         -dusername=momo -dpassword=password \
+        | jq -r '.access_token')
 
 # Testing the token
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")

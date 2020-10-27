@@ -13,7 +13,11 @@ spring:
       discovery:
         enabled: true
         service-id: config-service
-
+security:
+  oauth2:
+    client:
+      client-id: first-client
+      client-secret: noonewilleverguess
 eureka:
   instance:
     hostname: ${spring.application.name}
