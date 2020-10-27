@@ -99,9 +99,10 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/ind
 ```
 
 
-To run all services independently, start first rabbitmq, then start apps in order:
+To run all services independently, start the event bus rabbitmq + support services, then start apps in order:
 ```shell script
-docker run -d --hostname gn-cloud-rabbit --name gn-cloud-rabbit rabbitmq:3
+docker-compose up -d rabbitmq discovery config
+
 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/discovery
 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/configuring
 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing

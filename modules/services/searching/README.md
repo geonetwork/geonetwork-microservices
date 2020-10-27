@@ -18,3 +18,19 @@ mvn spring-boot:run
 ```
 
 For now only valid the token created by the Authorizing app.
+
+
+```shell script
+# RSS Search service 
+curl 127.0.0.1:9902/portal/api/search/records/rss \
+    -H "Accept: application/rss+xml" \
+    -H "Content-type: application/xml" 
+
+
+# Elasticsearch service
+curl 127.0.0.1:9902/portal/api/search/records/_search \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -X POST \
+    -d '{"from": 0, "size": 0, "query": {"query_string": {"query": "+isTemplate:n"}}}' | jq -r '.hits.total.value'
+```
