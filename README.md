@@ -74,12 +74,14 @@ gn_token=$( \
 
 # Testing the token
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
-curl 127.0.0.1:9900/search -H "$gn_auth_header"
+curl 127.0.0.1:9900/secured -H "$gn_auth_header"
 
-# Search service
-curl 127.0.0.1:9900/portal/api/search/records/_search \
+
+# Search service (TODO: Need to be accessible to anonymous)
+curl 127.0.0.1:9900/search \
     -H "Accept: application/json" \
     -H "Content-type: application/json" \
+    -H "$gn_auth_header" \
     -X POST \
     -d '{"from": 0, "size": 0, "query": {"query_string": {"query": "+isTemplate:n"}}}' | jq -r '.hits.total.value'
 ```

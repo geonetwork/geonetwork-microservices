@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
   /**
-   * Search.
+   * A simple secured endpoint returning username.
    */
-  @RequestMapping("/search")
+  @RequestMapping("/secured")
   public String search(
       @AuthenticationPrincipal
         String name,
