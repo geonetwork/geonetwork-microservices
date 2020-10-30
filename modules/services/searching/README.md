@@ -21,6 +21,13 @@ For now only valid the token created by the Authorizing app.
 
 
 ```shell script
+
+docker-compose up -d elasticsearch rabbitmq discovery 
+docker-compose up -d config
+docker-compose up -d gateway auth
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/searching/
+
+
 # RSS Search service 
 curl 127.0.0.1:9902/portal/api/search/records/rss \
     -H "Accept: application/rss+xml" \
