@@ -1,10 +1,27 @@
 management:
   health:
     ldap.enabled: false
-
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://database:5432/geonetwork
+    username: geonetwork
+    password: geonetwork
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    jpa.generate-ddl: false
+    jpa.hibernate.ddl-auto: none
+---
+spring:
+  profiles: local
+  elasticsearch.rest.uris: http://localhost:9200
+  datasource.url: jdbc:postgresql://localhost:55432/geonetwork
 ---
 spring:
   profiles: dev
+  jpa:
+    jpa.generate-ddl: true
+    jpa.hibernate.ddl-auto: update
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration

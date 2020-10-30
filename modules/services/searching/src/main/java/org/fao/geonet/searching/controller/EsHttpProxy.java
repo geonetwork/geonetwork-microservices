@@ -53,9 +53,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RequestMapping(value = {
-    "/{portal}/api"
-})
 @Tag(name = "search",
     description = "Proxy for ElasticSearch catalog search operations")
 @Controller
@@ -89,7 +86,7 @@ public class EsHttpProxy {
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Search endpoint",
       description = "See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html for search parameters details.")
-  @RequestMapping(value = "/search/records/_search",
+  @RequestMapping(value = "/search",
       method = {
           RequestMethod.POST
       })
@@ -113,38 +110,6 @@ public class EsHttpProxy {
   }
 
 
-  @Hidden
-  @io.swagger.v3.oas.annotations.Operation(
-      summary = "Elasticsearch proxy endpoint",
-      description = "Endpoint to allow access to more ES API"
-          + " only allowed to Administrator. Currently not"
-          + " used by the user interface. Needs improvements in the proxy call.")
-  @RequestMapping(value = "/search/records/{endPoint}",
-      method = {
-          RequestMethod.POST, RequestMethod.GET
-      })
-  @ResponseStatus(value = HttpStatus.OK)
-  @PreAuthorize("hasAuthority('Administrator')")
-  @ResponseBody
-  public void call(
-      @RequestParam(defaultValue = Constants.Selection.DEFAULT_SELECTION_METADATA_BUCKET)
-          String bucket,
-      @Parameter(description = "'_search' for search service.")
-      @PathVariable String endPoint,
-      @Parameter(hidden = true)
-          HttpSession httpSession,
-      @Parameter(hidden = true)
-          HttpServletRequest request,
-      @Parameter(hidden = true)
-          HttpServletResponse response,
-      @RequestBody
-          String body,
-      @Parameter(hidden = true)
-          HttpEntity<String> httpEntity) throws Exception {
-
-    call(httpSession, request, response, endPoint, httpEntity.getBody(), bucket);
-  }
-
   /**
    * Process the ES request adding additional filters for privileges, etc.
    * and returns the ES response.
@@ -162,15 +127,15 @@ public class EsHttpProxy {
       String endPoint, String body, String selectionBucket) throws Exception {
 
     String name = SecurityContextHolder.getContext().getAuthentication().getName();
-    List<Integer> viewingGroup = new ArrayList<>();
-    List<Integer> editingGroup = new ArrayList<>();
 
     if (!name.equalsIgnoreCase("anonymousUser")) {
-      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-      editingGroup = (List<Integer>) claims.get("_editingGroup");
+    //      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    //      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
+    //      editingGroup = (List<Integer>) claims.get("_editingGroup");
     }
 
+    List<Integer> viewingGroup = new ArrayList<>();
+    List<Integer> editingGroup = new ArrayList<>();
     UserInfo userInfo = new UserInfo();
     userInfo.setUserName(name);
     userInfo.setViewingGroups(viewingGroup);
