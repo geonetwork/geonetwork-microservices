@@ -86,6 +86,11 @@
 
       <dependency>
         <groupId>org.geonetwork-opensource.cloud</groupId>
+        <artifactId>gn-cloud-common-search</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
         <artifactId>gn-cloud-common-security</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -201,6 +206,23 @@
         <artifactId>lombok</artifactId>
         <version>1.18.12</version>
         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>24.1.1-jre</version>
       </dependency>
 
       <dependency>

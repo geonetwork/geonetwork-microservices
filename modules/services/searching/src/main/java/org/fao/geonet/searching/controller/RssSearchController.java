@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-import org.fao.geonet.searching.Constants;
-import org.fao.geonet.searching.util.ElasticSearchProxy;
+
+import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

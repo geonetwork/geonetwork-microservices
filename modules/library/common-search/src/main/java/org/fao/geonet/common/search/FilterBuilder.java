@@ -4,14 +4,14 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.util;
+package org.fao.geonet.common.search;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.fao.geonet.searching.domain.Profile;
-import org.fao.geonet.searching.domain.ReservedOperation;
-import org.fao.geonet.searching.domain.UserInfo;
+import org.fao.geonet.common.search.domain.Profile;
+import org.fao.geonet.common.search.domain.ReservedOperation;
+import org.fao.geonet.common.search.domain.UserInfo;
 import org.springframework.stereotype.Component;
 
 

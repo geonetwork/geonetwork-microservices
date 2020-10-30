@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.domain;
+package org.fao.geonet.common.search.domain;
 
 /**
  * The system reserved operations. Ids and names are hardcoded and have special meaning in
