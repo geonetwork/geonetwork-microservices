@@ -30,3 +30,20 @@ eureka:
       defaultZone: ${eureka.server.url:http://localhost:8761/eureka}
     healthcheck:
       enabled: true
+
+---
+spring:
+  profiles: standalone
+  cloud:
+    config:
+      discovery:
+        enabled: false
+      enabled: false
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    fetch-registry: false
+gn:
+  index.url: http://localhost:9200
+
