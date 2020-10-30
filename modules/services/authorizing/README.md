@@ -38,7 +38,7 @@ gn_token=$( \
 3. The token is used to access services
 
 ```shell script
-gn_auth_header=$(echo "Authorization: $gn_token")
+gn_auth_header=$(echo "Authorization: Bearer $gn_token")
 curl 127.0.0.1:9902/search -H "$gn_auth_header"
 ```
 

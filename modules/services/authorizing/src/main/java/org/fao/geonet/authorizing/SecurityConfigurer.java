@@ -51,10 +51,10 @@ public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
     clients
-        .inMemory() // (2)
+        .inMemory()
         .withClient("test-client")
-        .secret("{noop}noonewilleverguess") // (3)
-        .scopes("any") // (4)
+        .secret("{noop}noonewilleverguess")
+        .scopes("any")
         .autoApprove(true)
         .authorizedGrantTypes("password", "refresh_token");
   }
