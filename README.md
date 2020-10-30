@@ -69,7 +69,7 @@ Test the service using the token:
 gn_token=$( \
     curl test-client:noonewilleverguess@127.0.0.1:9900/oauth/token \
          -dgrant_type=password -dscope=any \
-         -dusername=momo -dpassword=password \
+         -dusername=admin -dpassword=admin \
         | jq -r '.access_token')
 
 # Testing the token

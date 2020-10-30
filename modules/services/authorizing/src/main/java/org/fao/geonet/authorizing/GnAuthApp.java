@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 
 @SpringBootApplication
@@ -32,9 +33,14 @@ public class GnAuthApp {
     return new GnUserDetailsService();
   }
 
+  /**
+   * GN4 password encoder.
+   */
   @Bean
-  PasswordEncoder passwordEncoder() {
-    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  public PasswordEncoder passwordEncoder() {
+    return new StandardPasswordEncoder("secret-hash-salt=");
+    //    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    //    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
   }
 
   public static void main(String[] args) {

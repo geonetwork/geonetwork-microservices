@@ -53,7 +53,7 @@ public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
     clients
         .inMemory()
         .withClient("test-client")
-        .secret("{noop}noonewilleverguess")
+        .secret(passwordEncoder.encode("noonewilleverguess"))
         .scopes("any")
         .autoApprove(true)
         .authorizedGrantTypes("password", "refresh_token");
@@ -96,6 +96,4 @@ public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
     defaultTokenServices.setSupportRefreshToken(true);
     return defaultTokenServices;
   }
-
 }
-
