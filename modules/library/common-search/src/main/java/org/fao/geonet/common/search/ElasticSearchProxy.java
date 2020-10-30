@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -98,18 +97,18 @@ public class ElasticSearchProxy {
       String body,
       String selectionBucket) throws Exception {
 
-    String name = SecurityContextHolder.getContext().getAuthentication().getName();
+//    String name = SecurityContextHolder.getContext().getAuthentication().getName();
     List<Integer> viewingGroup = new ArrayList<>();
     List<Integer> editingGroup = new ArrayList<>();
 
-    if (!name.equalsIgnoreCase("anonymousUser")) {
-      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-      editingGroup = (List<Integer>) claims.get("_editingGroup");
-    }
+//    if (!name.equalsIgnoreCase("anonymousUser")) {
+//      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
+//      editingGroup = (List<Integer>) claims.get("_editingGroup");
+//    }
 
     UserInfo userInfo = new UserInfo();
-    userInfo.setUserName(name);
+//    userInfo.setUserName(name);
     userInfo.setViewingGroups(viewingGroup);
     userInfo.setEditingGroups(editingGroup);
 
