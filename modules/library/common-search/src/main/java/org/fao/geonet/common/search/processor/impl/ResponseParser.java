@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.json.JsonGeneratorImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,7 +34,7 @@ public class ResponseParser {
       Object generator,
       TreeFilter callback)
       throws Exception {
-    this.copyJson = generator instanceof JsonParser;
+    this.copyJson = generator instanceof JsonGeneratorImpl;
     //    if (generator instanceof JsonParser jsonGenerator) {
     if (this.copyJson) {
       jsonGenerator = (JsonGenerator) generator;
