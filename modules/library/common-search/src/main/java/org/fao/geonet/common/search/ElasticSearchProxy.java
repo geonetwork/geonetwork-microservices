@@ -1,24 +1,17 @@
-/**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
- * GPL 2.0 license, available at the root application directory.
- */
-
-package org.fao.geonet.searching.controller;
+package org.fao.geonet.common.search;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -32,43 +25,50 @@ import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
-import org.fao.geonet.searching.Constants;
-import org.fao.geonet.searching.domain.UserInfo;
-import org.fao.geonet.searching.util.FilterBuilder;
-import org.fao.geonet.searching.util.SearchResponseProcessor;
+import org.fao.geonet.common.search.domain.UserInfo;
+import org.fao.geonet.common.search.processor.SearchResponseProcessor;
+import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
+import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.stereotype.Component;
 
-@Tag(name = "search",
-    description = "Proxy for ElasticSearch catalog search operations")
-@Controller
-public class EsHttpProxy {
+@Component
+public class ElasticSearchProxy {
 
   public static final String[] validContentTypes = {
-      "application/json", "text/plain"
+      "application/json", "text/plain", "application/rss+xml"
   };
 
-  private static final Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.indexing");
+  public static final List<String> ignoredHeaders = Arrays.asList(
+      new String[]{
+          "host", "x-xsrf-token", "cookie", "accept", "content-type"
+      });
+
+
+  static final Map<String, Class<? extends SearchResponseProcessor>>
+      RESPONSE_PROCESSOR =
+      Map.of(
+          "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
+          // "text/plain", CsvResponseProcessorImpl.class,
+          // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
+          "application/rss+xml", RssResponseProcessorImpl.class
+      );
+
+  private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.searching");
+
+  public ElasticSearchProxy() {
+  }
+
+  @Autowired
+  ApplicationContext applicationContext;
 
   @Autowired
   FilterBuilder filterBuilder;
-
-  @Autowired
-  SearchResponseProcessor searchResponseProcessor;
 
   @Getter
   @Setter
@@ -80,111 +80,77 @@ public class EsHttpProxy {
   @Value("${gn.index.url}")
   String serverUrl;
 
-  public EsHttpProxy() {
-  }
-
-  @io.swagger.v3.oas.annotations.Operation(
-      summary = "Search endpoint",
-      description = "See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html for search parameters details.")
-  @RequestMapping(value = "/search",
-      method = {
-          RequestMethod.POST
-      })
-  @ResponseStatus(value = HttpStatus.OK)
-  @ResponseBody
-  public void search(
-      @RequestParam(defaultValue = Constants.Selection.DEFAULT_SELECTION_METADATA_BUCKET)
-          String bucket,
-      @Parameter(hidden = true)
-          HttpSession httpSession,
-      @Parameter(hidden = true)
-          HttpServletRequest request,
-      @Parameter(hidden = true)
-          HttpServletResponse response,
-      @RequestBody
-          String body,
-      @Parameter(hidden = true)
-          HttpEntity<String> httpEntity) throws Exception {
-
-    call(httpSession, request, response, "_search", body, bucket);
-  }
-
-
   /**
-   * Process the ES request adding additional filters for privileges, etc.
-   * and returns the ES response.
+   * Process the ES request adding additional filters for privileges, etc. and returns the ES
+   * response.
    *
-   * @param httpSession       Http session.
-   * @param request           Http request.
-   * @param response          Http response.
-   * @param endPoint          ElasticSearch endpoint.
-   * @param body              Request body.
-   * @param selectionBucket   Selection bucket.
-   * @throws Exception        Error.
+   * @param httpSession     Http session.
+   * @param request         Http request.
+   * @param response        Http response.
+   * @param body            Request body.
+   * @param selectionBucket Selection bucket.
+   * @throws Exception Error.
    */
-  public void call(HttpSession httpSession, HttpServletRequest request,
+  public void search(
+      HttpSession httpSession,
+      HttpServletRequest request,
       HttpServletResponse response,
-      String endPoint, String body, String selectionBucket) throws Exception {
+      String body,
+      String selectionBucket) throws Exception {
 
     String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-    if (!name.equalsIgnoreCase("anonymousUser")) {
-    //      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-    //      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-    //      editingGroup = (List<Integer>) claims.get("_editingGroup");
-    }
-
     List<Integer> viewingGroup = new ArrayList<>();
     List<Integer> editingGroup = new ArrayList<>();
+
+    if (!name.equalsIgnoreCase("anonymousUser")) {
+      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
+      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
+      editingGroup = (List<Integer>) claims.get("_editingGroup");
+    }
+
     UserInfo userInfo = new UserInfo();
     userInfo.setUserName(name);
     userInfo.setViewingGroups(viewingGroup);
     userInfo.setEditingGroups(editingGroup);
 
-    final String url = serverUrl + "/" + defaultIndex + "/" + endPoint + "?";
+    final String url = serverUrl + "/" + defaultIndex + "/_search?";
 
-    // Make query on multiple indices
-    if ("_search".equals(endPoint)) {
-      ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
 
-      // multisearch support
-      final MappingIterator<Object> mappingIterator = objectMapper.readerFor(JsonNode.class)
-          .readValues(body);
-      StringBuffer requestBody = new StringBuffer();
-      while (mappingIterator.hasNextValue()) {
-        JsonNode node = (JsonNode) mappingIterator.nextValue();
-        final JsonNode indexNode = node.get("index");
-        if (indexNode != null) {
-          ((ObjectNode) node).put("index", defaultIndex);
-        } else {
-          final JsonNode queryNode = node.get("query");
-          if (queryNode != null) {
-            addFilterToQuery(objectMapper, node, userInfo);
-            if (selectionBucket != null) {
-              // Multisearch are not supposed to work with a bucket.
-              // Only one request is store in session
+    // multisearch support
+    final MappingIterator<Object> mappingIterator = objectMapper.readerFor(JsonNode.class)
+        .readValues(body);
+    StringBuffer requestBody = new StringBuffer();
+    while (mappingIterator.hasNextValue()) {
+      JsonNode node = (JsonNode) mappingIterator.nextValue();
+      final JsonNode indexNode = node.get("index");
+      if (indexNode != null) {
+        ((ObjectNode) node).put("index", defaultIndex);
+      } else {
+        final JsonNode queryNode = node.get("query");
+        if (queryNode != null) {
+          addFilterToQuery(objectMapper, node, userInfo);
+          if (selectionBucket != null) {
+            // Multisearch are not supposed to work with a bucket.
+            // Only one request is store in session
 
-              // TODO: Review if required
-              //session.setProperty(Geonet.Session.SEARCH_REQUEST + selectionBucket, node);
-            }
-          }
-          final JsonNode sourceNode = node.get("_source");
-          if (sourceNode != null) {
-            final JsonNode sourceIncludes = sourceNode.get("includes");
-            if (sourceIncludes != null && sourceIncludes.isArray()) {
-              ((ArrayNode) sourceIncludes).add("op*");
-            }
+            // TODO: Review if required
+            //session.setProperty(Geonet.Session.SEARCH_REQUEST + selectionBucket, node);
           }
         }
-        requestBody.append(node.toString()).append(System.lineSeparator());
+        final JsonNode sourceNode = node.get("_source");
+        if (sourceNode != null) {
+          final JsonNode sourceIncludes = sourceNode.get("includes");
+          if (sourceIncludes != null && sourceIncludes.isArray()) {
+            ((ArrayNode) sourceIncludes).add("op*");
+          }
+        }
       }
-      handleRequest(httpSession, request, response, url,
-          requestBody.toString(), userInfo, true, selectionBucket);
-
-    } else {
-      handleRequest(httpSession, request, response, url,
-          body, userInfo, true, selectionBucket);
+      requestBody.append(node.toString()).append(System.lineSeparator());
     }
+    handleRequest(httpSession, request, response, url,
+        requestBody.toString(), userInfo, true, selectionBucket);
+
   }
 
   private void addFilterToQuery(ObjectMapper objectMapper,
@@ -249,12 +215,15 @@ public class EsHttpProxy {
       // all actions before the connection can be taken now
       HttpURLConnection connectionWithFinalHost = (HttpURLConnection) url.openConnection();
       try {
-        connectionWithFinalHost.setRequestMethod(request.getMethod());
+        boolean isSearch = isSearch(request);
+        connectionWithFinalHost.setRequestMethod(
+            isSearch ? "POST" : request.getMethod());
 
         // copy headers from client's request to request that will be send to the final host
         copyHeadersToConnection(request, connectionWithFinalHost);
 
         connectionWithFinalHost.setDoOutput(true);
+        LOGGER.debug(requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host
@@ -334,16 +303,38 @@ public class EsHttpProxy {
         }
 
         try {
-          searchResponseProcessor
-              .processResponse(httpSession, streamFromServer, streamToClient, userInfo,
-                  selectionBucket,
-                  addPermissions);
+          String acceptHeader = request.getHeader("Accept");
+          Class<? extends SearchResponseProcessor> responseProcessorClass =
+              RESPONSE_PROCESSOR.get(acceptHeader);
+          if (responseProcessorClass == null) {
+            throw new UnsupportedOperationException(String.format(
+                "No response processor configured for '%s'. Use one of %s.",
+                acceptHeader, RESPONSE_PROCESSOR.keySet().toArray()));
+          }
+
+          SearchResponseProcessor responseProcessor =
+              applicationContext.getBean(responseProcessorClass);
+          if (responseProcessor == null) {
+            throw new UnsupportedOperationException(String.format(
+                "No response processor bean found for '%s'.",
+                acceptHeader));
+          }
+
+          responseProcessor.processResponse(
+              httpSession,
+              streamFromServer, streamToClient,
+              userInfo, selectionBucket, addPermissions);
           streamToClient.flush();
         } finally {
           IOUtils.closeQuietly(streamFromServer);
         }
       } catch (Exception ex) {
         ex.printStackTrace();
+
+        throw new Exception(
+            String.format(
+                "Failed to connect to index at URL %s. %s",
+                esUrl, ex.getMessage()), ex);
       } finally {
         connectionWithFinalHost.disconnect();
       }
@@ -351,16 +342,21 @@ public class EsHttpProxy {
       // connection problem with the host
       e.printStackTrace();
 
-      throw new Exception(
-          String.format("Failed to request Es at URL %s. "
-                  + "Check Es configuration.", esUrl),
-          e);
+      throw new Exception(String.format(
+          "Failed to request index at URL %s. Check configuration.",
+          esUrl), e);
     }
+  }
+
+  private boolean isSearch(HttpServletRequest request) {
+    String accept = request.getHeader("Accept");
+    return RESPONSE_PROCESSOR.containsKey(accept);
   }
 
 
   /**
-   * Gets the encoding of the content sent by the remote host: extracts the content-encoding header.
+   * Gets the encoding of the content sent by the remote host: extracts the content-encoding
+   * header.
    *
    * @param headerFields headers of the HttpURLConnection
    * @return null if not exists otherwise name of the encoding (gzip, deflate...)
@@ -436,17 +432,16 @@ public class EsHttpProxy {
    * @param uc Contains now headers from client request except Host
    */
   protected void copyHeadersToConnection(HttpServletRequest request, HttpURLConnection uc) {
-
+    boolean isSearch = isSearch(request);
     for (Enumeration enumHeader = request.getHeaderNames(); enumHeader.hasMoreElements(); ) {
       String headerName = (String) enumHeader.nextElement();
       String headerValue = request.getHeader(headerName);
 
-      // copy every header except host
-      if (!"host".equalsIgnoreCase(headerName)
-          && !"X-XSRF-TOKEN".equalsIgnoreCase(headerName)
-          && !"Cookie".equalsIgnoreCase(headerName)) {
+      if (!ignoredHeaders.contains(headerName.toLowerCase())) {
         uc.setRequestProperty(headerName, headerValue);
       }
+      uc.setRequestProperty("accept", "application/json");
+      uc.setRequestProperty("content-type", "application/json");
     }
   }
 
@@ -459,7 +454,7 @@ public class EsHttpProxy {
 
     // focus only on type, not on the text encoding
     String type = contentType.split(";")[0];
-    for (String validTypeContent : EsHttpProxy.validContentTypes) {
+    for (String validTypeContent : validContentTypes) {
       if (validTypeContent.equals(type)) {
         return true;
       }

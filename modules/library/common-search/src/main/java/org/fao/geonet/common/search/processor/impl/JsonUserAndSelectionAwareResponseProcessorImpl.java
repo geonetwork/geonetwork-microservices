@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.util;
+package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -20,12 +20,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
-import org.fao.geonet.searching.Constants;
-import org.fao.geonet.searching.Constants.IndexFieldNames;
-import org.fao.geonet.searching.domain.Profile;
-import org.fao.geonet.searching.domain.ReservedGroup;
-import org.fao.geonet.searching.domain.ReservedOperation;
-import org.fao.geonet.searching.domain.UserInfo;
+import org.fao.geonet.common.search.Constants;
+import org.fao.geonet.common.search.Constants.IndexFieldNames;
+import org.fao.geonet.common.search.domain.Profile;
+import org.fao.geonet.common.search.domain.ReservedGroup;
+import org.fao.geonet.common.search.domain.ReservedOperation;
+import org.fao.geonet.common.search.domain.UserInfo;
+import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.springframework.stereotype.Component;
 
 

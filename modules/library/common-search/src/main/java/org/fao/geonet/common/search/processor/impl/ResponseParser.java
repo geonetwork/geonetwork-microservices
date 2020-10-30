@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.util;
+package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;

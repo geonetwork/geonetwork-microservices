@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.util;
+package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,9 +17,9 @@ import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.fao.geonet.searching.domain.UserInfo;
+import org.fao.geonet.common.search.domain.UserInfo;
+import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class RssResponseProcessorImpl implements SearchResponseProcessor {

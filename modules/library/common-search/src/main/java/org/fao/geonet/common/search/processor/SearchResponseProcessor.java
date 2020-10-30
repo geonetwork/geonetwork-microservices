@@ -4,12 +4,12 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching.util;
+package org.fao.geonet.common.search.processor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.servlet.http.HttpSession;
-import org.fao.geonet.searching.domain.UserInfo;
+import org.fao.geonet.common.search.domain.UserInfo;
 
 public interface SearchResponseProcessor {
 

@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.searching;
+package org.fao.geonet.common.search;
 
 public final class Constants {
 
