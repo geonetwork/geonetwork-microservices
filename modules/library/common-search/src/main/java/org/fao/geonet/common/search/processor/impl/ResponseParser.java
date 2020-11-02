@@ -104,7 +104,7 @@ public class ResponseParser {
     }
 
     if (this.copyJson) {
-      jsonGenerator.writeStartObject();
+      jsonGenerator.writeEndObject();
     }
   }
 
