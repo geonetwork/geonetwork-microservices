@@ -12,11 +12,19 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.util.JAXBResult;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XsltCompiler;
+import net.sf.saxon.s9api.XsltExecutable;
+import net.sf.saxon.s9api.XsltTransformer;
+import net.sf.saxon.stax.XMLStreamWriterDestination;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -53,5 +61,29 @@ public class XsltUtil {
       e.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Transform XML string and write result to XMLStreamWriter.
+   */
+  public static void transform(String inputXmlString,
+      File xsltFile,
+      XMLStreamWriter generator) {
+
+    try {
+      Processor proc = new Processor(true);
+      XsltCompiler compiler = proc.newXsltCompiler();
+
+      XsltExecutable xsl = compiler.compile(new StreamSource(xsltFile));
+      XsltTransformer transformer = xsl.load();
+
+      XdmNode source = proc.newDocumentBuilder().build(new StreamSource(new StringReader(inputXmlString)));
+      transformer.setInitialContextNode(source);
+      transformer.setDestination(new XMLStreamWriterDestination(generator));
+      transformer.transform();
+
+    } catch (SaxonApiException e) {
+      e.printStackTrace();
+    }
   }
 }
