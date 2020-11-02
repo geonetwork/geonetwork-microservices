@@ -29,6 +29,7 @@ import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
+import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,8 @@ public class ElasticSearchProxy {
           "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
-          "application/rss+xml", RssResponseProcessorImpl.class
+          "application/rss+xml", RssResponseProcessorImpl.class,
+          "application/json+xslt", XsltResponseProcessorImpl.class
       );
 
   private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.searching");
@@ -97,18 +99,18 @@ public class ElasticSearchProxy {
       String body,
       String selectionBucket) throws Exception {
 
-//    String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    //String name = SecurityContextHolder.getContext().getAuthentication().getName();
     List<Integer> viewingGroup = new ArrayList<>();
     List<Integer> editingGroup = new ArrayList<>();
 
-//    if (!name.equalsIgnoreCase("anonymousUser")) {
-//      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-//      editingGroup = (List<Integer>) claims.get("_editingGroup");
-//    }
+    /*if (!name.equalsIgnoreCase("anonymousUser")) {
+      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
+      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
+      editingGroup = (List<Integer>) claims.get("_editingGroup");
+   }*/
 
     UserInfo userInfo = new UserInfo();
-//    userInfo.setUserName(name);
+    //userInfo.setUserName(name);
     userInfo.setViewingGroups(viewingGroup);
     userInfo.setEditingGroups(editingGroup);
 
