@@ -11,6 +11,7 @@ public final class Constants {
   public static final String ENCODING = System.getProperty("geonetwork.file.encoding", "UTF-8");
 
   public static final class IndexFieldNames {
+    public static final String ID = "id";
     public static final String UUID = "uuid";
     public static final String OWNER = "owner";
     public static final String GROUP_OWNER = "groupOwner";
