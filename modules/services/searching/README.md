@@ -44,17 +44,23 @@ Test the search:
 
 # RSS Search service 
 curl 127.0.0.1:9902/portal/api/search/records/rss \
-    -H "Accept: application/rss+xml" \
-    -H "Content-type: application/xml" 
+    -H "Accept: application/rss+xml"
 
 
 # XSLT based search service 
+# - Response in record format
 curl 127.0.0.1:9902/portal/api/search/records/xslt \
-    -H "Accept: application/json+xslt" \
-    -H "Content-type: application/xml" \
+    -H "Accept: application/gn-own" \
+    -H "Content-type: application/json" \
     -X POST \
     -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'
 
+# - Response in record DCAT format
+curl 127.0.0.1:9902/portal/api/search/records/xslt \
+    -H "Accept: application/gn-dcat" \
+    -H "Content-type: application/json" \
+    -X POST \
+    -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'
 
 
 

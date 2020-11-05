@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 import org.fao.geonet.common.search.domain.UserInfo;
 
 public interface SearchResponseProcessor {
-
   /**
    * Receive Elasticsearch response, process the response
    * and stream response to client.
