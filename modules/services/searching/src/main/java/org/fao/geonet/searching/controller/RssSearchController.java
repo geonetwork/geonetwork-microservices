@@ -16,12 +16,14 @@ import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 @RequestMapping(value = {
     "/{portal}/api"
@@ -30,12 +32,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
     description = "Proxy for ElasticSearch catalog search operations")
 @Controller
 public class RssSearchController {
+
   @Autowired
   ElasticSearchProxy proxy;
 
   /**
-   * RSS Search.
-   * https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md#opensearch-url-template-syntax
+   * RSS Search. https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md#opensearch-url-template-syntax
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "RSS Search endpoint",
@@ -79,8 +81,8 @@ public class RssSearchController {
 
   private String buildQuery(String searchTerms, Integer startIndex, Integer count) {
     return String.format("{\"from\": %d, \"size\": %d, "
-        + "\"query\": {\"query_string\": "
-        + "{\"query\": \"%s +isTemplate:n\"}}}",
+            + "\"query\": {\"query_string\": "
+            + "{\"query\": \"%s +isTemplate:n\"}}}",
         startIndex, count, searchTerms);
   }
 }

@@ -2,24 +2,28 @@
 
 This service is in charge of checking user privileges using GeoNetwork user repository. Once authenticated, a JSON Web Token (JWT) is created. The token will contain necessary information about the user that may be required for other services to limit requests to the database (eg. user membership is required to build a search filter by the search application).
 
-
-Start the service using:
+The auth service requires the following to be started first:
+```shell script
+docker-compose up -d database rabbitmq 
+docker-compose up -d discovery config
+docker-compose up -d gateway auth
 ```
-mvn spring-boot:run
-```
 
-It use a user detail service with a single user `momo` with password `password`.
+GeoNetwork does not need to be started, but it MUST have started once to create the database (including the `users` table with the default `admin/admin` user).
+
 
 1. Get an authentication token
 
 ```shell script
-USERNAME=momo
-PASSWORD=password
+USERNAME=admin
+PASSWORD=admin
 gn_token=$( \
     curl test-client:noonewilleverguess@127.0.0.1:9900/oauth/token \
          -dgrant_type=password -dscope=any \
          -dusername=$USERNAME -dpassword=$PASSWORD \
         | jq -r '.access_token') 
+
+echo $gn_token
 ```
 
 2. The service response return the token `access_token`
@@ -39,6 +43,6 @@ gn_token=$( \
 
 ```shell script
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
-curl 127.0.0.1:9902/search -H "$gn_auth_header"
+curl 127.0.0.1:9900/search/secured -H "$gn_auth_header"
 ```
 

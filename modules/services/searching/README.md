@@ -32,8 +32,12 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/sea
 
 
 Start the service in standalone mode (see `bootstrap.yml` for the configuration) from the root project folder using:
-```
+```shell script
+# Without security
 SERVER_PORT=9902 mvn spring-boot:run -Dspring-boot.run.profiles=standalone,local -f modules/services/searching
+
+# With security
+SERVER_PORT=9902 mvn spring-boot:run -Dspring-boot.run.profiles=local -f modules/services/searching
 ```
 In standalone mode, the service requires an Elasticsearch instance and database running.
 

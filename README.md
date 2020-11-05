@@ -32,10 +32,10 @@ To build the services:
 ./mvnw clean install
 ```
 
-For a quicker build, you can skip `checkstyle` and tests with:
+For a quicker build, you can skip `checkstyle`, tests and docker image build with:
 
 ```shell script
-./mvnw clean install -Drelax
+./mvnw clean install -Drelax -P-docker
 ```
 
 ### Running
@@ -66,10 +66,13 @@ Test the service using the token:
 
 ```shell script
 # Authenticate
+USERNAME=admin
+PASSWORD=admin
+
 gn_token=$( \
     curl test-client:noonewilleverguess@127.0.0.1:9900/oauth/token \
          -dgrant_type=password -dscope=any \
-         -dusername=admin -dpassword=admin \
+         -dusername=$USERNAME -dpassword=$PASSWORD \
         | jq -r '.access_token')
 
 # Testing the token
