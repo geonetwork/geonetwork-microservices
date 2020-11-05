@@ -36,7 +36,7 @@ import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.fao.geonet.common.XsltUtil;
+import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.AbstractMetadata;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.indexing.exception.IndexingRecordException;
