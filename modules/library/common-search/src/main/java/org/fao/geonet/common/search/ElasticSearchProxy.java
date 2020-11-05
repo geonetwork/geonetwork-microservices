@@ -57,7 +57,15 @@ public class ElasticSearchProxy {
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
           "application/rss+xml", RssResponseProcessorImpl.class,
-          "application/json+xslt", XsltResponseProcessorImpl.class
+          "application/gn-own", XsltResponseProcessorImpl.class,
+          "application/gn-dcat", XsltResponseProcessorImpl.class
+      );
+
+  static final Map<String, String>
+      ACCEPT_FORMATTERS =
+      Map.of(
+          "application/gn-own", "copy",
+          "application/gn-dcat", "dcat"
       );
 
   private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.searching");
@@ -319,6 +327,12 @@ public class ElasticSearchProxy {
             throw new UnsupportedOperationException(String.format(
                 "No response processor bean found for '%s'.",
                 acceptHeader));
+          }
+
+          if (responseProcessor instanceof XsltResponseProcessorImpl) {
+            ((XsltResponseProcessorImpl) responseProcessor).setTransformation(
+                ACCEPT_FORMATTERS.get(acceptHeader)
+            );
           }
 
           responseProcessor.processResponse(
