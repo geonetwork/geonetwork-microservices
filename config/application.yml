@@ -61,6 +61,13 @@ jwt.secret: geonetwork
 spring:
   profiles: local
   rabbitmq.host: localhost
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:55432/geonetwork
+    username: geonetwork
+    password: geonetwork
+management:
+  health.ldap.enabled: false
 gn:
   baseurl: http://localhost:8080
   index.url: http://localhost:9200

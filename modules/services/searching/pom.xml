@@ -21,11 +21,11 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <!--<dependency>
+    <dependency>
       <groupId>org.geonetwork-opensource.cloud</groupId>
       <artifactId>gn-cloud-common-security</artifactId>
       <scope>compile</scope>
-    </dependency>-->
+    </dependency>
 
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>
@@ -47,7 +47,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>org.springframework.security.oauth</groupId>
       <artifactId>spring-security-oauth2</artifactId>
-    </dependency>-->
+    </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-config</artifactId>
@@ -75,14 +75,14 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>org.springframework.security.oauth.boot</groupId>
       <artifactId>spring-security-oauth2-autoconfigure</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-    </dependency>-->
+    </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>

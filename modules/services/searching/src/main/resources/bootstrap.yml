@@ -30,7 +30,9 @@ eureka:
       defaultZone: ${eureka.server.url:http://localhost:8761/eureka}
     healthcheck:
       enabled: true
-
+logging:
+  level:
+    org.springframework.security: DEBUG
 ---
 spring:
   profiles: standalone
