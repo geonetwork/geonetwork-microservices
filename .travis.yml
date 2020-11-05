@@ -4,6 +4,9 @@ language: java
 jdk:
   - openjdk11
 before_install:
+install: true
+script:
+  - ./mvnw clean install -P-docker
 cache:
   directories:
     - $HOME/.m2
