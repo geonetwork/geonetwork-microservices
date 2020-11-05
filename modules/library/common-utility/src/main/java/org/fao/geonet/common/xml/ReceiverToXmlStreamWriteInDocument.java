@@ -10,8 +10,8 @@ import javax.xml.stream.XMLStreamWriter;
 import net.sf.saxon.stax.ReceiverToXMLStreamWriter;
 import net.sf.saxon.trans.XPathException;
 
-public class ReceiverToXMLStreamWriteInDocument extends ReceiverToXMLStreamWriter {
-  public ReceiverToXMLStreamWriteInDocument(XMLStreamWriter writer) {
+public class ReceiverToXmlStreamWriteInDocument extends ReceiverToXMLStreamWriter {
+  public ReceiverToXmlStreamWriteInDocument(XMLStreamWriter writer) {
     super(writer);
   }
 
