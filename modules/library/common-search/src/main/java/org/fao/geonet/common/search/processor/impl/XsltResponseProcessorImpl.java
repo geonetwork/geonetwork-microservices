@@ -48,15 +48,16 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
       InputStream streamFromServer, OutputStream streamToClient,
       UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
 
-    //    Processor p = new Processor(false);
-    //    Serializer s = p.newSerializer();
-    //    s.setOutputProperty(Property.INDENT, "no");
-    //    serializer.setOutputStream(streamToClient);
-    //    XMLStreamWriter generator = s.getXMLStreamWriter();
+    Processor p = new Processor(false);
+    Serializer s = p.newSerializer();
+    s.setOutputProperty(Property.INDENT, "no");
+    s.setOutputStream(streamToClient);
+    XMLStreamWriter generator = s.getXMLStreamWriter();
 
-    XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
-    xmlOutputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
-    XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
+    //    XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
+    //    xmlOutputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
+    //    XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
+
 
     generator.writeStartDocument("UTF-8", "1.0");
 
