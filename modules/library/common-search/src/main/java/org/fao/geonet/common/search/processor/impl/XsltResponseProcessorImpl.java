@@ -9,8 +9,10 @@ package org.fao.geonet.common.search.processor.impl;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,9 @@ import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.Serializer.Property;
 import org.fao.geonet.common.XsltUtil;
 import org.fao.geonet.common.search.Constants.IndexFieldNames;
 import org.fao.geonet.common.search.domain.UserInfo;
@@ -43,16 +48,22 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
       InputStream streamFromServer, OutputStream streamToClient,
       UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
 
+    //    Processor p = new Processor(false);
+    //    Serializer s = p.newSerializer();
+    //    s.setOutputProperty(Property.INDENT, "no");
+    //    serializer.setOutputStream(streamToClient);
+    //    XMLStreamWriter generator = s.getXMLStreamWriter();
 
     XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
+    xmlOutputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
     XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
+
     generator.writeStartDocument("UTF-8", "1.0");
 
     JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
     parser.nextToken();
 
     List<Integer> ids = new ArrayList<>();
-
     new ResponseParser().matchHits(parser, generator, doc -> {
       ids.add(doc.get(IndexFieldNames.SOURCE).get(IndexFieldNames.ID).asInt());
     });
@@ -73,54 +84,16 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
           xsltFile,
           generator
       );
+
+      //      try {
+      //        generator.writeCharacters(XsltUtil.transformXmlToString(r.getData(), xsltFile));
+      //      } catch (XMLStreamException ioException) {
+      //        ioException.printStackTrace();
+      //      }
     });
-
-    generator.writeEndElement();
-
+    //    generator.writeEndElement();
+    //    generator.writeEndDocument();
     generator.flush();
     generator.close();
-  }
-
-  private void writeChannelProperties(XMLStreamWriter generator) throws XMLStreamException {
-    String title = "GeoNetwork opensource";
-    String link = "http://localhost:8080/geonetwork";
-    String description = "Search for datasets, services and maps...";
-
-    generator.writeStartElement("title");
-    generator.writeCharacters(title);
-    generator.writeEndElement();
-    generator.writeStartElement("link");
-    generator.writeCharacters(link);
-    generator.writeEndElement();
-    generator.writeStartElement("description");
-    generator.writeCharacters(description);
-    generator.writeEndElement();
-  }
-
-  private void writeItem(XMLStreamWriter generator,
-      com.fasterxml.jackson.databind.node.ObjectNode doc) throws XMLStreamException {
-
-    Map<String, String> itemProperties = new HashMap<>();
-    itemProperties.put("title", "/_source/resourceTitleObject/default");
-    itemProperties.put("link", "/_id");
-    itemProperties.put("description", "/_source/resourceAbstractObject/default");
-
-    generator.writeStartElement("item");
-
-    for (Entry<String, String> entry : itemProperties.entrySet()) {
-      String property = entry.getKey();
-      String path = entry.getValue();
-      generator.writeStartElement(property);
-      JsonNode node = doc.at(path);
-      if (node != null) {
-        String value = node.asText();
-        if (property.equals("link")) {
-          value = "http://localhost:8080/geonetwork/srv/api/records/" + value;
-        }
-        generator.writeCharacters(value);
-      }
-      generator.writeEndElement();
-    }
-    generator.writeEndElement();
   }
 }
