@@ -36,9 +36,9 @@ spring:
   profiles: standalone
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://database:5432/geonetwork
-    username: geonetwork
-    password: geonetwork
+    url: jdbc:postgresql://localhost:5432/sextant7
+    username: www-data
+    password: www-data
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     jpa.generate-ddl: false

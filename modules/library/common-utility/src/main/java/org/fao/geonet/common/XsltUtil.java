@@ -18,6 +18,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -27,6 +28,7 @@ import net.sf.saxon.s9api.Xslt30Transformer;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
+import net.sf.saxon.stax.ReceiverToXMLStreamWriter;
 import net.sf.saxon.stax.XMLStreamWriterDestination;
 import org.springframework.stereotype.Component;
 
@@ -106,14 +108,21 @@ public class XsltUtil {
       Processor proc = new Processor(false);
       XsltCompiler compiler = proc.newXsltCompiler();
 
-      XsltExecutable xsl = compiler.compile(new StreamSource(xsltFile));
-      XsltTransformer transformer = xsl.load();
+//      XsltExecutable xslt = compiler.compile(new StreamSource(xsltFile));
+//      XsltTransformer transformer = xsl.load();
+//      XdmNode source = proc.newDocumentBuilder().build(
+//          new StreamSource(new StringReader(inputXmlString)));
+//      transformer.setInitialContextNode(source);
+//      transformer.setDestination(new XMLStreamWriterDestination(streamWriter));
+//      transformer.transform();
 
-      XdmNode source = proc.newDocumentBuilder().build(
-          new StreamSource(new StringReader(inputXmlString)));
-      transformer.setInitialContextNode(source);
-      transformer.setDestination(new XMLStreamWriterDestination(streamWriter));
-      transformer.transform();
+      TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
+      StreamSource xslt = new StreamSource(xsltFile);
+      Transformer transformer = factory.newTransformer(xslt);
+      transformer.transform(
+          new StreamSource(new StringReader(inputXmlString)),
+//          new StAXResult(streamWriter));
+          new ReceiverToXMLStreamWriteWithDocument(streamWriter));
 
       //      Processor proc = new Processor(false);
       //      XsltCompiler compiler = proc.newXsltCompiler();
@@ -125,7 +134,9 @@ public class XsltUtil {
       //          new StreamSource(new StringReader(inputXmlString)), destination
       //          );
 
-    } catch (SaxonApiException e) {
+    } catch (TransformerConfigurationException e) {
+      e.printStackTrace();
+    } catch (TransformerException e) {
       e.printStackTrace();
     }
   }
