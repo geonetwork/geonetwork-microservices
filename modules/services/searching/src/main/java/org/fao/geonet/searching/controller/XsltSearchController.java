@@ -30,10 +30,13 @@ public class XsltSearchController {
   @Autowired
   ElasticSearchProxy proxy;
 
+  /**
+   * XSLT based search endpoint.
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "XSLT Search endpoint",
-      description = "Note: Templates can not be retrieved.")
-  @RequestMapping(value = "/search-xslt/records/_search",
+      description = "")
+  @RequestMapping(value = "/search/records/xslt",
       method = {
           RequestMethod.POST
       })
@@ -50,11 +53,14 @@ public class XsltSearchController {
           HttpServletRequest request,
       @Parameter(hidden = true)
           HttpServletResponse response,
-      @RequestBody
+      @RequestBody(required = false)
           String body,
       @Parameter(hidden = true)
           HttpEntity<String> httpEntity) throws Exception {
-
-    proxy.search(httpSession, request, response, body, bucket);
+    proxy.search(httpSession, request, response,
+        body == null
+            ? "{\"from\": 0, \"size\": 20, "
+            + "\"query\": {\"query_string\": "
+            + "{\"query\": \"%s +isTemplate:n\"}}}" : body, bucket);
   }
 }
