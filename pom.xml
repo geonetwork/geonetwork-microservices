@@ -109,6 +109,12 @@
         <groupId>org.geonetwork-opensource</groupId>
         <artifactId>gn-domain</artifactId>
         <version>${geonetwork.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <!--
       Needed for java.lang.RuntimeException: java.lang.NoClassDefFoundError:
