@@ -77,8 +77,7 @@ public class XsltUtil {
       Xslt30Transformer transformer = xsl.load30();
       transformer.transform(
           new StreamSource(new StringReader(inputXmlString)),
-          new XMLStreamWriterDestinationInDocument(streamWriter)
-          );
+          new XmlStreamWriterDestinationInDocument(streamWriter));
     } catch (SaxonApiException e) {
       e.printStackTrace();
     }

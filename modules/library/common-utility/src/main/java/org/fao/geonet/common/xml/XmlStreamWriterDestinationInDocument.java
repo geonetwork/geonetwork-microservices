@@ -13,21 +13,21 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.stax.XMLStreamWriterDestination;
 
-public class XMLStreamWriterDestinationInDocument extends XMLStreamWriterDestination {
+public class XmlStreamWriterDestinationInDocument extends XMLStreamWriterDestination {
 
   /**
-   * Create an XMLStreamWriterDestination based on a supplied XMLStreamWriter
+   * Create an XMLStreamWriterDestination based on a supplied XMLStreamWriter.
    *
    * @param writer the supplied XmlStreamWriter
    */
-  public XMLStreamWriterDestinationInDocument(XMLStreamWriter writer) {
+  public XmlStreamWriterDestinationInDocument(XMLStreamWriter writer) {
     super(writer);
   }
 
   @Override
   public Receiver getReceiver(PipelineConfiguration pipe,
       SerializationProperties params) throws SaxonApiException {
-    Receiver r = new ReceiverToXMLStreamWriteInDocument(getXMLStreamWriter());
+    Receiver r = new ReceiverToXmlStreamWriteInDocument(getXMLStreamWriter());
     r.setPipelineConfiguration(pipe);
     return r;
   }
