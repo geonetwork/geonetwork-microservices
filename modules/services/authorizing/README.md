@@ -44,9 +44,6 @@ echo $gn_token
 ```shell script
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
 
-(as working when not passing thru frontal, also consider:)
-gn_auth_header=$(echo $gn_token | sed -E "s#.*\"access_token\":\"(([A-Za-z0-9]|\.|-)+)\",.*#Authorization: Bearer \1#g")
-
 curl 127.0.0.1:9900/search/secured -H "$gn_auth_header"
 ```
 
