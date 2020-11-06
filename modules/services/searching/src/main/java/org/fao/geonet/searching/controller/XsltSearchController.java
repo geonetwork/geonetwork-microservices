@@ -12,6 +12,7 @@ import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +58,9 @@ public class XsltSearchController {
           String body,
       @Parameter(hidden = true)
           HttpEntity<String> httpEntity) throws Exception {
+
+    System.err.println("+++++++++++++++++++++++++: " + SecurityContextHolder.getContext().getAuthentication().getName());
+
     proxy.search(httpSession, request, response,
         body == null
             ? "{\"from\": 0, \"size\": 20, "
