@@ -5,6 +5,7 @@
 
 package org.fao.geonet.authorizing;
 
+import org.fao.geonet.common.GnUserAuthentificationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -81,6 +83,9 @@ public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
   public JwtAccessTokenConverter accessTokenConverter() {
     JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
     converter.setSigningKey("123");
+    DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+    accessTokenConverter.setUserTokenConverter(new GnUserAuthentificationConverter());
+    converter.setAccessTokenConverter(accessTokenConverter);
     return converter;
   }
 
