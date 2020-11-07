@@ -6,6 +6,7 @@
 
 package org.fao.geonet.authorizing;
 
+import java.util.Properties;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +35,13 @@ public class PersistenceConfig {
 
     JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     em.setJpaVendorAdapter(vendorAdapter);
+    Properties jpaProperties = new Properties();
+    jpaProperties.put("hibernate.enable_lazy_load_no_trans", true);
+    em.setJpaProperties(jpaProperties);
+
     //        em.setJpaProperties(additionalProperties());
     return em;
   }
+
+
 }
