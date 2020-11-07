@@ -75,7 +75,7 @@ public class GnUserDetailsService implements UserDetailsService {
           reservedOperation.put("groupId", userGroup.getGroup().getId());
           reservedOperation.put("groupName", userGroup.getGroup().getName());
           reservedOperation.put("profiles", userGroup.getProfile().getAll().stream()
-              .map(profile -> profile.name()));
+              .map(profile -> profile.name()).collect(Collectors.toList()));
           return new OAuth2UserAuthority(userGroup.getGroup().getName(), reservedOperation);
           })
         .collect(Collectors.toList());
