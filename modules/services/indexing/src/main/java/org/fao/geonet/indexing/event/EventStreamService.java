@@ -25,8 +25,7 @@ public class EventStreamService {
    * Publishes an {@link IndexEvent}. Being a {@link RemoteApplicationEvent}, if
    * spring-bus {@link ConditionalOnBusEnabled is enabled}, it will automatically
    * be distributed to all nodes in the cluster.
-   * 
-   * @see EventConsumer
+   *
    */
   public void produceEvent(String bucket, String uuid) {
     System.out.println("Producing events --> uuid: " + uuid + " bucket: " + bucket);

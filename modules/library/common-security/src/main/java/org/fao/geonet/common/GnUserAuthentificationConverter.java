@@ -1,14 +1,14 @@
 package org.fao.geonet.common;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class GnUserAuthentificationConverter implements UserAuthenticationConverter {
 
@@ -34,17 +34,21 @@ public class GnUserAuthentificationConverter implements UserAuthenticationConver
     }
   }
 
-  private Map<String, ?> convertAuthorities(Collection <? extends GrantedAuthority> authorities) {
+  private Map<String, ?> convertAuthorities(Collection<? extends GrantedAuthority> authorities) {
     return authorities.stream()
         .filter(auth -> auth instanceof OAuth2UserAuthority)
-        .map(auth -> (OAuth2UserAuthority)auth)
-        .collect(Collectors.toMap(OAuth2UserAuthority::getAuthority, OAuth2UserAuthority::getAttributes));
+        .map(auth -> (OAuth2UserAuthority) auth)
+        .collect(
+            Collectors.toMap(
+                OAuth2UserAuthority::getAuthority,
+                OAuth2UserAuthority::getAttributes));
   }
 
-  private Collection<? extends GrantedAuthority> getAuthorities(Map<String,?> map) {
-    return ((Map<String, Object>)map.get("authorities")).values().stream()
-        .map(attributes -> (Map<String, Object>)attributes)
-        .map(attributes -> new OAuth2UserAuthority((String) attributes.get("groupName"), attributes))
+  private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
+    return ((Map<String, Object>) map.get("authorities")).values().stream()
+        .map(attributes -> (Map<String, Object>) attributes)
+        .map(attributes ->
+            new OAuth2UserAuthority((String) attributes.get("groupName"), attributes))
         .collect(Collectors.toList());
   }
 }
