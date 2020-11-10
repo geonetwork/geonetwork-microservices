@@ -38,8 +38,6 @@ public class PersistenceConfig {
     Properties jpaProperties = new Properties();
     jpaProperties.put("hibernate.enable_lazy_load_no_trans", true);
     em.setJpaProperties(jpaProperties);
-
-    //        em.setJpaProperties(additionalProperties());
     return em;
   }
 
