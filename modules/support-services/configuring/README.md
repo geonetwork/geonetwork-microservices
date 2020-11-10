@@ -1,23 +1,8 @@
 # Configuration service
 
-Start the service using:
-```
-mvn spring-boot:run
-```
+The configuration service centralized the configuration for all services with multiple profiles (dev, local, test, prod, ...). While starting each service is requesting their config from it. See [config](../../../config) folder at the root of this repository.
 
 It uses a file storage for storing the configuration for all services.
-
-Configuration authentication is required using user `gn` with password `gn`.
-
-```yaml
-spring:
-  cloud:
-    config:
-      uri: http://localhost:9999
-      name: geonetwork
-      username: gn
-      password: gn
-```
 
 
 Configuration can be retrieved using entry point like http://localhost:9999/geonetwork-dev.json.
