@@ -77,7 +77,7 @@ public class GnUserDetailsService implements UserDetailsService {
           reservedOperation.put("profiles", userGroup.getProfile().getAll().stream()
               .map(profile -> profile.name()).collect(Collectors.toList()));
           return new OAuth2UserAuthority(userGroup.getGroup().getName(), reservedOperation);
-          })
+        })
         .collect(Collectors.toList());
 
     return org.springframework.security.core.userdetails.User

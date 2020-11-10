@@ -59,7 +59,8 @@ public class XsltSearchController {
       @Parameter(hidden = true)
           HttpEntity<String> httpEntity) throws Exception {
 
-    System.err.println("+++++++++++++++++++++++++: " + SecurityContextHolder.getContext().getAuthentication().getName());
+    System.err.println("+++++++++++++: "
+        + SecurityContextHolder.getContext().getAuthentication().getName());
 
     proxy.search(httpSession, request, response,
         body == null
