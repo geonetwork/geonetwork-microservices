@@ -6,7 +6,9 @@
 package org.fao.geonet.searching.controller;
 
 import java.security.Principal;
+import java.util.Optional;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +27,12 @@ public class SecurityTesterController {
       Authentication authentication,
       OAuth2Authentication oauth2Authentication,
       Principal principal) {
-    return String.format(
-        "Search service called. You are authenticated as %s",
-        name,
+    Optional<GrantedAuthority> authority =
         oauth2Authentication.getAuthorities()
-            .stream().findFirst().get().getAuthority());
+            .stream().findFirst();
+    return String.format(
+        "Search service called. You are authenticated as %s. Authorities: %s",
+        name,
+        authority.isPresent() ? authority.get().getAuthority() : "");
   }
 }
