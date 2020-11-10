@@ -45,10 +45,14 @@ public class GnUserAuthentificationConverter implements UserAuthenticationConver
   }
 
   private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
-    return ((Map<String, Object>) map.get("authorities")).values().stream()
-        .map(attributes -> (Map<String, Object>) attributes)
-        .map(attributes ->
-            new OAuth2UserAuthority((String) attributes.get("groupName"), attributes))
-        .collect(Collectors.toList());
+    if (map.containsKey("authorities")) {
+      return ((Map<String, Object>) map.get("authorities")).values().stream()
+          .map(attributes -> (Map<String, Object>) attributes)
+          .map(attributes ->
+              new OAuth2UserAuthority((String) attributes.get("groupName"), attributes))
+          .collect(Collectors.toList());
+    } else {
+      return null;
+    }
   }
 }
