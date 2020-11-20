@@ -11,8 +11,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.xslt.XsltViewResolver;
 
 @SpringBootApplication
 @RefreshScope
@@ -25,5 +28,17 @@ public class GnSearchApp {
 
   public static void main(String[] args) {
     SpringApplication.run(GnSearchApp.class, args);
+  }
+
+
+  @Bean
+  public ViewResolver xsltViewResolver() {
+    XsltViewResolver viewResolver = new XsltViewResolver();
+    viewResolver.setPrefix("classpath:/xslt/");
+    viewResolver.setSuffix(".xsl");
+    viewResolver.setSourceKey("source");
+    viewResolver.setCacheTemplates(false);
+    viewResolver.setCache(false);
+    return viewResolver;
   }
 }

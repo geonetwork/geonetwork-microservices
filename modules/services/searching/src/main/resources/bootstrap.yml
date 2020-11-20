@@ -33,12 +33,17 @@ eureka:
 logging:
   level:
     org.springframework.security: DEBUG
+
+
 ---
+# Use this profile when running on a GN4 database on localhost and Elasticsearch index.
+# Turn off security, config & discover.
 spring:
   profiles: standalone
+  rabbitmq.host: localhost
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/sextant7
+    url: jdbc:postgresql://localhost:5432/geonetwork
     username: www-data
     password: www-data
   jpa:
