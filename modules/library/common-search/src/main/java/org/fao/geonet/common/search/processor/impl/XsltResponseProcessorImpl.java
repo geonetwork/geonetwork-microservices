@@ -53,7 +53,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
     XMLStreamWriter generator = s.getXMLStreamWriter();
 
     String xsltFileName = String.format(
-        "xslt/%s.xsl", transformation);
+        "xslt/collections/items/formats/%s.xsl", transformation);
     File xsltFile = new ClassPathResource(xsltFileName).getFile();
 
     if (!xsltFile.exists()) {
