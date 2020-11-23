@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.ogcapi.records;
@@ -10,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.NativeWebRequest;
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
@@ -35,7 +34,8 @@ public class CapabilitiesApiController implements CapabilitiesApi {
    * Only to support sample responses from {@link CapabilitiesApi}, remove once
    * all its methods are implemented.
    */
-  private @Autowired NativeWebRequest nativeWebRequest;
+  @Autowired
+  private NativeWebRequest nativeWebRequest;
 
   @Override
   public Optional<NativeWebRequest> getRequest() {
@@ -54,15 +54,17 @@ public class CapabilitiesApiController implements CapabilitiesApi {
 
     Content content = new Content();
 
-    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL().toString();
+    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
+        .toString();
 
     List<Source> sources = sourceRepository.findAll();
     sources.forEach(s -> {
-      content.addCollectionsItem( CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
+      content.addCollectionsItem(
+          CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
     });
 
     // TODO: Accept format parameter.
-    List<Link> linkList = LinksItemsBuilder.build(mediaType,baseUrl, language);
+    List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
     linkList.forEach(l -> content.addLinksItem(l));
 
     return ResponseEntity.ok(content);
