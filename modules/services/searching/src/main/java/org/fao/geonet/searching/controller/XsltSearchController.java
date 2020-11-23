@@ -29,9 +29,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 public class XsltSearchController {
 
-  public
-  @Autowired
-  ElasticSearchProxy proxy;
+  public @Autowired ElasticSearchProxy proxy;
 
   /**
    * XSLT based search endpoint.

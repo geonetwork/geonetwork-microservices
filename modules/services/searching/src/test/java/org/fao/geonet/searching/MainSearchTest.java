@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"jwt.secret:secret", "gn.index.url:mockingesproxy", "spring.cloud.discovery.enabled:false", "spring.cloud.config.discovery.enabled:false", "spring.cloud.config.enabled:false"})
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 public class MainSearchTest {
