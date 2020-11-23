@@ -31,6 +31,9 @@ public class GnSearchApp {
   }
 
 
+  /**
+   * XSLT view.
+   */
   @Bean
   public ViewResolver xsltViewResolver() {
     XsltViewResolver viewResolver = new XsltViewResolver();
