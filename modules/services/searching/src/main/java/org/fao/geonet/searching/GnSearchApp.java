@@ -7,9 +7,11 @@ package org.fao.geonet.searching;
 
 
 import org.fao.geonet.repository.GeonetRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,20 +30,5 @@ public class GnSearchApp {
 
   public static void main(String[] args) {
     SpringApplication.run(GnSearchApp.class, args);
-  }
-
-
-  /**
-   * XSLT view.
-   */
-  @Bean
-  public ViewResolver xsltViewResolver() {
-    XsltViewResolver viewResolver = new XsltViewResolver();
-    viewResolver.setPrefix("classpath:/xslt/");
-    viewResolver.setSuffix(".xsl");
-    viewResolver.setSourceKey("source");
-    viewResolver.setCacheTemplates(false);
-    viewResolver.setCache(false);
-    return viewResolver;
   }
 }

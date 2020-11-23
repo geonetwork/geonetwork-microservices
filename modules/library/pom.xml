@@ -25,6 +25,8 @@
     <module>common-utility</module>
     <module>common-security</module>
     <module>common-search</module>
+    <module>common-error</module>
+    <module>common-view</module>
   </modules>
 
 </project>
