@@ -6,17 +6,30 @@
 
 package org.fao.geonet.ogcapi.records;
 
-import io.swagger.annotations.ApiParam;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
+import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
+import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
+import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
+import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
+import org.fao.geonet.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.request.NativeWebRequest;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
+
+  @Autowired
+  private SourceRepository sourceRepository;
 
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once
@@ -29,15 +42,30 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return Optional.of(nativeWebRequest);
   }
 
-  /**
-   * Describe a collection.
-   */
-  public ResponseEntity<CollectionInfo> describeCollection(
-      @ApiParam(value = "Identifier (name) of a specific collection", required = true) 
-      @PathVariable("collectionId") String collectionId) {
-    CollectionInfo collectionInfo = new CollectionInfo();
-    collectionInfo.name("My GeoNetwork catalog");
-    collectionInfo.description("Search for datasets, services and maps.");
-    return ResponseEntity.ok(collectionInfo);
+
+  @Override
+  public ResponseEntity<Content> describeCollections(Integer limit, List<BigDecimal> bbox,
+      String time) {
+
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+
+    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(nativeWebRequest);
+
+    Content content = new Content();
+
+    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL().toString();
+
+    List<Source> sources = sourceRepository.findAll();
+    sources.forEach(s -> {
+      content.addCollectionsItem( CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
+    });
+
+    // TODO: Accept format parameter.
+    List<Link> linkList = LinksItemsBuilder.build(mediaType,baseUrl, language);
+    linkList.forEach(l -> content.addLinksItem(l));
+
+    return ResponseEntity.ok(content);
   }
+
 }
