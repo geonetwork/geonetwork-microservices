@@ -1,6 +1,9 @@
 package org.fao.geonet.ogcapi.records;
 
 import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
@@ -16,16 +19,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Locale;
 
 
 @Controller
 public class CollectionApiController implements CollectionApi {
 
-  private @Autowired
-  NativeWebRequest nativeWebRequest;
+  @Autowired
+  private NativeWebRequest nativeWebRequest;
 
   @Autowired
   private SourceRepository sourceRepository;
@@ -58,9 +58,11 @@ public class CollectionApiController implements CollectionApi {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
     }
 
-    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL().toString();
+    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
+        .toString();
 
-    CollectionInfo collectionInfo =  CollectionInfoBuilder.buildFromSource(source, language, baseUrl, mediaType);
+    CollectionInfo collectionInfo = CollectionInfoBuilder
+        .buildFromSource(source, language, baseUrl, mediaType);
 
     return ResponseEntity.ok(collectionInfo);
   }

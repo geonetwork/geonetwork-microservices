@@ -1,5 +1,8 @@
 package org.fao.geonet.ogcapi.records;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
@@ -8,9 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 @Configuration
 public class MvcConfigurer {
@@ -21,6 +21,9 @@ public class MvcConfigurer {
   @Autowired
   IsoLanguageRepository isoLanguageRepository;
 
+  /**
+   * Resolve locale.
+   */
   @Bean
   public LocaleResolver localeResolver() {
     final AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();

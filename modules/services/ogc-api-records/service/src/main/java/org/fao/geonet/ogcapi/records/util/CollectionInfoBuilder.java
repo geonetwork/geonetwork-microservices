@@ -1,6 +1,10 @@
 package org.fao.geonet.ogcapi.records.util;
 
 
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
@@ -9,13 +13,12 @@ import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.CrsEnum;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.TrsEnum;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
 import org.springframework.http.MediaType;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 public class CollectionInfoBuilder {
 
+  /**
+   * Build Collection info from source table.
+   */
   public static CollectionInfo buildFromSource(Source source, String language,
       String baseUrl, MediaType mediaType) {
     String name;
@@ -26,13 +29,12 @@ public class CollectionInfoBuilder {
       name = source.getUuid();
     }
 
-    URI collectionUri = URI.create(baseUrl).resolve(name);
-
     CollectionInfo collectionInfo = new CollectionInfo();
     collectionInfo.setName(name);
     collectionInfo.setDescription(source.getLabel(language));
     collectionInfo.setTitle(source.getLabel(language));
-    collectionInfo.setCrs(Arrays.asList(CrsEnum.HTTP_WWW_OPENGIS_NET_DEF_CRS_OGC_1_3_CRS84.getValue()));
+    collectionInfo
+        .setCrs(Arrays.asList(CrsEnum.HTTP_WWW_OPENGIS_NET_DEF_CRS_OGC_1_3_CRS84.getValue()));
 
     // TODO: Review values
     Extent extent = new Extent();
@@ -44,6 +46,7 @@ public class CollectionInfoBuilder {
     extent.setTrs(TrsEnum.HTTP_WWW_OPENGIS_NET_DEF_UOM_ISO_8601_0_GREGORIAN);
 
     // TODO: Accept format parameter.
+    URI collectionUri = URI.create(baseUrl).resolve(name);
     Link currentDoc = new Link();
     currentDoc.setRel("self");
     currentDoc.setHref(collectionUri.toString());
