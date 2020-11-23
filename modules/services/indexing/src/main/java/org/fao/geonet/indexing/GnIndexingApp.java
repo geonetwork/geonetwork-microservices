@@ -37,25 +37,4 @@ public class GnIndexingApp {
       System.exit(-1);
     }
   }
-
-  /**
-   * Experiment localized message.
-   */
-  @Bean
-  public LocaleResolver localeResolver() {
-    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-    localeResolver.setDefaultLocale(Locale.ENGLISH);
-    return localeResolver;
-  }
-
-  /**
-   * Experiment localized message.
-   */
-  @Bean
-  public ResourceBundleMessageSource messageSource() {
-    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    messageSource.setUseCodeAsDefaultMessage(true);
-    messageSource.setBasenames("messages");
-    return messageSource;
-  }
 }

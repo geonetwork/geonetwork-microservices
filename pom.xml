@@ -90,6 +90,16 @@
       </dependency>
       <dependency>
         <groupId>org.geonetwork-opensource.cloud</groupId>
+        <artifactId>gn-cloud-common-error</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
+        <artifactId>gn-cloud-common-view</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geonetwork-opensource.cloud</groupId>
         <artifactId>gn-cloud-common-search</artifactId>
         <version>${project.version}</version>
       </dependency>
