@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
     description = "Proxy for ElasticSearch catalog search operations")
 @Controller
 public class XsltSearchController {
+
+  public
   @Autowired
   ElasticSearchProxy proxy;
 
