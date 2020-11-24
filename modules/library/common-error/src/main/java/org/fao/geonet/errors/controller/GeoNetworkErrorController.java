@@ -96,7 +96,7 @@ public class GeoNetworkErrorController implements ErrorController {
       e.printStackTrace();
     }
     model.addAttribute("source", IOUtils.toInputStream(sw.toString()));
-    return "errors/error";
+    return "core/errors/error";
   }
 
   protected GeoNetworkError getError(HttpServletRequest request) {

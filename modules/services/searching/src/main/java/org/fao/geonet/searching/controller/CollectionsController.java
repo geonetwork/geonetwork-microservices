@@ -40,6 +40,6 @@ public class CollectionsController {
     model.addAttribute("source", IOUtils.toInputStream(
         String.format("<source id='%s'/>", UUID.randomUUID())));
     model.addAttribute("language", "fre");
-    return "landingpage";
+    return "core/landingpage";
   }
 }

@@ -22,6 +22,8 @@ curl -v -H "Accept:application/json" -H "Accept-language:en" http://localhost:99
 
 curl -v -H "Accept:application/json" -H "Accept-language:fr" http://localhost:9902/errortestlocalized
 
+curl -v -H "Accept:application/xml" -H "Accept-language:fr" http://localhost:9902/errortestlocalized
+
 curl -v -H "Accept:text/html" -H "Accept-language:fr" http://localhost:9902/errortestlocalized
 ```
 
