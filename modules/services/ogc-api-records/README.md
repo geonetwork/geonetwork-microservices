@@ -16,13 +16,27 @@ mvn spring-boot:run
 Test the service:
 
 ```shell script
-curl '127.0.0.1:9991/collections/main' \
-        -H "Content-Type: application/json"
+
+curl 127.0.0.1:9991/collections \
+        -H "Accept: application/json"
+
+firstCollection=$( \
+curl 127.0.0.1:9991/collections \
+        -H "Accept: application/json" \
+         | jq -r '.collections[0].name')
+
+curl 127.0.0.1:9991/collections/$firstCollection \
+        -H "Accept: application/json"
+
+curl 127.0.0.1:9991/collections/$firstCollection/items \
+        -H "Accept: application/json" 
+
+uuid=$( \
+    curl 127.0.0.1:9991/collections/$firstCollection/items \
+                 -H "Accept: application/json"  \
+        | jq -r '.hits.hits[0]._id')
+
+curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+                 -H "Accept: application/json" 
 ```
 
-
-Needs to be fixed:
-* https://github.com/OpenAPITools/openapi-generator/issues/2901
-```
-java: package org.openapitools.jackson.nullable does not exist
-```

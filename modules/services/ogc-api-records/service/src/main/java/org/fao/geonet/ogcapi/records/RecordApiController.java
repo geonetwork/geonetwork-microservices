@@ -10,19 +10,33 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import org.apache.commons.io.IOUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.common.xml.XmlList;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -98,9 +112,16 @@ public class RecordApiController implements RecordApi {
 
   @Override
   // TODO: support datetime, type, q, externalids
-  public ResponseEntity<Void> collectionsCollectionIdItemsGet(String collectionId,
-      List<BigDecimal> bbox, String datetime, Integer limit, Integer startindex, String type,
-      List<String> q, List<String> externalids, List<String> sortby) {
+  public ResponseEntity<Void> collectionsCollectionIdItemsGet(
+      String collectionId,
+      List<BigDecimal> bbox,
+      String datetime,
+      Integer limit,
+      Integer startindex,
+      String type,
+      List<String> q,
+      List<String> externalids,
+      List<String> sortby) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
@@ -133,6 +154,80 @@ public class RecordApiController implements RecordApi {
     }
 
   }
+
+
+  /**
+   * Collection items as XML.
+   */
+  @GetMapping(value = "/collections/{collectionId}/items",
+      produces = {"application/xml"})
+  public ResponseEntity<Void> collectionsCollectionIdItemsGetAsXml(
+      @PathVariable
+      String collectionId,
+      @RequestParam(required = false)
+      List<BigDecimal> bbox,
+      @RequestParam(required = false)
+      String datetime,
+      @RequestParam(required = false)
+      Integer limit,
+      @RequestParam(required = false)
+      Integer startindex,
+      @RequestParam(required = false)
+      String type,
+      @RequestParam(required = false)
+      List<String> q,
+      @RequestParam(required = false)
+      List<String> externalids,
+      @RequestParam(required = false)
+      List<String> sortby) {
+    return collectionsCollectionIdItemsGet(collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby);
+  }
+
+  /**
+   * Collection items as HTML.
+   */
+  @GetMapping(value = "/collections/{collectionId}/items",
+      produces = {"text/html"})
+  public String collectionsCollectionIdItemsGetAsHtml(
+      @PathVariable
+          String collectionId,
+      @RequestParam(required = false)
+          List<BigDecimal> bbox,
+      @RequestParam(required = false)
+          String datetime,
+      @RequestParam(required = false)
+          Integer limit,
+      @RequestParam(required = false)
+          Integer startindex,
+      @RequestParam(required = false)
+          String type,
+      @RequestParam(required = false)
+          List<String> q,
+      @RequestParam(required = false)
+          List<String> externalids,
+      @RequestParam(required = false)
+          List<String> sortby,
+      Model model) {
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
+    StringWriter sw = new StringWriter();
+    try {
+      JAXBContext context = JAXBContext.newInstance(XmlList.class, Source.class);
+      Marshaller marshaller = context.createMarshaller();
+      marshaller.marshal(new XmlList<>(Arrays.asList(source)), sw);
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
+    model.addAttribute("source", IOUtils.toInputStream(
+        String.format(
+            "<model><collection>%s</collection><items>%s<items></model>",
+            sw.toString(), "")));
+    model.addAttribute("language", language);
+    return "ogcapir/items";
+  }
+
+
 
   private String buildQueryRecord(String recordId, String collectionFilter) {
     return String.format("{\"from\": %d, \"size\": %d, "
