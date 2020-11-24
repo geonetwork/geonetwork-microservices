@@ -21,10 +21,6 @@ import org.springframework.web.servlet.view.xslt.XsltViewResolver;
 
 @SpringBootApplication
 @RefreshScope
-@EntityScan(basePackages = { "org.fao.geonet.domain" })
-@EnableJpaRepositories(
-    basePackages = "org.fao.geonet.repository",
-    repositoryBaseClass = GeonetRepositoryImpl.class)
 @ComponentScan({"org.fao.geonet"})
 public class GnSearchApp {
 
