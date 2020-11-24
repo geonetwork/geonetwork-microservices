@@ -11,6 +11,7 @@
   "validateSpec": "false",
   "dateLibrary": "java8",
   "useTags": "true",
+  "singleContentTypes": "true",
   "interfaceOnly": "true",
   "sourceFolder": "src",
   "swaggerDocketConfig": "false",

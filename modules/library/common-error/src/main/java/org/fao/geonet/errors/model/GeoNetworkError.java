@@ -7,7 +7,9 @@ package org.fao.geonet.errors.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -51,9 +53,9 @@ public class GeoNetworkError {
     if (exception != null) {
       setMessage(exception.getMessage());
       //    if(errorProperties.getIncludeStacktrace() != IncludeStacktrace.NEVER) {
-      //      setStackTrace(
-      //          Arrays.stream(exception.getStackTrace()).map(StackTraceElement::toString).collect(
-      //              Collectors.joining("\n")));
+      setStackTrace(
+          Arrays.stream(exception.getStackTrace()).map(StackTraceElement::toString).collect(
+              Collectors.joining("\n")));
       //    }
     }
     setPath(path);
