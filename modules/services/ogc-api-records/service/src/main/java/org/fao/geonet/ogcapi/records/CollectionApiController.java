@@ -1,6 +1,7 @@
 package org.fao.geonet.ogcapi.records;
 
 import io.swagger.annotations.ApiParam;
+import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
@@ -54,5 +55,16 @@ public class CollectionApiController implements CollectionApi {
         .buildFromSource(source, language, baseUrl, mediaType);
 
     return ResponseEntity.ok(collectionInfo);
+  }
+
+  @Override
+  public ResponseEntity<List<Object>> getCoverageOffering(String collectionId) {
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
+
+    if (source == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+    }
+
+    return ResponseEntity.ok(collectionService.getSortables(source));
   }
 }
