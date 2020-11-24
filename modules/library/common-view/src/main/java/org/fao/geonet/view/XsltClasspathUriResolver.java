@@ -31,37 +31,41 @@ public class XsltClasspathUriResolver extends StandardURIResolver {
   @Override
   public Source resolve(String href, String base) throws XPathException {
     if (href.startsWith(CLASSPATH_PREFIX)) {
-      ClassPathResource resource = new ClassPathResource(href);
-      if (resource.exists()) {
+      return loadResourceFromClasspath(href, true);
+    } else {
+      return super.resolve(href, adaptClasspathBasePath(base));
+    }
+  }
+
+  private String adaptClasspathBasePath(String base) {
+    if (base.startsWith(CLASSPATH_PREFIX)) {
+      ClassPathResource pathResource = new ClassPathResource(base.replace(CLASSPATH_PREFIX, ""));
+      if (pathResource.exists()) {
         try {
-          return new StreamSource(resource.getInputStream());
+          base = pathResource.getFile().getCanonicalPath();
         } catch (IOException ioException) {
-          System.out.println(String.format(
-              "ClasspathResourceURIResolver can't find '%s'. IOException.",
-              href
-          ));
-          return null;
+          ioException.printStackTrace();
         }
-      } else {
+      }
+    }
+    return base;
+  }
+
+  private StreamSource loadResourceFromClasspath(String path, boolean tryReplacingPrefix) {
+    ClassPathResource resource = new ClassPathResource(path);
+    if (resource.exists()) {
+      try {
+        return new StreamSource(resource.getInputStream());
+      } catch (IOException ioException) {
         System.out.println(String.format(
-            "ClasspathResourceURIResolver can't find '%s'.",
-            href
+            "ClasspathResourceURIResolver can't find '%s'. IOException.",
+            path
         ));
         return null;
       }
-    } else {
-      if (base.startsWith(
-          CLASSPATH_PREFIX)) {
-        ClassPathResource pathResource = new ClassPathResource(base.replace(CLASSPATH_PREFIX, ""));
-        if (pathResource.exists()) {
-          try {
-            base = pathResource.getFile().getCanonicalPath();
-          } catch (IOException ioException) {
-            ioException.printStackTrace();
-          }
-        }
-      }
-      return super.resolve(href, base);
+    } else if (tryReplacingPrefix) {
+      return null;//loadResourceFromClasspath(path.replace(CLASSPATH_PREFIX, ""), false);
     }
+    return null;
   }
 }
