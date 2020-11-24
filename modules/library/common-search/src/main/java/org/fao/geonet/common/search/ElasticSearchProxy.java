@@ -137,7 +137,8 @@ public class ElasticSearchProxy {
 
     String requestBody = processSearchQuery(body, selectionBucket, userInfo);
 
-    return handleRequestAndGetResult(httpSession, request, requestBody, userInfo, true, selectionBucket);
+    return handleRequestAndGetResult(
+        httpSession, request, requestBody, userInfo, true, selectionBucket);
 
   }
 
@@ -190,15 +191,6 @@ public class ElasticSearchProxy {
 
   /**
    * Query ES and streams the result to HttpServletResponse.
-   *
-   * @param httpSession
-   * @param request
-   * @param response
-   * @param requestBody
-   * @param userInfo
-   * @param addPermissions
-   * @param selectionBucket
-   * @throws Exception
    */
   private void handleRequest(HttpSession httpSession,
       HttpServletRequest request,
@@ -333,14 +325,6 @@ public class ElasticSearchProxy {
 
   /**
    * Query ES and returns the result as a String.
-   *
-   * @param httpSession
-   * @param request
-   * @param requestBody
-   * @param userInfo
-   * @param addPermissions
-   * @param selectionBucket
-   * @throws Exception
    */
   private String handleRequestAndGetResult(HttpSession httpSession,
       HttpServletRequest request,
@@ -381,7 +365,7 @@ public class ElasticSearchProxy {
               ? new GZIPInputStream(connectionWithFinalHost.getErrorStream()) :
               connectionWithFinalHost.getErrorStream();
 
-          throw new Exception( String.format(
+          throw new Exception(String.format(
               "Error is: %s.\nRequest:\n%s.\nError:\n%s.",
               connectionWithFinalHost.getResponseMessage(),
               requestBody,
@@ -391,7 +375,8 @@ public class ElasticSearchProxy {
         // get content type
         String contentType = connectionWithFinalHost.getContentType();
         if (contentType == null) {
-          throw new Exception("Host url has been validated by proxy but content type given by remote host is null");
+          throw new Exception(
+              "Host url has been validated by proxy but content type given by remote host is null");
         }
 
         // content type has to be valid
@@ -581,7 +566,8 @@ public class ElasticSearchProxy {
     return userInfo;
   }
 
-  private String processSearchQuery(String body, String selectionBucket, UserInfo userInfo) throws Exception {
+  private String processSearchQuery(String body, String selectionBucket, UserInfo userInfo)
+      throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
 
     // multisearch support
