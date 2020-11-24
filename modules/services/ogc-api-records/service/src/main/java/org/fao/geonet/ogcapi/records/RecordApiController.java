@@ -9,6 +9,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
@@ -18,13 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class RecordApiController implements RecordApi {
@@ -64,8 +64,7 @@ public class RecordApiController implements RecordApi {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
       String query =  buildQueryRecord(recordId, collectionFilter);
 
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query
-         , null);
+      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
       ObjectMapper mapper = new ObjectMapper();
       JsonFactory factory = mapper.getFactory();
@@ -75,7 +74,7 @@ public class RecordApiController implements RecordApi {
       JsonNode totalValue = actualObj.get("hits").get("total").get("value");
 
       if ((totalValue == null) || (totalValue.intValue() == 0)) {
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
       }
 
       JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
@@ -116,8 +115,7 @@ public class RecordApiController implements RecordApi {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
       String query = buildQuery(bbox, startindex, limit, collectionFilter, sortby);
 
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query
-          , null);
+      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
       PrintWriter out = response.getWriter();
       try {
@@ -171,10 +169,10 @@ public class RecordApiController implements RecordApi {
     if (sortBy != null) {
       List<String> sortByList = new ArrayList<>();
       sortBy.forEach(s -> {
-        String[] sAux = s.split(":");
+        String[] sortByTokens = s.split(":");
 
-        if (sAux.length == 2) {
-          sortByList.add( String.format("{\"%s\": \"%s\"}", sAux[0], sAux[1]));
+        if (sortByTokens.length == 2) {
+          sortByList.add(String.format("{\"%s\": \"%s\"}", sortByTokens[0], sortByTokens[1]));
         }
       });
 

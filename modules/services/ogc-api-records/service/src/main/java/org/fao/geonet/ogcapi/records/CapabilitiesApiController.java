@@ -50,11 +50,14 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return Optional.of(nativeWebRequest);
   }
 
-
+  /**
+   * Return collections as HTML.
+   *
+   */
   @RequestMapping(value = "/collections",
       produces = {"text/html"},
       method = RequestMethod.GET)
-  public String describeCollectionsAsHTML(
+  public String describeCollectionsAsHtml(
       Integer limit,
       List<BigDecimal> bbox,
       String time,
@@ -75,10 +78,14 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return "ogcapir/collections";
   }
 
+  /**
+   * Return collections as XML.
+   *
+   */
   @RequestMapping(value = "/collections",
       produces = {"application/xml"},
       method = RequestMethod.GET)
-  public ResponseEntity<Content> describeCollectionsAsXML(Integer limit, List<BigDecimal> bbox,
+  public ResponseEntity<Content> describeCollectionsAsXml(Integer limit, List<BigDecimal> bbox,
       String time) {
     return describeCollections(limit, bbox, time);
   }
