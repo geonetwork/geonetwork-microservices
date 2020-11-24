@@ -1,15 +1,13 @@
 package org.fao.geonet.ogcapi.records;
 
 import io.swagger.annotations.ApiParam;
-import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
-import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
-import org.fao.geonet.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -28,7 +26,7 @@ public class CollectionApiController implements CollectionApi {
   private NativeWebRequest nativeWebRequest;
 
   @Autowired
-  private SourceRepository sourceRepository;
+  private CollectionService collectionService;
 
   /**
    * Describe a collection.
@@ -43,16 +41,7 @@ public class CollectionApiController implements CollectionApi {
 
     MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(nativeWebRequest);
 
-    Source source = null;
-
-    if (collectionId.equals("main")) {
-      List<Source> sources = sourceRepository.findByType(SourceType.portal, null);
-      if (!sources.isEmpty()) {
-        source = sources.get(0);
-      }
-    } else {
-      source = sourceRepository.findOneByUuid(collectionId);
-    }
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");

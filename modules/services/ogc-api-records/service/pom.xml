@@ -34,6 +34,10 @@
     </dependency>
     <dependency>
       <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-common-search</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
       <artifactId>gn-cloud-common-error</artifactId>
     </dependency>
     <dependency>
