@@ -6,7 +6,6 @@
 package org.fao.geonet.view;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.xslt.XsltViewResolver;
@@ -19,11 +18,12 @@ public class XsltViewConfig {
   @Bean
   public ViewResolver xsltViewResolver() {
     XsltViewResolver viewResolver = new XsltViewResolver();
+    viewResolver.setUriResolver(new XsltClasspathUriResolver());
     viewResolver.setPrefix("classpath:/xslt/");
     viewResolver.setSuffix(".xsl");
     viewResolver.setSourceKey("source");
-    //    viewResolver.setCacheTemplates(false);
-    //    viewResolver.setCache(false);
+    viewResolver.setCacheTemplates(false);
+    viewResolver.setCache(false);
     return viewResolver;
   }
 }
