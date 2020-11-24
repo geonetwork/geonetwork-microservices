@@ -53,6 +53,45 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return Optional.of(nativeWebRequest);
   }
 
+  @Override
+  public ResponseEntity<Content> describeCollections(Integer limit, List<BigDecimal> bbox,
+      String time) {
+
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+
+    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(nativeWebRequest);
+
+    Content content = new Content();
+
+    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
+        .toString();
+
+    List<Source> sources = sourceRepository.findAll();
+    sources.forEach(s -> {
+      content.addCollectionsItem(
+          CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
+    });
+
+    // TODO: Accept format parameter.
+    List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
+    linkList.forEach(l -> content.addLinksItem(l));
+
+    return ResponseEntity.ok(content);
+  }
+
+  /**
+   * Collections as XML.
+   */
+  @RequestMapping(value = "/collections",
+      produces = {"application/xml"},
+      method = RequestMethod.GET)
+  public ResponseEntity<Content> describeCollectionsAsXml(
+      @RequestParam(required = false) Integer limit,
+      @RequestParam(required = false) ArrayList<BigDecimal> bbox,
+      @RequestParam(required = false) String time) {
+    return describeCollections(limit, bbox, time);
+  }
 
   /**
    * Collections as HTML.
@@ -79,45 +118,5 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     model.addAttribute("source", IOUtils.toInputStream(sw.toString()));
     model.addAttribute("language", language);
     return "ogcapir/collections";
-  }
-
-  /**
-   * Collections as XML.
-   */
-  @RequestMapping(value = "/collections",
-      produces = {"application/xml"},
-      method = RequestMethod.GET)
-  public ResponseEntity<Content> describeCollectionsAsXml(
-      @RequestParam(required = false) Integer limit,
-      @RequestParam(required = false) ArrayList<BigDecimal> bbox,
-      @RequestParam(required = false) String time) {
-    return describeCollections(limit, bbox, time);
-  }
-
-  @Override
-  public ResponseEntity<Content> describeCollections(Integer limit, List<BigDecimal> bbox,
-      String time) {
-
-    Locale locale = LocaleContextHolder.getLocale();
-    String language = locale.getISO3Language();
-
-    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(nativeWebRequest);
-
-    Content content = new Content();
-
-    String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
-        .toString();
-
-    List<Source> sources = sourceRepository.findAll();
-    sources.forEach(s -> {
-      content.addCollectionsItem(
-          CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
-    });
-
-    // TODO: Accept format parameter.
-    List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
-    linkList.forEach(l -> content.addLinksItem(l));
-
-    return ResponseEntity.ok(content);
   }
 }
