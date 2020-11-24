@@ -17,12 +17,12 @@ public class MessageSourceConfig {
   /**
    * Localized message.
    */
-  @Bean
-  public LocaleResolver localeResolver() {
-    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-    localeResolver.setDefaultLocale(Locale.ENGLISH);
-    return localeResolver;
-  }
+  //  @Bean
+  //  public LocaleResolver localeResolver() {
+  //    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+  //    localeResolver.setDefaultLocale(Locale.ENGLISH);
+  //    return localeResolver;
+  //  }
 
   /**
    * Localized message.
