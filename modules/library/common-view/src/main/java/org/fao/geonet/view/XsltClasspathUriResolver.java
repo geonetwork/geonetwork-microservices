@@ -64,7 +64,7 @@ public class XsltClasspathUriResolver extends StandardURIResolver {
         return null;
       }
     } else if (tryReplacingPrefix) {
-      return null;//loadResourceFromClasspath(path.replace(CLASSPATH_PREFIX, ""), false);
+      return null; //loadResourceFromClasspath(path.replace(CLASSPATH_PREFIX, ""), false);
     }
     return null;
   }
