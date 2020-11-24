@@ -1,18 +1,34 @@
 package org.fao.geonet.ogcapi.records.service;
 
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
+import org.fao.geonet.domain.UiSetting;
 import org.fao.geonet.repository.SourceRepository;
+import org.fao.geonet.repository.UiSettingsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class CollectionService {
+  private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.ogcapi.records");
+
   @Autowired
   private SourceRepository sourceRepository;
+
+  @Autowired
+  private UiSettingsRepository uiSettingsRepository;
 
   /**
    * Checks if a collection is defined.
@@ -60,4 +76,51 @@ public class CollectionService {
 
     return collectionFilter;
   }
+
+  /**
+   * Retrieves the sortables related to a collection.
+   *
+   */
+  public List<Object> getSortables(Source source) {
+    List<Object> sortables = new ArrayList<>();
+
+    Optional<UiSetting> uiSetting = null;
+    if (source.getType() == SourceType.portal) {
+      uiSetting = uiSettingsRepository.findById("srv");
+    } else if (source.getUiConfig() != null) {
+      uiSetting = uiSettingsRepository.findById(source.getUiConfig());
+    }
+
+    if (uiSetting.isPresent()) {
+      UiSetting uiSettingValue = uiSetting.get();
+      String configuration = uiSettingValue.getConfiguration();
+
+      try {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        JsonParser parser = factory.createParser(configuration);
+        JsonNode actualObj = mapper.readTree(parser);
+
+        JsonNode sortbyValues = actualObj.get("mods").get("search").get("sortbyValues");
+
+        if (sortbyValues != null) {
+          sortbyValues.iterator().forEachRemaining(s -> sortables.add(s.get("sortBy").textValue()));
+        }
+      } catch (Exception ex) {
+        LOGGER.error(ex.getMessage(), ex);
+      }
+    }
+
+    if (sortables.isEmpty()) {
+      // TODO: Make default values configurable
+      sortables.add("relevance");
+      sortables.add("createDate");
+      sortables.add("resourceTitleObject.default.keyword");
+      sortables.add("rating");
+      sortables.add("popularity");
+    }
+
+    return sortables;
+  }
+
 }
