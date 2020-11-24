@@ -5,11 +5,16 @@
 
 package org.fao.geonet.ogcapi.records;
 
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import org.apache.commons.io.IOUtils;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -22,6 +27,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
 
 @Controller
@@ -31,8 +39,8 @@ public class CapabilitiesApiController implements CapabilitiesApi {
   private SourceRepository sourceRepository;
 
   /**
-   * Only to support sample responses from {@link CapabilitiesApi}, remove once
-   * all its methods are implemented.
+   * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
+   * implemented.
    */
   @Autowired
   private NativeWebRequest nativeWebRequest;
@@ -42,6 +50,38 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return Optional.of(nativeWebRequest);
   }
 
+
+  @RequestMapping(value = "/collections",
+      produces = {"text/html"},
+      method = RequestMethod.GET)
+  public String describeCollectionsAsHTML(
+      Integer limit,
+      List<BigDecimal> bbox,
+      String time,
+      Model model) {
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+    ResponseEntity<Content> collections = describeCollections(limit, bbox, time);
+    StringWriter sw = new StringWriter();
+    try {
+      JAXBContext context = JAXBContext.newInstance(Content.class);
+      Marshaller marshaller = context.createMarshaller();
+      marshaller.marshal(collections.getBody(), sw);
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
+    model.addAttribute("source", IOUtils.toInputStream(sw.toString()));
+    model.addAttribute("language", language);
+    return "ogcapir/collections";
+  }
+
+  @RequestMapping(value = "/collections",
+      produces = {"application/xml"},
+      method = RequestMethod.GET)
+  public ResponseEntity<Content> describeCollectionsAsXML(Integer limit, List<BigDecimal> bbox,
+      String time) {
+    return describeCollections(limit, bbox, time);
+  }
 
   @Override
   public ResponseEntity<Content> describeCollections(Integer limit, List<BigDecimal> bbox,
@@ -69,5 +109,4 @@ public class CapabilitiesApiController implements CapabilitiesApi {
 
     return ResponseEntity.ok(content);
   }
-
 }
