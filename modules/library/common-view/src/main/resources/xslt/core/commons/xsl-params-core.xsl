@@ -5,5 +5,7 @@
                 version="3.0">
   <xsl:param name="language" select="'en'" as="xs:string"/>
   <xsl:param name="language3letter" select="'eng'" as="xs:string"/>
+  <xsl:param name="base" select="'http://localhost:8080/geonetwork'" as="xs:string"/>
 
+  <xsl:variable name="harvestingFolder" select="'/images/harvesting'" as="xs:string"/>
 </xsl:stylesheet>

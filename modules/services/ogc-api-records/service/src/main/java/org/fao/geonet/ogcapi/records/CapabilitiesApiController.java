@@ -7,6 +7,7 @@ package org.fao.geonet.ogcapi.records;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.apache.commons.io.IOUtils;
+import org.fao.geonet.common.xml.XmlList;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 
 @Controller
@@ -50,26 +53,26 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     return Optional.of(nativeWebRequest);
   }
 
+
   /**
-   * Return collections as HTML.
-   *
+   * Collections as HTML.
    */
   @RequestMapping(value = "/collections",
       produces = {"text/html"},
       method = RequestMethod.GET)
   public String describeCollectionsAsHtml(
-      Integer limit,
-      List<BigDecimal> bbox,
-      String time,
+      @RequestParam(required = false) Integer limit,
+      @RequestParam(required = false) ArrayList<BigDecimal> bbox,
+      @RequestParam(required = false) String time,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
-    ResponseEntity<Content> collections = describeCollections(limit, bbox, time);
+    List<Source> sources = sourceRepository.findAll();
     StringWriter sw = new StringWriter();
     try {
-      JAXBContext context = JAXBContext.newInstance(Content.class);
+      JAXBContext context = JAXBContext.newInstance(XmlList.class, Source.class);
       Marshaller marshaller = context.createMarshaller();
-      marshaller.marshal(collections.getBody(), sw);
+      marshaller.marshal(new XmlList(sources), sw);
     } catch (JAXBException e) {
       e.printStackTrace();
     }
@@ -79,14 +82,15 @@ public class CapabilitiesApiController implements CapabilitiesApi {
   }
 
   /**
-   * Return collections as XML.
-   *
+   * Collections as XML.
    */
   @RequestMapping(value = "/collections",
       produces = {"application/xml"},
       method = RequestMethod.GET)
-  public ResponseEntity<Content> describeCollectionsAsXml(Integer limit, List<BigDecimal> bbox,
-      String time) {
+  public ResponseEntity<Content> describeCollectionsAsXml(
+      @RequestParam(required = false) Integer limit,
+      @RequestParam(required = false) ArrayList<BigDecimal> bbox,
+      @RequestParam(required = false) String time) {
     return describeCollections(limit, bbox, time);
   }
 

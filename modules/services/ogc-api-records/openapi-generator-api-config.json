@@ -12,6 +12,7 @@
   "dateLibrary": "java8",
   "useTags": "true",
   "singleContentTypes": "true",
+  "withXml": "true",
   "interfaceOnly": "true",
   "sourceFolder": "src",
   "swaggerDocketConfig": "false",
