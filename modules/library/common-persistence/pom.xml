@@ -25,12 +25,6 @@
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>
       <artifactId>gn-domain</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>net.sf.saxon</groupId>
-          <artifactId>saxon</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.geonetwork-opensource</groupId>

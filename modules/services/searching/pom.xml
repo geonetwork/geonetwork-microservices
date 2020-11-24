@@ -37,10 +37,6 @@
     </dependency>
     <dependency>
       <groupId>org.geonetwork-opensource.cloud</groupId>
-      <artifactId>gn-cloud-common-view</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geonetwork-opensource.cloud</groupId>
       <artifactId>gn-cloud-common-search</artifactId>
     </dependency>
 
