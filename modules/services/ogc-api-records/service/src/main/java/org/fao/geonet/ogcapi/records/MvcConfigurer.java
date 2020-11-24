@@ -1,8 +1,9 @@
 package org.fao.geonet.ogcapi.records;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
@@ -28,14 +29,13 @@ public class MvcConfigurer {
   public LocaleResolver localeResolver() {
     final AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
 
-    List<Language> languageList = languageRepository.findAll();
-    List<Locale> supportedLocales = new ArrayList<>();
-    languageList.forEach(lang -> {
-      Locale locale = Locale.forLanguageTag(lang.getId());
-      if (locale != null) {
-        supportedLocales.add(locale);
-      }
-    });
+    List<Locale> supportedLocales = languageRepository
+        .findAll() //
+        .stream() //
+        .map(Language::getId) //
+        .map(id -> Locale.forLanguageTag(id)) //
+        .filter(Objects::nonNull) //
+        .collect(Collectors.toList());
 
     resolver.setSupportedLocales(supportedLocales);
     resolver.setDefaultLocale(Locale.ENGLISH);
