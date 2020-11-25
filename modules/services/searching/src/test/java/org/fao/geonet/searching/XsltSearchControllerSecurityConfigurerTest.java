@@ -5,7 +5,6 @@
 
 package org.fao.geonet.searching;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -73,31 +73,6 @@ public class XsltSearchControllerSecurityConfigurerTest {
   private MockMvc mockMvc;
 
   @Test
-  public void nominal() throws Exception {
-    Map<String, Object> guests= new HashMap<>();
-    guests.put("groupName", "groupName");
-    guests.put("array", Arrays.asList(new int[]{1, 3, 3}));
-    GrantedAuthority authority = new OAuth2UserAuthority("GUEST",guests );
-
-    String token = createToken("gn_admin", Collections.singletonList(authority));
-
-    Mockito
-      .doAnswer(invocationOnMock -> {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assertEquals("gn_admin", authentication.getName());
-        assertTrue(authentication.getAuthorities().size() > 0);
-        return null;})
-      .when(esProxy).search(Mockito.any(),Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any());
-
-    this.mockMvc
-      .perform(
-          post("/portal/api/search/records/xslt")
-          .header("Authorization", "Bearer " + token))
-      .andExpect(status()
-      .isOk());
-  }
-
-  @Test
   public void withProfileAndExtraGroupsForEveryRoles() throws Exception {
     Map gnAuthAttributes = new HashMap();
     gnAuthAttributes.put("group", 42);
@@ -125,6 +100,37 @@ public class XsltSearchControllerSecurityConfigurerTest {
         .andExpect(status()
             .isOk());
   }
+
+  @Test
+  public void exoticOAuth2UserAuthorityNoSerialisationTrouble() throws Exception {
+    Map attributes= new HashMap();
+    attributes.put("lapin", "malin");
+    Map insideMap = new HashMap();
+    insideMap.put("1", "one");  // if key is an Integer, transformed into a String
+    insideMap.put("2", "two");
+    attributes.put("map", insideMap);
+    GrantedAuthority exoticAuthority = new OAuth2UserAuthority("exotic", attributes);
+    String token = createToken("gn_admin", Collections.singletonList(exoticAuthority));
+
+    Mockito
+      .doAnswer(invocationOnMock -> {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertEquals("gn_admin", authentication.getName());
+        OAuth2UserAuthority authority =
+            (OAuth2UserAuthority) authentication.getAuthorities().stream().findFirst().get();
+        assertEquals(attributes, authority.getAttributes());
+        assertEquals("exotic", authority.getAuthority());
+        return null;})
+      .when(esProxy).search(Mockito.any(),Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any());
+
+    this.mockMvc
+      .perform(
+          post("/portal/api/search/records/xslt")
+          .header("Authorization", "Bearer " + token))
+      .andExpect(status()
+      .isOk());
+  }
+
 
   private String createToken( String userName, List<GrantedAuthority> authorities) {
     UsernamePasswordAuthenticationToken token
