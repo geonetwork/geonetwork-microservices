@@ -44,7 +44,7 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .findAll() //
         .stream() //
         .map(Language::getId) //
-        .map(id -> Locale.forLanguageTag(id)) //
+        .map(Locale::forLanguageTag) //
         .filter(Objects::nonNull) //
         .collect(Collectors.toList());
 
