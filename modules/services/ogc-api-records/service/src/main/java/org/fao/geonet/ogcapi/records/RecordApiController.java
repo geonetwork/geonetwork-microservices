@@ -19,11 +19,15 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.fao.geonet.ogcapi.records.util.XmlUtil;
+import org.fao.geonet.repository.MetadataRepository;
+import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -47,6 +51,9 @@ public class RecordApiController implements RecordApi {
 
   @Autowired
   ElasticSearchProxy proxy;
+
+  @Autowired
+  MetadataRepository metadataRepository;
 
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
@@ -152,6 +159,66 @@ public class RecordApiController implements RecordApi {
     }
   }
 
+
+  /**
+   * Collection item as HTML.
+   */
+  @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
+      produces = {
+      MediaType.TEXT_HTML_VALUE
+  })
+  public String collectionsCollectionIdItemsRecordIdGetAsHtml(
+      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
+      @PathVariable("collectionId")
+      String collectionId,
+      @ApiParam(value = "Identifier (name) of a specific record", required = true)
+      @PathVariable("recordId")
+      String recordId,
+      Model model) {
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
+
+    if (source == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+    }
+
+    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
+
+    try {
+      //      String collectionFilter = collectionService.retrieveCollectionFilter(source);
+      //      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(
+      //      recordId, collectionFilter, null);
+      //
+      //      String queryResponse = proxy.searchAndGetResult(
+      //      request.getSession(), request, query, null);
+      //
+      //      Document queryResult = XmlUtil.parseXmlString(queryResponse);
+      //      String total = queryResult.getChildNodes().item(0)
+      //      .getAttributes().getNamedItem("total")
+      //          .getNodeValue();
+      //
+      //      if (Integer.parseInt(total) == 0) {
+      //        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
+      //      }
+      //      Node metadataResult = queryResult.getChildNodes().item(0).getFirstChild();
+      //      streamResult(response, XmlUtil.getNodeString(metadataResult),
+      //          MediaType.APPLICATION_XML_VALUE);
+
+      Metadata record = metadataRepository.findOneByUuid(recordId);
+      XsltModel modelSource = new XsltModel();
+      modelSource.setCollection(source);
+      modelSource.setItems(List.of(
+          new Item(recordId, null, record.getData())
+      ));
+      model.addAttribute("source", modelSource.toSource());
+      XsltViewConfig.addi18n(model, locale);
+      return "ogcapir/item";
+    } catch (Exception ex) {
+      // TODO: Log exception
+      throw new RuntimeException(ex);
+    }
+  }
 
   @Override
   // TODO: support datetime, type, q, externalids

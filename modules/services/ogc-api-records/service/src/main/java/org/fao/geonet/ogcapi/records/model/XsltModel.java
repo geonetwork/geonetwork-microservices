@@ -1,3 +1,8 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.model;
 
 import java.io.InputStream;
@@ -12,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +27,7 @@ import org.fao.geonet.domain.Source;
 @NoArgsConstructor
 @XmlRootElement(name = "model")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({Source.class})
 public class XsltModel {
   Map<String, String> i18n;
   Map<String, String> settings;
@@ -29,7 +36,10 @@ public class XsltModel {
   @XmlElement(name = "collection")
   List<Source> collections;
   Source collection;
-  List<Object> items;
+
+  @XmlElementWrapper(name = "items")
+  @XmlElement(name = "item")
+  List<Item> items;
 
   /**
    * Convert to InputStream.
