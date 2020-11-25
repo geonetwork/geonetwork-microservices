@@ -1,6 +1,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
+                exclude-result-prefixes="#all"
                 version="3.0">
 
   <xsl:function name="gn-util:getCollectionName" as="xs:string">

@@ -104,14 +104,20 @@
 
   <xsl:template name="html-breadcrumb">
     <xsl:param name="breadcrumb" select="''" as="item()*"/>
+    <xsl:param name="header" select="''" as="item()*"/>
 
     <div class="pt-24">
       <div class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-        <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
-          <p class="uppercase tracking-loose w-full">
-            <xsl:copy-of select="$breadcrumb"/>
-          </p>
-        </div>
+        <xsl:if test="$breadcrumb">
+          <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+            <p class="uppercase tracking-loose w-full">
+              <xsl:copy-of select="$breadcrumb"/>
+            </p>
+          </div>
+        </xsl:if>
+        <xsl:if test="$header">
+          <xsl:copy-of select="$header"/>
+        </xsl:if>
       </div>
     </div>
     <div class="relative -mt-12 lg:-mt-24">
