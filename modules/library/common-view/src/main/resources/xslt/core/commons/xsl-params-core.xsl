@@ -8,4 +8,5 @@
   <xsl:param name="base" select="'http://localhost:8080/geonetwork'" as="xs:string"/>
 
   <xsl:variable name="harvestingFolder" select="'/images/harvesting'" as="xs:string"/>
+  <xsl:variable name="logoFolder" select="'/images/logos'" as="xs:string"/>
 </xsl:stylesheet>
