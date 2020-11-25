@@ -5,18 +5,12 @@
 
 package org.fao.geonet.ogcapi.records;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import org.apache.commons.io.IOUtils;
-import org.fao.geonet.common.xml.XmlList;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
