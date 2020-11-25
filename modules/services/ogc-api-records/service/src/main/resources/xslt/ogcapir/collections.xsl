@@ -2,6 +2,7 @@
                 xmlns:map="http://www.w3.org/2005/xpath-functions/map"
                 xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                exclude-result-prefixes="#all"
                 version="3.0">
 
   <xsl:output method="html"
