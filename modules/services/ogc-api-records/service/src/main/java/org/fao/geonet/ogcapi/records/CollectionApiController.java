@@ -65,7 +65,7 @@ public class CollectionApiController implements CollectionApi {
    * Collections as XML.
    */
   @GetMapping(value = "/collections/{collectionId}",
-      produces = {"text/xml"})
+      produces = {"application/xml"})
   public ResponseEntity<CollectionInfo> describeCollectionAsXml(
       @PathVariable("collectionId") String collectionId) {
     return describeCollection(collectionId);
