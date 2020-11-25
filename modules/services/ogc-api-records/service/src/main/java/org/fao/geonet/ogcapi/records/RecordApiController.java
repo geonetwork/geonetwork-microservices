@@ -105,10 +105,10 @@ public class RecordApiController implements RecordApi {
 
 
   /**
-   * Collection item as XML.
+   * Collection item as XML / DCAT.
    */
   @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
-      produces = {"application/xml"})
+      produces = {"application/xml", "application/gn-dcat"})
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
