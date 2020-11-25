@@ -94,8 +94,7 @@ public class RecordsEsQueryBuilder {
         startIndex, limit,
         configuration.getSources()
             .stream()
-            .map(f -> String.format("\"%s\"", f))
-            .collect(Collectors.joining(",")),
+            .collect(Collectors.joining("\",\"", "\"", "\"")),
         sortByValue, collectionFilter, geoFilter);
   }
 }
