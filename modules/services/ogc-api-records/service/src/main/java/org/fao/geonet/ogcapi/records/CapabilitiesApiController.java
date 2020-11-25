@@ -19,7 +19,9 @@ import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.repository.SourceRepository;
+import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
+
+  @Autowired
+  MessageSource messages;
 
   @Autowired
   private SourceRepository sourceRepository;
@@ -100,12 +105,11 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       @RequestParam(required = false) String time,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
-    String language = locale.getISO3Language();
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
-    model.addAttribute("language", language);
+    XsltViewConfig.addi18n(model, locale);
     return "ogcapir/collections";
   }
 }

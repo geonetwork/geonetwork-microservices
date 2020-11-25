@@ -10,6 +10,7 @@ import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
+import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -79,12 +80,11 @@ public class CollectionApiController implements CollectionApi {
       @PathVariable("collectionId") String collectionId,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
-    String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
     model.addAttribute("source", modelSource.toSource());
-    model.addAttribute("language", language);
+    XsltViewConfig.addi18n(model, locale);
     return "ogcapir/collection";
   }
 
