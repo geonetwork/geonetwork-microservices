@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -73,12 +72,11 @@ public class XsltSearchControllerSecurityConfigurerTest {
   private MockMvc mockMvc;
 
   @Test
-  public void withProfileAndExtraGroupsForEveryRoles() throws Exception {
+  public void withProfileAndGroupsForEveryRoles() throws Exception {
     Map gnAuthAttributes = new HashMap();
-    gnAuthAttributes.put("group", 42);
-    gnAuthAttributes.put("profile", Profile.Editor.name());
+    gnAuthAttributes.put("higher_profile", Profile.Editor.name());
     Stream.of(Profile.values())
-        .forEach(profile -> {gnAuthAttributes.put(profile.name(), Arrays.asList(profile.ordinal()));});
+        .forEach(profile -> {if (profile.ordinal() >0) {gnAuthAttributes.put(profile.name(), Arrays.asList(profile.ordinal() + 42));}});
     GrantedAuthority gnAuthority = new OAuth2UserAuthority("gn", gnAuthAttributes);
     String token = createToken("42_editor", Collections.singletonList(gnAuthority));
 
@@ -131,7 +129,6 @@ public class XsltSearchControllerSecurityConfigurerTest {
       .isOk());
   }
 
-
   private String createToken( String userName, List<GrantedAuthority> authorities) {
     UsernamePasswordAuthenticationToken token
         = new UsernamePasswordAuthenticationToken(userName, null, authorities);
@@ -140,5 +137,4 @@ public class XsltSearchControllerSecurityConfigurerTest {
     OAuth2Authentication auth = new OAuth2Authentication(request, token);
     return jwtAccessTokenConverter.enhance(new DefaultOAuth2AccessToken(""), auth).getValue();
   }
-
 }
