@@ -1,6 +1,7 @@
 package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLStreamWriter;
-import com.google.common.base.Throwables;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
