@@ -58,7 +58,7 @@ public class CollectionApiController implements CollectionApi {
     }
 
     String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
-        .toString();
+        .toString().replace(collectionId, "");
 
     CollectionInfo collectionInfo = CollectionInfoBuilder
         .buildFromSource(source, language, baseUrl, mediaType);
