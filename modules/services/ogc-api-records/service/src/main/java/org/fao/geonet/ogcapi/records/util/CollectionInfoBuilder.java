@@ -46,6 +46,7 @@ public class CollectionInfoBuilder {
     extent.setTrs(TrsEnum.HTTP_WWW_OPENGIS_NET_DEF_UOM_ISO_8601_0_GREGORIAN);
 
     // TODO: Accept format parameter.
+    baseUrl = baseUrl + (!baseUrl.endsWith("/") ? "/" : "");
     URI collectionUri = URI.create(baseUrl).resolve(name);
     Link currentDoc = new Link();
     currentDoc.setRel("self");
