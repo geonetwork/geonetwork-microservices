@@ -9,17 +9,28 @@ import org.fao.geonet.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 @Configuration
-public class MvcConfigurer {
+public class MvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Autowired
   LanguageRepository languageRepository;
 
   @Autowired
   IsoLanguageRepository isoLanguageRepository;
+
+  @Override
+  public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    configurer
+        .favorParameter(true)
+        .parameterName("f")
+        .defaultContentType(MediaType.APPLICATION_JSON);
+  }
 
   /**
    * Resolve locale.

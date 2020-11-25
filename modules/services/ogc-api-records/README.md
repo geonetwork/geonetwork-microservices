@@ -31,6 +31,9 @@ curl 127.0.0.1:9991/collections \
 curl 127.0.0.1:9991/collections/$firstCollection \
         -H "Accept: application/json"
 
+curl 127.0.0.1:9991/collections/$firstCollection/sortables \
+        -H "Accept: application/json"
+
 curl 127.0.0.1:9991/collections/$firstCollection/items \
         -H "Accept: application/json" 
 
@@ -48,4 +51,6 @@ curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
 curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/xml" 
 ```
+
+API also `f` URL parameter to set the output format eg. http://localhost:9991/collections?f=xml
 
