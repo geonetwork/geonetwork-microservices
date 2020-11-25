@@ -7,6 +7,7 @@
 package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,15 +53,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
     s.setOutputStream(streamToClient);
     XMLStreamWriter generator = s.getXMLStreamWriter();
 
-    String xsltFileName = String.format(
-        "xslt/collections/items/formats/%s.xsl", transformation);
-    File xsltFile = new ClassPathResource(xsltFileName).getFile();
 
-    if (!xsltFile.exists()) {
-      throw new IllegalArgumentException(String.format(
-          "Transformation '%s' does not exist.", transformation
-      ));
-    }
 
     generator.writeStartDocument("UTF-8", "1.0");
     {
@@ -78,11 +71,27 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
       generator.writeAttribute("total", records.size() + "");
       {
         records.forEach(r -> {
-          XsltUtil.transformAndStreamInDocument(
-              r.getData(),
-              xsltFile,
-              generator
-          );
+          String xsltFileName = String.format(
+              "xslt/collections/items/formats/%s/%s.xsl",
+              r.getDataInfo().getSchemaId(), transformation);
+          try {
+            File xsltFile = new ClassPathResource(xsltFileName).getFile();
+
+            if (!xsltFile.exists()) {
+              throw new IllegalArgumentException(String.format(
+                  "Transformation '%s' does not exist for schema %s.", transformation
+              ));
+            }
+
+            XsltUtil.transformAndStreamInDocument(
+                r.getData(),
+                xsltFile,
+                generator
+            );
+          } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
+          }
         });
       }
       generator.writeEndElement();

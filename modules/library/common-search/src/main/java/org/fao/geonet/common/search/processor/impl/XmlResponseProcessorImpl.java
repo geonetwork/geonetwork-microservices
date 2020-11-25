@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLStreamWriter;
+import com.google.common.base.Throwables;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
@@ -43,16 +44,6 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
 
     String transformation = "copy";
 
-    String xsltFileName = String.format(
-        "xslt/collections/items/formats/%s.xsl", transformation);
-    File xsltFile = new ClassPathResource(xsltFileName).getFile();
-
-    if (!xsltFile.exists()) {
-      throw new IllegalArgumentException(String.format(
-          "Transformation '%s' does not exist.", transformation
-      ));
-    }
-
     generator.writeStartDocument("UTF-8", "1.0");
     {
       JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
@@ -69,11 +60,27 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
       generator.writeAttribute("total", records.size() + "");
       {
         records.forEach(r -> {
-          XsltUtil.transformAndStreamInDocument(
-              r.getData(),
-              xsltFile,
-              generator
-          );
+          String xsltFileName = String.format(
+              "xslt/collections/items/formats/%s/%s.xsl",
+              r.getDataInfo().getSchemaId(), transformation);
+          try {
+            File xsltFile = new ClassPathResource(xsltFileName).getFile();
+
+            if (!xsltFile.exists()) {
+              throw new IllegalArgumentException(String.format(
+                  "Transformation '%s' does not exist for schema %s.", transformation
+              ));
+            }
+
+            XsltUtil.transformAndStreamInDocument(
+                r.getData(),
+                xsltFile,
+                generator
+            );
+          } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
+          }
         });
       }
       generator.writeEndElement();
