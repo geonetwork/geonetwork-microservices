@@ -15,7 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.domain.Profile;
 import org.fao.geonet.searching.controller.XsltSearchController;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +85,7 @@ public class XsltSearchControllerSecurityConfigurerTest {
       .doAnswer(invocationOnMock -> {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertEquals("gn_admin", authentication.getName());
-        assertTrue( authentication.getAuthorities().size() > 0);
+        assertTrue(authentication.getAuthorities().size() > 0);
         return null;})
       .when(esProxy).search(Mockito.any(),Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any());
 
@@ -93,6 +95,35 @@ public class XsltSearchControllerSecurityConfigurerTest {
           .header("Authorization", "Bearer " + token))
       .andExpect(status()
       .isOk());
+  }
+
+  @Test
+  public void withProfileAndExtraGroupsForEveryRoles() throws Exception {
+    Map gnAuthAttributes = new HashMap();
+    gnAuthAttributes.put("group", 42);
+    gnAuthAttributes.put("profile", Profile.Editor.name());
+    Stream.of(Profile.values())
+        .forEach(profile -> {gnAuthAttributes.put(profile.name(), Arrays.asList(profile.ordinal()));});
+    GrantedAuthority gnAuthority = new OAuth2UserAuthority("gn", gnAuthAttributes);
+    String token = createToken("42_editor", Collections.singletonList(gnAuthority));
+
+    Mockito
+        .doAnswer(invocationOnMock -> {
+          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+          assertEquals("42_editor", authentication.getName());
+          OAuth2UserAuthority authority =
+              (OAuth2UserAuthority) authentication.getAuthorities().stream().findFirst().get();
+          assertEquals(gnAuthAttributes, authority.getAttributes());
+          assertEquals("gn", authority.getAuthority());
+          return null;})
+        .when(esProxy).search(Mockito.any(),Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any());
+
+    this.mockMvc
+        .perform(
+            post("/portal/api/search/records/xslt")
+                .header("Authorization", "Bearer " + token))
+        .andExpect(status()
+            .isOk());
   }
 
   private String createToken( String userName, List<GrantedAuthority> authorities) {

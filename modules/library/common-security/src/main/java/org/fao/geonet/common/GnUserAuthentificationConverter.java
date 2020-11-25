@@ -46,10 +46,9 @@ public class GnUserAuthentificationConverter implements UserAuthenticationConver
 
   private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
     if (map.containsKey("authorities")) {
-      return ((Map<String, Object>) map.get("authorities")).values().stream()
-          .map(attributes -> (Map<String, Object>) attributes)
-          .map(attributes ->
-              new OAuth2UserAuthority((String) attributes.get("groupName"), attributes))
+      return ((Map<String, Object>) map.get("authorities")).entrySet().stream()
+          .map(entry ->
+              new OAuth2UserAuthority(entry.getKey(), (Map<String, Object>) entry.getValue()))
           .collect(Collectors.toList());
     } else {
       return null;
