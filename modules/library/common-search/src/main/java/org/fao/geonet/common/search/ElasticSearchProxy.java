@@ -30,6 +30,7 @@ import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
+import org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,7 @@ public class ElasticSearchProxy {
           "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
+          "application/xml", XmlResponseProcessorImpl.class,
           "application/rss+xml", RssResponseProcessorImpl.class,
           "application/gn-own", XsltResponseProcessorImpl.class,
           "application/gn-dcat", XsltResponseProcessorImpl.class
