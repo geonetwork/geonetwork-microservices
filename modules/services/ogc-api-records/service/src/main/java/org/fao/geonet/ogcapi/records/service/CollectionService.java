@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.domain.UiSetting;
+import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.repository.UiSettingsRepository;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CollectionService {
   private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.ogcapi.records");
+
+  @Autowired
+  private OgcApiConfiguration configuration;
 
   @Autowired
   private SourceRepository sourceRepository;
@@ -78,7 +82,8 @@ public class CollectionService {
   }
 
   /**
-   * Retrieves the sortables related to a collection.
+   * Retrieves the sortables related to a collection
+   * from the user interface configuration.
    *
    */
   public List<Object> getSortables(Source source) {
@@ -112,12 +117,7 @@ public class CollectionService {
     }
 
     if (sortables.isEmpty()) {
-      // TODO: Make default values configurable
-      sortables.add("relevance");
-      sortables.add("createDate");
-      sortables.add("resourceTitleObject.default.keyword");
-      sortables.add("rating");
-      sortables.add("popularity");
+      sortables.addAll(configuration.getSortables());
     }
 
     return sortables;

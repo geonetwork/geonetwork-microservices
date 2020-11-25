@@ -1,7 +1,11 @@
 gn:
   ogcapi:
     sortables:
+      - "relevance"
+      - "createDate"
       - "resourceTitleObject.default.keyword"
+      - "rating"
+      - "popularity"
     sources:
       - "resourceTitle"
       - "resourceAbstract"
