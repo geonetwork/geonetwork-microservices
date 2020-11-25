@@ -20,6 +20,9 @@ Test the service:
 curl 127.0.0.1:9991/collections \
         -H "Accept: application/json"
 
+curl 127.0.0.1:9991/collections \
+        -H "Accept: text/html" -H "Accept-Language: fr"
+
 firstCollection=$( \
 curl 127.0.0.1:9991/collections \
         -H "Accept: application/json" \
@@ -31,6 +34,9 @@ curl 127.0.0.1:9991/collections/$firstCollection \
 curl 127.0.0.1:9991/collections/$firstCollection/items \
         -H "Accept: application/json" 
 
+curl 127.0.0.1:9991/collections/$firstCollection/items \
+        -H "Accept: application/xml" 
+
 uuid=$( \
     curl 127.0.0.1:9991/collections/$firstCollection/items \
                  -H "Accept: application/json"  \
@@ -38,5 +44,8 @@ uuid=$( \
 
 curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/json" 
+
+curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+                 -H "Accept: application/xml" 
 ```
 
