@@ -180,7 +180,8 @@ public class RecordApiController implements RecordApi {
       List<String> externalids,
       @RequestParam(required = false)
       List<String> sortby) {
-    return collectionsCollectionIdItemsGet(collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby);
+    return collectionsCollectionIdItemsGet(collectionId, bbox, datetime, limit,
+        startindex, type, q, externalids, sortby);
   }
 
   /**
