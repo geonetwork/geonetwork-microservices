@@ -13,10 +13,8 @@
   <xsl:import href="collection-util.xsl"/>
 
   <xsl:template match="/">
-    <xsl:message><xsl:copy-of select="."/></xsl:message>
-
     <xsl:variable name="collection"
-                  select="list/values"
+                  select="model/collection"
                   as="node()?"/>
 
     <xsl:variable name="label"
@@ -43,6 +41,19 @@
           <xsl:call-template name="html-breadcrumb">
             <xsl:with-param name="breadcrumb" select="$subTitle"/>
           </xsl:call-template>
+
+          <section class="bg-white border-b py-8">
+            <div class="container mx-auto flex flex-wrap pt-4 pb-12">
+              <a href="{$collection/uuid}/items">
+                <button class="p-4 rounded-full bg-gray-800
+                               transition duration-500 ease-in-out
+                               hover:underline
+                               focus:outline-none focus:shadow-outline
+                               transform transition hover:scale-105 duration-300 ease-in-out">
+                  Browse datasets and maps...</button>
+              </a>
+            </div>
+          </section>
         </xsl:with-param>
       </xsl:call-template>
     </html>

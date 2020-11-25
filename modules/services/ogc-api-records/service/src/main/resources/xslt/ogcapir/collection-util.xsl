@@ -4,7 +4,7 @@
                 version="3.0">
 
   <xsl:function name="gn-util:getCollectionName" as="xs:string">
-    <xsl:param name="collection" as="element(values)"/>
+    <xsl:param name="collection" as="element(collection)"/>
     <xsl:param name="language" as="xs:string"/>
 
     <xsl:value-of select="$collection/(

@@ -1,7 +1,4 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:gmd="http://www.isotc211.org/2005/gmd"
-                xmlns:gco="http://www.isotc211.org/2005/gco"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="3.0">
   <xsl:output method="html"
               media-type="text/html"
@@ -23,7 +20,12 @@
         <xsl:with-param name="content">
 
 
+          <section class="bg-white border-b py-8">
+            <div class="container mx-auto flex flex-wrap pt-4 pb-12">
 
+              Items
+            </div>
+          </section>
         </xsl:with-param>
       </xsl:call-template>
     </html>

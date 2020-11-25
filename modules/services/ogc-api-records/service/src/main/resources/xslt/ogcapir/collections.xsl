@@ -14,7 +14,7 @@
 
   <xsl:template name="render-collection-family">
     <xsl:param name="title" as="xs:string"/>
-    <xsl:param name="collections" as="element(values)*"/>
+    <xsl:param name="collections" as="element(collection)*"/>
 
     <xsl:if test="count($collections) > 0">
       <section class="bg-white border-b py-8">
@@ -83,9 +83,9 @@
 
 
   <xsl:template match="/">
-
+<xsl:message><xsl:copy-of select="."/></xsl:message>
     <xsl:variable name="collections"
-                  select="list/values"
+                  select="model/collections/collection"
                   as="node()*"/>
 
     <xsl:variable name="mainCollection"
