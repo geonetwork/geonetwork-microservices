@@ -12,6 +12,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.io.IOUtils;
 import org.fao.geonet.common.xml.XmlList;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
@@ -87,15 +88,9 @@ public class CollectionApiController implements CollectionApi {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
-    StringWriter sw = new StringWriter();
-    try {
-      JAXBContext context = JAXBContext.newInstance(XmlList.class, Source.class);
-      Marshaller marshaller = context.createMarshaller();
-      marshaller.marshal(new XmlList<>(Arrays.asList(source)), sw);
-    } catch (JAXBException e) {
-      e.printStackTrace();
-    }
-    model.addAttribute("source", IOUtils.toInputStream(sw.toString()));
+    XsltModel modelSource = new XsltModel();
+    modelSource.setCollection(source);
+    model.addAttribute("source", modelSource.toSource());
     model.addAttribute("language", language);
     return "ogcapir/collection";
   }

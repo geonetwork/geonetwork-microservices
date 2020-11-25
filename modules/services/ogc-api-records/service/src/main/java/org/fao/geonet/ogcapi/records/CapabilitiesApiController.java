@@ -18,6 +18,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.io.IOUtils;
 import org.fao.geonet.common.xml.XmlList;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
@@ -107,15 +108,9 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
     List<Source> sources = sourceRepository.findAll();
-    StringWriter sw = new StringWriter();
-    try {
-      JAXBContext context = JAXBContext.newInstance(XmlList.class, Source.class);
-      Marshaller marshaller = context.createMarshaller();
-      marshaller.marshal(new XmlList(sources), sw);
-    } catch (JAXBException e) {
-      e.printStackTrace();
-    }
-    model.addAttribute("source", IOUtils.toInputStream(sw.toString()));
+    XsltModel modelSource = new XsltModel();
+    modelSource.setCollections(sources);
+    model.addAttribute("source", modelSource.toSource());
     model.addAttribute("language", language);
     return "ogcapir/collections";
   }
