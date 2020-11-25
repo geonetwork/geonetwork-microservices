@@ -1,15 +1,16 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:gmd="http://www.isotc211.org/2005/gmd"
-                xmlns:gco="http://www.isotc211.org/2005/gco"
+                xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="3.0">
+
   <xsl:output method="html"
               media-type="text/html"
               encoding="UTF-8"
               indent="no"/>
+
   <xsl:import href="classpath:xslt/core/commons/xsl-params-core.xsl"/>
   <xsl:import href="classpath:xslt/core/themes/default/theme.xsl"/>
-
+  <xsl:import href="collection-util.xsl"/>
 
   <xsl:template name="render-collection-family">
     <xsl:param name="title" as="xs:string"/>
@@ -31,10 +32,7 @@
 
           <xsl:for-each select="$collections">
             <xsl:variable name="label"
-                          select="(
-                            labelTranslations/entry[key = $language]/value[. != '']
-                            |name[. != '']
-                            |uuid)[1]"
+                          select="gn-util:getCollectionName(., $language)"
                           as="xs:string"/>
 
             <xsl:variable name="properties"
@@ -47,7 +45,7 @@
               <xsl:with-param name="subTitle"
                               select="if (empty($properties[2])) then '' else $properties[2]"/>
               <xsl:with-param name="logo" select="if (type = 'harvester') then concat($logoFolder, '/', uuid, '.png') else concat($harvestingFolder, '/', logo)"/>
-              <xsl:with-param name="url" select="concat('', uuid)"/>
+              <xsl:with-param name="url" select="concat('/collections/', uuid)"/>
             </xsl:call-template>
           </xsl:for-each>
         </div>
