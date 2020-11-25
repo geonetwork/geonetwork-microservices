@@ -33,7 +33,7 @@ public class MvcConfigurer {
         .findAll() //
         .stream() //
         .map(Language::getId) //
-        .map(id -> Locale.forLanguageTag(id)) //
+        .map(Locale::forLanguageTag) //
         .filter(Objects::nonNull) //
         .collect(Collectors.toList());
 
