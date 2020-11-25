@@ -1,4 +1,5 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:map="http://www.w3.org/2005/xpath-functions/map"
                 xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="3.0">
@@ -83,7 +84,6 @@
 
 
   <xsl:template match="/">
-<xsl:message><xsl:copy-of select="."/></xsl:message>
     <xsl:variable name="collections"
                   select="model/collections/collection"
                   as="node()*"/>
@@ -111,13 +111,17 @@
           </xsl:call-template>
 
           <xsl:call-template name="render-collection-family">
-            <xsl:with-param name="title" select="'Thematic portals'"/>
-            <xsl:with-param name="collections" select="$portals"/>
+            <xsl:with-param name="title"
+                            select="map:get($i18n, 'ogcapir.collections.portals')"/>
+            <xsl:with-param name="collections"
+                            select="$portals"/>
           </xsl:call-template>
 
           <xsl:call-template name="render-collection-family">
-            <xsl:with-param name="title" select="'Harvested collections'"/>
-            <xsl:with-param name="collections" select="$harvesters"/>
+            <xsl:with-param name="title"
+                            select="map:get($i18n, 'ogcapir.collections.harvestedCollection')"/>
+            <xsl:with-param name="collections"
+                            select="$harvesters"/>
           </xsl:call-template>
 
         </xsl:with-param>
