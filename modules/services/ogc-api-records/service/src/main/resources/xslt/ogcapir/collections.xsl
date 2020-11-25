@@ -47,7 +47,7 @@
               <xsl:with-param name="subTitle"
                               select="if (empty($properties[2])) then '' else $properties[2]"/>
               <xsl:with-param name="logo" select="if (type = 'harvester') then concat($logoFolder, '/', uuid, '.png') else concat($harvestingFolder, '/', logo)"/>
-              <xsl:with-param name="url" select="concat('collections/', uuid)"/>
+              <xsl:with-param name="url" select="concat('', uuid)"/>
             </xsl:call-template>
           </xsl:for-each>
         </div>
