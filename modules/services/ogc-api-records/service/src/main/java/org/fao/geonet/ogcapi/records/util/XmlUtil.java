@@ -21,14 +21,13 @@ public class XmlUtil {
 
   /**
    * Retrieves the content of a org.w3c.dom.Node as a string.
-   *
    */
   public static String getNodeString(Node node) throws TransformerException {
-      StringWriter writer = new StringWriter();
-      Transformer transformer = TransformerFactory.newInstance().newTransformer();
-      transformer.transform(new DOMSource(node), new StreamResult(writer));
-      String output = writer.toString();
-      return output;
+    StringWriter writer = new StringWriter();
+    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    transformer.transform(new DOMSource(node), new StreamResult(writer));
+    String output = writer.toString();
+    return output;
   }
 
 

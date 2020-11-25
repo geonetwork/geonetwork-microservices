@@ -1,3 +1,18 @@
+gn:
+  ogcapi:
+    sortables:
+      - "resourceTitleObject.default.keyword"
+    sources:
+      - "resourceTitle"
+      - "resourceAbstract"
+      - "resourceType"
+      - "uuid"
+      - "schema"
+      - "link"
+      - "allKeywords"
+      - "contactForResource"
+      - "cl_status"
+      - "edit"
 server:
   port: 8080
   instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}

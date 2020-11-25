@@ -4,18 +4,30 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
+@Component
+@ConstructorBinding
 public class RecordsEsQueryBuilder {
+
+  private static OgcApiConfiguration configuration;
+
+  public RecordsEsQueryBuilder(OgcApiConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
   /**
    * Creates a ElasticSearch query for a single record.
    *
-   * @param recordId          Record uuid.
-   * @param collectionFilter  Filter to select the record in a collection scope.
-   * @param includes          List of fields to return (null, retuns all).
-   * @return                  ElasticSearch query.
+   * @param recordId         Record uuid.
+   * @param collectionFilter Filter to select the record in a collection scope.
+   * @param includes         List of fields to return (null, retuns all).
+   * @return ElasticSearch query.
    */
-  public static String buildQuerySingleRecord(String recordId, String collectionFilter, List<String> includes) {
+  public static String buildQuerySingleRecord(String recordId, String collectionFilter,
+      List<String> includes) {
 
     if (includes == null) {
       return String.format("{\"from\": %d, \"size\": %d, "
@@ -35,7 +47,6 @@ public class RecordsEsQueryBuilder {
 
   /**
    * Creates a ElasticSearch query from Records API parameters.
-   *
    */
   public static String buildQuery(List<BigDecimal> bbox, Integer startIndex, Integer limit,
       String collectionFilter, List<String> sortBy) {
@@ -76,9 +87,15 @@ public class RecordsEsQueryBuilder {
     }
 
     return String.format("{\"from\": %d, \"size\": %d, "
+            + "\"_source\": [%s],"
             + "\"sort\": [%s],"
             + "\"query\": {\"query_string\": "
             + "{\"query\": \"%s +isTemplate:n\"}} %s} ",
-        startIndex, limit, sortByValue, collectionFilter, geoFilter);
+        startIndex, limit,
+        configuration.getSources()
+            .stream()
+            .map(f -> String.format("\"%s\"", f))
+            .collect(Collectors.joining(",")),
+        sortByValue, collectionFilter, geoFilter);
   }
 }
