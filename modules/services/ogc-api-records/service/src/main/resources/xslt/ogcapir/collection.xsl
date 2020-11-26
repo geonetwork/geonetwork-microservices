@@ -12,6 +12,7 @@
   <xsl:import href="classpath:xslt/core/commons/xsl-params-core.xsl"/>
   <xsl:import href="classpath:xslt/core/themes/default/theme.xsl"/>
   <xsl:import href="collection-util.xsl"/>
+  <xsl:import href="html-util.xsl"/>
 
   <xsl:template match="/">
     <xsl:variable name="collection"
@@ -30,7 +31,6 @@
                     select="if (empty($properties[1])) then name else $properties[1]"/>
     <xsl:variable name="subTitle"
                     select="if (empty($properties[2])) then '' else $properties[2]"/>
-
     <html>
       <xsl:attribute name="lang" select="$language"/>
       <xsl:call-template name="html-head">
@@ -52,16 +52,25 @@
           <section class="bg-white border-b py-8">
             <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">
               <xsl:choose>
-                <xsl:when test="model/items">
-                  <ul>
-                    <xsl:for-each select="model/items/item">
-                      <li>
-                        <a href="items/{uuid}">
-                          <xsl:value-of select="uuid"/>
-                        </a>
-                      </li>
-                    </xsl:for-each>
-                  </ul>
+                <xsl:when test="model/results">
+                  <div class="w-full tracking-wide text-4xl mb-4">
+                    <xsl:choose>
+                      <xsl:when test="model/results/total/total = 0">
+                        No record found. Search for something else or in another collection?
+                      </xsl:when>
+                      <xsl:when test="model/results/total/total = 1">
+                        <xsl:value-of select="model/results/total/total"/> record.
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="model/results/total/total"/> records.
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </div>
+
+                  <xsl:for-each select="model/results/results">
+                    <xsl:message><xsl:copy-of select="."/></xsl:message>
+                    <xsl:call-template name="html-record-preview-title"/>
+                  </xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>
                   <a href="{$collection/uuid}/items">
