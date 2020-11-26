@@ -9,26 +9,18 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>gn-cloud-common-view</artifactId>
-  <name>GeoNetwork common view</name>
+  <artifactId>gn-cloud-common-standards</artifactId>
+  <name>GeoNetwork common standard</name>
   <url>http://geonetwork-opensource.org</url>
 
   <dependencies>
-    <dependency>
-      <groupId>org.geonetwork-opensource.cloud</groupId>
-      <artifactId>gn-cloud-common-standards</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>Saxon-HE</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
     </dependency>
   </dependencies>
 </project>

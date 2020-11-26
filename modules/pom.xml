@@ -23,6 +23,7 @@
   <modules>
     <module>support-services</module>
     <module>library</module>
+    <module>standards</module>
     <module>services</module>
   </modules>
 </project>

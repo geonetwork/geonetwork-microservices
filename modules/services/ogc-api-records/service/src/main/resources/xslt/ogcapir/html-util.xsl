@@ -5,8 +5,6 @@
                 version="3.0">
 
 
-
-
   <xsl:template name="html-field">
     <xsl:param name="label"/>
     <xsl:param name="text"/>

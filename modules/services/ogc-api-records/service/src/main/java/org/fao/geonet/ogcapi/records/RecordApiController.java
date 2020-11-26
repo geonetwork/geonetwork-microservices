@@ -212,7 +212,7 @@ public class RecordApiController implements RecordApi {
           new Item(recordId, null, record.getData())
       ));
       model.addAttribute("source", modelSource.toSource());
-      XsltViewConfig.addi18n(model, locale);
+      XsltViewConfig.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()));
       return "ogcapir/item";
     } catch (Exception ex) {
       // TODO: Log exception
