@@ -11,10 +11,30 @@
                          select="gmd:identificationInfo/*/gmd:citation/*/gmd:title"/>
   </xsl:template>
 
+
+  <xsl:template mode="getShortAbstract" match="gmd:MD_Metadata">
+    <xsl:variable name="abstract">
+      <xsl:apply-templates mode="getText"
+                           select="gmd:identificationInfo/*/gmd:abstract"/>
+    </xsl:variable>
+    <xsl:value-of select="substring-before($abstract, '.') || '.'"/>
+  </xsl:template>
+
+
+  <xsl:template mode="getAfterShortAbstract" match="gmd:MD_Metadata">
+    <xsl:variable name="abstract">
+      <xsl:apply-templates mode="getText"
+                           select="gmd:identificationInfo/*/gmd:abstract"/>
+    </xsl:variable>
+    <xsl:value-of select="substring-after($abstract, '.')"/>
+  </xsl:template>
+
+
   <xsl:template mode="getAbstract" match="gmd:MD_Metadata">
     <xsl:apply-templates mode="getText"
                          select="gmd:identificationInfo/*/gmd:abstract"/>
   </xsl:template>
+
 
   <xsl:template mode="getOverviews" match="gmd:MD_Metadata" as="element(overview)*">
     <xsl:for-each select="gmd:identificationInfo/*/gmd:graphicOverview/*">
@@ -29,6 +49,7 @@
       </overview>
     </xsl:for-each>
   </xsl:template>
+
 
   <xsl:template name="getText" match="*[gco:CharacterString]">
     <xsl:value-of select="gco:CharacterString/text()"/>

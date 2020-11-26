@@ -8,8 +8,32 @@
   <xsl:import href="../../schemas-utils/util-iso19139.xsl"/>
   <xsl:import href="../../html-util.xsl"/>
 
+  <xsl:template match="gmd:MD_Metadata"
+                mode="landingpage">
+    <section class="w-full">
+      <div class="mt-4 pb-2 border-solid border-b-4">
+        <h1 class="text-4xl font-medium">Custom view</h1>
+      </div>
+    </section>
+
+    <section class="w-full">
+      <div class="mt-4 pb-2 border-solid border-b-4">
+        <h1 class="text-4xl font-medium">Full view</h1>
+      </div>
+
+
+      <div class="flex flex-wrap">
+        <xsl:apply-templates mode="landingpage" select="*"/>
+      </div>
+    </section>
+
+
+
+  </xsl:template>
+
+
   <xsl:template match="gmd:*[gco:CharacterString]"
-                mode="landingpage" priority="2">
+                mode="landingpage">
 
     <xsl:variable name="labelKey"
                   select="name(.)"
