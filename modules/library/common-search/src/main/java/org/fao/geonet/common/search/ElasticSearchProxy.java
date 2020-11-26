@@ -353,7 +353,9 @@ public class ElasticSearchProxy {
             isSearch ? "POST" : request.getMethod());
 
         // copy headers from client's request to request that will be send to the final host
-        copyHeadersToConnection(request, connectionWithFinalHost);
+        // exclude "accept-encoding" to avoid compressed results in this case
+        copyHeadersToConnection(request, connectionWithFinalHost,
+            Arrays.asList(new String[] {"accept-encoding"}));
 
         connectionWithFinalHost.setDoOutput(true);
         LOGGER.debug(requestBody);
@@ -528,12 +530,21 @@ public class ElasticSearchProxy {
    * @param uc Contains now headers from client request except Host
    */
   protected void copyHeadersToConnection(HttpServletRequest request, HttpURLConnection uc) {
-    boolean isSearch = isSearch(request);
+    copyHeadersToConnection(request, uc, null);
+  }
+
+  protected void copyHeadersToConnection(HttpServletRequest request, HttpURLConnection uc,
+      List<String> additionalIgnoredHeaders) {
+    if (additionalIgnoredHeaders == null) {
+      additionalIgnoredHeaders = new ArrayList<>();
+    }
+
     for (Enumeration enumHeader = request.getHeaderNames(); enumHeader.hasMoreElements(); ) {
       String headerName = (String) enumHeader.nextElement();
       String headerValue = request.getHeader(headerName);
 
-      if (!ignoredHeaders.contains(headerName.toLowerCase())) {
+      if (!ignoredHeaders.contains(headerName.toLowerCase())
+          && !additionalIgnoredHeaders.contains(headerName.toLowerCase())) {
         uc.setRequestProperty(headerName, headerValue);
       }
       uc.setRequestProperty("accept", "application/json");
