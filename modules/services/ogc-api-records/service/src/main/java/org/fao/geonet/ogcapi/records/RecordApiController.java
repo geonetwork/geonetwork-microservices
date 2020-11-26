@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
-import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -30,7 +29,7 @@ import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.fao.geonet.ogcapi.records.util.XmlUtil;
 import org.fao.geonet.repository.MetadataRepository;
-import org.fao.geonet.view.XsltViewConfig;
+import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -57,6 +56,9 @@ public class RecordApiController implements RecordApi {
 
   @Autowired
   MetadataRepository metadataRepository;
+
+  @Autowired
+  ViewUtility viewUtility;
 
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
@@ -169,15 +171,15 @@ public class RecordApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
       produces = {
-      MediaType.TEXT_HTML_VALUE
-  })
+          MediaType.TEXT_HTML_VALUE
+      })
   public String collectionsCollectionIdItemsRecordIdGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
-      String collectionId,
+          String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
-      String recordId,
+          String recordId,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
@@ -216,7 +218,7 @@ public class RecordApiController implements RecordApi {
           new Item(recordId, null, record.getData())
       ));
       model.addAttribute("source", modelSource.toSource());
-      XsltViewConfig.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()));
+      viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()));
       return "ogcapir/item";
     } catch (Exception ex) {
       // TODO: Log exception
@@ -237,6 +239,32 @@ public class RecordApiController implements RecordApi {
       List<String> externalids,
       List<String> sortby) {
 
+    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
+        externalids, sortby);
+
+    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
+    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
+
+    try {
+      streamResult(response, queryResponse, getResponseContentType(request));
+    } catch (IOException ioException) {
+      throw new RuntimeException(ioException);
+    }
+
+    return ResponseEntity.ok().build();
+  }
+
+  private String search(
+      String collectionId,
+      List<BigDecimal> bbox,
+      String datetime,
+      Integer limit,
+      Integer startindex,
+      String type,
+      List<String> q,
+      List<String> externalids,
+      List<String> sortby) {
+
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
@@ -244,19 +272,12 @@ public class RecordApiController implements RecordApi {
     }
 
     HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
-    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
 
+    String collectionFilter = collectionService.retrieveCollectionFilter(source);
+    String query = RecordsEsQueryBuilder
+        .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
     try {
-      String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = RecordsEsQueryBuilder
-          .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
-
-     
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
-      streamResult(response, queryResponse, getResponseContentType(request));
-
-      return ResponseEntity.ok().build();
+      return proxy.searchAndGetResult(request.getSession(), request, query, null);
     } catch (Exception ex) {
       // TODO: Log exception
       throw new RuntimeException(ex);
@@ -272,31 +293,31 @@ public class RecordApiController implements RecordApi {
   public ResponseEntity<Void> collectionsCollectionIdItemsGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
-      String collectionId,
+          String collectionId,
       @ApiParam(value = "")
       @RequestParam(value = "bbox", required = false)
-      List<BigDecimal> bbox,
+          List<BigDecimal> bbox,
       @ApiParam(value = "")
       @RequestParam(value = "datetime", required = false)
-      String datetime,
+          String datetime,
       @ApiParam(value = "", defaultValue = "10")
       @RequestParam(value = "limit", required = false, defaultValue = "10")
-      Integer limit,
+          Integer limit,
       @ApiParam(value = "", defaultValue = "9")
       @RequestParam(value = "startindex", required = false, defaultValue = "9")
-      Integer startindex,
+          Integer startindex,
       @ApiParam(value = "")
       @RequestParam(value = "type", required = false)
-      String type,
+          String type,
       @ApiParam(value = "")
       @RequestParam(value = "q", required = false)
-      List<String> q,
+          List<String> q,
       @ApiParam(value = "")
       @RequestParam(value = "externalids", required = false)
-      List<String> externalids,
+          List<String> externalids,
       @ApiParam(value = "")
       @RequestParam(value = "sortby", required = false)
-      List<String> sortby) {
+          List<String> sortby) {
 
     return collectionsCollectionIdItemsGet(
         collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby);
@@ -311,35 +332,36 @@ public class RecordApiController implements RecordApi {
   public String collectionsCollectionIdItemsGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
-      String collectionId,
+          String collectionId,
       @ApiParam(value = "")
       @RequestParam(value = "bbox", required = false)
-      List<BigDecimal> bbox,
+          List<BigDecimal> bbox,
       @ApiParam(value = "")
       @RequestParam(value = "datetime", required = false)
-      String datetime,
+          String datetime,
       @ApiParam(value = "", defaultValue = "10")
       @RequestParam(value = "limit", required = false, defaultValue = "10")
-      Integer limit,
+          Integer limit,
       @ApiParam(value = "", defaultValue = "9")
       @RequestParam(value = "startindex", required = false, defaultValue = "9")
-      Integer startindex,
+          Integer startindex,
       @ApiParam(value = "")
       @RequestParam(value = "type", required = false)
-      String type,
+          String type,
       @ApiParam(value = "")
       @RequestParam(value = "q", required = false)
-      List<String> q,
+          List<String> q,
       @ApiParam(value = "")
       @RequestParam(value = "externalids", required = false)
-      List<String> externalids,
+          List<String> externalids,
       @ApiParam(value = "")
       @RequestParam(value = "sortby", required = false)
-      List<String> sortby,
+          List<String> sortby,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
+
 
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
@@ -347,8 +369,13 @@ public class RecordApiController implements RecordApi {
     // TODO: Populate the list from the search.
     items.add(new Item("7e98455f-8bcd-4162-85ed-2770c28112b3", null, null));
     modelSource.setItems(items);
+
+    //    String results = search(
+    //    collectionId, bbox, datetime, limit, startindex, type, q, externalids,
+    //        sortby);
+    //    model.addAttribute("records", results);
     model.addAttribute("source", modelSource.toSource());
-    XsltViewConfig.addi18n(model, locale);
+    viewUtility.addi18n(model, locale);
     return "ogcapir/collection";
   }
 
@@ -356,7 +383,9 @@ public class RecordApiController implements RecordApi {
   /**
    * Streams the content body in the response stream using the content-type provided.
    */
-  private void streamResult(HttpServletResponse response, String content,
+  private void streamResult(
+      HttpServletResponse response,
+      String content,
       String contentType) throws IOException {
     PrintWriter out = response.getWriter();
     try {

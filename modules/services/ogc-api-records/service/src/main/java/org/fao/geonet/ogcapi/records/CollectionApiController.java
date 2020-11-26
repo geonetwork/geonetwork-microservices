@@ -10,8 +10,10 @@ import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
+import org.fao.geonet.view.ViewUtility;
 import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +34,9 @@ public class CollectionApiController implements CollectionApi {
 
   @Autowired
   private CollectionService collectionService;
+
+  @Autowired
+  ViewUtility viewUtility;
 
   /**
    * Describe a collection.
@@ -84,7 +89,7 @@ public class CollectionApiController implements CollectionApi {
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
     model.addAttribute("source", modelSource.toSource());
-    XsltViewConfig.addi18n(model, locale);
+    viewUtility.addi18n(model, locale);
     return "ogcapir/collection";
   }
 
