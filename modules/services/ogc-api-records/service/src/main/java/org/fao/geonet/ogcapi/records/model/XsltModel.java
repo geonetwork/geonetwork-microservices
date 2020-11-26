@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Source;
 
 @Data
@@ -41,6 +42,7 @@ public class XsltModel {
   @XmlElement(name = "item")
   List<Item> items;
 
+  EsSearchResults results;
 
   /**
    * Convert to InputStream.
@@ -49,7 +51,7 @@ public class XsltModel {
     try {
       StringWriter sw = new StringWriter();
       JAXBContext context = JAXBContext.newInstance(
-          XsltModel.class, Source.class);
+          XsltModel.class, Source.class, EsSearchResults.class);
       Marshaller marshaller = context.createMarshaller();
       marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
       marshaller.marshal(this, sw);

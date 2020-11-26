@@ -1,0 +1,12 @@
+package org.fao.geonet.common.search.domain.es;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EsOverview {
+  private String url;
+}

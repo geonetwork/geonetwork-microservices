@@ -27,8 +27,8 @@ public class XsltViewConfig {
     viewResolver.setPrefix("classpath:/xslt/");
     viewResolver.setSuffix(".xsl");
     viewResolver.setSourceKey("source");
-    viewResolver.setCacheTemplates(true);
-    viewResolver.setCache(true);
+    viewResolver.setCacheTemplates(false);
+    viewResolver.setCache(false);
     return viewResolver;
   }
 }

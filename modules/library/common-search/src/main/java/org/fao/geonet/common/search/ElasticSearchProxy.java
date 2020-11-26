@@ -66,6 +66,7 @@ public class ElasticSearchProxy {
       RESPONSE_PROCESSOR =
       Map.of(
           "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
+          "text/html", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           "json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
@@ -500,6 +501,9 @@ public class ElasticSearchProxy {
     String accept = request.getParameter("f");
     if (StringUtils.isEmpty(accept)) {
       accept = request.getHeader("Accept");
+      if (StringUtils.isNotEmpty(accept) && accept.contains(",")) {
+        return accept.split(",")[0];
+      }
     }
 
     return accept;
@@ -692,6 +696,7 @@ public class ElasticSearchProxy {
       InputStream streamFromServer, OutputStream streamToClient,
       boolean addPermissions, String selectionBucket, UserInfo userInfo) throws Exception {
 
+    // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
     Class<? extends SearchResponseProcessor> responseProcessorClass =
         RESPONSE_PROCESSOR.get(acceptHeader);

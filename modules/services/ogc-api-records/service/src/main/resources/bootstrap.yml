@@ -7,9 +7,10 @@ gn:
       - "rating"
       - "popularity"
     sources:
-      - "resourceTitle"
-      - "resourceAbstract"
+      - "resourceTitleObject"
+      - "resourceAbstractObject"
       - "resourceType"
+      - "overview"
       - "uuid"
       - "schema"
       - "link"
@@ -58,9 +59,9 @@ spring:
   rabbitmq.host: localhost
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/geonetwork
-    username: geonetwork
-    password: geonetwork
+    url: jdbc:postgresql://localhost:5432/gn
+    username: www-data
+    password: www-data
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     jpa.generate-ddl: false

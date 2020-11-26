@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -362,18 +363,27 @@ public class RecordApiController implements RecordApi {
     String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
+    if (source == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+    }
+
+    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
+
+    String collectionFilter = collectionService.retrieveCollectionFilter(source);
+    String query = RecordsEsQueryBuilder
+        .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
+    EsSearchResults results = new EsSearchResults();
+    try {
+      results = proxy
+          .searchAndGetResultAsObject(request.getSession(), request, query, null);
+    } catch (Exception ex) {
+      // TODO: Log exception
+      throw new RuntimeException(ex);
+    }
 
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
-    List<Item> items = new ArrayList<>();
-    // TODO: Populate the list from the search.
-    items.add(new Item("7e98455f-8bcd-4162-85ed-2770c28112b3", null, null));
-    modelSource.setItems(items);
-
-    //    String results = search(
-    //    collectionId, bbox, datetime, limit, startindex, type, q, externalids,
-    //        sortby);
-    //    model.addAttribute("records", results);
+    modelSource.setResults(results);
     model.addAttribute("source", modelSource.toSource());
     viewUtility.addi18n(model, locale);
     return "ogcapir/collection";
