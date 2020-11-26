@@ -37,22 +37,44 @@
         <xsl:with-param name="title" select="$title"/>
       </xsl:call-template>
       <xsl:call-template name="html-body">
-        <xsl:with-param name="title" select="$title"/>
+        <xsl:with-param name="logo">
+          <img src="{gn-util:getCollectionLogo($collection)}"
+               class=""/>
+        </xsl:with-param>
+        <xsl:with-param name="title">
+          <xsl:value-of select="$title"/>
+        </xsl:with-param>
         <xsl:with-param name="content">
           <xsl:call-template name="html-breadcrumb">
             <xsl:with-param name="breadcrumb" select="$subTitle"/>
           </xsl:call-template>
 
           <section class="bg-white border-b py-8">
-            <div class="container mx-auto flex flex-wrap pt-4 pb-12">
-              <a href="{$collection/uuid}/items">
-                <button class="p-4 rounded-full bg-gray-800
+            <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">
+              <xsl:choose>
+                <xsl:when test="model/items">
+
+                  <ul>
+                    <xsl:for-each select="model/items/item">
+                      <li>
+                        <a href="items/{uuid}">
+                          <xsl:value-of select="uuid"/>
+                        </a>
+                      </li>
+                    </xsl:for-each>
+                  </ul>
+                </xsl:when>
+                <xsl:otherwise>
+                  <a href="{$collection/uuid}/items">
+                    <button class="p-4 rounded-full bg-gray-800
                                transition duration-500 ease-in-out
                                hover:underline
                                focus:outline-none focus:shadow-outline
                                transform transition hover:scale-105 duration-300 ease-in-out">
-                  Browse datasets and maps...</button>
-              </a>
+                      Browse datasets and maps...</button>
+                  </a>
+                </xsl:otherwise>
+              </xsl:choose>
             </div>
           </section>
         </xsl:with-param>
