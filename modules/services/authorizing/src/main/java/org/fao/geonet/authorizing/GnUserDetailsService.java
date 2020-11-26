@@ -7,10 +7,12 @@ package org.fao.geonet.authorizing;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
-import java.util.HashMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.fao.geonet.domain.Profile;
 import org.fao.geonet.domain.User;
 import org.fao.geonet.domain.UserGroup;
 import org.fao.geonet.repository.GroupRepository;
@@ -21,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -69,22 +70,23 @@ public class GnUserDetailsService implements UserDetailsService {
     Specification<UserGroup> thisUser = where(UserGroupSpecs.hasUserId(user.getId()));
     List<UserGroup> userGroups = userGroupRepository.findAll(thisUser);
 
-    List<GrantedAuthority> authorities = userGroups.stream()
-        .map(userGroup -> {
-          Map<String, Object> reservedOperation = new HashMap<>();
-          reservedOperation.put("groupId", userGroup.getGroup().getId());
-          reservedOperation.put("groupName", userGroup.getGroup().getName());
-          reservedOperation.put("profiles", userGroup.getProfile().getAll().stream()
-              .map(profile -> profile.name()).collect(Collectors.toList()));
-          return new OAuth2UserAuthority(userGroup.getGroup().getName(), reservedOperation);
-        })
-        .collect(Collectors.toList());
+    Map<String, List<Object>> attributesToCast = userGroups.stream()
+        .map(userGroup -> new SimpleEntry<>(userGroup.getProfile().name(),
+            userGroup.getGroup().getId()))
+        .collect(Collectors.groupingBy(
+            t -> t.getKey(), Collectors.mapping(t -> t.getValue(), Collectors.toList())));
+    Map<String, Object> attributes = (Map<String, Object>) (Object) attributesToCast;
+    attributes.put("highest_profile", user.getProfile().name());
+    attributes.putIfAbsent(Profile.UserAdmin.name(), Collections.emptyList());
+    attributes.putIfAbsent(Profile.Reviewer.name(), Collections.emptyList());
+    attributes.putIfAbsent(Profile.RegisteredUser.name(), Collections.emptyList());
+    attributes.putIfAbsent(Profile.Editor.name(), Collections.emptyList());
+    OAuth2UserAuthority authority = new OAuth2UserAuthority("gn", attributes);
 
     return org.springframework.security.core.userdetails.User
         .withUsername(user.getUsername())
         .password(user.getPassword())
-        .roles(user.getProfile().name())
-        .authorities(authorities)
+        .authorities(Collections.singletonList(authority))
         .build();
   }
 }
