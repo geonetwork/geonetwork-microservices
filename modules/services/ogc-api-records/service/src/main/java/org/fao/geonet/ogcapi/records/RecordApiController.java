@@ -19,7 +19,9 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -87,6 +89,7 @@ public class RecordApiController implements RecordApi {
       String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+
 
       ObjectMapper mapper = new ObjectMapper();
       JsonFactory factory = mapper.getFactory();
@@ -248,9 +251,10 @@ public class RecordApiController implements RecordApi {
       String query = RecordsEsQueryBuilder
           .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
 
+     
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
-      streamResult(response, queryResponse, MediaType.APPLICATION_JSON_VALUE);
+      streamResult(response, queryResponse, getResponseContentType(request));
 
       return ResponseEntity.ok().build();
     } catch (Exception ex) {
@@ -362,5 +366,33 @@ public class RecordApiController implements RecordApi {
     } finally {
       out.flush();
     }
+  }
+
+
+  /**
+   * Calculates the response content type.
+   *
+   */
+  private String getResponseContentType(HttpServletRequest request) {
+    String mediaType = "";
+    String formatParam = request.getParameter("f");
+
+    if (StringUtils.isNotEmpty(formatParam)) {
+      if (formatParam.equalsIgnoreCase("xml")) {
+        mediaType = MediaType.APPLICATION_XML_VALUE;
+      } else if (formatParam.equalsIgnoreCase("json")) {
+        mediaType = MediaType.APPLICATION_JSON_VALUE;
+      } else if (formatParam.equalsIgnoreCase("dcat")) {
+        mediaType = "application/gn-dcat";
+      }
+    } else {
+      mediaType = request.getHeader("Accept");
+    }
+
+    if (StringUtils.isEmpty(mediaType)) {
+      mediaType = MediaType.APPLICATION_JSON_VALUE;
+    }
+
+    return mediaType;
   }
 }
