@@ -85,9 +85,12 @@
                   </xsl:for-each>
                 </div>
               </div>
+            </div>
 
+            <div class="w-full border-t-4 border-blue-900 bg-gray-100 p-2 text-gray-800">
               <xsl:apply-templates mode="landingpage" select="$metadata"/>
             </div>
+
           </section>
         </xsl:with-param>
       </xsl:call-template>
