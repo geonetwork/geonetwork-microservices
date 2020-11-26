@@ -2,7 +2,12 @@ package org.fao.geonet.ogcapi.records.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.springframework.boot.context.properties.ConstructorBinding;
@@ -13,6 +18,10 @@ import org.springframework.stereotype.Component;
 public class RecordsEsQueryBuilder {
 
   private static OgcApiConfiguration configuration;
+
+  private static List<String> defaultSources = Arrays.asList("resourceTitle", "resourceAbstract",
+      "resourceType", "uuid", "schema", "link", "allKeywords",
+      "contactForResource", "cl_status", "edit", "id");
 
   public RecordsEsQueryBuilder(OgcApiConfiguration configuration) {
     this.configuration = configuration;
@@ -86,13 +95,16 @@ public class RecordsEsQueryBuilder {
       sortByValue = String.join(",", sortByList);
     }
 
+    Set<String> sources = new HashSet(defaultSources);
+    sources.addAll(configuration.getSources());
+
     return String.format("{\"from\": %d, \"size\": %d, "
             + "\"_source\": [%s],"
             + "\"sort\": [%s],"
             + "\"query\": {\"query_string\": "
             + "{\"query\": \"%s +isTemplate:n\"}} %s} ",
         startIndex, limit,
-        configuration.getSources()
+        sources
             .stream()
             .collect(Collectors.joining("\",\"", "\"", "\"")),
         sortByValue, collectionFilter, geoFilter);

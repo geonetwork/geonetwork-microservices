@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
@@ -56,19 +57,23 @@ public class ElasticSearchProxy {
       RESPONSE_PROCESSOR =
       Map.of(
           "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
+          "json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
           "application/xml", XmlResponseProcessorImpl.class,
+          "xml", XmlResponseProcessorImpl.class,
           "application/rss+xml", RssResponseProcessorImpl.class,
           "application/gn-own", XsltResponseProcessorImpl.class,
-          "application/gn-dcat", XsltResponseProcessorImpl.class
+          "application/gn-dcat", XsltResponseProcessorImpl.class,
+          "dcat", XsltResponseProcessorImpl.class
       );
 
   static final Map<String, String>
       ACCEPT_FORMATTERS =
       Map.of(
           "application/gn-own", "copy",
-          "application/gn-dcat", "dcat"
+          "application/gn-dcat", "dcat",
+          "dcat", "dcat"
       );
 
   private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.searching");
@@ -431,10 +436,19 @@ public class ElasticSearchProxy {
   }
 
   private boolean isSearch(HttpServletRequest request) {
-    String accept = request.getHeader("Accept");
+    String accept = getAcceptValue(request);
     return RESPONSE_PROCESSOR.containsKey(accept);
   }
 
+
+  private String getAcceptValue(HttpServletRequest request) {
+    String accept = request.getParameter("f");
+    if (StringUtils.isEmpty(accept)) {
+      accept = request.getHeader("Accept");
+    }
+
+    return accept;
+  }
 
   /**
    * Gets the encoding of the content sent by the remote host: extracts the content-encoding
@@ -611,7 +625,7 @@ public class ElasticSearchProxy {
       InputStream streamFromServer, OutputStream streamToClient,
       boolean addPermissions, String selectionBucket, UserInfo userInfo) throws Exception {
 
-    String acceptHeader = request.getHeader("Accept");
+    String acceptHeader = getAcceptValue(request);
     Class<? extends SearchResponseProcessor> responseProcessorClass =
         RESPONSE_PROCESSOR.get(acceptHeader);
     if (responseProcessorClass == null) {
