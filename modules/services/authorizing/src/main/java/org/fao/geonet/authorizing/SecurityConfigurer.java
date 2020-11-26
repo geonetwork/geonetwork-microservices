@@ -5,10 +5,9 @@
 
 package org.fao.geonet.authorizing;
 
-import org.fao.geonet.common.GnUserAuthentificationConverter;
-import org.springframework.context.annotation.Bean;
+import org.fao.geonet.common.TokenStoreConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,28 +17,34 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-@Configuration
+@Configuration()
 @EnableAuthorizationServer
+@Import(TokenStoreConfig.class)
 public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
 
   AuthenticationManager authenticationManager;
   PasswordEncoder passwordEncoder;
   UserDetailsService userDetailsService;
+  AccessTokenConverter accessTokenConverter;
+  TokenStore tokenStore;
 
   /**
    * Configure security.
    */
-  public SecurityConfigurer(AuthenticationConfiguration authenticationConfiguration,
-      PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) throws Exception {
+  public SecurityConfigurer(
+      AuthenticationConfiguration authenticationConfiguration,
+      PasswordEncoder passwordEncoder,
+      UserDetailsService userDetailsService,
+      TokenStore tokenStore,
+      AccessTokenConverter accessTokenConverter) throws Exception {
     this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
     this.passwordEncoder = passwordEncoder;
     this.userDetailsService = userDetailsService;
+    this.tokenStore = tokenStore;
+    this.accessTokenConverter = accessTokenConverter;
   }
 
   @Override
@@ -66,39 +71,9 @@ public class SecurityConfigurer extends AuthorizationServerConfigurerAdapter {
    */
   public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
     endpoints.authenticationManager(this.authenticationManager)
-        .accessTokenConverter(accessTokenConverter())
+        .accessTokenConverter(accessTokenConverter)
         .userDetailsService(userDetailsService)
-        .tokenStore(tokenStore());
+        .tokenStore(tokenStore);
   }
 
-  @Bean
-  public TokenStore tokenStore() {
-    return new JwtTokenStore(accessTokenConverter());
-  }
-
-  /**
-   * Access token converter which set signing key.
-   */
-  @Bean
-  public JwtAccessTokenConverter accessTokenConverter() {
-    JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-    converter.setSigningKey("123");
-    DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-    accessTokenConverter.setUserTokenConverter(new GnUserAuthentificationConverter());
-    converter.setAccessTokenConverter(accessTokenConverter);
-    return converter;
-  }
-
-
-  /**
-   * A default token service using JWT token store.
-   */
-  @Bean
-  @Primary
-  public DefaultTokenServices tokenServices() {
-    DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-    defaultTokenServices.setTokenStore(tokenStore());
-    defaultTokenServices.setSupportRefreshToken(true);
-    return defaultTokenServices;
-  }
 }
