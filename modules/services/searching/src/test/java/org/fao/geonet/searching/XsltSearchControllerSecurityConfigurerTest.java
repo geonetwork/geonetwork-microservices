@@ -72,9 +72,9 @@ public class XsltSearchControllerSecurityConfigurerTest {
   private MockMvc mockMvc;
 
   @Test
-  public void withProfileAndGroupsForEveryRoles() throws Exception {
+  public void withHighestProfileAndGroupsForEveryRoles() throws Exception {
     Map gnAuthAttributes = new HashMap();
-    gnAuthAttributes.put("higher_profile", Profile.Editor.name());
+    gnAuthAttributes.put("highest_profile", Profile.Editor.name());
     Stream.of(Profile.values())
         .forEach(profile -> {if (profile.ordinal() >0) {gnAuthAttributes.put(profile.name(), Arrays.asList(profile.ordinal() + 42));}});
     GrantedAuthority gnAuthority = new OAuth2UserAuthority("gn", gnAuthAttributes);
