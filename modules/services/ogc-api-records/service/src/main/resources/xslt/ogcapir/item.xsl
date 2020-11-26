@@ -14,9 +14,6 @@
   <xsl:import href="formats/landingpage/landingpage.xsl"/>
 
   <xsl:template match="/">
-    <xsl:message>
-      <xsl:copy-of select="$i18nStandard/labels"/>
-    </xsl:message>
 
     <xsl:variable name="item"
                   select="model/items/item"/>

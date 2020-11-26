@@ -9,7 +9,6 @@
   <!-- Browse the tree here and add specific schema templates
   to catch what should be displayed in that mode. -->
   <xsl:template match="@*|node()" mode="landingpage">
-    <xsl:message>name <xsl:value-of select="name()"/></xsl:message>
     <xsl:apply-templates mode="landingpage" select="*|@*"/>
   </xsl:template>
 </xsl:stylesheet>
