@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -338,8 +339,12 @@ public class RecordApiController implements RecordApi {
 
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
+    List<Item> items = new ArrayList<>();
+    // TODO: Populate the list from the search.
+    items.add(new Item("7e98455f-8bcd-4162-85ed-2770c28112b3", null, null));
+    modelSource.setItems(items);
     model.addAttribute("source", modelSource.toSource());
-    model.addAttribute("language", language);
+    XsltViewConfig.addi18n(model, locale);
     return "ogcapir/collection";
   }
 

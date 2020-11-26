@@ -46,7 +46,7 @@
                               select="if (empty($properties[1])) then name else $properties[1]"/>
               <xsl:with-param name="subTitle"
                               select="if (empty($properties[2])) then '' else $properties[2]"/>
-              <xsl:with-param name="logo" select="if (type = 'harvester') then concat($logoFolder, '/', uuid, '.png') else concat($harvestingFolder, '/', logo)"/>
+              <xsl:with-param name="logo" select="gn-util:getCollectionLogo(.)"/>
               <xsl:with-param name="url" select="concat('/collections/', uuid)"/>
             </xsl:call-template>
           </xsl:for-each>
@@ -66,7 +66,7 @@
       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow transition duration-200 hover:bg-gray-100">
         <a href="{$url}" class="flex flex-wrap no-underline hover:no-underline">
           <div class="flex items-end bg-cover w-full h-60"
-               style="background-image: url({$base}{$logo})">
+               style="background-image: url({$logo})">
             <div class="w-full bg-gray-900 bg-opacity-75 font-bold text-xl text-center text-white py-6 mb-6">
               <xsl:value-of select="$title"/>
             </div>
@@ -90,8 +90,11 @@
                   as="node()*"/>
 
     <xsl:variable name="mainCollection"
-                  select="$collections[type = 'portal' or not(type)][1]"
+                  select="$collections[type = 'portal']"
                   as="node()?"/>
+    <xsl:variable name="mainCollectionName"
+                  select="gn-util:getCollectionName($mainCollection, $language)"/>
+
     <xsl:variable name="portals"
                   select="$collections[type = 'subportal']"
                   as="node()*"/>
@@ -102,13 +105,23 @@
     <html>
       <xsl:attribute name="lang" select="$language"/>
       <xsl:call-template name="html-head">
-        <xsl:with-param name="title" select="$mainCollection/name"/>
+        <xsl:with-param name="title" select="$mainCollectionName"/>
       </xsl:call-template>
       <xsl:call-template name="html-body">
-        <xsl:with-param name="title" select="$mainCollection/name"/>
+        <xsl:with-param name="logo">
+          <img src="{gn-util:getCollectionLogo($mainCollection)}"
+               class=""/>
+        </xsl:with-param>
+        <xsl:with-param name="title">
+          <xsl:value-of select="$mainCollectionName"/>
+        </xsl:with-param>
+        <xsl:with-param name="link" select="'/collection/main'"/>
         <xsl:with-param name="content">
           <xsl:call-template name="html-breadcrumb">
-            <xsl:with-param name="breadcrumb" select="$mainCollection/name"/>
+            <xsl:with-param name="breadcrumb">
+              <xsl:value-of select="map:get($i18n, 'ogcapir.collections.browseCollection') || '&#160;'"/>
+              <a href="/collections/main"><xsl:value-of select="$mainCollectionName"/></a>
+            </xsl:with-param>
           </xsl:call-template>
 
           <xsl:call-template name="render-collection-family">
