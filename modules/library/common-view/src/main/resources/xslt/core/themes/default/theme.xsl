@@ -127,8 +127,8 @@
     <xsl:param name="breadcrumb" select="''" as="item()*"/>
     <xsl:param name="header" select="''" as="item()*"/>
 
-    <div class="pt-24">
-      <div class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center z-1">
+    <div class="pt-24 pb-4">
+      <div class="container mx-auto flex flex-wrap flex-col md:flex-row items-center z-30">
         <xsl:if test="$breadcrumb">
           <div
             class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
