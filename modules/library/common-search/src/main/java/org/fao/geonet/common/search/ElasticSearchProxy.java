@@ -1,5 +1,7 @@
 package org.fao.geonet.common.search;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
+import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
@@ -123,6 +126,25 @@ public class ElasticSearchProxy {
         requestBody, userInfo, true, selectionBucket);
   }
 
+  /**
+   * Returns the results in EsSearchResults instance.
+   *
+   */
+  public EsSearchResults searchAndGetResultAsObject(
+      HttpSession httpSession,
+      HttpServletRequest request,
+      String body,
+      String selectionBucket) throws Exception {
+
+    UserInfo userInfo = getUserInfo();
+
+    String requestBody = processSearchQuery(body, selectionBucket, userInfo);
+
+    EsSearchResults results = handleRequestAndGetObjectResult(httpSession, request,
+        requestBody, userInfo, true, selectionBucket);
+
+    return results;
+  }
 
   /**
    * Process the ES request adding additional filters for privileges, etc. and returns the ES
@@ -435,6 +457,31 @@ public class ElasticSearchProxy {
           "Failed to request index at URL %s. Check configuration.",
           esUrl), e);
     }
+  }
+
+  /**
+   * Query ES and returns the result as a EsSearchResults object.
+   */
+  private EsSearchResults handleRequestAndGetObjectResult(HttpSession httpSession,
+      HttpServletRequest request,
+      String requestBody,
+      UserInfo userInfo,
+      boolean addPermissions,
+      String selectionBucket) throws Exception {
+
+    String resultAsJson =  handleRequestAndGetResult(httpSession, request, requestBody,
+        userInfo, addPermissions, selectionBucket);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    JsonFactory factory = objectMapper.getFactory();
+
+    JsonParser parser = factory.createParser(resultAsJson);
+    JsonNode actualObj = objectMapper.readTree(parser);
+
+    EsSearchResults results = objectMapper.readValue(actualObj.get("hits").toPrettyString(),
+        EsSearchResults.class);
+
+    return results;
   }
 
   private boolean isSearch(HttpServletRequest request) {
