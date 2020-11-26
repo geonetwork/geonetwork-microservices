@@ -58,7 +58,7 @@
     <xsl:param name="link" as="xs:string?" required="false"/>
 
     <nav id="header" class="fixed w-full z-30 top-0 text-white">
-      <div class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
+      <div class="w-full container mx-auto flex flex-no-wrap items-center justify-between mt-0 py-2">
         <xsl:if test="$logo">
           <div class="flex-shrink items-center w-10">
             <xsl:copy-of select="$logo"/>
@@ -68,7 +68,7 @@
           <xsl:choose>
             <xsl:when test="$title instance of xs:string">
               <a
-                class="toggleColour text-white
+                class="toggleColour text-white truncate
                        no-underline hover:no-underline font-bold
                        text-2xl lg:text-4xl"
                 href="{if ($link) then $link else '#'}">

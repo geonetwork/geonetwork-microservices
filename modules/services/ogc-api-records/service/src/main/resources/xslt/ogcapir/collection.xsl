@@ -65,7 +65,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                   <a href="{$collection/uuid}/items">
-                    <button class="p-4 rounded-full bg-gray-800
+                    <button class="p-4 rounded-full bg-gray-800 text-white
                                transition duration-500 ease-in-out
                                hover:underline
                                focus:outline-none focus:shadow-outline
