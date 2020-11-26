@@ -15,7 +15,7 @@
 
   <xsl:template match="/">
     <xsl:message>
-      <xsl:copy-of select="."/>
+      <xsl:copy-of select="$i18nStandard/labels"/>
     </xsl:message>
 
     <xsl:variable name="item"

@@ -28,6 +28,7 @@
     <module>common-error</module>
     <module>common-view</module>
     <module>common-persistence</module>
+    <module>common-standards</module>
   </modules>
 
 </project>
