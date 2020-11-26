@@ -53,7 +53,6 @@
             <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">
               <xsl:choose>
                 <xsl:when test="model/items">
-
                   <ul>
                     <xsl:for-each select="model/items/item">
                       <li>

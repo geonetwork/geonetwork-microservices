@@ -12,7 +12,6 @@
   <xsl:import href="themes/default/theme.xsl"/>
 
   <xsl:template match="/">
-    <xsl:message>Processing doc: <xsl:copy-of select="."/></xsl:message>
     <html>
       <xsl:attribute name="lang" select="$language"/>
       <xsl:call-template name="html-head"/>
