@@ -21,8 +21,6 @@ import org.fao.geonet.repository.UserRepository;
 import org.fao.geonet.repository.specification.UserGroupSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,30 +41,14 @@ public class GnUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String userNameOrEmail) throws UsernameNotFoundException {
-    return retrieveUser(userNameOrEmail, null);
-  }
-
-  protected UserDetails retrieveUser(
-      String userNameOrEmail,
-      UsernamePasswordAuthenticationToken authentication)
-      throws AuthenticationException {
-
-    User user = userRepository
-        .findOneByUsernameAndSecurityAuthTypeIsNullOrEmpty(userNameOrEmail);
+    User user = userRepository.findOneByUsernameAndSecurityAuthTypeIsNullOrEmpty(userNameOrEmail);
     if (user == null && checkUserNameOrEmail) {
       user = userRepository
           .findOneByEmailAndSecurityAuthTypeIsNullOrEmpty(userNameOrEmail);
     }
-    if (user != null) {
-      if (authentication != null && authentication.getCredentials() != null) {
-        String hash = user.getPassword();
-        user.getSecurity().setPassword(hash);
-      }
-    }
     if (user == null) {
       throw new UsernameNotFoundException(userNameOrEmail);
     }
-
     Specification<UserGroup> thisUser = where(UserGroupSpecs.hasUserId(user.getId()));
     List<UserGroup> userGroups = userGroupRepository.findAll(thisUser);
 
