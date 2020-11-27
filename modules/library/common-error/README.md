@@ -1,5 +1,8 @@
 ## Error
 
+The error module defines rules and core implementation of error handling and capacity to return multilingual error messages in format corresponding to the request.
+
+
 Errors handling conventions:
 
 * All errors are localized. Use `exception.properties` file:
