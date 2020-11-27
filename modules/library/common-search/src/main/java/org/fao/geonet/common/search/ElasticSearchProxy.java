@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.fao.geonet.common.search.domain.Profile;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
@@ -41,6 +43,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -622,20 +628,23 @@ public class ElasticSearchProxy {
   }
 
   private UserInfo getUserInfo() {
-    //String name = SecurityContextHolder.getContext().getAuthentication().getName();
-    List<Integer> viewingGroup = new ArrayList<>();
-    List<Integer> editingGroup = new ArrayList<>();
-
-    /*if (!name.equalsIgnoreCase("anonymousUser")) {
-      Map claims = (Map) SecurityContextHolder.getContext().getAuthentication().getDetails();
-      viewingGroup = (List<Integer>) claims.get("_viewingGroup");
-      editingGroup = (List<Integer>) claims.get("_editingGroup");
-   }*/
-
     UserInfo userInfo = new UserInfo();
-    //userInfo.setUserName(name);
-    userInfo.setViewingGroups(viewingGroup);
-    userInfo.setEditingGroups(editingGroup);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication.getPrincipal().toString().equalsIgnoreCase("anonymousUser")) {
+      userInfo.setViewingGroups(Collections.emptyList());
+      userInfo.setEditingGroups(Collections.emptyList());
+      return userInfo;
+    }
+
+    userInfo.setUserName(authentication.getName());
+    GrantedAuthority authority = authentication.getAuthorities().stream().findFirst().get();
+    if (authority.getAuthority().equals("gn")) {
+      OAuth2UserAuthority userAuthority = (OAuth2UserAuthority) authority;
+      userInfo.setViewingGroups(
+          (List<Integer>) userAuthority.getAttributes().get(Profile.Reviewer.name()));
+      userInfo.setEditingGroups(
+          (List<Integer>) userAuthority.getAttributes().get(Profile.Editor.name()));
+    }
 
     return userInfo;
   }
