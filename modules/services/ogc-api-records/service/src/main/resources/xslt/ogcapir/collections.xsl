@@ -115,7 +115,7 @@
         <xsl:with-param name="title">
           <xsl:value-of select="$mainCollectionName"/>
         </xsl:with-param>
-        <xsl:with-param name="link" select="'/collection/main'"/>
+        <xsl:with-param name="link" select="concat($requestUrl, 'main')"/>
         <xsl:with-param name="content">
           <xsl:call-template name="html-breadcrumb">
             <xsl:with-param name="breadcrumb">
