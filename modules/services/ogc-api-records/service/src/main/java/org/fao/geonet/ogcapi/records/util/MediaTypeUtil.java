@@ -9,7 +9,10 @@ import org.springframework.web.context.request.WebRequest;
 public class MediaTypeUtil {
 
   public static final List<MediaType> supportedMediaTypes =
-      Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_HTML);
+      Arrays.asList(
+          MediaType.APPLICATION_JSON,
+          MediaType.APPLICATION_XML,
+          MediaType.TEXT_HTML);
 
   public static boolean isSupportedMediaType(MediaType mediaType) {
     return supportedMediaTypes.contains(mediaType);

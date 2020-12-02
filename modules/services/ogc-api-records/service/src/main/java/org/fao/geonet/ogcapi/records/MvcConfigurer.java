@@ -31,6 +31,7 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
     configurer
         .favorParameter(true)
         .parameterName("f")
+        .mediaType("html", MediaType.TEXT_HTML)
         .defaultContentType(MediaType.APPLICATION_JSON);
   }
 
