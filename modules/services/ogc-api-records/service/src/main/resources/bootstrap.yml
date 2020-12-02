@@ -20,6 +20,10 @@ gn:
       - "edit"
 server:
   port: 8080
+#  address: localhost
+#  forward-headers-strategy: NATIVE
+#  servlet:
+#    context-path: /ogcapi
   instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
 spring:
   application.name: ogc-records-service
@@ -79,6 +83,8 @@ eureka:
     registerWithEureka: false
     fetch-registry: false
 gn:
+  baseurl: http://localhost:9901
+  legacy.url: http://localhost:8080/geonetwork
   index.url: http://localhost:9200
 #logging.level:
 #  org.springframework: DEBUG

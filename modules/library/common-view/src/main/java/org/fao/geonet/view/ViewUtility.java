@@ -13,11 +13,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import net.sf.saxon.s9api.XdmMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -31,15 +33,26 @@ public class ViewUtility {
   @Autowired
   ViewUtility self; // For cache to work.
 
-  public void addi18n(Model model, Locale locale) {
-    addi18n(model, locale, new ArrayList<>());
+  @Value("${gn.baseurl}")
+  String baseUrl;
+
+  @Value("${gn.legacy.url}")
+  String geonetworkUrl;
+
+  public void addi18n(Model model, Locale locale, HttpServletRequest request) {
+    addi18n(model, locale, new ArrayList<>(), request);
   }
 
   /**
    * Adds language and map of translations as parameters to the model.
    */
-  public void addi18n(Model model, Locale locale, List<String> standards) {
+  public void addi18n(Model model, Locale locale,
+      List<String> standards,
+      HttpServletRequest request) {
     String twoLetterCode = locale.getLanguage();
+    model.addAttribute("requestUrl", request.getRequestURL());
+    model.addAttribute("geonetworkUrl", geonetworkUrl);
+    model.addAttribute("baseUrl", baseUrl);
     model.addAttribute("language", twoLetterCode);
     model.addAttribute("language3letters", locale.getISO3Language());
 

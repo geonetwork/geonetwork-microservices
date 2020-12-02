@@ -17,7 +17,7 @@
         </div>
 
         <gn-ui-record-data uuid="12345" bbox="" links="">
-          <img src="{$base}/srv/api/records/{gmd:fileIdentifier/*/text()}/extents.png"
+          <img src="{$geonetworkUrl}/srv/api/records/{gmd:fileIdentifier/*/text()}/extents.png"
                class="w-full rounded"/>
         </gn-ui-record-data>
       </section>

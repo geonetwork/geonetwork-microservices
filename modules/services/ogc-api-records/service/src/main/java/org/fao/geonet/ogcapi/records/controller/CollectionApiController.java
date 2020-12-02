@@ -80,13 +80,14 @@ public class CollectionApiController implements CollectionApi {
       produces = {"text/html"})
   public String describeCollectionAsHtml(
       @PathVariable("collectionId") String collectionId,
+      HttpServletRequest request,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
     model.addAttribute("source", modelSource.toSource());
-    viewUtility.addi18n(model, locale);
+    viewUtility.addi18n(model, locale, request);
     return "ogcapir/collection";
   }
 

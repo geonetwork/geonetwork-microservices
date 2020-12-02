@@ -67,4 +67,7 @@ Start as a standalone module:
 ```shell script
 mvn package
 SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api-records.jar 
+
+# With custom configuration
+SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.location=./config/ -jar target/gn-ogc-api-records.jar
 ```
