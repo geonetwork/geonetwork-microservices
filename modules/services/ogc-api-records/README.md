@@ -57,3 +57,11 @@ curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
 
 API also `f` URL parameter to set the output format eg. http://localhost:9991/collections?f=xml
 
+
+
+Start as a standalone module:
+
+```shell script
+mvn package
+SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api-records.jar 
+```

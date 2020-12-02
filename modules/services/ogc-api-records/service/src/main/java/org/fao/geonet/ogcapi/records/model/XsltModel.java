@@ -30,6 +30,7 @@ import org.fao.geonet.domain.Source;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso({Source.class})
 public class XsltModel {
+
   Map<String, String> i18n;
   Map<String, String> settings;
 

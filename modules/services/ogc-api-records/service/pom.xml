@@ -17,6 +17,7 @@
   <artifactId>gn-ogc-api-records-service</artifactId>
   <name>OGC API Records service</name>
   <url>http://geonetwork-opensource.org</url>
+  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
@@ -93,11 +94,13 @@
         <executions>
           <execution>
             <goals>
+              <goal>repackage</goal>
               <goal>build-info</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
+          <mainClass>org.fao.geonet.ogcapi.records.OgcApiRecordApp</mainClass>
           <excludes>
             <exclude>
               <groupId>org.springframework.boot</groupId>
