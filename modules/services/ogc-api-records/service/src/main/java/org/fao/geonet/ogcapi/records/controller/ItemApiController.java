@@ -175,7 +175,7 @@ public class ItemApiController implements RecordApi {
           String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
-          String recordId,
+      String recordId,HttpServletRequest request,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
@@ -184,8 +184,6 @@ public class ItemApiController implements RecordApi {
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
     }
-
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
 
     try {
       //      String collectionFilter = collectionService.retrieveCollectionFilter(source);
@@ -214,7 +212,7 @@ public class ItemApiController implements RecordApi {
           new Item(recordId, null, record.getData())
       ));
       model.addAttribute("source", modelSource.toSource());
-      viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()));
+      viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()), request);
       return "ogcapir/item";
     } catch (Exception ex) {
       // TODO: Log exception
@@ -380,7 +378,7 @@ public class ItemApiController implements RecordApi {
     modelSource.setCollection(source);
     modelSource.setResults(results);
     model.addAttribute("source", modelSource.toSource());
-    viewUtility.addi18n(model, locale);
+    viewUtility.addi18n(model, locale, request);
     return "ogcapir/collection";
   }
 

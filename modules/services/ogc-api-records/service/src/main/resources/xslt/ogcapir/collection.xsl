@@ -68,12 +68,11 @@
                   </div>
 
                   <xsl:for-each select="model/results/results">
-                    <xsl:message><xsl:copy-of select="."/></xsl:message>
                     <xsl:call-template name="html-record-preview-title"/>
                   </xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>
-                  <a href="{$collection/uuid}/items">
+                  <a href="{$requestUrl}/items">
                     <button class="p-4 rounded-full bg-gray-800 text-white
                                transition duration-500 ease-in-out
                                hover:underline

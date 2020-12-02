@@ -137,13 +137,14 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       @RequestParam(required = false) Integer limit,
       @RequestParam(required = false) ArrayList<BigDecimal> bbox,
       @RequestParam(required = false) String time,
+      HttpServletRequest request,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
-    viewUtility.addi18n(model, locale);
+    viewUtility.addi18n(model, locale, request);
     return "ogcapir/collections";
   }
 }
