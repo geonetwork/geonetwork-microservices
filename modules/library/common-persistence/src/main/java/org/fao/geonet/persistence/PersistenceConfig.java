@@ -9,7 +9,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -20,9 +19,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EntityScan(basePackages = { "org.fao.geonet.domain"})
 @EnableJpaRepositories(
     basePackages = "org.fao.geonet.repository",
+    entityManagerFactoryRef = "gnEntityManager",
     repositoryBaseClass = GeonetRepositoryImpl.class)
 public class PersistenceConfig {
 
@@ -32,12 +31,17 @@ public class PersistenceConfig {
   /**
    * Entity manager scan config.
    */
-  @Bean
+  @Bean(name = "gnEntityManager")
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     LocalContainerEntityManagerFactoryBean em
         = new LocalContainerEntityManagerFactoryBean();
+    em.setPersistenceUnitName("gn-cloud-persistent-default");
     em.setDataSource(dataSource);
-    em.setPackagesToScan(new String[]{"org.fao.geonet.model"});
+    em.setPackagesToScan(new String[]{
+        "org.fao.geonet.repository",
+        "org.fao.geonet.domain"});
+    // TODO: Would be good to only load a subset of the model
+    //  depending on service needs
 
     JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     em.setJpaVendorAdapter(vendorAdapter);
@@ -45,6 +49,7 @@ public class PersistenceConfig {
     Properties jpaProperties = new Properties();
     jpaProperties.put("hibernate.enable_lazy_load_no_trans", true);
     em.setJpaProperties(jpaProperties);
+
     return em;
   }
 }

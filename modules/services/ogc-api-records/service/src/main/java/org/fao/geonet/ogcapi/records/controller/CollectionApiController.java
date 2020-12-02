@@ -1,19 +1,18 @@
-package org.fao.geonet.ogcapi.records;
+package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.ApiParam;
 import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.CollectionApi;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.view.ViewUtility;
-import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,13 +29,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class CollectionApiController implements CollectionApi {
 
   @Autowired
+  ViewUtility viewUtility;
+  @Autowired
   private NativeWebRequest nativeWebRequest;
-
   @Autowired
   private CollectionService collectionService;
-
-  @Autowired
-  ViewUtility viewUtility;
 
   /**
    * Describe a collection.

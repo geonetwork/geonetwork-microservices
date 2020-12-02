@@ -5,6 +5,7 @@
 
 package org.fao.geonet.ogcapi.records;
 
+import org.fao.geonet.ogcapi.records.controller.CapabilitiesApiController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -17,10 +18,11 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @RefreshScope
 @Import({CapabilitiesApiController.class})
-@ComponentScan({"org.fao.geonet"})
+@ComponentScan({"org.fao.geonet", "org.fao.geonet.domain"})
 @Configuration
 @EnableCaching
 public class OgcApiRecordApp {
+
   public static void main(String[] args) {
     SpringApplication.run(OgcApiRecordApp.class, args);
   }

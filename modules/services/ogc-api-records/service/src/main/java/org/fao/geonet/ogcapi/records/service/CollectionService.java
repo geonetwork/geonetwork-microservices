@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CollectionService {
+
   private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.ogcapi.records");
 
   @Autowired
@@ -36,7 +37,6 @@ public class CollectionService {
 
   /**
    * Checks if a collection is defined.
-   *
    */
   public boolean existsCollection(String collectionId) {
     Source source = retrieveSourceForCollection(collectionId);
@@ -47,7 +47,6 @@ public class CollectionService {
 
   /**
    * Retrieves the Source object related to a collection.
-   *
    */
   @Nullable
   public Source retrieveSourceForCollection(String collectionId) {
@@ -67,7 +66,6 @@ public class CollectionService {
 
   /**
    * Retrieves the ElasticSearch filter related to a collection.
-   *
    */
   public String retrieveCollectionFilter(Source source) {
     String collectionFilter = "";
@@ -82,9 +80,7 @@ public class CollectionService {
   }
 
   /**
-   * Retrieves the sortables related to a collection
-   * from the user interface configuration.
-   *
+   * Retrieves the sortables related to a collection from the user interface configuration.
    */
   public List<Object> getSortables(Source source) {
     List<Object> sortables = new ArrayList<>();

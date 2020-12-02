@@ -3,7 +3,7 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.ogcapi.records;
+package org.fao.geonet.ogcapi.records.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.CapabilitiesApi;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -20,7 +21,6 @@ import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.view.ViewUtility;
-import org.fao.geonet.view.XsltViewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -42,13 +42,10 @@ public class CapabilitiesApiController implements CapabilitiesApi {
 
   @Autowired
   ViewUtility viewUtility;
-
-  @Autowired
-  private SourceRepository sourceRepository;
-
   @Autowired
   ConcurrentMapCacheManager cacheManager;
-
+  @Autowired
+  private SourceRepository sourceRepository;
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
    * implemented.

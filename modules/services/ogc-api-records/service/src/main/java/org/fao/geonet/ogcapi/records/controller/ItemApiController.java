@@ -3,7 +3,7 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.ogcapi.records;
+package org.fao.geonet.ogcapi.records.controller;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiParam;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -24,6 +23,7 @@ import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
@@ -47,20 +47,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @Controller
-public class RecordApiController implements RecordApi {
-
-  @Autowired
-  private CollectionService collectionService;
+public class ItemApiController implements RecordApi {
 
   @Autowired
   ElasticSearchProxy proxy;
-
   @Autowired
   MetadataRepository metadataRepository;
-
   @Autowired
   ViewUtility viewUtility;
-
+  @Autowired
+  private CollectionService collectionService;
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
    * implemented.
@@ -92,7 +88,6 @@ public class RecordApiController implements RecordApi {
       String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
 
       ObjectMapper mapper = new ObjectMapper();
       JsonFactory factory = mapper.getFactory();
@@ -410,7 +405,6 @@ public class RecordApiController implements RecordApi {
 
   /**
    * Calculates the response content type.
-   *
    */
   private String getResponseContentType(HttpServletRequest request) {
     String mediaType = "";
