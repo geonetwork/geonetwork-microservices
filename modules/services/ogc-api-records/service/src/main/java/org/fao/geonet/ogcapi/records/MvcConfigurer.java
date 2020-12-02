@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
@@ -33,19 +34,28 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .defaultContentType(MediaType.APPLICATION_JSON);
   }
 
+
   /**
-   * Resolve locale.
+   * Resolve locale based on l URL parameter or fallback on Header.
    */
   @Bean
   public LocaleResolver localeResolver() {
-    final AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
+    final AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver() {
+      @Override
+      public Locale resolveLocale(HttpServletRequest request) {
+        String locale = request.getParameter("l");
+        return locale != null
+            ? org.springframework.util.StringUtils.parseLocaleString(locale)
+            : super.resolveLocale(request);
+      }
+    };
 
     List<Locale> supportedLocales = languageRepository
-        .findAll() //
-        .stream() //
-        .map(Language::getId) //
-        .map(Locale::forLanguageTag) //
-        .filter(Objects::nonNull) //
+        .findAll()
+        .stream()
+        .map(Language::getId)
+        .map(Locale::forLanguageTag)
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
     resolver.setSupportedLocales(supportedLocales);
