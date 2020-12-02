@@ -23,6 +23,9 @@ curl 127.0.0.1:9991/collections \
 curl 127.0.0.1:9991/collections \
         -H "Accept: text/html" -H "Accept-Language: fr"
 
+curl 127.0.0.1:9991/collections.l=fr \
+        -H "Accept: text/html"
+
 firstCollection=$( \
 curl 127.0.0.1:9991/collections \
         -H "Accept: application/json" \

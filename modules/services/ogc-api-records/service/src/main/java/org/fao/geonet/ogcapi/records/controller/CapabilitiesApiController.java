@@ -16,6 +16,7 @@ import org.fao.geonet.ogcapi.records.CapabilitiesApi;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.fao.geonet.ogcapi.records.rest.ogc.model.Root;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -56,6 +57,34 @@ public class CapabilitiesApiController implements CapabilitiesApi {
   @Override
   public Optional<NativeWebRequest> getRequest() {
     return Optional.of(nativeWebRequest);
+  }
+
+  @Override
+  public ResponseEntity<Root> getLandingPage() {
+    String baseUrl = ((HttpServletRequest)
+        nativeWebRequest.getNativeRequest()).getRequestURL()
+        .toString();
+
+    Root root = new Root();
+    root.addLinksItem(new Link()
+        .href(baseUrl)
+        .rel("self").type(MediaType.APPLICATION_JSON.toString()));
+    //    root.addLinksItem(new Link()
+    //        .href(baseUrl + "conformance")
+    //        .rel("conformance").type(MediaType.APPLICATION_JSON.toString()));
+    root.addLinksItem(new Link()
+        .href(baseUrl + "collections?f=json")
+        .type("Catalogue collections")
+        .rel("self").type(MediaType.APPLICATION_JSON_VALUE));
+    root.addLinksItem(new Link()
+        .href(baseUrl + "collections?f=xml")
+        .type("Catalogue collections")
+        .rel("self").type(MediaType.APPLICATION_XML_VALUE));
+    root.addLinksItem(new Link()
+        .href(baseUrl + "collections?f=html")
+        .type("Catalogue collections")
+        .rel("self").type(MediaType.TEXT_HTML_VALUE));
+    return ResponseEntity.ok(root);
   }
 
   @Override
