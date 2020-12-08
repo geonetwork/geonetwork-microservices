@@ -52,11 +52,14 @@ public class GnUserDetailsService implements UserDetailsService {
     Specification<UserGroup> thisUser = where(UserGroupSpecs.hasUserId(user.getId()));
     List<UserGroup> userGroups = userGroupRepository.findAll(thisUser);
 
-    Map<String, List<Object>> attributesToCast = userGroups.stream()
-        .map(userGroup -> new SimpleEntry<>(userGroup.getProfile().name(),
+    Map<String, List<Integer>> attributesToCast = userGroups.stream()
+        .map(userGroup -> new SimpleEntry<>(
+            userGroup.getProfile().name(),
             userGroup.getGroup().getId()))
         .collect(Collectors.groupingBy(
-            t -> t.getKey(), Collectors.mapping(t -> t.getValue(), Collectors.toList())));
+            t -> t.getKey(),
+            Collectors.mapping(t -> t.getValue(), Collectors.toList())
+        ));
     Map<String, Object> attributes = (Map<String, Object>) (Object) attributesToCast;
     attributes.put("highest_profile", user.getProfile().name());
     attributes.putIfAbsent(Profile.UserAdmin.name(), Collections.emptyList());
