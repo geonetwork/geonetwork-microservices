@@ -222,6 +222,14 @@ public class ItemApiController implements RecordApi {
       //          MediaType.APPLICATION_XML_VALUE);
 
       Metadata record = metadataRepository.findOneByUuid(recordId);
+
+      if (record == null) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            messages.getMessage("ogcapir.exception.collectionItem.notFound",
+                new String[]{recordId, collectionId},
+                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+      }
+
       XsltModel modelSource = new XsltModel();
       modelSource.setCollection(source);
       modelSource.setItems(List.of(
