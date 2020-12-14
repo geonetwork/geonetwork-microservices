@@ -1,5 +1,5 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
+                xmlns:gn-ogcapir-util="https://geonetwork-opensource.org/gn-ogcapir-util"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 exclude-result-prefixes="#all"
                 version="3.0">
@@ -11,7 +11,7 @@
 
   <xsl:import href="classpath:xslt/core/commons/xsl-params-core.xsl"/>
   <xsl:import href="classpath:xslt/core/themes/default/theme.xsl"/>
-  <xsl:import href="collection-util.xsl"/>
+  <xsl:import href="collection-fn.xsl"/>
   <xsl:import href="html-util.xsl"/>
 
   <xsl:template match="/">
@@ -20,7 +20,7 @@
                   as="node()?"/>
 
     <xsl:variable name="label"
-                  select="gn-util:getCollectionName($collection, $language)"
+                  select="gn-ogcapir-util:getCollectionName($collection, $language)"
                   as="xs:string"/>
 
     <xsl:variable name="properties"
@@ -38,7 +38,7 @@
       </xsl:call-template>
       <xsl:call-template name="html-body">
         <xsl:with-param name="logo">
-          <img src="{gn-util:getCollectionLogo($collection)}"
+          <img src="{gn-ogcapir-util:getCollectionLogo($collection)}"
                class=""/>
         </xsl:with-param>
         <xsl:with-param name="title">
@@ -68,7 +68,7 @@
                   </div>
 
                   <xsl:for-each select="model/results/results">
-                    <xsl:call-template name="html-record-preview-title"/>
+                    <xsl:call-template name="render-record-preview-title"/>
                   </xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>

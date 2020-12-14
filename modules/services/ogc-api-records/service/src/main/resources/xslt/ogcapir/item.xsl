@@ -1,6 +1,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                xmlns:gn-util="https://geonetwork-opensource.org/gn-util"
+                xmlns:gn-ogcapir-util="https://geonetwork-opensource.org/gn-ogcapir-util"
                 exclude-result-prefixes="#all"
                 version="3.0">
 
@@ -12,7 +12,7 @@
   <xsl:import href="classpath:xslt/core/commons/xsl-params-core.xsl"/>
   <xsl:import href="classpath:xslt/core/themes/default/theme.xsl"/>
 
-  <xsl:import href="collection-util.xsl"/>
+  <xsl:import href="collection-fn.xsl"/>
   <xsl:import href="formats/landingpage/landingpage.xsl"/>
 
   <xsl:template match="/">
@@ -57,7 +57,7 @@
         <xsl:with-param name="logo">
           <img src="{if ($overviews[1])
                      then $overviews[1]/url || '?size=20'
-                     else gn-util:getCollectionLogo($collection)}"
+                     else gn-ogcapir-util:getCollectionLogo($collection)}"
                class=""/>
         </xsl:with-param>
         <xsl:with-param name="title" select="$title"/>
