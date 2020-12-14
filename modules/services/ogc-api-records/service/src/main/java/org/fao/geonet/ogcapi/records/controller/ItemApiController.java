@@ -32,6 +32,7 @@ import org.fao.geonet.ogcapi.records.util.XmlUtil;
 import org.fao.geonet.repository.MetadataRepository;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +58,9 @@ public class ItemApiController implements RecordApi {
   ViewUtility viewUtility;
   @Autowired
   private CollectionService collectionService;
+  @Autowired
+  MessageSource messages;
+
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
    * implemented.
@@ -77,7 +81,10 @@ public class ItemApiController implements RecordApi {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
     }
 
     HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
@@ -97,7 +104,10 @@ public class ItemApiController implements RecordApi {
       JsonNode totalValue = actualObj.get("hits").get("total").get("value");
 
       if ((totalValue == null) || (totalValue.intValue() == 0)) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            messages.getMessage("ogcapir.exception.collectionItem.notFound",
+                new String[]{recordId, collectionId},
+                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
       }
 
       JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
@@ -129,7 +139,10 @@ public class ItemApiController implements RecordApi {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
     }
 
     HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
@@ -146,7 +159,10 @@ public class ItemApiController implements RecordApi {
           .getNodeValue();
 
       if (Integer.parseInt(total) == 0) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            messages.getMessage("ogcapir.exception.collectionItem.notFound",
+                new String[]{recordId, collectionId},
+                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
       }
 
       Node metadataResult = queryResult.getChildNodes().item(0).getFirstChild();
