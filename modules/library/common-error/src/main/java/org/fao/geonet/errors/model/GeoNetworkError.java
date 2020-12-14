@@ -5,6 +5,7 @@
 
 package org.fao.geonet.errors.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,25 +32,32 @@ public class GeoNetworkError {
   String message;
 
   @XmlElement(nillable = true)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   String stackTrace;
 
   @XmlElement(nillable = true)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   String path;
 
   @XmlElement(nillable = true)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   List<GeoNetworkError> errors = new ArrayList<>();
 
   public GeoNetworkError(Exception exception, HttpStatus status) {
-    initialize(exception, status, "");
+    initialize(exception, "", status, "");
   }
 
-  public GeoNetworkError(Exception exception, HttpStatus status, String path) {
-    initialize(exception, status, path);
+
+  public GeoNetworkError(Exception exception, String errorMessage,
+      HttpStatus status, String path) {
+    initialize(exception, errorMessage, status, path);
   }
 
-  private void initialize(Exception exception, HttpStatus status, String path) {
+  private void initialize(Exception exception, String errorMessage,
+      HttpStatus status, String path) {
     setTimestamp(Instant.now().toString());
     setStatus(status);
+    setError(status.getReasonPhrase());
     if (exception != null) {
       setMessage(exception.getMessage());
       //    if(errorProperties.getIncludeStacktrace() != IncludeStacktrace.NEVER) {
@@ -57,6 +65,8 @@ public class GeoNetworkError {
           Arrays.stream(exception.getStackTrace()).map(StackTraceElement::toString).collect(
               Collectors.joining("\n")));
       //    }
+    } else {
+      setMessage(errorMessage);
     }
     setPath(path);
   }

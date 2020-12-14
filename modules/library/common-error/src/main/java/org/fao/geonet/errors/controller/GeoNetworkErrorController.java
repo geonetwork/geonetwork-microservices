@@ -102,8 +102,9 @@ public class GeoNetworkErrorController implements ErrorController {
   protected GeoNetworkError getError(HttpServletRequest request) {
     Integer status = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+    String errorMessage = (String) request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
     String path = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
-    return new GeoNetworkError(exception, HttpStatus.valueOf(status), path);
+    return new GeoNetworkError(exception, errorMessage, HttpStatus.valueOf(status), path);
   }
 
   @Override
