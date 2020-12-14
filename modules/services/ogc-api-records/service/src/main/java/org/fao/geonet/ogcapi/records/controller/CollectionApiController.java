@@ -13,6 +13,7 @@ import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +35,8 @@ public class CollectionApiController implements CollectionApi {
   private NativeWebRequest nativeWebRequest;
   @Autowired
   private CollectionService collectionService;
+  @Autowired
+  MessageSource messages;
 
   /**
    * Describe a collection.
@@ -51,7 +54,10 @@ public class CollectionApiController implements CollectionApi {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
     }
 
     String baseUrl = ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getRequestURL()
@@ -97,7 +103,10 @@ public class CollectionApiController implements CollectionApi {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
     }
 
     return ResponseEntity.ok(collectionService.getSortables(source));
