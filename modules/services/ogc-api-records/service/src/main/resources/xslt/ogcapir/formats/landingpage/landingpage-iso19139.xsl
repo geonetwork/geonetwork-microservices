@@ -5,7 +5,7 @@
                 exclude-result-prefixes="#all"
                 version="3.0">
 
-  <xsl:import href="../../schemas-utils/util-iso19139.xsl"/>
+  <xsl:import href="../../schemas/iso19139-tpl.xsl"/>
   <xsl:import href="../../html-util.xsl"/>
 
   <xsl:template match="gmd:MD_Metadata"
@@ -90,7 +90,7 @@
                   as="xs:string"/>
     <xsl:variable name="label"
                   select="($i18nStandard/labels/element[@name = $labelKey]/label/text())[1]"/>
-    <xsl:call-template name="html-field">
+    <xsl:call-template name="render-field">
       <xsl:with-param name="label" select="$label"/>
       <xsl:with-param name="text">
         <xsl:call-template name="getText"/>
@@ -107,7 +107,7 @@
                   as="xs:string"/>
     <xsl:variable name="label"
                   select="($i18nStandard/labels/element[@name = $labelKey]/label/text())[1]"/>-->
-    <xsl:call-template name="html-field">
+    <xsl:call-template name="render-field">
       <xsl:with-param name="label" select="*/gmd:dateType/*/@codeListValue"/>
       <xsl:with-param name="text">
         <xsl:value-of select="*/gmd:date/*/text()"/>
@@ -124,7 +124,7 @@
                   as="xs:string"/>
     <xsl:variable name="label"
                   select="($i18nStandard/labels/element[@name = $labelKey]/label/text())[1]"/>
-    <xsl:call-template name="html-field">
+    <xsl:call-template name="render-field">
       <xsl:with-param name="label" select="$label"/>
       <xsl:with-param name="text">
         <xsl:value-of select="@codeListValue"/>
