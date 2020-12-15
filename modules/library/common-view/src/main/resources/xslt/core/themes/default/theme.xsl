@@ -174,7 +174,7 @@
           <div class="flex-1 mb-6 text-black">
             <a
               class="text-orange-600 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-              href="{baseUrl}">/
+              href="{$baseUrl}">/
             </a>
           </div>
           <div class="flex-1">

@@ -108,7 +108,7 @@
               <xsl:with-param name="subTitle"
                               select="if (empty($properties[2])) then '' else $properties[2]"/>
               <xsl:with-param name="logo" select="gn-ogcapir-util:getCollectionLogo(.)"/>
-              <xsl:with-param name="url" select="concat($requestUrl, '/', uuid)"/>
+              <xsl:with-param name="url" select="concat($requestUrl, uuid)"/>
             </xsl:call-template>
           </xsl:for-each>
         </div>
