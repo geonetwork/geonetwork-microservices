@@ -5,8 +5,8 @@
 
 
   <xsl:template name="render-field">
-    <xsl:param name="label" as="xs:string"/>
-    <xsl:param name="text" as="xs:string"/>
+    <xsl:param name="label" as="xs:string?"/>
+    <xsl:param name="text" as="xs:string?"/>
 
     <div class="w-1/3">
       <xsl:value-of select="$label"/>
