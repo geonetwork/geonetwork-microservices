@@ -53,14 +53,14 @@ curl 127.0.0.1:9902/portal/api/search/records/rss \
 # XSLT based search service 
 # - Response in record format
 curl 127.0.0.1:9902/portal/api/search/records/xslt \
-    -H "Accept: application/gn-own" \
+    -H "Accept: application/gn+xml" \
     -H "Content-type: application/json" \
     -X POST \
     -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'
 
 # - Response in record DCAT format
 curl 127.0.0.1:9902/portal/api/search/records/xslt \
-    -H "Accept: application/gn-dcat" \
+    -H "Accept: application/dcat2+xml" \
     -H "Content-type: application/json" \
     -X POST \
     -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'

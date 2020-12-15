@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
@@ -32,6 +33,10 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .favorParameter(true)
         .parameterName("f")
         .mediaType("html", MediaType.TEXT_HTML)
+        .mediaType("dcat", GnMediaType.APPLICATION_DCAT2_XML)
+        .mediaType("gn", GnMediaType.APPLICATION_GN_XML)
+        .mediaType("iso19139", GnMediaType.APPLICATION_ISO19139_XML)
+        .mediaType("iso19115-3", GnMediaType.APPLICATION_ISO19115_3_XML)
         .defaultContentType(MediaType.APPLICATION_JSON);
   }
 

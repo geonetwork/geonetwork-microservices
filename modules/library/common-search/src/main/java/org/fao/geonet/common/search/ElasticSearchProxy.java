@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,24 +67,36 @@ public class ElasticSearchProxy {
   static final Map<String, Class<? extends SearchResponseProcessor>>
       RESPONSE_PROCESSOR =
       Map.of(
-          "application/json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
-          "text/html", JsonUserAndSelectionAwareResponseProcessorImpl.class,
+          MediaType.APPLICATION_JSON_VALUE,
+          JsonUserAndSelectionAwareResponseProcessorImpl.class,
+          MediaType.TEXT_HTML_VALUE,
+          JsonUserAndSelectionAwareResponseProcessorImpl.class,
           "json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
           // "text/plain", CsvResponseProcessorImpl.class,
-          // "application/gn+iso19139+default", FormatterResponseProcessorImpl.class,
-          "application/xml", XmlResponseProcessorImpl.class,
-          "xml", XmlResponseProcessorImpl.class,
-          "application/rss+xml", RssResponseProcessorImpl.class,
-          "application/gn-own", XsltResponseProcessorImpl.class,
-          "application/gn-dcat", XsltResponseProcessorImpl.class,
-          "dcat", XsltResponseProcessorImpl.class
+          // "application/iso19139+xml", FormatterResponseProcessorImpl.class,
+          // "application/iso19115-3+xml", FormatterResponseProcessorImpl.class,
+          MediaType.APPLICATION_XML_VALUE,
+          XmlResponseProcessorImpl.class,
+          "xml",
+          XmlResponseProcessorImpl.class,
+          MediaType.APPLICATION_RSS_XML_VALUE,
+          RssResponseProcessorImpl.class,
+          GnMediaType.APPLICATION_GN_XML_VALUE,
+          XsltResponseProcessorImpl.class,
+          "gn",
+          XsltResponseProcessorImpl.class,
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
+          XsltResponseProcessorImpl.class,
+          "dcat",
+          XsltResponseProcessorImpl.class
       );
 
   static final Map<String, String>
       ACCEPT_FORMATTERS =
       Map.of(
-          "application/gn-own", "copy",
-          "application/gn-dcat", "dcat",
+          GnMediaType.APPLICATION_GN_XML_VALUE, "copy",
+          "gn", "copy",
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE, "dcat",
           "dcat", "dcat"
       );
 
@@ -703,7 +717,8 @@ public class ElasticSearchProxy {
     if (responseProcessorClass == null) {
       throw new UnsupportedOperationException(String.format(
           "No response processor configured for '%s'. Use one of %s.",
-          acceptHeader, RESPONSE_PROCESSOR.keySet().toArray()));
+          acceptHeader,
+          RESPONSE_PROCESSOR.keySet().stream().collect(Collectors.joining(", "))));
     }
 
     SearchResponseProcessor responseProcessor =

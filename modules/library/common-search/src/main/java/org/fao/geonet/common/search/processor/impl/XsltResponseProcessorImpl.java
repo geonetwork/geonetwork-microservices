@@ -72,8 +72,8 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
       {
         records.forEach(r -> {
           String xsltFileName = String.format(
-              "xslt/collections/items/formats/%s/%s.xsl",
-              r.getDataInfo().getSchemaId(), transformation);
+              "xslt/ogcapir/formats/%s/%s-%s.xsl",
+              transformation, transformation, r.getDataInfo().getSchemaId());
           try {
             File xsltFile = new ClassPathResource(xsltFileName).getFile();
 
