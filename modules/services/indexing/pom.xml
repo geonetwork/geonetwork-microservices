@@ -19,9 +19,6 @@
   <name>GeoNetwork indexing app</name>
   <url>http://geonetwork-opensource.org</url>
 
-  <properties>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.geonetwork-opensource.cloud</groupId>

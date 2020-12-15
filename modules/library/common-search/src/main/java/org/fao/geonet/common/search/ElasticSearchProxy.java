@@ -59,36 +59,50 @@ public class ElasticSearchProxy {
   };
 
   public static final List<String> ignoredHeaders = Arrays.asList(
-      new String[]{
-          "host", "x-xsrf-token", "cookie", "accept", "content-type"
-      });
+      new String[]{"host", "x-xsrf-token", "cookie", "accept", "content-type"});
 
 
   static final Map<String, Class<? extends SearchResponseProcessor>>
-      RESPONSE_PROCESSOR =
-      Map.of(
-          MediaType.APPLICATION_JSON_VALUE,
-          JsonUserAndSelectionAwareResponseProcessorImpl.class,
-          MediaType.TEXT_HTML_VALUE,
-          JsonUserAndSelectionAwareResponseProcessorImpl.class,
-          "json", JsonUserAndSelectionAwareResponseProcessorImpl.class,
+      RESPONSE_PROCESSOR = Map.ofEntries(
+          Map.entry(
+              MediaType.APPLICATION_JSON_VALUE,
+              JsonUserAndSelectionAwareResponseProcessorImpl.class),
+          Map.entry(
+              MediaType.TEXT_HTML_VALUE,
+              JsonUserAndSelectionAwareResponseProcessorImpl.class),
+          Map.entry(
+              "json",
+              JsonUserAndSelectionAwareResponseProcessorImpl.class),
           // "text/plain", CsvResponseProcessorImpl.class,
           // "application/iso19139+xml", FormatterResponseProcessorImpl.class,
           // "application/iso19115-3+xml", FormatterResponseProcessorImpl.class,
-          MediaType.APPLICATION_XML_VALUE,
-          XmlResponseProcessorImpl.class,
-          "xml",
-          XmlResponseProcessorImpl.class,
-          MediaType.APPLICATION_RSS_XML_VALUE,
-          RssResponseProcessorImpl.class,
-          GnMediaType.APPLICATION_GN_XML_VALUE,
-          XsltResponseProcessorImpl.class,
-          "gn",
-          XsltResponseProcessorImpl.class,
-          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
-          XsltResponseProcessorImpl.class,
-          "dcat",
-          XsltResponseProcessorImpl.class
+          Map.entry(
+              MediaType.APPLICATION_XML_VALUE,
+              XmlResponseProcessorImpl.class),
+          Map.entry(
+              "xml",
+              XmlResponseProcessorImpl.class),
+          Map.entry(
+              MediaType.APPLICATION_RSS_XML_VALUE,
+              RssResponseProcessorImpl.class),
+          Map.entry(
+              GnMediaType.APPLICATION_GN_XML_VALUE,
+              XsltResponseProcessorImpl.class),
+          Map.entry(
+              "gn",
+              XsltResponseProcessorImpl.class),
+          Map.entry(
+              GnMediaType.APPLICATION_DCAT2_XML_VALUE,
+              XsltResponseProcessorImpl.class),
+          Map.entry(
+              "dcat",
+              XsltResponseProcessorImpl.class),
+          Map.entry(
+              GnMediaType.APPLICATION_JSON_LD_VALUE,
+              JsonUserAndSelectionAwareResponseProcessorImpl.class),
+          Map.entry(
+              "jsonld",
+              JsonUserAndSelectionAwareResponseProcessorImpl.class)
       );
 
   static final Map<String, String>
@@ -149,7 +163,6 @@ public class ElasticSearchProxy {
 
   /**
    * Returns the results in EsSearchResults instance.
-   *
    */
   public EsSearchResults searchAndGetResultAsObject(
       HttpSession httpSession,
@@ -398,7 +411,7 @@ public class ElasticSearchProxy {
         // copy headers from client's request to request that will be send to the final host
         // exclude "accept-encoding" to avoid compressed results in this case
         copyHeadersToConnection(request, connectionWithFinalHost,
-            Arrays.asList(new String[] {"accept-encoding"}));
+            Arrays.asList(new String[]{"accept-encoding"}));
 
         connectionWithFinalHost.setDoOutput(true);
         LOGGER.debug(requestBody);
@@ -490,7 +503,7 @@ public class ElasticSearchProxy {
       boolean addPermissions,
       String selectionBucket) throws Exception {
 
-    String resultAsJson =  handleRequestAndGetResult(httpSession, request, requestBody,
+    String resultAsJson = handleRequestAndGetResult(httpSession, request, requestBody,
         userInfo, addPermissions, selectionBucket);
 
     ObjectMapper objectMapper = new ObjectMapper();

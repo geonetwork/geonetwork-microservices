@@ -6,14 +6,17 @@
 
 package org.fao.geonet.index.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact {
   private String role;
   private String individual;
   private String organisation;
   private String email;
+  private String logo;
   private String phone;
   private String address;
   private String website;

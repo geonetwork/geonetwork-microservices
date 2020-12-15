@@ -30,6 +30,7 @@ import org.xml.sax.SAXException;
 
 @Component
 public class ViewUtility {
+
   @Autowired
   ViewUtility self; // For cache to work.
 
@@ -71,7 +72,7 @@ public class ViewUtility {
   }
 
   private String getUrlWithNoTrailingSlash(String url) {
-    if(url.endsWith("/")) {
+    if (url.endsWith("/")) {
       return url.substring(0, url.length() - 1);
     } else {
       return url;

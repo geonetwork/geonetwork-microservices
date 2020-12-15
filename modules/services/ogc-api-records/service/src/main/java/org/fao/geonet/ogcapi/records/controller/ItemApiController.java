@@ -18,13 +18,14 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.index.model.IndexRecord;
+import org.fao.geonet.index.model.JsonLdRecord;
 import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
@@ -77,8 +78,8 @@ public class ItemApiController implements RecordApi {
 
 
   @Override
-  @Produces(MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGet(String collectionId,
+  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGet(
+      String collectionId,
       String recordId) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
@@ -115,8 +116,9 @@ public class ItemApiController implements RecordApi {
 
       JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
 
-      streamResult(response, recordValue.toPrettyString(), MediaType.APPLICATION_JSON_VALUE);
-
+      streamResult(response,
+          recordValue.toPrettyString(),
+          MediaType.APPLICATION_JSON_VALUE);
       return ResponseEntity.ok().build();
     } catch (Exception ex) {
       // TODO: Log exception
@@ -125,15 +127,78 @@ public class ItemApiController implements RecordApi {
 
   }
 
+  /**
+   * Collection item as XML / DCAT.
+   */
+  @GetMapping(
+      value = "/collections/{collectionId}/items/{recordId}",
+      produces = {
+          GnMediaType.APPLICATION_JSON_LD_VALUE
+      })
+  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
+      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
+      @PathVariable("collectionId")
+          String collectionId,
+      @ApiParam(value = "Identifier (name) of a specific record", required = true)
+      @PathVariable("recordId")
+          String recordId) {
+
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
+
+    if (source == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+    }
+
+    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
+    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
+
+    try {
+      String collectionFilter = collectionService.retrieveCollectionFilter(source);
+      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+
+      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+
+      ObjectMapper mapper = new ObjectMapper();
+      JsonFactory factory = mapper.getFactory();
+      JsonParser parser = factory.createParser(queryResponse);
+      JsonNode actualObj = mapper.readTree(parser);
+
+      JsonNode totalValue = actualObj.get("hits").get("total").get("value");
+
+      if ((totalValue == null) || (totalValue.intValue() == 0)) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            messages.getMessage("ogcapir.exception.collectionItem.notFound",
+                new String[]{recordId, collectionId},
+                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+      }
+
+      JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
+      IndexRecord record = mapper.readValue(
+          recordValue.get("_source").toPrettyString(),
+          IndexRecord.class);
+      streamResult(response,
+          new JsonLdRecord(record).toString(),
+          GnMediaType.APPLICATION_JSON_LD_VALUE);
+      return ResponseEntity.ok().build();
+    } catch (Exception ex) {
+      // TODO: Log exception
+      throw new RuntimeException(ex);
+    }
+
+  }
 
   /**
    * Collection item as XML / DCAT.
    */
-  @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
+  @GetMapping(
+      value = "/collections/{collectionId}/items/{recordId}",
       produces = {
-        MediaType.APPLICATION_XML_VALUE,
-        GnMediaType.APPLICATION_GN_XML_VALUE,
-        GnMediaType.APPLICATION_DCAT2_XML_VALUE
+          MediaType.APPLICATION_XML_VALUE,
+          GnMediaType.APPLICATION_GN_XML_VALUE,
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE
       })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
@@ -188,7 +253,8 @@ public class ItemApiController implements RecordApi {
   /**
    * Collection item as HTML.
    */
-  @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
+  @GetMapping(
+      value = "/collections/{collectionId}/items/{recordId}",
       produces = {
           MediaType.TEXT_HTML_VALUE
       })
@@ -198,7 +264,7 @@ public class ItemApiController implements RecordApi {
           String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
-      String recordId,HttpServletRequest request,
+          String recordId, HttpServletRequest request,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();

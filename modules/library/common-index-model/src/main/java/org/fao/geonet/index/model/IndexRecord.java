@@ -6,6 +6,11 @@
 
 package org.fao.geonet.index.model;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +28,7 @@ import org.fao.geonet.domain.MetadataDraft;
 @EqualsAndHashCode(callSuper = true)
 @XmlRootElement(name = "indexRecord")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IndexRecord extends IndexDocument {
 
   private Integer internalId;
@@ -38,6 +44,8 @@ public class IndexRecord extends IndexDocument {
   private String root;
 
   private String indexingDate;
+  @JsonIgnore
+  private String dateStamp;
   private String changeDate;
   private String createDate;
 
@@ -56,7 +64,7 @@ public class IndexRecord extends IndexDocument {
 
   private int popularity;
   private String mainLanguage;
-  private String resourceType;
+  private List<String> resourceType;
 
   private Integer valid;
   private Integer feedbackCount;
@@ -76,7 +84,10 @@ public class IndexRecord extends IndexDocument {
   //    le canton de Fribourg - Organisation des Zivilschutzes im Kanton Freiburg",
   //        langfre: "Organisation de la protection civile dans le canton de Fribourg
   //        - Organisation des Zivilschutzes im Kanton Freiburg"
+  @JsonProperty("resourceTitleObject")
   Map<String, String> resourceTitle = new HashMap<>();
+
+  @JsonProperty("resourceAbstractObject")
   Map<String, String> resourceAbstract = new HashMap<>();
 
   // TODO: Object field
@@ -93,6 +104,9 @@ public class IndexRecord extends IndexDocument {
   //      phone: "",
   //      address: "Fribourg, Service du cadastre et de la géomatique (SCG), 1701, CH"
   //  }
+
+  //  @JsonProperty("Org")
+  //  private List<String> org;
   private List<Contact> contact;
   //  private List<Link> resourceLinks;
 
@@ -135,7 +149,23 @@ public class IndexRecord extends IndexDocument {
   //]
 
   //  @JsonAnyGetter
-  private Map<String, String> otherProperties = new HashMap<>();
+  private Map<String, List<String>> otherProperties = new HashMap<>();
+
+  /**
+   * Collect all other properties in a map.
+   */
+  @JsonAnySetter
+  public void ignored(String name, Object value) {
+    List<String> s = otherProperties.get(name);
+    if (s == null) {
+      s = new ArrayList<>(1);
+      s.add(value.toString());
+      otherProperties.put(name, s);
+    } else {
+      s.add(value.toString());
+    }
+  }
+
 
   /**
    * Record to be loaded in the index.

@@ -1,0 +1,369 @@
+
+{
+  "_index" : "gn-records",
+  "_type" : "_doc",
+  "_id" : "8108e203-59db-4672-b9e0-c1863fd6523b",
+  "_score" : 1.0468898,
+  "_source" : {
+    "docType" : "metadata",
+    "documentStandard" : "iso19139",
+    "document" : "",
+    "metadataIdentifier" : "8108e203-59db-4672-b9e0-c1863fd6523b",
+    "standardName" : "ISO 19115/19139",
+    "indexingDate" : "2020-12-07T11:12:46",
+    "dateStamp" : "2020-11-25T12:36:21",
+    "mainLanguage" : "eng",
+    "resourceType" : [ "dataset" ],
+    "Org" : "European Environment Agency",
+    "pointOfContactOrg" : "European Environment Agency",
+    "contact" : [ {
+      "organisation" : "European Environment Agency",
+      "role" : "pointOfContact",
+      "email" : "sdi@eea.europa.eu",
+      "website" : "",
+      "logo" : "",
+      "individual" : "",
+      "position" : "",
+      "phone" : "",
+      "address" : "Kongens Nytorv 6, Copenhagen, K, 1050, Denmark"
+    } ],
+    "cl_characterSet" : [ {
+      "key" : "utf8",
+      "default" : "UTF8",
+      "langeng" : "UTF8",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_CharacterSetCode"
+    } ],
+    "cl_hierarchyLevel" : [ {
+      "key" : "dataset",
+      "default" : "Dataset",
+      "langeng" : "Dataset",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode"
+    } ],
+    "cl_status" : [ {
+      "key" : "obsolete",
+      "default" : "Obsolete",
+      "langeng" : "Obsolete",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ProgressCode"
+    } ],
+    "cl_maintenanceAndUpdateFrequency" : [ {
+      "key" : "continual",
+      "default" : "Continual",
+      "langeng" : "Continual",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_MaintenanceFrequencyCode"
+    } ],
+    "cl_type" : [ {
+      "key" : "theme",
+      "default" : "Theme",
+      "langeng" : "Theme",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+    }, {
+      "key" : "place",
+      "default" : "Place",
+      "langeng" : "Place",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+    } ],
+    "cl_accessConstraints" : [ {
+      "key" : "otherRestrictions",
+      "default" : "Other restrictions",
+      "langeng" : "Other restrictions",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode"
+    } ],
+    "cl_spatialRepresentationType" : [ {
+      "key" : "grid",
+      "default" : "Grid",
+      "langeng" : "Grid",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_SpatialRepresentationTypeCode"
+    } ],
+    "cl_function" : [ {
+      "key" : "download",
+      "default" : "Download",
+      "langeng" : "Download",
+      "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_OnLineFunctionCode"
+    } ],
+    "resourceTitleObject" : {
+      "default" : "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
+      "langeng" : "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018"
+    },
+    "creationDateForResource" : [ "2018-03-22" ],
+    "creationYearForResource" : "2018",
+    "creationMonthForResource" : "2018-03",
+    "publicationDateForResource" : [ "2018-03-22" ],
+    "publicationYearForResource" : "2018",
+    "publicationMonthForResource" : "2018-03",
+    "resourceDate" : [ {
+      "type" : "creation",
+      "date" : "2018-03-22"
+    }, {
+      "type" : "publication",
+      "date" : "2018-03-22"
+    } ],
+    "resourceTemporalDateRange" : [ {
+      "gte" : "2018-03-22",
+      "lte" : "2018-03-22"
+    }, {
+      "gte" : "2009-01-01",
+      "lte" : "2015-12-31"
+    } ],
+    "resourceIdentifier" : [ "copernicus_r_3035_100_m_waw-2015_p_2009-2015_v02_r00" ],
+    "resourceAbstractObject" : {
+      "default" : "The combined Water and Wetness (WAW) product is a thematic product showing the occurrence of water and wet surfaces over the period from 2009 to 2015 for the EEA39 area. This metadata corresponds to the aggregation of the 20m classified product into a 100m raster. \nTwo WAW products are available:\n- The main Water and Wetness (WAW) product, with defined classes of (1) permanent water, (2) temporary water, (3) permanent wetness and (4) temporary wetness.\n- The additional expert product: Water and Wetness Probability Index (WWPI).\nThe products show the occurrence of water and indicate the degree of wetness in a physical sense, assessed independently of the actual vegetation cover and are thus not limited to a specific land cover class and their relative frequencies.\nThe production of the High Resolution Water and Wetness layers was coordinated by the European Environment Agency (EEA) in the frame of the EU Copernicus programme.\nData is provided as a mosaic of the full area, and as tiles with a side length of 1000 km x 1000 km.",
+      "langeng" : "The combined Water and Wetness (WAW) product is a thematic product showing the occurrence of water and wet surfaces over the period from 2009 to 2015 for the EEA39 area. This metadata corresponds to the aggregation of the 20m classified product into a 100m raster. \nTwo WAW products are available:\n- The main Water and Wetness (WAW) product, with defined classes of (1) permanent water, (2) temporary water, (3) permanent wetness and (4) temporary wetness.\n- The additional expert product: Water and Wetness Probability Index (WWPI).\nThe products show the occurrence of water and indicate the degree of wetness in a physical sense, assessed independently of the actual vegetation cover and are thus not limited to a specific land cover class and their relative frequencies.\nThe production of the High Resolution Water and Wetness layers was coordinated by the European Environment Agency (EEA) in the frame of the EU Copernicus programme.\nData is provided as a mosaic of the full area, and as tiles with a side length of 1000 km x 1000 km."
+    },
+    "hasOverview" : "true",
+    "overview" : [ {
+      "url" : "https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png"
+    } ],
+    "resourceLanguage" : [ "eng" ],
+    "inspireTheme_syn" : [ "Land cover" ],
+    "inspireTheme" : [ "land cover" ],
+    "inspireThemeFirst_syn" : "Land cover",
+    "inspireThemeFirst" : "land cover",
+    "inspireAnnexForFirstTheme" : "ii",
+    "inspireAnnex" : [ "ii" ],
+    "inspireThemeUri" : [ "http://inspire.ec.europa.eu/theme/lc" ],
+    "inspireThemeNumber" : "1",
+    "hasInspireTheme" : "true",
+    "tag" : [ {
+      "default" : "Land cover",
+      "langeng" : "Land cover"
+    }, {
+      "default" : "EEA39",
+      "langeng" : "EEA39"
+    }, {
+      "default" : "land cover",
+      "langeng" : "land cover"
+    }, {
+      "default" : "landscape alteration",
+      "langeng" : "landscape alteration"
+    }, {
+      "default" : "forest management",
+      "langeng" : "forest management"
+    }, {
+      "default" : "land use",
+      "langeng" : "land use"
+    }, {
+      "default" : "European",
+      "langeng" : "European",
+      "link" : "http://inspire.ec.europa.eu/metadata-codelist/SpatialScope/european"
+    } ],
+    "isOpenData" : "false",
+    "keywordType-theme" : [ {
+      "default" : "Land cover",
+      "langeng" : "Land cover"
+    }, {
+      "default" : "land cover",
+      "langeng" : "land cover"
+    }, {
+      "default" : "landscape alteration",
+      "langeng" : "landscape alteration"
+    }, {
+      "default" : "forest management",
+      "langeng" : "forest management"
+    }, {
+      "default" : "land use",
+      "langeng" : "land use"
+    }, {
+      "default" : "European",
+      "langeng" : "European",
+      "link" : "http://inspire.ec.europa.eu/metadata-codelist/SpatialScope/european"
+    } ],
+    "keywordType-place" : [ {
+      "default" : "EEA39",
+      "langeng" : "EEA39"
+    } ],
+    "th_httpinspireeceuropaeutheme-themeNumber" : "1",
+    "th_httpinspireeceuropaeutheme-theme" : [ {
+      "default" : "Land cover",
+      "langeng" : "Land cover"
+    } ],
+    "th_httpinspireeceuropaeutheme-theme_tree" : {
+      "default" : [ "Land cover" ],
+      "key" : [ "http://inspire.ec.europa.eu/theme/lc" ]
+    },
+    "th_regionsNumber" : "1",
+    "th_regions" : [ {
+      "default" : "EEA39",
+      "langeng" : "EEA39"
+    } ],
+    "th_regions_tree" : {
+      "default" : [ "EEA39" ],
+      "key" : [ "http://www.naturalearthdata.com/ne_admin#EU/EEA39" ]
+    },
+    "th_gemetNumber" : "4",
+    "th_gemet" : [ {
+      "default" : "land cover",
+      "langeng" : "land cover"
+    }, {
+      "default" : "landscape alteration",
+      "langeng" : "landscape alteration"
+    }, {
+      "default" : "forest management",
+      "langeng" : "forest management"
+    }, {
+      "default" : "land use",
+      "langeng" : "land use"
+    } ],
+    "th_gemet_tree" : {
+      "default" : [ "biosphere", "biosphere^ecology", "biosphere^ecology^ecological parameter", "biosphere^ecology^ecological parameter^land cover", "effect", "effect^landscape alteration", "environmental data", "environmental data^geo-referenced data", "environmental data^geo-referenced data^land cover", "environmental management", "environmental management^forest management", "resource utilisation", "resource utilisation^land use", "science", "science^natural science", "science^natural science^life science", "science^natural science^life science^ecology", "science^natural science^life science^ecology^ecological parameter", "science^natural science^life science^ecology^ecological parameter^land cover" ],
+      "key" : [ "http://www.eionet.europa.eu/gemet/concept/2562", "http://www.eionet.europa.eu/gemet/concept/2562^http://www.eionet.europa.eu/gemet/concept/4650", "http://www.eionet.europa.eu/gemet/concept/2803", "http://www.eionet.europa.eu/gemet/concept/2803^http://www.eionet.europa.eu/gemet/concept/14933", "http://www.eionet.europa.eu/gemet/concept/2803^http://www.eionet.europa.eu/gemet/concept/14933^http://www.eionet.europa.eu/gemet/concept/4612", "http://www.eionet.europa.eu/gemet/concept/2877", "http://www.eionet.europa.eu/gemet/concept/2877^http://www.eionet.europa.eu/gemet/concept/3425", "http://www.eionet.europa.eu/gemet/concept/7472", "http://www.eionet.europa.eu/gemet/concept/7472^http://www.eionet.europa.eu/gemet/concept/5524", "http://www.eionet.europa.eu/gemet/concept/7472^http://www.eionet.europa.eu/gemet/concept/5524^http://www.eionet.europa.eu/gemet/concept/4805", "http://www.eionet.europa.eu/gemet/concept/7472^http://www.eionet.europa.eu/gemet/concept/5524^http://www.eionet.europa.eu/gemet/concept/4805^http://www.eionet.europa.eu/gemet/concept/2470", "http://www.eionet.europa.eu/gemet/concept/7472^http://www.eionet.europa.eu/gemet/concept/5524^http://www.eionet.europa.eu/gemet/concept/4805^http://www.eionet.europa.eu/gemet/concept/2470^http://www.eionet.europa.eu/gemet/concept/2457", "http://www.eionet.europa.eu/gemet/concept/7472^http://www.eionet.europa.eu/gemet/concept/5524^http://www.eionet.europa.eu/gemet/concept/4805^http://www.eionet.europa.eu/gemet/concept/2470^http://www.eionet.europa.eu/gemet/concept/2457^http://www.eionet.europa.eu/gemet/concept/4612", "http://www.eionet.europa.eu/gemet/concept/8879", "http://www.eionet.europa.eu/gemet/concept/8879^http://www.eionet.europa.eu/gemet/concept/4678", "http://www.eionet.europa.eu/gemet/concept/892", "http://www.eionet.europa.eu/gemet/concept/892^http://www.eionet.europa.eu/gemet/concept/2470", "http://www.eionet.europa.eu/gemet/concept/892^http://www.eionet.europa.eu/gemet/concept/2470^http://www.eionet.europa.eu/gemet/concept/2457", "http://www.eionet.europa.eu/gemet/concept/892^http://www.eionet.europa.eu/gemet/concept/2470^http://www.eionet.europa.eu/gemet/concept/2457^http://www.eionet.europa.eu/gemet/concept/4612" ]
+    },
+    "th_httpinspireeceuropaeumetadatacodelistSpatialScope-SpatialScopeNumber" : "1",
+    "th_httpinspireeceuropaeumetadatacodelistSpatialScope-SpatialScope" : [ {
+      "default" : "European",
+      "langeng" : "European",
+      "link" : "http://inspire.ec.europa.eu/metadata-codelist/SpatialScope/european"
+    } ],
+    "th_httpinspireeceuropaeumetadatacodelistSpatialScope-SpatialScope_tree" : {
+      "default" : [ "European" ],
+      "key" : [ "http://inspire.ec.europa.eu/metadata-codelist/SpatialScope/european" ]
+    },
+    "allKeywords" : {
+      "geonetworkthesaurusexternalplaceregions" : {
+        "id" : "geonetwork.thesaurus.external.place.regions",
+        "title" : "Continents, countries, sea regions of the world.",
+        "theme" : "place",
+        "link" : "",
+        "keywords" : [ {
+          "default" : "EEA39",
+          "langeng" : "EEA39"
+        } ]
+      },
+      "geonetworkthesaurusexternalthemegemet" : {
+        "id" : "geonetwork.thesaurus.external.theme.gemet",
+        "title" : "GEMET",
+        "theme" : "theme",
+        "link" : "",
+        "keywords" : [ {
+          "default" : "land cover",
+          "langeng" : "land cover"
+        }, {
+          "default" : "landscape alteration",
+          "langeng" : "landscape alteration"
+        }, {
+          "default" : "forest management",
+          "langeng" : "forest management"
+        }, {
+          "default" : "land use",
+          "langeng" : "land use"
+        } ]
+      },
+      "geonetworkthesaurusexternalthemehttpinspireeceuropaeuthemetheme" : {
+        "id" : "geonetwork.thesaurus.external.theme.httpinspireeceuropaeutheme-theme",
+        "title" : "GEMET - INSPIRE themes, version 1.0",
+        "theme" : "theme",
+        "link" : "",
+        "keywords" : [ {
+          "default" : "Land cover",
+          "langeng" : "Land cover"
+        } ]
+      },
+      "geonetworkthesaurusexternalthemehttpinspireeceuropaeumetadatacodelistSpatialScopeSpatialScope" : {
+        "id" : "geonetwork.thesaurus.external.theme.httpinspireeceuropaeumetadatacodelistSpatialScope-SpatialScope",
+        "title" : "Spatial scope",
+        "theme" : "theme",
+        "link" : "",
+        "keywords" : [ {
+          "default" : "European",
+          "langeng" : "European",
+          "link" : "http://inspire.ec.europa.eu/metadata-codelist/SpatialScope/european"
+        } ]
+      }
+    },
+    "cl_topic" : [ {
+      "key" : "environment",
+      "default" : "Environment",
+      "langeng" : "Environment"
+    }, {
+      "key" : "imageryBaseMapsEarthCover",
+      "default" : "Imagery base maps earth cover",
+      "langeng" : "Imagery base maps earth cover"
+    } ],
+    "resolutionDistance" : [ "100 m" ],
+    "MD_LegalConstraintsOtherConstraintsObject" : [ {
+      "default" : "No limitations to public access",
+      "langeng" : "No limitations to public access",
+      "link" : "http://inspire.ec.europa.eu/metadata-codelist/LimitationsOnPublicAccess/noLimitations"
+    }, {
+      "default" : "Access to data is based on a principle of full, open and free access as established by the Copernicus data and information policy Regulation (EU) No 1159/2013 of 12 July 2013. This regulation establishes registration and licensing conditions for GMES/Copernicus users.\n\nFree, full and open access to this data set is made on the conditions that:\n\n1. When distributing or communicating Copernicus dedicated data and Copernicus service information to the public, users shall inform the public of the source of that data and information.\n\n2. Users shall make sure not to convey the impression to the public that the user's activities are officially endorsed by the Union.\n\n3. Where that data or information has been adapted or modified, the user shall clearly state this.\n\n4. The data remain the sole property of the European Union. Any information and data produced in the framework of the action shall be the sole property of the European Union. Any communication and publication by the beneficiary shall acknowledge that the data were produced ?with funding by the European Union?.",
+      "langeng" : "Access to data is based on a principle of full, open and free access as established by the Copernicus data and information policy Regulation (EU) No 1159/2013 of 12 July 2013. This regulation establishes registration and licensing conditions for GMES/Copernicus users.\n\nFree, full and open access to this data set is made on the conditions that:\n\n1. When distributing or communicating Copernicus dedicated data and Copernicus service information to the public, users shall inform the public of the source of that data and information.\n\n2. Users shall make sure not to convey the impression to the public that the user's activities are officially endorsed by the Union.\n\n3. Where that data or information has been adapted or modified, the user shall clearly state this.\n\n4. The data remain the sole property of the European Union. Any information and data produced in the framework of the action shall be the sole property of the European Union. Any communication and publication by the beneficiary shall acknowledge that the data were produced ?with funding by the European Union?."
+    } ],
+    "resourceTemporalExtentDateRange" : [ {
+      "gte" : "2009-01-01",
+      "lte" : "2015-12-31"
+    } ],
+    "geom" : [ {
+      "type" : "Polygon",
+      "coordinates" : [ [ [ -31.2684, 27.6375 ], [ -13.4198, 27.6375 ], [ -13.4198, 66.5662 ], [ -31.2684, 66.5662 ], [ -31.2684, 27.6375 ] ] ]
+    }, {
+      "type" : "Polygon",
+      "coordinates" : [ [ [ -10.6198, 34.5619 ], [ 44.8212, 34.5619 ], [ 44.8212, 71.1855 ], [ -10.6198, 71.1855 ], [ -10.6198, 34.5619 ] ] ]
+    } ],
+    "location" : [ "47.10185,-22.3441", "52.8737,17.1007" ],
+    "coordinateSystem" : [ "EPSG:3035" ],
+    "crsDetails" : [ {
+      "code" : "EPSG:3035",
+      "codeSpace" : "",
+      "name" : "",
+      "url" : "http://www.opengis.net/def/crs/EPSG/0/3035"
+    } ],
+    "inspireConformResource" : "",
+    "hassource" : "98fed314-cc2a-4744-a4c9-1ee7473d58cb",
+    "recordLink" : [ {
+      "type" : "sources",
+      "origin" : "catalog",
+      "to" : "98fed314-cc2a-4744-a4c9-1ee7473d58cb",
+      "title" : "",
+      "url" : ""
+    } ],
+    "lineage" : "Quality assurance follows the ISO9000 standards for Quality Management and comprises of dedicated procedures of on-going quality checks (QA breakpoints) during implementation of the production chain, in order to keep persistent control over the various stages of production, assure fitness-for-purpose of the end-products and that all quality requirements are fulfilled. Priority will be given to the target thematic accuracies to be achieved by each product, as well as to the issues of product consistency (spatial, thematic, temporal) and homogeneity.\nQuality Assessment: The quality assessment has been performed according to INSPIRE Data Specifications. The data quality elements considered are:\n(i) Completeness,\n(ii) Logical Consistency,\n(iii) Thematic Accuracy,\n(iv) Temporal quality and (v) Usability.\nEach of them (excl. the Thematic Accuracy hereafter) forms a section in the QA/QC Procedures.\n\nMore information about the product can be found here: https://land.copernicus.eu/user-corner/technical-library/hrl-water-wetness-technical-document-prod-2015.",
+    "format" : [ "GTiff" ],
+    "linkUrl" : "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
+    "linkProtocol" : "WWW:LINK-1.0-http--link",
+    "linkUrlProtocolWWWLINK10httplink" : "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
+    "link" : [ {
+      "protocol" : "WWW:LINK-1.0-http--link",
+      "url" : "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
+      "name" : "",
+      "description" : "",
+      "applicationProfile" : "",
+      "group" : 0
+    } ],
+    "recordGroup" : "8108e203-59db-4672-b9e0-c1863fd6523b",
+    "schema" : "iso19139",
+    "isPublishedToAll" : "true",
+    "recordOwner" : "admin admin",
+    "uuid" : "8108e203-59db-4672-b9e0-c1863fd6523b",
+    "harvesterUuid" : "d8a17d8d-f9fe-490d-aa1a-1863ec54cefe",
+    "displayOrder" : "0",
+    "popularity" : "0",
+    "userinfo" : "admin|admin|admin|Administrator",
+    "record" : "record",
+    "draft" : "n",
+    "changeDate" : "2020-11-25T12:36:21",
+    "id" : "2041",
+    "createDate" : "2020-11-25T12:36:21",
+    "owner" : "1",
+    "groupOwner" : "2",
+    "logo" : "/images/logos/d8a17d8d-f9fe-490d-aa1a-1863ec54cefe.png",
+    "hasxlinks" : "false",
+    "groupPublished" : "all",
+    "featureOfRecord" : "record",
+    "root" : "gmd:MD_Metadata",
+    "extra" : "null",
+    "valid" : "-1",
+    "isTemplate" : "n",
+    "feedbackCount" : "0",
+    "rating" : "0",
+    "isHarvested" : "true",
+    "sourceCatalogue" : "d8a17d8d-f9fe-490d-aa1a-1863ec54cefe"
+  },
+  "edit" : false,
+  "owner" : false,
+  "isPublishedToAll" : true,
+  "view" : true,
+  "notify" : false,
+  "download" : true,
+  "dynamic" : true,
+  "featured" : false,
+  "selected" : false
+}
