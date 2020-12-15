@@ -84,6 +84,11 @@
               </xsl:choose>
             </div>
           </section>
+
+          <xsl:call-template name="render-page-format-links">
+            <xsl:with-param name="formats"
+                            select="('json', 'xml')"/>
+          </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </html>

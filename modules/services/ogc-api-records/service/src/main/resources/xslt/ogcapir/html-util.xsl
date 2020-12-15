@@ -1,11 +1,12 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 exclude-result-prefixes="#all"
                 version="3.0">
 
 
   <xsl:template name="render-field">
-    <xsl:param name="label"/>
-    <xsl:param name="text"/>
+    <xsl:param name="label" as="xs:string"/>
+    <xsl:param name="text" as="xs:string"/>
 
     <div class="w-1/3">
       <xsl:value-of select="$label"/>
@@ -41,6 +42,21 @@
         </div>
       </a>
     </div>
+  </xsl:template>
+
+
+  <xsl:template name="render-page-format-links">
+    <xsl:param name="formats"
+               as="xs:string*"/>
+
+    <xsl:if test="count($formats) > 0">
+      <div class="flex flex-row-reverse p-4 bg-white">
+        <xsl:for-each select="$formats">
+          <a class="mr-2 bg-gray-600 text-white text-xs p-2 rounded leading-none flex items-center"
+             href="?f={.}"><xsl:value-of select="."/></a>
+        </xsl:for-each>
+      </div>
+    </xsl:if>
   </xsl:template>
 
 

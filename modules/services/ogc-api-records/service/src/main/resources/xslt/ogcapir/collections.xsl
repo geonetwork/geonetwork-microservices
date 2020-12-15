@@ -13,6 +13,7 @@
   <xsl:import href="classpath:xslt/core/commons/xsl-params-core.xsl"/>
   <xsl:import href="classpath:xslt/core/themes/default/theme.xsl"/>
   <xsl:import href="collection-fn.xsl"/>
+  <xsl:import href="html-util.xsl"/>
 
   <xsl:template match="/">
     <xsl:variable name="collections"
@@ -48,12 +49,14 @@
         </xsl:with-param>
         <xsl:with-param name="link" select="concat($requestUrl, 'main')"/>
         <xsl:with-param name="content">
+
           <xsl:call-template name="html-breadcrumb">
             <xsl:with-param name="breadcrumb">
               <xsl:value-of select="map:get($i18n, 'ogcapir.collections.browseCollection') || '&#160;'"/>
               <a href="/collections/main"><xsl:value-of select="$mainCollectionName"/></a>
             </xsl:with-param>
           </xsl:call-template>
+
 
           <xsl:call-template name="render-collection-family">
             <xsl:with-param name="title"
@@ -62,6 +65,7 @@
                             select="$portals"/>
           </xsl:call-template>
 
+
           <xsl:call-template name="render-collection-family">
             <xsl:with-param name="title"
                             select="map:get($i18n, 'ogcapir.collections.harvestedCollection')"/>
@@ -69,6 +73,11 @@
                             select="$harvesters"/>
           </xsl:call-template>
 
+
+          <xsl:call-template name="render-page-format-links">
+            <xsl:with-param name="formats"
+                            select="('json', 'xml')"/>
+          </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </html>
@@ -90,7 +99,6 @@
           <div class="w-full mb-4">
             <div class="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
           </div>
-
 
 
           <xsl:for-each select="$collections">
