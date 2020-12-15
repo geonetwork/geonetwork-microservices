@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.fao.geonet.domain.Metadata;
-import org.fao.geonet.indexing.model.IndexRecord;
-import org.fao.geonet.indexing.model.IndexRecords;
-import org.fao.geonet.indexing.model.IndexingReport;
+import org.fao.geonet.index.model.IndexRecord;
+import org.fao.geonet.index.model.IndexRecords;
+import org.fao.geonet.index.model.IndexingReport;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 //@SpringBootTest
 //@ActiveProfiles("dev")
 //@ComponentScan("org.fao.geonet")
-class IndexRecordTest {
+class IndexingRecordTest {
   @Autowired
   IndexingService indexingService;
 
@@ -40,7 +40,7 @@ class IndexRecordTest {
   void testIso19139() throws IOException {
     String xmlFileContent =
         Files.readAllLines(new ClassPathResource(
-            String.format("resources/metadata-%s.xml",
+            String.format("metadata-%s.xml",
                 "iso19139")
         ).getFile().toPath()).stream().collect(Collectors.joining());
 

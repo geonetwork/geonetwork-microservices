@@ -96,7 +96,7 @@
 
           <xsl:call-template name="render-page-format-links">
             <xsl:with-param name="formats"
-                            select="('json', 'xml', 'dcat', 'gn')"/>
+                            select="('json', 'jsonld', 'xml', 'dcat', 'gn')"/>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>

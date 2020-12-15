@@ -67,6 +67,12 @@ curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/json" 
 
 curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+                 -H "Accept: application/ld+json" 
+
+curl 127.0.0.1:9991/collections/$firstCollection/items/8108e203-59db-4672-b9e0-c1863fd6523b \
+                 -H "Accept: application/ld+json" 
+
+curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/xml"
  
 curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \

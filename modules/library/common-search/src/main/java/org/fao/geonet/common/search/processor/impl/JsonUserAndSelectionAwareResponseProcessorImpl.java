@@ -178,7 +178,6 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
    *
    * @param node  Node with metadata information.
    * @param name  Field name to retrieve from the source section.
-   * @return
    */
   private String getSourceFieldAsString(ObjectNode node, String name) {
     final JsonNode sourceNode = node.get(Constants.IndexFieldNames.SOURCE);
@@ -196,7 +195,6 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
    *
    * @param node  Node with metadata information.
    * @param name  Field name to retrieve from the source section.
-   * @return
    */
   private Integer getSourceFieldAsInteger(ObjectNode node, String name) {
     final JsonNode sourceNode = node.get(Constants.IndexFieldNames.SOURCE);

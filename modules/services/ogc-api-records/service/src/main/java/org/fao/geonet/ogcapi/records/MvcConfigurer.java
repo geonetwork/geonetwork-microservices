@@ -35,6 +35,7 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .mediaType("html", MediaType.TEXT_HTML)
         .mediaType("dcat", GnMediaType.APPLICATION_DCAT2_XML)
         .mediaType("gn", GnMediaType.APPLICATION_GN_XML)
+        .mediaType("jsonld", GnMediaType.APPLICATION_JSON_LD)
         .mediaType("iso19139", GnMediaType.APPLICATION_ISO19139_XML)
         .mediaType("iso19115-3", GnMediaType.APPLICATION_ISO19115_3_XML)
         .defaultContentType(MediaType.APPLICATION_JSON);
