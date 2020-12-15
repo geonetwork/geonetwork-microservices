@@ -18,8 +18,10 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
+import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
@@ -75,6 +77,7 @@ public class ItemApiController implements RecordApi {
 
 
   @Override
+  @Produces(MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGet(String collectionId,
       String recordId) {
 
@@ -127,7 +130,11 @@ public class ItemApiController implements RecordApi {
    * Collection item as XML / DCAT.
    */
   @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
-      produces = {"application/xml", "application/gn-dcat"})
+      produces = {
+        MediaType.APPLICATION_XML_VALUE,
+        GnMediaType.APPLICATION_GN_XML_VALUE,
+        GnMediaType.APPLICATION_DCAT2_XML_VALUE
+      })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
@@ -438,7 +445,7 @@ public class ItemApiController implements RecordApi {
       } else if (formatParam.equalsIgnoreCase("json")) {
         mediaType = MediaType.APPLICATION_JSON_VALUE;
       } else if (formatParam.equalsIgnoreCase("dcat")) {
-        mediaType = "application/gn-dcat";
+        mediaType = "application/dcat2+xml";
       }
     } else {
       mediaType = request.getHeader("Accept");
