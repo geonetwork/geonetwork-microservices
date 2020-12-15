@@ -50,7 +50,8 @@ public class ViewUtility {
       List<String> standards,
       HttpServletRequest request) {
     String twoLetterCode = locale.getLanguage();
-    model.addAttribute("requestUrl", request.getRequestURL());
+    model.addAttribute("requestUrl",
+        getUrlWithNoTrailingSlash(request.getRequestURL().toString()));
     model.addAttribute("geonetworkUrl", geonetworkUrl);
     model.addAttribute("baseUrl", baseUrl);
     model.addAttribute("language", twoLetterCode);
@@ -66,6 +67,14 @@ public class ViewUtility {
       if (doc.isPresent()) {
         model.addAttribute("i18nStandard", doc.get());
       }
+    }
+  }
+
+  private String getUrlWithNoTrailingSlash(String url) {
+    if(url.endsWith("/")) {
+      return url.substring(0, url.length() - 1);
+    } else {
+      return url;
     }
   }
 
