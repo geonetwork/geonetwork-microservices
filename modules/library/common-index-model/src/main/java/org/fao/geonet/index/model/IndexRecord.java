@@ -149,14 +149,14 @@ public class IndexRecord extends IndexDocument {
   //]
 
   //  @JsonAnyGetter
-  private Map<String, List<String>> otherProperties = new HashMap<>();
+  private Map<String, ArrayList<String>> otherProperties = new HashMap<>();
 
   /**
    * Collect all other properties in a map.
    */
   @JsonAnySetter
   public void ignored(String name, Object value) {
-    List<String> s = otherProperties.get(name);
+    ArrayList<String> s = otherProperties.get(name);
     if (s == null) {
       s = new ArrayList<>(1);
       s.add(value.toString());
