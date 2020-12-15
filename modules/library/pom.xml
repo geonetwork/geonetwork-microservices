@@ -24,6 +24,7 @@
   <modules>
     <module>common-utility</module>
     <module>common-security</module>
+    <module>common-index-model</module>
     <module>common-search</module>
     <module>common-error</module>
     <module>common-view</module>
