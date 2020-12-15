@@ -91,7 +91,7 @@
     <xsl:variable name="label"
                   select="($i18nStandard/labels/element[@name = $labelKey]/label/text())[1]"/>
     <xsl:call-template name="render-field">
-      <xsl:with-param name="label" select="$label"/>
+      <xsl:with-param name="label" select="if ($label) then $label else $labelKey"/>
       <xsl:with-param name="text">
         <xsl:call-template name="getText"/>
       </xsl:with-param>
