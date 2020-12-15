@@ -47,7 +47,7 @@
         <xsl:with-param name="title">
           <xsl:value-of select="$mainCollectionName"/>
         </xsl:with-param>
-        <xsl:with-param name="link" select="concat($requestUrl, 'main')"/>
+        <xsl:with-param name="link" select="concat($requestUrl, '/main')"/>
         <xsl:with-param name="content">
 
           <xsl:call-template name="html-breadcrumb">
@@ -116,7 +116,7 @@
               <xsl:with-param name="subTitle"
                               select="if (empty($properties[2])) then '' else $properties[2]"/>
               <xsl:with-param name="logo" select="gn-ogcapir-util:getCollectionLogo(.)"/>
-              <xsl:with-param name="url" select="concat($requestUrl, uuid)"/>
+              <xsl:with-param name="url" select="concat($requestUrl, '/', uuid)"/>
             </xsl:call-template>
           </xsl:for-each>
         </div>
