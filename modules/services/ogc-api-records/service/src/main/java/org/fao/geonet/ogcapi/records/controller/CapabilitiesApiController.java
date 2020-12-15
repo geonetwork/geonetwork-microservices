@@ -15,7 +15,6 @@ import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Root;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
+
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
@@ -66,24 +67,34 @@ public class CapabilitiesApiController implements CapabilitiesApi {
         .toString();
 
     Root root = new Root();
-    root.addLinksItem(new Link()
-        .href(baseUrl)
-        .rel("self").type(MediaType.APPLICATION_JSON.toString()));
-    //    root.addLinksItem(new Link()
-    //        .href(baseUrl + "conformance")
-    //        .rel("conformance").type(MediaType.APPLICATION_JSON.toString()));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=json")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_JSON_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=xml")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_XML_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=html")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.TEXT_HTML_VALUE));
+    root.setTitle("GeoNetwork opensource OGC API Records");
+    root.setDescription("GeoNetwork opensource OGC API Records");
+
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+
+    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(nativeWebRequest);
+    List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
+
+    Link link = Link.of(baseUrl + "collections?f=json")
+        .withMedia(MediaType.APPLICATION_JSON_VALUE)
+        .withRel("data")
+        .withTitle("Catalogue collections");
+    linkList.add(link);
+
+    link = Link.of(baseUrl + "collections?f=xml")
+        .withMedia(MediaType.APPLICATION_XML_VALUE)
+        .withRel("data")
+        .withTitle("Catalogue collections");
+    linkList.add(link);
+
+    link = Link.of(baseUrl + "collections?f=html")
+        .withMedia(MediaType.TEXT_HTML_VALUE)
+        .withRel("data")
+        .withTitle("Catalogue collections");
+    linkList.add(link);
+
+    root.add(linkList);
     return ResponseEntity.ok(root);
   }
 
@@ -107,9 +118,8 @@ public class CapabilitiesApiController implements CapabilitiesApi {
           CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
     });
 
-    // TODO: Accept format parameter.
     List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
-    linkList.forEach(l -> content.addLinksItem(l));
+    linkList.forEach(l -> content.add(linkList));
 
     return ResponseEntity.ok(content);
   }

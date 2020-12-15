@@ -362,29 +362,14 @@ components:
         description:
           type: string
     root:
-      required:
-        - links
       type: object
       properties:
-        links:
-          type: array
-          example:
-            - href: 'http://data.example.org/'
-              rel: self
-              type: application/json
-              title: this document
-            - href: 'http://data.example.org/api'
-              rel: service
-              type: application/openapi+json;version=3.0
-              title: the API definition
-            - href: 'http://data.example.org/conformance'
-              rel: conformance
-              type: application/json
-              title: OGC conformance classes implemented by this API
-            - href: 'http://data.example.org/collections'
-              title: Metadata about the resource collections
-          items:
-            $ref: '#/components/schemas/link'
+        title:
+          description: The title of the API
+          type: string
+        description:
+          description: A textual description of the API
+          type: string
     req-classes:
       required:
         - conformsTo
@@ -401,52 +386,17 @@ components:
             - 'http://www.opengis.net/spec/ogcapi-coverages/1.0/conf/core'
           items:
             type: string
-    link:
-      required:
-        - href
-      type: object
-      properties:
-        href:
-          type: string
-        rel:
-          type: string
-          example: prev
-        type:
-          type: string
-          example: application/geo+json
-        hreflang:
-          type: string
-          example: en
     content:
       required:
         - collections
-        - links
       type: object
       properties:
-        links:
-          type: array
-          example:
-            - href: 'http://data.example.org/collections.json'
-              rel: self
-              type: application/json
-              title: this document
-            - href: 'http://data.example.org/collections.html'
-              rel: alternate
-              type: text/html
-              title: this document as HTML
-            - href: 'http://schemas.example.org/1.0/foobar.xsd'
-              rel: describedBy
-              type: application/xml
-              title: XML schema for Acme Corporation data
-          items:
-            $ref: '#/components/schemas/link'
         collections:
           type: array
           items:
             $ref: '#/components/schemas/collectionInfo'
     collectionInfo:
       required:
-        - links
         - name
       type: object
       properties:
@@ -462,19 +412,6 @@ components:
           type: string
           description: a description of the data in the collection
           example: Buildings in the city of Bonn.
-        links:
-          type: array
-          example:
-            - href: 'http://data.example.org/collections/buildings/items'
-              rel: item
-              type: application/geo+json
-              title: Buildings
-            - href: 'http://example.org/concepts/building.html'
-              rel: describedBy
-              type: text/html
-              title: Coverage for buildings
-          items:
-            $ref: '#/components/schemas/link'
         extent:
           $ref: '#/components/schemas/extent'
         crs:

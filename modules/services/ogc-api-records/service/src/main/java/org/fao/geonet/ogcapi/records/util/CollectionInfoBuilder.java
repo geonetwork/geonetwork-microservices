@@ -11,7 +11,8 @@ import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.CrsEnum;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.TrsEnum;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+//import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 
 public class CollectionInfoBuilder {
@@ -48,14 +49,8 @@ public class CollectionInfoBuilder {
     // TODO: Accept format parameter.
     baseUrl = baseUrl + (!baseUrl.endsWith("/") ? "/" : "");
     URI collectionUri = URI.create(baseUrl).resolve(name);
-    Link currentDoc = new Link();
-    currentDoc.setRel("self");
-    currentDoc.setHref(collectionUri.toString());
-    currentDoc.setType(mediaType.toString());
-    currentDoc.setHreflang(language);
-
     List<Link> linkList = LinksItemsBuilder.build(mediaType, collectionUri.toString(), language);
-    linkList.forEach(l -> collectionInfo.addLinksItem(l));
+    collectionInfo.add(linkList);
 
     return collectionInfo;
   }

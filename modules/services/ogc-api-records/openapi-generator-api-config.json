@@ -23,6 +23,7 @@
   "generateApiTests": "false",
   "generateModelDocumentation": "false",
   "generateModelTests": "false",
+  "hateoas": "true",
   "importMappings": {
   }
 }

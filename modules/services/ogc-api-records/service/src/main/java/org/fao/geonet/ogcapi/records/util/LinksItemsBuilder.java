@@ -2,7 +2,7 @@ package org.fao.geonet.ogcapi.records.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 
 public class LinksItemsBuilder {
@@ -11,23 +11,18 @@ public class LinksItemsBuilder {
    * Build items.
    */
   public static List<Link> build(MediaType mediaType, String url, String language) {
-    Link currentDoc = new Link();
-    currentDoc.setRel("self");
-    currentDoc.setHref(url);
-    currentDoc.setType(mediaType.toString());
-    currentDoc.setHreflang(language);
-
     List<Link> links = new ArrayList<>();
+
+    Link currentDoc = Link.of(url).withSelfRel()
+        .withMedia(mediaType.toString()).withHreflang(language)
+        .withTitle("This document as " +  mediaType.toString());
     links.add(currentDoc);
 
     for (MediaType supportedMediaType : MediaTypeUtil.supportedMediaTypes) {
       if (!supportedMediaType.equals(mediaType)) {
-        Link alternateDoc = new Link();
-        alternateDoc.setRel("alternate");
-        alternateDoc.setHref(url);
-        alternateDoc.setType(supportedMediaType.toString());
-        alternateDoc.setHreflang(language);
-
+        Link alternateDoc = Link.of(url).withRel("alternate")
+            .withMedia(supportedMediaType.toString()).withHreflang(language)
+            .withTitle("This document as " + supportedMediaType.toString());
         links.add(alternateDoc);
       }
     }
