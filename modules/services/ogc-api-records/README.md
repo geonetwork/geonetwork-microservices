@@ -13,6 +13,21 @@ Start the service using:
 mvn spring-boot:run
 ```
 
+or with custom port and profile:
+```
+SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=standalone
+```
+
+Run the following to update XSLT files while running the application:
+```
+mvn process-resources
+
+# TODO: Check how to update shared XSLT from other module with CLI? 
+# Build module in Intellij works fine.
+# cd modules/library/common-view; mvn compile
+```
+
+
 Test the service:
 
 ```shell script
