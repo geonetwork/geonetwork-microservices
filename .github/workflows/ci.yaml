@@ -1,0 +1,26 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checking out"
+      uses: actions/checkout@v2
+
+    - name: "Setting up Java"
+      uses: actions/setup-java@v1
+      with:
+        java-version: '11.x'
+
+    - name: "Maven repository caching"
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: "Run the testsuite"
+      run: ./mvnw clean install -P-docker --no-transfer-progress -B
