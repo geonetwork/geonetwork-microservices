@@ -6,7 +6,7 @@ jdk:
 before_install:
 install: true
 script:
-  - ./mvnw clean install -P-docker
+  - ./mvnw clean install -P-docker --no-transfer-progress -B
 cache:
   directories:
     - $HOME/.m2
