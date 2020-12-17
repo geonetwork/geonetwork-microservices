@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.Profile;
@@ -39,8 +40,6 @@ import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResp
 import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -52,6 +51,7 @@ import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j(topic = "org.fao.geonet.searching")
 public class ElasticSearchProxy {
 
   public static final String[] validContentTypes = {
@@ -113,8 +113,6 @@ public class ElasticSearchProxy {
           GnMediaType.APPLICATION_DCAT2_XML_VALUE, "dcat",
           "dcat", "dcat"
       );
-
-  private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.searching");
 
   public ElasticSearchProxy() {
   }
@@ -280,7 +278,7 @@ public class ElasticSearchProxy {
         copyHeadersToConnection(request, connectionWithFinalHost);
 
         connectionWithFinalHost.setDoOutput(true);
-        LOGGER.debug(requestBody);
+        log.debug(requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host
@@ -414,7 +412,7 @@ public class ElasticSearchProxy {
             Arrays.asList(new String[]{"accept-encoding"}));
 
         connectionWithFinalHost.setDoOutput(true);
-        LOGGER.debug(requestBody);
+        log.debug(requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host
