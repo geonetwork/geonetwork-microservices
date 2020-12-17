@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -44,14 +45,13 @@ import org.fao.geonet.index.model.IndexRecords;
 import org.fao.geonet.index.model.IndexingReport;
 import org.fao.geonet.indexing.exception.IndexingRecordException;
 import org.fao.geonet.repository.MetadataRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j(topic = "org.fao.geonet.indexing.tasks")
 public class IndexingService {
 
   @Getter
@@ -65,8 +65,6 @@ public class IndexingService {
   @Autowired
   RestHighLevelClient client;
 
-  private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.indexing.tasks");
-
   /**
    * Delete index.
    */
@@ -75,12 +73,12 @@ public class IndexingService {
       AcknowledgedResponse deleteIndexResponse = client.indices()
           .delete(new DeleteIndexRequest(index), RequestOptions.DEFAULT);
       if (deleteIndexResponse.isAcknowledged()) {
-        LOGGER.info(String.format(
+        log.info(String.format(
             "Index %s removed.",
             index));
       }
     } catch (IOException ioException) {
-      LOGGER.warn(String.format(
+      log.warn(String.format(
           "Index %s does not exist.",
           index));
     }
@@ -102,7 +100,7 @@ public class IndexingService {
     }
     List<Metadata> records = metadataRepository.findAllById(ids);
 
-    LOGGER.info(String.format(
+    log.info(String.format(
         "Indexing %d records in batch", ids.size()
     ));
 
@@ -111,7 +109,7 @@ public class IndexingService {
           .collect(Collectors.toList());
       List<Integer> ghost = new ArrayList<Integer>(ids);
       ghost.removeAll(listOfIds);
-      LOGGER.warn(String.format(
+      log.warn(String.format(
           "Error while retrieving records from database. "
               + "%d record(s) missing. Records are %s."
               + "Records may have been deleted since we started this indexing task.",
@@ -126,7 +124,7 @@ public class IndexingService {
         .collect(Collectors.groupingBy(record -> record.getDataInfo().getSchemaId()));
 
     recordsBySchema.forEach((schema, schemaRecords) -> {
-      LOGGER.info(String.format(
+      log.info(String.format(
           "Indexing %d records in schema %s", schemaRecords.size(), schema
       ));
       IndexRecords indexRecords = collectProperties(schema, schemaRecords, report);
@@ -169,7 +167,7 @@ public class IndexingService {
       );
     } catch (IOException ioException) {
       report.setNumberOfRecordsWithUnsupportedSchema(schemaRecords.size());
-      LOGGER.error(String.format(
+      log.error(String.format(
           "Schema %s used by records %s does not exist or does not provide indexing file %s.",
           schema,
           schemaRecords.stream()
@@ -226,7 +224,7 @@ public class IndexingService {
     try {
       // TODO: Asynchronous?
       BulkResponse bulkItemResponses = client.bulk(bulkRequest, RequestOptions.DEFAULT);
-      LOGGER.info(String.format(
+      log.info(String.format(
           "Indexing operation took %d.",
           bulkItemResponses.getIngestTookInMillis()
       ));
@@ -240,19 +238,19 @@ public class IndexingService {
           }
         });
         report.setNumberOfRecordsWithIndexingErrors(failureCount.intValue());
-        LOGGER.info(String.format(
+        log.info(String.format(
             "Indexing operation has failures %d.",
             failureCount
         ));
       }
     } catch (ElasticsearchStatusException indexException) {
       report.setNumberOfRecordsWithIndexingErrors(indexRecords.getIndexRecord().size());
-      LOGGER.error(String.format(
+      log.error(String.format(
           "Error while saving records %d in index. Error is: %s.",
           indexException.getMessage()
       ));
     } catch (IOException ioException) {
-      LOGGER.error(String.format(
+      log.error(String.format(
           "Error while sending records to index. Error is: %s.",
           ioException.getMessage()
       ));

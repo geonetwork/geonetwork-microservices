@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.domain.UiSetting;
@@ -22,9 +23,8 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class CollectionService {
-
-  private static Logger LOGGER = LoggerFactory.getLogger("org.fao.geonet.ogcapi.records");
 
   @Autowired
   private OgcApiConfiguration configuration;
@@ -108,7 +108,7 @@ public class CollectionService {
           sortbyValues.iterator().forEachRemaining(s -> sortables.add(s.get("sortBy").textValue()));
         }
       } catch (Exception ex) {
-        LOGGER.error(ex.getMessage(), ex);
+        log.error(ex.getMessage(), ex);
       }
     }
 
