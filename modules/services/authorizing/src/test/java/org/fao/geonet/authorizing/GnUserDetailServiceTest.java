@@ -1,5 +1,7 @@
 package org.fao.geonet.authorizing;
 
+import static org.fao.geonet.authorizing.GnUserDetailsService.HIGHEST_PROFILE;
+import static org.fao.geonet.authorizing.GnUserDetailsService.USER_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -45,10 +47,12 @@ public class GnUserDetailServiceTest {
     Group group = new Group();
     group.setName("csc");
     groupRepository.save(group);
+
     User user = new User();
     user.setUsername("csc_editor");
     user.setProfile(Profile.Editor);
     userRepository.save(user);
+
     UserGroup userGroup = new UserGroup();
     userGroup.setGroup(group);
     userGroup.setUser(user);
@@ -58,17 +62,20 @@ public class GnUserDetailServiceTest {
     UserDetails userDetails = toTest.loadUserByUsername("csc_editor");
 
     assertEquals("csc_editor", userDetails.getUsername());
+
     assertEquals(1, userDetails.getAuthorities().size());
     assertTrue(userDetails.getAuthorities().stream().findFirst().get() instanceof OAuth2UserAuthority);
     OAuth2UserAuthority authority = (OAuth2UserAuthority) userDetails.getAuthorities().stream().findFirst().get();
     assertEquals("gn", authority.getAuthority());
+
     Map<String, Object> attributes = authority.getAttributes();
-    assertEquals(5, attributes.size());
+    assertEquals(6, attributes.size());
     assertEquals(Arrays.asList(group.getId()), attributes.get(Profile.Editor.name()));
     assertEquals(Collections.emptyList(), attributes.get(Profile.Reviewer.name()));
     assertEquals(Collections.emptyList(), attributes.get(Profile.UserAdmin.name()));
     assertEquals(Collections.emptyList(), attributes.get(Profile.RegisteredUser.name()));
-    assertEquals(Profile.Editor.name(), attributes.get("highest_profile"));
+    assertEquals(Profile.Editor.name(), attributes.get(HIGHEST_PROFILE));
+    assertEquals(100, attributes.get(USER_ID));
   }
 
   @Configuration

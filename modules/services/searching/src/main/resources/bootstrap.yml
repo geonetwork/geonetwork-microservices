@@ -33,7 +33,7 @@ eureka:
 logging:
   level:
     org.springframework.security: DEBUG
-
+    org.fao.geonet.searching: DEBUG
 
 ---
 # Use this profile when running on a GN4 database on localhost and Elasticsearch index.

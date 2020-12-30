@@ -25,6 +25,10 @@ public class UserInfo {
 
   @Getter
   @Setter
+  private String highestProfile;
+
+  @Getter
+  @Setter
   private List<Integer> viewingGroups = new ArrayList<>();
 
   @Getter
@@ -39,15 +43,6 @@ public class UserInfo {
   public boolean isAuthenticated() {
     return (StringUtils.isNotEmpty(userName)
         && (!userName.equalsIgnoreCase("anonymousUser")));
-  }
-
-  /**
-   * Retrieve the user profile.
-   *
-   * @return User profile.
-   */
-  public String getProfile() {
-    return "";
   }
 
   /**

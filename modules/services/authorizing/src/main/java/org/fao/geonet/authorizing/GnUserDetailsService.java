@@ -27,15 +27,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 
 public class GnUserDetailsService implements UserDetailsService {
+  public static final String HIGHEST_PROFILE = "highest_profile";
+  public static final String USER_ID = "user_id";
+  public static final String GN_AUTHORITY = "gn";
 
   @Autowired
   private UserRepository userRepository;
 
   @Autowired
   private UserGroupRepository userGroupRepository;
-
-  @Autowired
-  private GroupRepository groupRepository;
 
   private boolean checkUserNameOrEmail = true;
 
@@ -61,12 +61,13 @@ public class GnUserDetailsService implements UserDetailsService {
             Collectors.mapping(t -> t.getValue(), Collectors.toList())
         ));
     Map<String, Object> attributes = (Map<String, Object>) (Object) attributesToCast;
-    attributes.put("highest_profile", user.getProfile().name());
+    attributes.put(USER_ID, user.getId());
+    attributes.put(HIGHEST_PROFILE, user.getProfile().name());
     attributes.putIfAbsent(Profile.UserAdmin.name(), Collections.emptyList());
     attributes.putIfAbsent(Profile.Reviewer.name(), Collections.emptyList());
     attributes.putIfAbsent(Profile.RegisteredUser.name(), Collections.emptyList());
     attributes.putIfAbsent(Profile.Editor.name(), Collections.emptyList());
-    OAuth2UserAuthority authority = new OAuth2UserAuthority("gn", attributes);
+    OAuth2UserAuthority authority = new OAuth2UserAuthority(GN_AUTHORITY, attributes);
 
     return org.springframework.security.core.userdetails.User
         .withUsername(user.getUsername())
