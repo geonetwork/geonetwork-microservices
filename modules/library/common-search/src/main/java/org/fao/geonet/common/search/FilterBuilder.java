@@ -59,7 +59,7 @@ public class FilterBuilder {
    */
   private String buildPermissionsFilter(UserInfo userInfo) {
     // If admin you can see all
-    if (Profile.Administrator.equals(userInfo.getProfile())) {
+    if (Profile.Administrator.name().equals(userInfo.getHighestProfile())) {
       return "*";
     } else {
       // op0 (ie. view operation) contains one of the ids of your groups
@@ -68,15 +68,15 @@ public class FilterBuilder {
           .collect(Collectors.joining(" OR "));
       String operationFilter = String.format("op%d:(%s)", ReservedOperation.view.getId(), ids);
 
-
-      String ownerFilter = "";
-      if (userInfo.isAuthenticated()) {
+      if (userInfo.isAuthenticated() && userInfo.getUserId() != null) {
         // OR you are owner
-        ownerFilter = String.format("owner:%d", userInfo.getUserId());
+        String ownerFilter = String.format("owner:%d", userInfo.getUserId());
         // OR member of groupOwner
         // TODOES
+        return String.format("(%s %s)", operationFilter, ownerFilter);
+      } else {
+        return operationFilter;
       }
-      return String.format("(%s %s)", operationFilter, ownerFilter).trim();
     }
   }
 

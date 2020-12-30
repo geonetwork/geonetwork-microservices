@@ -669,10 +669,18 @@ public class ElasticSearchProxy {
     GrantedAuthority authority = authentication.getAuthorities().stream().findFirst().get();
     if (authority.getAuthority().equals("gn")) {
       OAuth2UserAuthority userAuthority = (OAuth2UserAuthority) authority;
+      Map<String, Object> attributes = userAuthority.getAttributes();
+
+      String highestProfile = (String) attributes.get("highest_profile");
+      if (StringUtils.isNotEmpty(highestProfile)) {
+        userInfo.setHighestProfile(Profile.valueOf(highestProfile).name());
+      }
+
+      userInfo.setUserId((Integer) attributes.get("user_id"));
       userInfo.setViewingGroups(
-          (List<Integer>) userAuthority.getAttributes().get(Profile.Reviewer.name()));
+          (List<Integer>) attributes.get(Profile.Reviewer.name()));
       userInfo.setEditingGroups(
-          (List<Integer>) userAuthority.getAttributes().get(Profile.Editor.name()));
+          (List<Integer>) attributes.get(Profile.Editor.name()));
     }
 
     return userInfo;

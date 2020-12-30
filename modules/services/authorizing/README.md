@@ -15,6 +15,8 @@ GeoNetwork does not need to be started, but it MUST have started once to create 
 1. Get an authentication token
 
 ```shell script
+USERNAME=editor
+PASSWORD=aaaaaa
 USERNAME=admin
 PASSWORD=admin
 gn_token=$( \
@@ -42,8 +44,23 @@ echo $gn_token
 3. The token is used to access services
 
 ```shell script
+docker-compose up -d search
+
 gn_auth_header=$(echo "Authorization: Bearer $gn_token")
 
 curl 127.0.0.1:9900/search/secured -H "$gn_auth_header"
+```
+
+The server return user details:
+
+```
+curl 127.0.0.1:9900/search/secured -H "$gn_auth_header"
+You are authenticated as editor
+Authorities gn
+ * UserAdmin:[]
+ * highest_profile:Editor
+ * Editor:[100]
+ * Reviewer:[]
+ * RegisteredUser:[101]
 ```
 

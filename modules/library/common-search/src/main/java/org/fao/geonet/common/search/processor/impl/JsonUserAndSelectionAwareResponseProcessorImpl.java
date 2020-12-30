@@ -240,7 +240,7 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
     }
 
     //--- check if the user is an administrator
-    final Profile profile = Profile.findProfileIgnoreCase(userInfo.getProfile());
+    final Profile profile = Profile.findProfileIgnoreCase(userInfo.getHighestProfile());
     if (profile == Profile.Administrator) {
       return true;
     }
