@@ -44,6 +44,8 @@
     <java.version>11</java.version>
     <fork.javac>true</fork.javac>
     <javac.maxHeapSize>256M</javac.maxHeapSize>
+
+    <packaging.type>jar</packaging.type>
   </properties>
 
   <modules>
@@ -348,15 +350,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>jar</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <packaging.type>jar</packaging.type>
-      </properties>
     </profile>
     <profile>
       <id>war</id>
