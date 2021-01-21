@@ -17,7 +17,7 @@
   <artifactId>gn-ogc-api-records-service</artifactId>
   <name>OGC API Records service</name>
   <url>http://geonetwork-opensource.org</url>
-  <packaging>jar</packaging>
+  <packaging>${packaging.type}</packaging>
 
   <dependencies>
     <dependency>
@@ -107,6 +107,20 @@
               <artifactId>spring-boot-configuration-processor</artifactId>
             </exclude>
           </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.27.v20200227</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <httpConnector>
+            <port>9999</port>
+          </httpConnector>
+          <stopKey>JETTY_TOP</stopKey>
+          <stopPort>9998</stopPort>
         </configuration>
       </plugin>
     </plugins>

@@ -1,10 +1,15 @@
 # OGC API Record service
 
+## Build
+
 Build the OpenApi using `openapi-generator-maven-plugin`
 
 ```
 mvn clean compile
 ```
+
+
+## Start
 
 Check the `target/generate-sources` folder.
 
@@ -28,7 +33,7 @@ mvn process-resources
 ```
 
 
-Test the service:
+## Test the service
 
 ```shell script
 
@@ -82,8 +87,7 @@ curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
 API also `f` URL parameter to set the output format eg. http://localhost:9991/collections?f=xml
 
 
-
-Start as a standalone module:
+## Start as standalone service
 
 ```shell script
 mvn package
@@ -91,4 +95,16 @@ SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api
 
 # With custom configuration
 SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.location=./config/ -jar target/gn-ogc-api-records.jar
+```
+
+
+## Start as WAR
+
+Use the `war` profile to build the WAR:
+
+```shell script
+cd modules/services/ogc-api-records/service
+mvn package -Pwar,-docker
+
+mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.location=./service/src/main/resources/
 ```
