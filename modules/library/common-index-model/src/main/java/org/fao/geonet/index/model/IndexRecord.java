@@ -107,7 +107,7 @@ public class IndexRecord extends IndexDocument {
 
   //  @JsonProperty("Org")
   //  private List<String> org;
-  private List<Contact> contact;
+  private List<Contact> contact = new ArrayList<>();
   //  private List<Link> resourceLinks;
 
   // TODO: codelist_characterSet

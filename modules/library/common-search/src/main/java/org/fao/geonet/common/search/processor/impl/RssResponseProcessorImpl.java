@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,15 +23,25 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.model.IndexRecord;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RssResponseProcessorImpl implements SearchResponseProcessor {
+
+  @Value("${gn.baseurl}")
+  String baseUrl;
+
+  public SimpleDateFormat isoDateFormat =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+  public SimpleDateFormat rssDateFormat =
+      new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 
   /**
    * Process the search response and return RSS feed.
@@ -62,19 +74,37 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   }
 
   private void writeChannelProperties(XMLStreamWriter generator) throws XMLStreamException {
+    // TODO: Get Collection info
+    // And build it from metadata record if set
     String title = "GeoNetwork opensource";
     String link = "http://localhost:8080/geonetwork";
     String description = "Search for datasets, services and maps...";
 
+    // The name of the channel.
+    // It's how people refer to your service.
+    // If you have an HTML website that contains the same information
+    // as your RSS file, the title of your channel should be
+    // the same as the title of your website.
     generator.writeStartElement("title");
     generator.writeCharacters(title);
     generator.writeEndElement();
+
+    // The URL to the HTML website corresponding to the channel.
     generator.writeStartElement("link");
     generator.writeCharacters(link);
     generator.writeEndElement();
+
+    // Phrase or sentence describing the channel.
     generator.writeStartElement("description");
     generator.writeCharacters(description);
     generator.writeEndElement();
+
+    // Optional elements
+    // https://www.rssboard.org/rss-specification#optionalChannelElements
+
+
+
+
     generator.flush();
   }
 
@@ -95,20 +125,58 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   }
 
 
+  /**
+   * GeoNetwork 3 implementation:
+   * See https://github.com/geonetwork/core-geonetwork/blob/master/web/src/main/webapp/xslt/services/rss/rss-utils.xsl
+   *
+   * Differences:
+   * * No GeoRSS support
+   * * Link only target the landing page of the record
+   */
   private Item toRssItem(ObjectNode doc) {
     try {
       IndexRecord record = new ObjectMapper()
           .readValue(doc.get("_source").toString(), IndexRecord.class);
+
+      // https://www.rssboard.org/rss-specification#hrelementsOfLtitemgt
       Item item = new Item();
       Guid guid = new Guid();
       guid.setValue(record.getId());
       item.setGuid(guid);
       item.setTitle(record.getResourceTitle().get("default"));
       item.setDescription(record.getResourceAbstract().get("default"));
+      item.setLink(buildLandingPageLink(record));
+
+      // Email address of the author of the item.
+      record.getContact().forEach(c ->
+          item.setAuthor(c.getEmail())
+      );
+
+      // Includes the item in one or more categories.
+      // Category could be tag ? Was hardcoded in GN3
+
+      // Indicates when the item (here metadata or record?) was published.
+      if (StringUtils.isNotEmpty(record.getDateStamp())) {
+        try {
+          item.setPubDate(
+              rssDateFormat.format(isoDateFormat.parse(record.getDateStamp()))
+          );
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+      }
+
       return item;
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private String buildLandingPageLink(IndexRecord record) {
+    return String.format("%s/collections/%s/items/%s",
+        baseUrl,
+        "main",
+        record.getId());
   }
 }

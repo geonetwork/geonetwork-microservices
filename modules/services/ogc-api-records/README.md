@@ -63,6 +63,9 @@ curl 127.0.0.1:9991/collections/$firstCollection/items \
 curl 127.0.0.1:9991/collections/$firstCollection/items \
         -H "Accept: application/xml" 
 
+curl 127.0.0.1:9991/collections/$firstCollection/items \
+        -H "Accept: application/rss+xml" 
+
 uuid=$( \
     curl 127.0.0.1:9991/collections/$firstCollection/items \
                  -H "Accept: application/json"  \
