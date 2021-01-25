@@ -403,7 +403,7 @@ public class ItemApiController implements RecordApi {
       @RequestParam(value = "limit", required = false, defaultValue = "10")
           Integer limit,
       @ApiParam(value = "", defaultValue = "9")
-      @RequestParam(value = "startindex", required = false, defaultValue = "9")
+      @RequestParam(value = "startindex", required = false, defaultValue = "0")
           Integer startindex,
       @ApiParam(value = "")
       @RequestParam(value = "type", required = false)
