@@ -7,22 +7,30 @@
 package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
+import org.fao.geonet.index.model.IndexRecord;
+import org.fao.geonet.index.model.rss.Guid;
+import org.fao.geonet.index.model.rss.Item;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RssResponseProcessorImpl implements SearchResponseProcessor {
+
   /**
    * Process the search response and return RSS feed.
    *
@@ -43,7 +51,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     parser.nextToken();
 
     new ResponseParser().matchHits(parser, generator, doc -> {
-      writeItem(generator, doc);
+      writeItem(generator, streamToClient, doc);
     });
 
     generator.writeEndElement();
@@ -67,32 +75,40 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     generator.writeStartElement("description");
     generator.writeCharacters(description);
     generator.writeEndElement();
+    generator.flush();
   }
 
   private void writeItem(XMLStreamWriter generator,
-      com.fasterxml.jackson.databind.node.ObjectNode doc) throws XMLStreamException {
+      OutputStream stream, ObjectNode doc) throws XMLStreamException {
 
-    Map<String, String> itemProperties = new HashMap<>();
-    itemProperties.put("title", "/_source/resourceTitleObject/default");
-    itemProperties.put("link", "/_id");
-    itemProperties.put("description", "/_source/resourceAbstractObject/default");
-
-    generator.writeStartElement("item");
-
-    for (Entry<String, String> entry : itemProperties.entrySet()) {
-      String property = entry.getKey();
-      String path = entry.getValue();
-      generator.writeStartElement(property);
-      JsonNode node = doc.at(path);
-      if (node != null) {
-        String value = node.asText();
-        if (property.equals("link")) {
-          value = "http://localhost:8080/geonetwork/srv/api/records/" + value;
-        }
-        generator.writeCharacters(value);
-      }
-      generator.writeEndElement();
+    Item item = toRssItem(doc);
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(Item.class);
+      OutputStreamWriter osw = new OutputStreamWriter(stream);
+      Marshaller marshaller = jaxbContext.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+      marshaller.marshal(item, osw);
+      osw.flush();
+    } catch (JAXBException | IOException e) {
+      e.printStackTrace();
     }
-    generator.writeEndElement();
+  }
+
+
+  private Item toRssItem(ObjectNode doc) {
+    try {
+      IndexRecord record = new ObjectMapper()
+          .readValue(doc.get("_source").toString(), IndexRecord.class);
+      Item item = new Item();
+      Guid guid = new Guid();
+      guid.setValue(record.getId());
+      item.setGuid(guid);
+      item.setTitle(record.getResourceTitle().get("default"));
+      item.setDescription(record.getResourceAbstract().get("default"));
+      return item;
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

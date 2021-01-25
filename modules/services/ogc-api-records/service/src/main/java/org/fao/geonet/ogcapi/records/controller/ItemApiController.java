@@ -128,7 +128,7 @@ public class ItemApiController implements RecordApi {
   }
 
   /**
-   * Collection item as XML / DCAT.
+   * Collection item as JSON.
    */
   @GetMapping(
       value = "/collections/{collectionId}/items/{recordId}",
@@ -317,6 +317,14 @@ public class ItemApiController implements RecordApi {
     }
   }
 
+
+  /**
+   * Collection items as XML.
+   */
+  @GetMapping(value = "/collections/{collectionId}/items",
+      produces = {
+      "application/json",
+      "application/rss+xml"})
   @Override
   // TODO: support datetime, type, q, externalids
   public ResponseEntity<Void> collectionsCollectionIdItemsGet(
