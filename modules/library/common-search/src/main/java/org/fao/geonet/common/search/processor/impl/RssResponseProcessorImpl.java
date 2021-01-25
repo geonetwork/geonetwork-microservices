@@ -16,6 +16,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.model.IndexRecord;
+import org.fao.geonet.index.model.ResourceDate;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,10 +44,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   @Value("${gn.baseurl}")
   String baseUrl;
 
-  public SimpleDateFormat isoDateFormat =
-      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-  public SimpleDateFormat rssDateFormat =
-      new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+  public DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
 
   /**
    * Process the search response and return RSS feed.
@@ -129,7 +132,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
    * GeoNetwork 3 implementation:
    * See https://github.com/geonetwork/core-geonetwork/blob/master/web/src/main/webapp/xslt/services/rss/rss-utils.xsl
    *
-   * Differences:
+   * <p>Differences:
    * * No GeoRSS support
    * * Link only target the landing page of the record
    */
@@ -141,7 +144,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       // https://www.rssboard.org/rss-specification#hrelementsOfLtitemgt
       Item item = new Item();
       Guid guid = new Guid();
-      guid.setValue(record.getId());
+      guid.setValue(record.getMetadataIdentifier());
       item.setGuid(guid);
       item.setTitle(record.getResourceTitle().get("default"));
       item.setDescription(record.getResourceAbstract().get("default"));
@@ -155,15 +158,22 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       // Includes the item in one or more categories.
       // Category could be tag ? Was hardcoded in GN3
 
-      // Indicates when the item (here metadata or record?) was published.
-      if (StringUtils.isNotEmpty(record.getDateStamp())) {
-        try {
-          item.setPubDate(
-              rssDateFormat.format(isoDateFormat.parse(record.getDateStamp()))
-          );
-        } catch (ParseException e) {
-          e.printStackTrace();
-        }
+      // Indicates when the item was published.
+      // Publication date first, any resource date and fallback to record date
+      List<ResourceDate> resourceDates = record.getResourceDate();
+      Optional<ResourceDate> publicationDate = resourceDates.stream()
+          .filter(d -> "publication".equals(d.getType())).findFirst();
+      Optional<ResourceDate> firstDate = resourceDates.stream().findFirst();
+      String pubDate;
+      if (publicationDate.isPresent()) {
+        pubDate = publicationDate.get().getDate();
+      } else if (firstDate.isPresent()) {
+        pubDate = firstDate.get().getDate();
+      } else {
+        pubDate = record.getDateStamp();
+      }
+      if (StringUtils.isNotEmpty(pubDate)) {
+        item.setPubDate(OffsetDateTime.parse(pubDate).format(rssDateFormat));
       }
 
       return item;
@@ -177,6 +187,6 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     return String.format("%s/collections/%s/items/%s",
         baseUrl,
         "main",
-        record.getId());
+        record.getMetadataIdentifier());
   }
 }

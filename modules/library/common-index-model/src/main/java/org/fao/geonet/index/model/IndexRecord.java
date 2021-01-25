@@ -9,7 +9,6 @@ package org.fao.geonet.index.model;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +43,14 @@ public class IndexRecord extends IndexDocument {
   private String root;
 
   private String indexingDate;
+
   @JsonIgnore
   private String dateStamp;
   private String changeDate;
   private String createDate;
+
+  @JsonProperty(IndexRecordFieldNames.resourceDate)
+  private List<ResourceDate> resourceDate = new ArrayList<>();
 
   private Integer owner;
   private Integer groupOwner;
