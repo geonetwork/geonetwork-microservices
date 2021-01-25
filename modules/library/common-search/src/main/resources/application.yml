@@ -1,0 +1,60 @@
+gn:
+  search:
+    sortables:
+      - "relevance"
+      - "createDate"
+      - "resourceTitleObject.default.keyword"
+      - "rating"
+      - "popularity"
+    formats:
+      -
+        name: json
+        mimeType: application/json
+        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
+      -
+        name: xml
+        mimeType: application/xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl
+      -
+        name: html
+        mimeType: text/html
+      -
+        name : dcat
+        mimeType : application/dcat2+xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+      -
+        name : gn
+        mimeType : application/gn+xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+      -
+        name : jsonld
+        mimeType : application/ld+json
+        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
+      -
+        name : iso19139
+        mimeType : application/iso19139+xml
+      -
+        name : iso19115-3
+        mimeType : application/iso19115-3+xml
+      -
+        name : rss
+        mimeType : application/rss+xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl
+      -
+        name : rss
+        mimeType : application/rss+xml
+        responseProcessor : org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl
+
+    defaultMimeType: application/json
+    sources:
+      - "resourceTitleObject"
+      - "resourceAbstractObject"
+      - "resourceType"
+      - "overview"
+      - "uuid"
+      - "schema"
+      - "link"
+      - "allKeywords"
+      - "contactForResource"
+      - "cl_status"
+      - "edit"

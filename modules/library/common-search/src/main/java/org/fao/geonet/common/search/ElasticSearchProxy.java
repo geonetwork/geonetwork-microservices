@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,14 +38,10 @@ import org.fao.geonet.common.search.domain.Profile;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
-import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
-import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
-import org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +52,8 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.searching")
 public class ElasticSearchProxy {
 
+
+
   public static final String[] validContentTypes = {
       "application/json", "text/plain", "application/rss+xml"
   };
@@ -62,48 +62,7 @@ public class ElasticSearchProxy {
       new String[]{"host", "x-xsrf-token", "cookie", "accept", "content-type"});
 
 
-  static final Map<String, Class<? extends SearchResponseProcessor>>
-      RESPONSE_PROCESSOR = Map.ofEntries(
-          Map.entry(
-              MediaType.APPLICATION_JSON_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              MediaType.TEXT_HTML_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              "json",
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          // "text/plain", CsvResponseProcessorImpl.class,
-          // "application/iso19139+xml", FormatterResponseProcessorImpl.class,
-          // "application/iso19115-3+xml", FormatterResponseProcessorImpl.class,
-          Map.entry(
-              MediaType.APPLICATION_XML_VALUE,
-              XmlResponseProcessorImpl.class),
-          Map.entry(
-              "xml",
-              XmlResponseProcessorImpl.class),
-          Map.entry(
-              MediaType.APPLICATION_RSS_XML_VALUE,
-              RssResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_GN_XML_VALUE,
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              "gn",
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_DCAT2_XML_VALUE,
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              "dcat",
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_JSON_LD_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              "jsonld",
-              JsonUserAndSelectionAwareResponseProcessorImpl.class)
-      );
+  private Map<String, Class<? extends SearchResponseProcessor>> responseProcessors;
 
   static final Map<String, String>
       ACCEPT_FORMATTERS =
@@ -117,8 +76,31 @@ public class ElasticSearchProxy {
   public ElasticSearchProxy() {
   }
 
+  @PostConstruct
+  public void init() {
+    responseProcessors = new HashMap<String, Class<? extends SearchResponseProcessor>>();
+
+    searchConfiguration.getFormats().forEach(f -> {
+      try {
+        if (StringUtils.isNotEmpty(f.getResponseProcessor())) {
+          responseProcessors.put(f.getName(),
+              Class.forName(f.getResponseProcessor()).asSubclass(SearchResponseProcessor.class));
+
+          responseProcessors.put(f.getMimeType(),
+              Class.forName(f.getResponseProcessor()).asSubclass(SearchResponseProcessor.class));
+        }
+      } catch (ClassNotFoundException ex) {
+        // TODO: Log exception
+        ex.printStackTrace();
+      }
+    });
+  }
+
   @Autowired
   ApplicationContext applicationContext;
+
+  @Autowired
+  SearchConfiguration searchConfiguration;
 
   @Autowired
   FilterBuilder filterBuilder;
@@ -518,7 +500,7 @@ public class ElasticSearchProxy {
 
   private boolean isSearch(HttpServletRequest request) {
     String accept = getAcceptValue(request);
-    return RESPONSE_PROCESSOR.containsKey(accept);
+    return responseProcessors.containsKey(accept);
   }
 
 
@@ -732,12 +714,12 @@ public class ElasticSearchProxy {
     // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
     Class<? extends SearchResponseProcessor> responseProcessorClass =
-        RESPONSE_PROCESSOR.get(acceptHeader);
+        responseProcessors.get(acceptHeader);
     if (responseProcessorClass == null) {
       throw new UnsupportedOperationException(String.format(
           "No response processor configured for '%s'. Use one of %s.",
           acceptHeader,
-          RESPONSE_PROCESSOR.keySet().stream().collect(Collectors.joining(", "))));
+          responseProcessors.keySet().stream().collect(Collectors.joining(", "))));
     }
 
     SearchResponseProcessor responseProcessor =

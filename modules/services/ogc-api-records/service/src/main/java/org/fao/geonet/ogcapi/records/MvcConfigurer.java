@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.GnMediaType;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
@@ -27,18 +28,22 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
   @Autowired
   IsoLanguageRepository isoLanguageRepository;
 
+  @Autowired
+  SearchConfiguration searchConfiguration;
+
   @Override
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
     configurer
         .favorParameter(true)
         .parameterName("f")
-        .mediaType("html", MediaType.TEXT_HTML)
-        .mediaType("dcat", GnMediaType.APPLICATION_DCAT2_XML)
-        .mediaType("gn", GnMediaType.APPLICATION_GN_XML)
-        .mediaType("jsonld", GnMediaType.APPLICATION_JSON_LD)
-        .mediaType("iso19139", GnMediaType.APPLICATION_ISO19139_XML)
-        .mediaType("iso19115-3", GnMediaType.APPLICATION_ISO19115_3_XML)
-        .defaultContentType(MediaType.APPLICATION_JSON);
+        .defaultContentType(MediaType.parseMediaType(searchConfiguration.getDefaultMimeType()));
+
+
+    searchConfiguration.getFormats().forEach(f -> {
+      configurer.mediaType(f.getName(),
+          MediaType.parseMediaType(f.getMimeType()));
+    });
+
   }
 
 

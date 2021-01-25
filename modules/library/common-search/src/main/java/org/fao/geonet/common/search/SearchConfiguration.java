@@ -3,18 +3,18 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.ogcapi.records;
+package org.fao.geonet.common.search;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "gn.ogcapi")
-public class OgcApiConfiguration {
+@ConfigurationProperties(prefix = "gn.search")
+public class SearchConfiguration {
   String defaultMimeType;
 
   List<String> sortables = new ArrayList<>();

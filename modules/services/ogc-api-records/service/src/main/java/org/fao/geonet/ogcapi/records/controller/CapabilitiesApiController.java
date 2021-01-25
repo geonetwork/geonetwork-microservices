@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
+import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -43,10 +45,17 @@ public class CapabilitiesApiController implements CapabilitiesApi {
 
   @Autowired
   ViewUtility viewUtility;
+
   @Autowired
   ConcurrentMapCacheManager cacheManager;
+
   @Autowired
   private SourceRepository sourceRepository;
+
+  @Autowired
+  private SearchConfiguration searchConfiguration;
+
+
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
    * implemented.
@@ -66,24 +75,19 @@ public class CapabilitiesApiController implements CapabilitiesApi {
         .toString();
 
     Root root = new Root();
+
     root.addLinksItem(new Link()
         .href(baseUrl)
         .rel("self").type(MediaType.APPLICATION_JSON.toString()));
-    //    root.addLinksItem(new Link()
-    //        .href(baseUrl + "conformance")
-    //        .rel("conformance").type(MediaType.APPLICATION_JSON.toString()));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=json")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_JSON_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=xml")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_XML_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=html")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.TEXT_HTML_VALUE));
+
+    searchConfiguration.getFormats().forEach(f -> {
+      root.addLinksItem(new Link()
+          .href(baseUrl + "collections?f=" + f.getName())
+          .type("Catalogue collections")
+          .rel("self").type(f.getMimeType()));
+
+    });
+
     return ResponseEntity.ok(root);
   }
 
