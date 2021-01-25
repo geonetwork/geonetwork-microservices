@@ -52,8 +52,6 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.searching")
 public class ElasticSearchProxy {
 
-
-
   public static final String[] validContentTypes = {
       "application/json", "text/plain", "application/rss+xml"
   };
@@ -76,6 +74,9 @@ public class ElasticSearchProxy {
   public ElasticSearchProxy() {
   }
 
+  /**
+   * Load response processors configuration for each output formats.
+   */
   @PostConstruct
   public void init() {
     responseProcessors = new HashMap<String, Class<? extends SearchResponseProcessor>>();
