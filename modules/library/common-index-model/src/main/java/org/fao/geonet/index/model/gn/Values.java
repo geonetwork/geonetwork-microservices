@@ -1,4 +1,4 @@
-package org.fao.geonet.index.model;
+package org.fao.geonet.index.model.gn;
 
 import java.util.ArrayList;
 import java.util.List;

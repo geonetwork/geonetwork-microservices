@@ -3,15 +3,16 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.index.model;
+package org.fao.geonet.index.model.gn;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ResourceDate {
-
+public class RecordLink {
   private String type;
-  private String date;
+  private String origin;
+  private String to;
+  // TODO: Multilingual
+  private String title;
+  private String url;
 }

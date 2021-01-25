@@ -6,6 +6,8 @@
 
 package org.fao.geonet.common.search.processor.impl;
 
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,8 +30,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
-import org.fao.geonet.index.model.IndexRecord;
-import org.fao.geonet.index.model.ResourceDate;
+import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.ResourceDate;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;
@@ -146,8 +145,8 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       Guid guid = new Guid();
       guid.setValue(record.getMetadataIdentifier());
       item.setGuid(guid);
-      item.setTitle(record.getResourceTitle().get("default"));
-      item.setDescription(record.getResourceAbstract().get("default"));
+      item.setTitle(record.getResourceTitle().get(defaultText));
+      item.setDescription(record.getResourceAbstract().get(defaultText));
       item.setLink(buildLandingPageLink(record));
 
       // Email address of the author of the item.

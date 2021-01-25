@@ -4,11 +4,9 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.index.model;
+package org.fao.geonet.index.model.gn;
 
-import lombok.Data;
-
-@Data
-public abstract class IndexDocument {
-  private String id;
+public enum IndexType {
+  RECORDS,
+  FEATURES
 }

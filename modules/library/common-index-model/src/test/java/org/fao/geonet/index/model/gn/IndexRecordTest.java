@@ -1,20 +1,31 @@
-package org.fao.geonet.index.model;
+package org.fao.geonet.index.model.gn;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import org.fao.geonet.domain.MetadataType;
+import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.converter.JsonLdRecord;
+import org.fao.geonet.index.model.gn.IndexDocumentType;
+import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.Link;
+import org.fao.geonet.index.model.gn.Overview;
+import org.fao.geonet.index.model.gn.ResourceDate;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
 import org.springframework.core.io.ClassPathResource;
+
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
 
 public class IndexRecordTest {
 
   @Test
   public void testJsonToPojo() throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
-
+    ObjectMapper objectMapper = JsonUtils.getObjectMapper();
     String json = Files.readString(
         new ClassPathResource("index-document.json").getFile().toPath());
     JsonNode jsonNode = objectMapper.readTree(json);
@@ -25,8 +36,37 @@ public class IndexRecordTest {
           IndexRecord.class);
       Assert.assertEquals(
           "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
-          record.resourceTitle.get("default")
+          record.resourceTitle.get(defaultText)
           );
+
+      Assert.assertEquals(61, record.getOtherProperties().size());
+
+      Assert.assertEquals("gmd:MD_Metadata", record.getRoot());
+
+      Overview o = record.getOverview().get(0);
+      Assert.assertEquals("https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png", o.getUrl());
+      Assert.assertEquals("Global overview", o.getLabel().get("default"));
+
+      String org = record.getOrg().get(0);
+      Assert.assertEquals("European Environment Agency", org);
+
+      Assert.assertEquals(MetadataType.METADATA.code, record.getIsTemplate().charValue());
+      Assert.assertEquals(IndexDocumentType.metadata, record.getDocType());
+
+      List<ResourceDate> dates = record.getResourceDate();
+      Assert.assertEquals(2, dates.size());
+      Assert.assertEquals("creation", dates.get(0).getType());
+      Assert.assertEquals("2018-03-22", dates.get(0).getDate());
+
+      List<Link> links = record.getLinks();
+      Assert.assertEquals(1, links.size());
+      Assert.assertEquals("https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view", links.get(0).getUrl());
+
+      List<Coordinate> locations = record.getLocations();
+      Assert.assertEquals(47.10185, locations.get(0).getX(), .0001);
+      Assert.assertEquals(-22.3441, locations.get(0).getY(), .0001);
+
+      //     "location" : [ "47.10185,-22.3441", "52.8737,17.1007" ],
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       Assert.fail();
@@ -37,7 +77,7 @@ public class IndexRecordTest {
 
   @Test
   public void testJsonToJsonLd() throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = JsonUtils.getObjectMapper();
 
     String json = Files.readString(
         new ClassPathResource("index-document.json").getFile().toPath());
@@ -49,7 +89,7 @@ public class IndexRecordTest {
           IndexRecord.class);
       Assert.assertEquals(
           "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
-          record.resourceTitle.get("default")
+          record.resourceTitle.get(defaultText)
       );
 
       JsonLdRecord jsonLdRecord = new JsonLdRecord(record);

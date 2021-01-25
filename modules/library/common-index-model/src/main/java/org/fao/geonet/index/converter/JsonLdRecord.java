@@ -1,7 +1,8 @@
-package org.fao.geonet.index.model;
+package org.fao.geonet.index.converter;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.fao.geonet.index.model.gn.IndexRecord;
 
 /**
  * See https://github.com/geonetwork/core-geonetwork/blob/master/schemas/iso19139/src/main/plugin/iso19139/formatter/jsonld/iso19139-to-jsonld.xsl
