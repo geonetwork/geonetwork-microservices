@@ -67,37 +67,46 @@
                             select="$shortAbstract"/>
           </xsl:call-template>
 
+          <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
 
-          <section class="bg-white border-b py-8">
-            <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">
-
-              <div class="flex items-center">
-                <div class="w-2/3 whitespace-pre-line">
+            <div class="flex space-y-3 w-full">
+              <div class="w-2/3 pr-4">
+                <abstract>
                   <xsl:value-of select="$abstract"/>
+                </abstract>
+              </div>
+              <div class="w-1/3 pl-4">
+
+                <div class="-bt-4">
+                  <xsl:call-template name="render-page-format-links">
+                    <xsl:with-param name="formats"
+                                    select="('json', 'jsonld', 'xml', 'dcat', 'gn')"/>
+                  </xsl:call-template>
                 </div>
-                <div class="w-1/3">
-                  <xsl:for-each select="$overviews">
-                    <img class="rounded shadow" src="{url}">
-                      <xsl:if test="label">
-                        <xsl:attribute name="title" select="label"/>
-                      </xsl:if>
-                    </img>
-                  </xsl:for-each>
-                </div>
+
+                <section class="w-full rounded shadow border border-gray-200 bg-white">
+                  <div class="px-3 py-4 sm:px-5">
+                    <h3 class="font-medium">Overview</h3>
+                  </div>
+
+                  <div class="border-t border-gray-200 flex flex-wrap">
+                      <xsl:for-each select="$overviews">
+                        <img class="rounded shadow my-4 mx-2" src="{url}">
+                          <xsl:if test="label">
+                            <xsl:attribute name="title" select="label"/>
+                          </xsl:if>
+                        </img>
+                      </xsl:for-each>
+                  </div>
+                </section>
               </div>
             </div>
+          </div>
 
-            <div class="w-full border-t-4 border-blue-900 bg-gray-100 p-2 text-gray-800">
-              <xsl:apply-templates mode="landingpage" select="$metadata"/>
-            </div>
+          <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
+            <xsl:apply-templates mode="landingpage" select="$metadata"/>
+          </div>
 
-          </section>
-
-
-          <xsl:call-template name="render-page-format-links">
-            <xsl:with-param name="formats"
-                            select="('json', 'jsonld', 'xml', 'dcat', 'gn')"/>
-          </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </html>
