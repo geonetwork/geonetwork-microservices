@@ -18,6 +18,7 @@ gn:
       -
         name: html
         mimeType: text/html
+        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
       -
         name : dcat
         mimeType : application/dcat2+xml
@@ -33,9 +34,11 @@ gn:
       -
         name : iso19139
         mimeType : application/iso19139+xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
       -
         name : iso19115-3
         mimeType : application/iso19115-3+xml
+        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
       -
         name : rss
         mimeType : application/rss+xml
