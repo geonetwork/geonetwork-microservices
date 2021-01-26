@@ -32,11 +32,9 @@
     <xsl:variable name="harvesters"
                   select="$collections[type = 'harvester']"
                   as="node()*"/>
-    <xsl:variable name="outputFormats">
-      <xsl:for-each select="model/outputFormats/outputFormat">
-        <xsl:value-of select="name" /><xsl:if test="position() != last()">,</xsl:if>
-      </xsl:for-each>
-    </xsl:variable>
+    <xsl:variable name="outputFormats"
+                  select="/model/outputFormats/outputFormat/name"
+                  as="node()*"/>
 
     <html>
       <xsl:attribute name="lang" select="$language"/>
@@ -81,7 +79,7 @@
 
           <xsl:call-template name="render-page-format-links">
             <xsl:with-param name="formats"
-                            select="tokenize($outputFormats, ',')"/>
+                            select="$outputFormats"/>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
