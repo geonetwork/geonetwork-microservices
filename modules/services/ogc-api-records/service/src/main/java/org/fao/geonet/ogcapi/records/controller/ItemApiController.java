@@ -393,7 +393,7 @@ public class ItemApiController implements RecordApi {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = recordsEsQueryBuilder
-        .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
+        .buildQuery(q, bbox, startindex, limit, collectionFilter, sortby);
     try {
       return proxy.searchAndGetResult(request.getSession(), request, query, null);
     } catch (Exception ex) {
@@ -487,7 +487,7 @@ public class ItemApiController implements RecordApi {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = recordsEsQueryBuilder
-        .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
+        .buildQuery(q, bbox, startindex, limit, collectionFilter, sortby);
     EsSearchResults results = new EsSearchResults();
     try {
       results = proxy

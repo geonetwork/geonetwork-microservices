@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 public class SearchConfiguration {
   String defaultMimeType;
 
+  String queryBase;
+
   List<String> sortables = new ArrayList<>();
 
   List<String> sources = new ArrayList<>();

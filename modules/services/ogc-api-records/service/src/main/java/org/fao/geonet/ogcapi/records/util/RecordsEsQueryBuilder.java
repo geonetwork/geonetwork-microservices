@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConstructorBinding;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConstructorBinding
+@Slf4j(topic = "org.fao.geonet.ogcapi")
 public class RecordsEsQueryBuilder {
 
   @Autowired
@@ -29,37 +32,40 @@ public class RecordsEsQueryBuilder {
       "cl_status",
       "edit");
 
+  private static String defaultTypeFilter = "+isTemplate:n";
+  private static String defaultSpatialOperation = "intersects";
+
   /**
    * Creates a ElasticSearch query for a single record.
    *
-   * @param recordId         Record uuid.
+   * @param uuid             Record uuid.
    * @param collectionFilter Filter to select the record in a collection scope.
    * @param includes         List of fields to return (null, retuns all).
    * @return ElasticSearch query.
    */
-  public String buildQuerySingleRecord(String recordId, String collectionFilter,
+  public String buildQuerySingleRecord(String uuid,
+      String collectionFilter,
       List<String> includes) {
 
-    if (includes == null) {
-      return String.format("{\"from\": %d, \"size\": %d, "
-              + "\"query\": {\"query_string\": "
-              + "{\"query\": \"+_id:%s %s +isTemplate:n\"}}}",
-          0, 1, recordId, collectionFilter);
-    } else {
-      return String.format("{\"from\": %d, \"size\": %d, "
-              + "\"query\": {\"query_string\": "
-              + "{\"query\": \"+_id:%s %s +isTemplate:n\"}}, "
-              + "\"_source\": {\"includes\": [" + includes.stream().collect(
-          Collectors.joining("\",\"", "\"", "\"")) + "]}}",
-          0, 1, recordId, collectionFilter);
-
-    }
+    return String.format("{\"from\": %d, \"size\": %d, "
+            + "\"query\": {\"query_string\": "
+            + "{\"query\": \"+_id:\\\"%s\\\" %s %s\"}}, "
+            + "\"_source\": {\"includes\": [%s]}}",
+        0, 1, uuid,
+        collectionFilter == null ? "" : collectionFilter,
+        defaultTypeFilter,
+        includes == null ? ".*"
+            : includes.stream().collect(
+                Collectors.joining("\", \"", "\"", "\""))
+    );
   }
 
   /**
    * Creates a ElasticSearch query from Records API parameters.
    */
-  public String buildQuery(List<BigDecimal> bbox, Integer startIndex, Integer limit,
+  public String buildQuery(
+      List<String> q, List<BigDecimal> bbox,
+      Integer startIndex, Integer limit,
       String collectionFilter, List<String> sortBy) {
     String geoFilter = "";
 
@@ -78,8 +84,10 @@ public class RecordsEsQueryBuilder {
           + "                        ]\n"
           + "                    ]\n"
           + "                },\n"
-          + "                \"relation\": \"intersects\"\n"
-          + "            }}}", bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+          + "                \"relation\": \"%s\"\n"
+          + "            }}}",
+          bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3),
+          defaultSpatialOperation);
     }
 
     String sortByValue = "\"_score\"";
@@ -100,15 +108,31 @@ public class RecordsEsQueryBuilder {
     Set<String> sources = new HashSet(defaultSources);
     sources.addAll(configuration.getSources());
 
-    return String.format("{\"from\": %d, \"size\": %d, "
+    String queryString = "";
+    if (q != null && q.size() > 0) {
+      if (StringUtils.isNotEmpty(configuration.getQueryBase())) {
+        queryString = configuration.getQueryBase().replaceAll(
+            "\\{any\\}",
+            q.get(0));
+      } else {
+        queryString = q.stream().collect(Collectors.joining(" OR "));
+      }
+    }
+    String esQuery = String.format("{\"from\": %d, \"size\": %d, "
             + "\"_source\": [%s],"
             + "\"sort\": [%s],"
             + "\"query\": {\"query_string\": "
-            + "{\"query\": \"%s +isTemplate:n\"}} %s} ",
+            + "{\"query\": \"%s %s %s\"}} %s} ",
         startIndex, limit,
         sources
             .stream()
             .collect(Collectors.joining("\",\"", "\"", "\"")),
-        sortByValue, collectionFilter, geoFilter);
+        sortByValue,
+        collectionFilter,
+        queryString,
+        defaultTypeFilter,
+        geoFilter);
+    log.debug(esQuery);
+    return esQuery;
   }
 }
