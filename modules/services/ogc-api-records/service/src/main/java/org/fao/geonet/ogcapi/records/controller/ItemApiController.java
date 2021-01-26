@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.GnMediaType;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
@@ -65,6 +67,8 @@ public class ItemApiController implements RecordApi {
   MessageSource messages;
   @Autowired
   RecordsEsQueryBuilder recordsEsQueryBuilder;
+  @Autowired
+  SearchConfiguration searchConfiguration;
 
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
@@ -513,12 +517,10 @@ public class ItemApiController implements RecordApi {
     String formatParam = request.getParameter("f");
 
     if (StringUtils.isNotEmpty(formatParam)) {
-      if (formatParam.equalsIgnoreCase("xml")) {
-        mediaType = MediaType.APPLICATION_XML_VALUE;
-      } else if (formatParam.equalsIgnoreCase("json")) {
-        mediaType = MediaType.APPLICATION_JSON_VALUE;
-      } else if (formatParam.equalsIgnoreCase("dcat")) {
-        mediaType = "application/dcat2+xml";
+      Optional<Format> format = searchConfiguration.getFormats().stream().filter(f -> f.getName().equals(formatParam)).findFirst();
+
+      if (format.isPresent()) {
+        mediaType = format.get().getMimeType();
       }
     } else {
       mediaType = request.getHeader("Accept");
