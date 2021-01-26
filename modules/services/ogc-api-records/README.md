@@ -41,6 +41,7 @@ mvn process-resources
 
 ```shell script
 
+# Collections
 curl 127.0.0.1:9901/collections \
         -H "Accept: application/json"
 
@@ -50,6 +51,8 @@ curl 127.0.0.1:9901/collections \
 curl 127.0.0.1:9901/collections?l=fr \
         -H "Accept: text/html"
 
+
+# A collection
 firstCollection=$( \
 curl 127.0.0.1:9901/collections \
         -H "Accept: application/json" \
@@ -64,6 +67,8 @@ curl 127.0.0.1:9901/collections/$firstCollection \
 curl 127.0.0.1:9901/collections/$firstCollection/sortables \
         -H "Accept: application/json"
 
+
+# Collection records & search
 curl 127.0.0.1:9901/collections/$firstCollection/items \
         -H "Accept: application/json" 
 
@@ -73,6 +78,31 @@ curl 127.0.0.1:9901/collections/$firstCollection/items \
 curl 127.0.0.1:9901/collections/$firstCollection/items \
         -H "Accept: application/rss+xml" 
 
+# Search parameters
+# Use `limit` for the number of records per page
+curl 127.0.0.1:9901/collections/$firstCollection/items?limit=20 \
+        -H "Accept: application/json" 
+## Should we add a max limit ?
+
+# Use `startindex` for paging. Default is 0.
+curl 127.0.0.1:9901/collections/$firstCollection/items?startindex=20&limit=20 \
+        -H "Accept: application/json" 
+
+# Full text search using `q`. Full text search is configurable in `application.yml` > `queryBase`
+curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
+        -H "Accept: application/json" 
+
+# Full text search using `q`. Full text search is configurable in `application.yml` > `queryBase`
+curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
+        -H "Accept: application/json" 
+
+# Bbox search using `bbox` (relation: intersects)
+curl 127.0.0.1:9901/collections/$firstCollection/items?bbox=-100,40,-80,50 \
+        -H "Accept: application/json" 
+
+
+
+# One record
 uuid=$( \
     curl 127.0.0.1:9901/collections/$firstCollection/items \
                  -H "Accept: application/json"  \

@@ -396,7 +396,7 @@ public class ElasticSearchProxy {
             Arrays.asList(new String[]{"accept-encoding"}));
 
         connectionWithFinalHost.setDoOutput(true);
-        log.debug(requestBody);
+        log.debug("ES query: {}", requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host

@@ -81,3 +81,10 @@ gn:
 #  org.springframework: DEBUG
 #  org.hibernate.SQL: DEBUG
 #  org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+logging:
+  level:
+    # geonetwork roots
+    org.fao.geonet: INFO
+    org.fao.geonet.ogcapi: DEBUG
+    org.fao.geonet.searching: DEBUG
