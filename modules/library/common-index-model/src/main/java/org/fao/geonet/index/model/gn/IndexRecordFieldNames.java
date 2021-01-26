@@ -1,12 +1,20 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.model.gn;
 
 public class IndexRecordFieldNames {
+
+  public static final String source = "_source";
+
+  public static final String id = "id";
+  public static final String uuid = "uuid";
+  public static final String owner = "owner";
+  public static final String groupOwner = "groupOwner";
+  public static final String opPrefix = "op";
+
   public static final String isHarvested = "isHarvested";
   public static final String isPublishedToAll = "isPublishedToAll";
   public static final String resourceTitle = "resourceTitleObject";
@@ -26,8 +34,10 @@ public class IndexRecordFieldNames {
   public static final String resourceTemporalDateRange = "resourceTemporalDateRange";
   public static final String revisionYearForResource = "revisionYearForResource";
   public static final String revisionMonthForResource = "revisionMonthForResource";
+  public static final String dateStamp = "dateStamp";
 
   public class Codelists {
+
     public static final String prefix = "cl_";
     public static final String characterSet = prefix + "characterSet";
     public static final String hierarchyLevel = prefix + "hierarchyLevel";
@@ -35,6 +45,7 @@ public class IndexRecordFieldNames {
   }
 
   public class CommonField {
+
     public static final String defaultText = "default";
     public static final String key = "key";
     public static final String link = "link";

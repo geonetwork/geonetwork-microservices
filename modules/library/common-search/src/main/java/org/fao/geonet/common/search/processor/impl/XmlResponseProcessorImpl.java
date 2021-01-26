@@ -12,11 +12,11 @@ import javax.xml.stream.XMLStreamWriter;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
-import org.fao.geonet.common.search.Constants.IndexFieldNames;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -25,12 +25,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class XmlResponseProcessorImpl implements SearchResponseProcessor {
+
   @Autowired
   MetadataRepository metadataRepository;
 
   /**
    * Process the search response and return RSS feed.
-   *
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
@@ -51,7 +51,9 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
 
       List<Integer> ids = new ArrayList<>();
       new ResponseParser().matchHits(parser, generator, doc -> {
-        ids.add(doc.get(IndexFieldNames.SOURCE).get(IndexFieldNames.ID).asInt());
+        ids.add(doc
+            .get(IndexRecordFieldNames.source)
+            .get(IndexRecordFieldNames.id).asInt());
       });
 
       List<Metadata> records = metadataRepository.findAllById(ids);

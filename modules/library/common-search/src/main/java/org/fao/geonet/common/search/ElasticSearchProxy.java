@@ -39,6 +39,7 @@ import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -694,11 +695,11 @@ public class ElasticSearchProxy {
             //session.setProperty(Geonet.Session.SEARCH_REQUEST + selectionBucket, node);
           }
         }
-        final JsonNode sourceNode = node.get("_source");
+        final JsonNode sourceNode = node.get(IndexRecordFieldNames.source);
         if (sourceNode != null) {
           final JsonNode sourceIncludes = sourceNode.get("includes");
           if (sourceIncludes != null && sourceIncludes.isArray()) {
-            ((ArrayNode) sourceIncludes).add("op*");
+            ((ArrayNode) sourceIncludes).add(IndexRecordFieldNames.opPrefix + "*");
           }
         }
       }

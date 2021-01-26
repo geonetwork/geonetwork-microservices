@@ -32,7 +32,7 @@ public class IndexRecordTest {
 
     try {
       IndexRecord record = objectMapper.readValue(
-          jsonNode.get("_source").toPrettyString(),
+          jsonNode.get(IndexRecordFieldNames.source).toPrettyString(),
           IndexRecord.class);
       Assert.assertEquals(
           "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
@@ -85,7 +85,7 @@ public class IndexRecordTest {
 
     try {
       IndexRecord record = objectMapper.readValue(
-          jsonNode.get("_source").toPrettyString(),
+          jsonNode.get(IndexRecordFieldNames.source).toPrettyString(),
           IndexRecord.class);
       Assert.assertEquals(
           "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
