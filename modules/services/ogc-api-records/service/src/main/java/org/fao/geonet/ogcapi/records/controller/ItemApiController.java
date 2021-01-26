@@ -141,7 +141,9 @@ public class ItemApiController implements RecordApi {
           String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
-          String recordId) {
+          String recordId,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
@@ -151,9 +153,6 @@ public class ItemApiController implements RecordApi {
               new String[]{collectionId},
               ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
     }
-
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
-    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
@@ -206,7 +205,9 @@ public class ItemApiController implements RecordApi {
           String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
-          String recordId) {
+          String recordId,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
@@ -214,11 +215,8 @@ public class ItemApiController implements RecordApi {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND,
           messages.getMessage("ogcapir.exception.collection.notFound",
               new String[]{collectionId},
-              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+              request.getLocale()));
     }
-
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
-    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
@@ -456,7 +454,8 @@ public class ItemApiController implements RecordApi {
       @ApiParam(value = "")
       @RequestParam(value = "sortby", required = false)
           List<String> sortby,
-      Model model) {
+      Model model,
+      HttpServletRequest request) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
@@ -464,8 +463,6 @@ public class ItemApiController implements RecordApi {
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
     }
-
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = RecordsEsQueryBuilder
