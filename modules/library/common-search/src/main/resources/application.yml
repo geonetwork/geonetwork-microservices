@@ -40,11 +40,6 @@ gn:
         name : rss
         mimeType : application/rss+xml
         responseProcessor: org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl
-      -
-        name : rss
-        mimeType : application/rss+xml
-        responseProcessor : org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl
-
     defaultMimeType: application/json
     sources:
       - "resourceTitleObject"
