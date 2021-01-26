@@ -5,12 +5,6 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
@@ -24,6 +18,7 @@ import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -35,9 +30,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
+
+  @Value("${gn.baseurl}")
+  String baseUrl;
 
   @Autowired
   MessageSource messages;
@@ -121,7 +125,9 @@ public class CapabilitiesApiController implements CapabilitiesApi {
    * Collections as XML.
    */
   @RequestMapping(value = "/collections",
-      produces = {"application/xml"},
+      produces = {
+          MediaType.APPLICATION_XML_VALUE
+      },
       method = RequestMethod.GET)
   public ResponseEntity<Content> describeCollectionsAsXml(
       @RequestParam(required = false) Integer limit,
@@ -134,7 +140,9 @@ public class CapabilitiesApiController implements CapabilitiesApi {
    * Collections as HTML.
    */
   @RequestMapping(value = "/collections",
-      produces = {"text/html"},
+      produces = {
+          MediaType.TEXT_HTML_VALUE
+      },
       method = RequestMethod.GET)
   public String describeCollectionsAsHtml(
       @RequestParam(required = false) Integer limit,
