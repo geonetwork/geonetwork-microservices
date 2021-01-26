@@ -1,3 +1,12 @@
+gn:
+  ogcapi:
+    formats :
+      - name : json
+        mimeType : application/json
+      - name : xml
+        mimeType : application/xml
+      - name : html
+        mimeType : text/html
 server:
   port: 8080
 #  address: localhost

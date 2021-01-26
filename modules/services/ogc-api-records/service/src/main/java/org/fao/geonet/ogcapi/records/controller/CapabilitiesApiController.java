@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
+import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -56,8 +57,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
   private SourceRepository sourceRepository;
 
   @Autowired
-  private SearchConfiguration searchConfiguration;
-
+  private OgcApiConfiguration configuration;
 
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
@@ -83,7 +83,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
         .href(baseUrl)
         .rel("self").type(MediaType.APPLICATION_JSON.toString()));
 
-    searchConfiguration.getFormats().forEach(f -> {
+    configuration.getFormats().forEach(f -> {
       root.addLinksItem(new Link()
           .href(baseUrl + "collections?f=" + f.getName())
           .type("Catalogue collections")
@@ -92,6 +92,38 @@ public class CapabilitiesApiController implements CapabilitiesApi {
     });
 
     return ResponseEntity.ok(root);
+  }
+
+  /**
+   * Landing page as XML.
+   */
+  @RequestMapping(value = "/",
+      produces = {
+          MediaType.APPLICATION_XML_VALUE
+      },
+      method = RequestMethod.GET)
+  public ResponseEntity<Root> getLandingPageAsXml() {
+    return getLandingPage();
+  }
+
+  /**
+   * Landing page as HTML.
+   */
+  @RequestMapping(value = "/",
+      produces = {
+          MediaType.TEXT_HTML_VALUE
+      },
+      method = RequestMethod.GET)
+  public String getLandingPageAsHtml(HttpServletRequest request,
+      Model model) {
+    List<Source> sources = sourceRepository.findAll();
+    XsltModel modelSource = new XsltModel();
+    modelSource.setOutputFormats(configuration.getFormats());
+    modelSource.setCollections(sources);
+    model.addAttribute("source", modelSource.toSource());
+    Locale locale = LocaleContextHolder.getLocale();
+    viewUtility.addi18n(model, locale, request);
+    return "ogcapir/landingpage";
   }
 
   @Override
@@ -152,7 +184,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       Model model) {
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
-    modelSource.setOutputFormats(searchConfiguration.getFormats());
+    modelSource.setOutputFormats(configuration.getFormats());
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
     Locale locale = LocaleContextHolder.getLocale();

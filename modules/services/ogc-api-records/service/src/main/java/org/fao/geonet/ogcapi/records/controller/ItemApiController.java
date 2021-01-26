@@ -500,6 +500,7 @@ public class ItemApiController implements RecordApi {
     XsltModel modelSource = new XsltModel();
     modelSource.setCollection(source);
     modelSource.setResults(results);
+    modelSource.setOutputFormats(searchConfiguration.getFormats());
     model.addAttribute("source", modelSource.toSource());
     viewUtility.addi18n(model, locale, request);
     return "ogcapir/collection";
