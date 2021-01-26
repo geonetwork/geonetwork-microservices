@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
@@ -53,6 +54,8 @@ public class CollectionApiController implements CollectionApi {
   private CollectionService collectionService;
   @Autowired
   MessageSource messages;
+  @Autowired
+  SearchConfiguration searchConfiguration;
 
   /**
    * Describe a collection.
@@ -104,11 +107,12 @@ public class CollectionApiController implements CollectionApi {
       @PathVariable("collectionId") String collectionId,
       HttpServletRequest request,
       Model model) {
-    Locale locale = LocaleContextHolder.getLocale();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
     XsltModel modelSource = new XsltModel();
+    modelSource.setOutputFormats(searchConfiguration.getFormats());
     modelSource.setCollection(source);
     model.addAttribute("source", modelSource.toSource());
+    Locale locale = LocaleContextHolder.getLocale();
     viewUtility.addi18n(model, locale, request);
     return "ogcapir/collection";
   }

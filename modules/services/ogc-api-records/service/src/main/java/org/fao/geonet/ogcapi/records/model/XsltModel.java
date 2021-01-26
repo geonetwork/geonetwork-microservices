@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Source;
 
@@ -42,6 +43,10 @@ public class XsltModel {
   @XmlElementWrapper(name = "items")
   @XmlElement(name = "item")
   List<Item> items;
+
+  @XmlElementWrapper(name = "outputFormats")
+  @XmlElement(name = "outputFormat")
+  List<Format> outputFormats;
 
   EsSearchResults results;
 

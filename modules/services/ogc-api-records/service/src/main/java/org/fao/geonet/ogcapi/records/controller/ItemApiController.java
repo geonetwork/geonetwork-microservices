@@ -313,6 +313,7 @@ public class ItemApiController implements RecordApi {
           new Item(recordId, null, record.getData())
       ));
       model.addAttribute("source", modelSource.toSource());
+      modelSource.setOutputFormats(searchConfiguration.getFormats());
       viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()), request);
       return "ogcapir/item";
     } catch (Exception ex) {

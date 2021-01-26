@@ -150,11 +150,12 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       @RequestParam(required = false) String time,
       HttpServletRequest request,
       Model model) {
-    Locale locale = LocaleContextHolder.getLocale();
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
+    modelSource.setOutputFormats(searchConfiguration.getFormats());
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
+    Locale locale = LocaleContextHolder.getLocale();
     viewUtility.addi18n(model, locale, request);
     return "ogcapir/collections";
   }

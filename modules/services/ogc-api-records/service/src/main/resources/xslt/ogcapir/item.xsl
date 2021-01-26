@@ -29,6 +29,12 @@
                   select="model/collection"
                   as="node()?"/>
 
+    <xsl:variable name="outputFormats">
+      <xsl:for-each select="model/outputFormats/outputFormat">
+        <xsl:value-of select="name" /><xsl:if test="position() != last()">,</xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+
     <xsl:variable name="title" as="xs:string">
       <xsl:variable name="text">
         <xsl:apply-templates mode="getTitle" select="$metadata"/>
@@ -96,7 +102,7 @@
 
           <xsl:call-template name="render-page-format-links">
             <xsl:with-param name="formats"
-                            select="('json', 'jsonld', 'xml', 'dcat', 'gn')"/>
+                            select="tokenize($outputFormats, ',')"/>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>

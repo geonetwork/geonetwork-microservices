@@ -27,6 +27,12 @@
                   select="tokenize($label, '\|')"
                   as="xs:string*"/>
 
+    <xsl:variable name="outputFormats">
+      <xsl:for-each select="model/outputFormats/outputFormat">
+        <xsl:value-of select="name" /><xsl:if test="position() != last()">,</xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+
     <xsl:variable name="title"
                     select="if (empty($properties[1])) then name else $properties[1]"/>
     <xsl:variable name="subTitle"
@@ -87,7 +93,7 @@
 
           <xsl:call-template name="render-page-format-links">
             <xsl:with-param name="formats"
-                            select="('json', 'xml')"/>
+                            select="tokenize($outputFormats, ',')"/>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
