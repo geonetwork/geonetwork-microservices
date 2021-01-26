@@ -19,10 +19,13 @@ public class RecordsEsQueryBuilder {
 
   // TODO: Sources depends on output type
   private static List<String> defaultSources = Arrays.asList(
-      "resourceTitle", "resourceAbstract", "resourceType",
-      "resourceDate",
-      "metadataIdentifier", "schema", "link", "allKeywords",
-      "contactForResource", "cl_status", "edit", "id");
+      "resourceTitleObject", "resourceAbstractObject",
+      "resourceType", "resourceDate",
+      "id", "metadataIdentifier", "schema",
+      "link", "allKeywords",
+      "contactForResource",
+      "cl_status",
+      "edit");
 
   public RecordsEsQueryBuilder(OgcApiConfiguration configuration) {
     this.configuration = configuration;
