@@ -49,7 +49,7 @@
             <xsl:with-param name="breadcrumb" select="$subTitle"/>
           </xsl:call-template>
 
-          <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">           
+          <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">           
             <div class="w-2/3">
               <xsl:choose>
                 <xsl:when test="model/results">

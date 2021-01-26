@@ -50,7 +50,7 @@
         <xsl:with-param name="link" select="concat($requestUrl, '/main')"/>
         <xsl:with-param name="content">
 
-          <div class="container mx-auto flex flex-wrap text-gray-800">           
+          <div class="container mx-auto flex flex-wrap text-gray-800 md:px-4">           
             <div class="w-2/3">
               <xsl:call-template name="html-breadcrumb">
                 <xsl:with-param name="breadcrumb">
@@ -95,7 +95,7 @@
 
     <xsl:if test="count($collections) > 0">
       <section class="py-4">
-        <div class="container mx-auto">
+        <div class="container mx-auto md:px-4">
           <xsl:if test="$title">
             <h1 class="w-full my-2 text-3xl font-bold leading-tight text-gray-800">
               <xsl:value-of select="$title"/>
