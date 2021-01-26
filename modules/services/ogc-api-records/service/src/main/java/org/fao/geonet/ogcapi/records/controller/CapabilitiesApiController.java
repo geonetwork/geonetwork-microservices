@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;

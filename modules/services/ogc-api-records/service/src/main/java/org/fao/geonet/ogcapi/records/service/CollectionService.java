@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.domain.UiSetting;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.repository.UiSettingsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class CollectionService {
 
   @Autowired
-  private OgcApiConfiguration configuration;
+  private SearchConfiguration configuration;
 
   @Autowired
   private SourceRepository sourceRepository;

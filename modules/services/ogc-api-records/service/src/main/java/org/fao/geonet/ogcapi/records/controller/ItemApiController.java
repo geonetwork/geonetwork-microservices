@@ -60,9 +60,11 @@ public class ItemApiController implements RecordApi {
   @Autowired
   ViewUtility viewUtility;
   @Autowired
-  private CollectionService collectionService;
+  CollectionService collectionService;
   @Autowired
   MessageSource messages;
+  @Autowired
+  RecordsEsQueryBuilder recordsEsQueryBuilder;
 
   /**
    * Only to support sample responses from {@link RecordApi}, remove once all its methods are
@@ -96,7 +98,7 @@ public class ItemApiController implements RecordApi {
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
@@ -156,7 +158,7 @@ public class ItemApiController implements RecordApi {
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
@@ -220,7 +222,7 @@ public class ItemApiController implements RecordApi {
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
@@ -371,7 +373,7 @@ public class ItemApiController implements RecordApi {
     HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
-    String query = RecordsEsQueryBuilder
+    String query = recordsEsQueryBuilder
         .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
     try {
       return proxy.searchAndGetResult(request.getSession(), request, query, null);
@@ -400,7 +402,7 @@ public class ItemApiController implements RecordApi {
       @ApiParam(value = "", defaultValue = "10")
       @RequestParam(value = "limit", required = false, defaultValue = "10")
           Integer limit,
-      @ApiParam(value = "", defaultValue = "9")
+      @ApiParam(value = "", defaultValue = "0")
       @RequestParam(value = "startindex", required = false, defaultValue = "0")
           Integer startindex,
       @ApiParam(value = "")
@@ -439,8 +441,8 @@ public class ItemApiController implements RecordApi {
       @ApiParam(value = "", defaultValue = "10")
       @RequestParam(value = "limit", required = false, defaultValue = "10")
           Integer limit,
-      @ApiParam(value = "", defaultValue = "9")
-      @RequestParam(value = "startindex", required = false, defaultValue = "9")
+      @ApiParam(value = "", defaultValue = "0")
+      @RequestParam(value = "startindex", required = false, defaultValue = "0")
           Integer startindex,
       @ApiParam(value = "")
       @RequestParam(value = "type", required = false)
@@ -465,7 +467,7 @@ public class ItemApiController implements RecordApi {
     }
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
-    String query = RecordsEsQueryBuilder
+    String query = recordsEsQueryBuilder
         .buildQuery(bbox, startindex, limit, collectionFilter, sortby);
     EsSearchResults results = new EsSearchResults();
     try {

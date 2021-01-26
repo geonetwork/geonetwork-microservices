@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 @ConstructorBinding
 public class RecordsEsQueryBuilder {
 
-  private static OgcApiConfiguration configuration;
+  @Autowired
+  private SearchConfiguration configuration;
 
   // TODO: Sources depends on output type
   private static List<String> defaultSources = Arrays.asList(
@@ -27,10 +29,6 @@ public class RecordsEsQueryBuilder {
       "cl_status",
       "edit");
 
-  public RecordsEsQueryBuilder(OgcApiConfiguration configuration) {
-    this.configuration = configuration;
-  }
-
   /**
    * Creates a ElasticSearch query for a single record.
    *
@@ -39,7 +37,7 @@ public class RecordsEsQueryBuilder {
    * @param includes         List of fields to return (null, retuns all).
    * @return ElasticSearch query.
    */
-  public static String buildQuerySingleRecord(String recordId, String collectionFilter,
+  public String buildQuerySingleRecord(String recordId, String collectionFilter,
       List<String> includes) {
 
     if (includes == null) {
@@ -61,7 +59,7 @@ public class RecordsEsQueryBuilder {
   /**
    * Creates a ElasticSearch query from Records API parameters.
    */
-  public static String buildQuery(List<BigDecimal> bbox, Integer startIndex, Integer limit,
+  public String buildQuery(List<BigDecimal> bbox, Integer startIndex, Integer limit,
       String collectionFilter, List<String> sortBy) {
     String geoFilter = "";
 
