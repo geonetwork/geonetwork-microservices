@@ -517,7 +517,8 @@ public class ItemApiController implements RecordApi {
     String formatParam = request.getParameter("f");
 
     if (StringUtils.isNotEmpty(formatParam)) {
-      Optional<Format> format = searchConfiguration.getFormats().stream().filter(f -> f.getName().equals(formatParam)).findFirst();
+      Optional<Format> format = searchConfiguration.getFormats()
+          .stream().filter(f -> f.getName().equals(formatParam)).findFirst();
 
       if (format.isPresent()) {
         mediaType = format.get().getMimeType();
