@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.converter.JsonLdRecord;
 import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
@@ -182,7 +184,7 @@ public class ItemApiController implements RecordApi {
 
       JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
       IndexRecord record = mapper.readValue(
-          recordValue.get("_source").toPrettyString(),
+          recordValue.get(IndexRecordFieldNames.source).toPrettyString(),
           IndexRecord.class);
       streamResult(response,
           new JsonLdRecord(record).toString(),
@@ -343,11 +345,13 @@ public class ItemApiController implements RecordApi {
       List<String> externalids,
       List<String> sortby) {
 
-    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
-        externalids, sortby);
-
     HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
     HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
+
+    sortby = setDefaultRssSortBy(sortby, request);
+
+    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
+        externalids, sortby);
 
     try {
       streamResult(response, queryResponse, getResponseContentType(request));
@@ -356,6 +360,16 @@ public class ItemApiController implements RecordApi {
     }
 
     return ResponseEntity.ok().build();
+  }
+
+  private List<String> setDefaultRssSortBy(List<String> sortby, HttpServletRequest request) {
+    if ("rss".equals(request.getParameter("f"))
+        && (sortby == null || sortby.size() == 0)) {
+      sortby = new ArrayList<>();
+      sortby.add(String.format("%s:%s",
+          IndexRecordFieldNames.dateStamp, "desc"));
+    }
+    return sortby;
   }
 
   private String search(

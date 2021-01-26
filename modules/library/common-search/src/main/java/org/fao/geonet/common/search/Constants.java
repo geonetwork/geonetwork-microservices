@@ -10,21 +10,11 @@ public final class Constants {
 
   public static final String ENCODING = System.getProperty("geonetwork.file.encoding", "UTF-8");
 
-  public static final class IndexFieldNames {
-    public static final String ID = "id";
-    public static final String UUID = "uuid";
-    public static final String OWNER = "owner";
-    public static final String GROUP_OWNER = "groupOwner";
-    public static final String OP_PREFIX = "op";
-    public static final String SOURCE = "_source";
-  }
-
   public static final class Elem {
     public static final String SELECTED = "selected";
     public static final String IS_PUBLISHED_TO_ALL = "isPublishedToAll";
     public static final String GUEST_DOWNLOAD = "guestdownload";
     public static final String EDIT = "edit";
-    public static final String OWNER = "owner";
   }
 
   public static final class Selection {

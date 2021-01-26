@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.index.model.gn.ResourceDate;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
@@ -138,7 +139,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   private Item toRssItem(ObjectNode doc) {
     try {
       IndexRecord record = new ObjectMapper()
-          .readValue(doc.get("_source").toString(), IndexRecord.class);
+          .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
 
       // https://www.rssboard.org/rss-specification#hrelementsOfLtitemgt
       Item item = new Item();
