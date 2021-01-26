@@ -2,7 +2,6 @@ package org.fao.geonet.ogcapi.records.util;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -10,31 +9,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.common.geo.ShapeRelation;
-import org.elasticsearch.common.geo.builders.EnvelopeBuilder;
-import org.elasticsearch.common.geo.builders.GeometryCollectionBuilder;
-import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
-import org.elasticsearch.common.lucene.search.function.ScoreFunction;
 import org.elasticsearch.geometry.Rectangle;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.GeoShapeQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.stereotype.Component;
@@ -89,7 +74,9 @@ public class RecordsEsQueryBuilder {
    * Creates a ElasticSearch query from Records API parameters.
    */
   public String buildQuery(
-      List<String> q, List<BigDecimal> bbox,
+      List<String> q,
+      List<String> externalids,
+      List<BigDecimal> bbox,
       Integer startIndex, Integer limit,
       String collectionFilter, List<String> sortBy) {
     SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -103,7 +90,7 @@ public class RecordsEsQueryBuilder {
                 .order(
                     sortByTokens.length == 2
                         && "desc".equalsIgnoreCase(sortByTokens[1])
-                    ? SortOrder.DESC : SortOrder.ASC));
+                        ? SortOrder.DESC : SortOrder.ASC));
       });
     }
 
@@ -111,21 +98,18 @@ public class RecordsEsQueryBuilder {
     sources.addAll(configuration.getSources());
     sourceBuilder.fetchSource(sources.toArray(new String[]{}), null);
 
-    String queryString = "*:*";
-    if (q != null && q.size() > 0) {
-      String values = q.stream().collect(Collectors.joining(" AND "));
-      if (StringUtils.isNotEmpty(configuration.getQueryBase())) {
-        queryString = configuration.getQueryBase().replaceAll(
-            "\\$\\{any\\}",
-            values);
-      } else {
-        queryString = values;
-      }
-    }
-    QueryBuilder fullTextQuery = QueryBuilders.queryStringQuery(queryString);
-
     BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+    QueryBuilder fullTextQuery =
+        QueryBuilders.queryStringQuery(buildFullTextSearchQuery(q));
     boolQuery.must(fullTextQuery);
+
+    if (externalids != null && externalids.size() > 0) {
+      boolQuery.must(
+          QueryBuilders.termsQuery(
+              IndexRecordFieldNames.uuid,
+              externalids));
+    }
 
     GeoShapeQueryBuilder geoQuery;
     if (bbox != null && bbox.size() == 4) {
@@ -145,7 +129,6 @@ public class RecordsEsQueryBuilder {
       }
     }
 
-
     String filterQueryString = defaultTypeFilter;
     if (StringUtils.isNotEmpty(collectionFilter)) {
       filterQueryString += " " + collectionFilter;
@@ -156,5 +139,20 @@ public class RecordsEsQueryBuilder {
     log.debug("OGC API query: {}", sourceBuilder.toString());
 
     return sourceBuilder.toString();
+  }
+
+  private String buildFullTextSearchQuery(List<String> q) {
+    String queryString = "*:*";
+    if (q != null && q.size() > 0) {
+      String values = q.stream().collect(Collectors.joining(" AND "));
+      if (StringUtils.isNotEmpty(configuration.getQueryBase())) {
+        queryString = configuration.getQueryBase().replaceAll(
+            "\\$\\{any\\}",
+            values);
+      } else {
+        queryString = values;
+      }
+    }
+    return queryString;
   }
 }

@@ -100,6 +100,10 @@ curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
 curl 127.0.0.1:9901/collections/$firstCollection/items?bbox=-100,40,-80,50 \
         -H "Accept: application/json" 
 
+# Search by record UUID using `externalids`
+curl 127.0.0.1:9901/collections/$firstCollection/items?externalids=8306437bc59910b70223865b44100ffab97ba069&externalids=8a9bc9e8f86cb02be8be4450e310d261415ac909 \
+        -H "Accept: application/json" 
+
 
 
 # One record

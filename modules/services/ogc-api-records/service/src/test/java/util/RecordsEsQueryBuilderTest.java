@@ -48,12 +48,4 @@ class RecordsEsQueryBuilderTest {
         "{\"from\": 0, \"size\": 1, \"query\": {\"query_string\": {\"query\": \"+_id:\\\"abc\\\" +source:uio +isTemplate:n\"}}, \"_source\": {\"includes\": [\"resourceType\", \"cl_status\"]}}",
         query);
   }
-
-  @Ignore
-  void buildQuery() {
-    RecordsEsQueryBuilder queryBuilder = new RecordsEsQueryBuilder();
-    String query = queryBuilder.buildQuery(null, null, 0, 10, null, null);
-    Assert.assertEquals("", query);
-
-  }
 }

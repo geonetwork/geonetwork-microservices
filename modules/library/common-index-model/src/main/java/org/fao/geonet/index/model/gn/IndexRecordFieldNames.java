@@ -10,7 +10,7 @@ public class IndexRecordFieldNames {
   public static final String source = "_source";
 
   public static final String id = "id";
-  public static final String uuid = "uuid";
+  public static final String uuid = "metadataIdentifier";
   public static final String owner = "owner";
   public static final String groupOwner = "groupOwner";
   public static final String opPrefix = "op";
