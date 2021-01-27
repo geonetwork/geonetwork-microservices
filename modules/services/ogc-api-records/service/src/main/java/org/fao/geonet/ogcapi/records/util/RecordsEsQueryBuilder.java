@@ -64,7 +64,7 @@ public class RecordsEsQueryBuilder {
         0, 1, uuid,
         collectionFilter == null ? "" : collectionFilter,
         defaultTypeFilter,
-        includes == null ? "\".*\""
+        includes == null ? "\"*\""
             : includes.stream().collect(
                 Collectors.joining("\", \"", "\"", "\""))
     );

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -104,7 +105,8 @@ public class ItemApiController implements RecordApi {
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(
+          recordId, collectionFilter, null);
 
       String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
@@ -180,7 +182,7 @@ public class ItemApiController implements RecordApi {
                 ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
       }
 
-      JsonNode record = actualObj.get("DataFeed").get(0);
+      JsonNode record = actualObj.get("dataFeedElement").get(0);
       streamResult(response,
           record.toString(),
           GnMediaType.APPLICATION_JSON_LD_VALUE);

@@ -32,13 +32,13 @@ class RecordsEsQueryBuilderTest {
     String query = queryBuilder.buildQuerySingleRecord("abc", null, null);
 
     Assert.assertEquals(
-        "{\"from\": 0, \"size\": 1, \"query\": {\"query_string\": {\"query\": \"+_id:\\\"abc\\\"  +isTemplate:n\"}}, \"_source\": {\"includes\": [\".*\"]}}",
+        "{\"from\": 0, \"size\": 1, \"query\": {\"query_string\": {\"query\": \"+_id:\\\"abc\\\"  +isTemplate:n\"}}, \"_source\": {\"includes\": [\"*\"]}}",
         query);
 
     query = queryBuilder.buildQuerySingleRecord("abc", "+source:uio", null);
 
     Assert.assertEquals(
-        "{\"from\": 0, \"size\": 1, \"query\": {\"query_string\": {\"query\": \"+_id:\\\"abc\\\" +source:uio +isTemplate:n\"}}, \"_source\": {\"includes\": [\".*\"]}}",
+        "{\"from\": 0, \"size\": 1, \"query\": {\"query_string\": {\"query\": \"+_id:\\\"abc\\\" +source:uio +isTemplate:n\"}}, \"_source\": {\"includes\": [\"*\"]}}",
         query);
 
     String[] fields = {"resourceType", "cl_status"};
