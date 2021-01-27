@@ -50,7 +50,8 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
       parser.nextToken();
 
       List<Integer> ids = new ArrayList<>();
-      new ResponseParser().matchHits(parser, generator, doc -> {
+      ResponseParser responseParser = new ResponseParser();
+      responseParser.matchHits(parser, generator, doc -> {
         ids.add(doc
             .get(IndexRecordFieldNames.source)
             .get(IndexRecordFieldNames.id).asInt());
@@ -58,8 +59,11 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
 
       List<Metadata> records = metadataRepository.findAllById(ids);
 
-      generator.writeStartElement("results");
-      generator.writeAttribute("total", records.size() + "");
+      generator.writeStartElement("items");
+      generator.writeAttribute("total", responseParser.total + "");
+      generator.writeAttribute("relation", responseParser.totalRelation + "");
+      generator.writeAttribute("took", responseParser.took + "");
+      generator.writeAttribute("returned", records.size() + "");
       {
         records.forEach(r -> {
           String xsltFileName = String.format(

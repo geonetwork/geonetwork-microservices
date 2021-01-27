@@ -330,8 +330,9 @@ public class ItemApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
-      "application/json",
-      "application/rss+xml"})
+        MediaType.APPLICATION_JSON_VALUE,
+        GnMediaType.APPLICATION_JSON_LD_VALUE,
+        MediaType.APPLICATION_RSS_XML_VALUE})
   @Override
   // TODO: support datetime, type, q, externalids
   public ResponseEntity<Void> collectionsCollectionIdItemsGet(
@@ -407,7 +408,9 @@ public class ItemApiController implements RecordApi {
    * Collection items as XML.
    */
   @GetMapping(value = "/collections/{collectionId}/items",
-      produces = {"application/xml"})
+      produces = {
+        MediaType.APPLICATION_XML_VALUE
+      })
   public ResponseEntity<Void> collectionsCollectionIdItemsGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
@@ -446,7 +449,9 @@ public class ItemApiController implements RecordApi {
    * Collection items as HTML.
    */
   @GetMapping(value = "/collections/{collectionId}/items",
-      produces = {"text/html"})
+      produces = {
+        MediaType.TEXT_HTML_VALUE
+      })
   public String collectionsCollectionIdItemsGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
