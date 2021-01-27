@@ -23,7 +23,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 
-@Component
+@Component("XmlResponseProcessorImpl")
 public class XmlResponseProcessorImpl implements SearchResponseProcessor {
 
   @Autowired
@@ -55,7 +55,7 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
         ids.add(doc
             .get(IndexRecordFieldNames.source)
             .get(IndexRecordFieldNames.id).asInt());
-      });
+      }, false);
 
       List<Metadata> records = metadataRepository.findAllById(ids);
 

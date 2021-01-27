@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("XsltResponseProcessorImpl")
 public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
   @Autowired
@@ -41,7 +41,6 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
   /**
    * Process the search response and return RSS feed.
-   *
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
@@ -63,7 +62,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
         ids.add(doc
             .get(IndexRecordFieldNames.source)
             .get(IndexRecordFieldNames.id).asInt());
-      });
+      }, false);
 
       List<Metadata> records = metadataRepository.findAllById(ids);
 

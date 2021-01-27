@@ -61,7 +61,7 @@ public class ElasticSearchProxy {
       new String[]{"host", "x-xsrf-token", "cookie", "accept", "content-type"});
 
 
-  private Map<String, Class<? extends SearchResponseProcessor>> responseProcessors;
+  private HashMap<String, SearchResponseProcessor> responseProcessors;
 
   static final Map<String, String>
       ACCEPT_FORMATTERS =
@@ -80,20 +80,24 @@ public class ElasticSearchProxy {
    */
   @PostConstruct
   public void init() {
-    responseProcessors = new HashMap<String, Class<? extends SearchResponseProcessor>>();
+    responseProcessors = new HashMap<String, SearchResponseProcessor>();
 
     searchConfiguration.getFormats().forEach(f -> {
       try {
         if (StringUtils.isNotEmpty(f.getResponseProcessor())) {
-          responseProcessors.put(f.getName(),
-              Class.forName(f.getResponseProcessor()).asSubclass(SearchResponseProcessor.class));
 
-          responseProcessors.put(f.getMimeType(),
-              Class.forName(f.getResponseProcessor()).asSubclass(SearchResponseProcessor.class));
+          SearchResponseProcessor responseProcessor =
+              (SearchResponseProcessor) applicationContext.getBean(f.getResponseProcessor());
+
+          responseProcessors.put(f.getName(), responseProcessor);
+          responseProcessors.put(f.getMimeType(),responseProcessor);
         }
-      } catch (ClassNotFoundException ex) {
-        // TODO: Log exception
-        ex.printStackTrace();
+      } catch (Exception ex) {
+        log.error(
+            "Error while registering format {} with processor {}. Error is: {}."
+                + "Check that the processor as a name"
+                + " eg. '@Component(\"JsonLdResponseProcessorImpl\")'",
+            f.getName(), f.getResponseProcessor(), ex.getMessage());
       }
     });
   }
@@ -715,26 +719,18 @@ public class ElasticSearchProxy {
 
     // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
-    Class<? extends SearchResponseProcessor> responseProcessorClass =
+    SearchResponseProcessor responseProcessor =
         responseProcessors.get(acceptHeader);
-    if (responseProcessorClass == null) {
+    if (responseProcessor == null) {
       throw new UnsupportedOperationException(String.format(
           "No response processor configured for '%s'. Use one of %s.",
           acceptHeader,
           responseProcessors.keySet().stream().collect(Collectors.joining(", "))));
     }
 
-    SearchResponseProcessor responseProcessor =
-        applicationContext.getBean(responseProcessorClass);
-    if (responseProcessor == null) {
-      throw new UnsupportedOperationException(String.format(
-          "No response processor bean found for '%s'.",
-          acceptHeader));
-    }
-
     if (responseProcessor instanceof XsltResponseProcessorImpl) {
-      ((XsltResponseProcessorImpl) responseProcessor).setTransformation(
-          ACCEPT_FORMATTERS.get(acceptHeader)
+      ((XsltResponseProcessorImpl) responseProcessor)
+          .setTransformation(ACCEPT_FORMATTERS.get(acceptHeader)
       );
     }
 
@@ -742,7 +738,7 @@ public class ElasticSearchProxy {
         httpSession,
         streamFromServer, streamToClient,
         userInfo, selectionBucket, addPermissions);
-    streamToClient.flush();
 
+    streamToClient.flush();
   }
 }

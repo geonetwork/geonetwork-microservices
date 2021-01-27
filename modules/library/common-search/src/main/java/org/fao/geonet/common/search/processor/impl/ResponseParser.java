@@ -35,9 +35,10 @@ public class ResponseParser {
   public void matchHits(
       JsonParser parser,
       Object generator,
-      TreeFilter callback)
+      TreeFilter callback,
+      boolean streamJson)
       throws Exception {
-    this.copyJson = generator instanceof JsonGeneratorImpl;
+    this.copyJson = streamJson;
     //    if (generator instanceof JsonParser jsonGenerator) {
     if (this.copyJson) {
       jsonGenerator = (JsonGenerator) generator;

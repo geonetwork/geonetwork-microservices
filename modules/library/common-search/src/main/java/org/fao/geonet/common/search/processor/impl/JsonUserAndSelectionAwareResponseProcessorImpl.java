@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.common.search.processor.impl;
@@ -30,20 +29,13 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.stereotype.Component;
 
 
-@Component
+@Component("JsonUserAndSelectionAwareResponseProcessorImpl")
 public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchResponseProcessor {
 
   /**
    * Process the search response to add information about the user,
    * privileges and selection status.
    *
-   * @param httpSession       Http session.
-   * @param streamFromServer  ES server stream.
-   * @param streamToClient    Client stream.
-   * @param userInfo          User information.
-   * @param bucket            Selection bucket.
-   * @param addPermissions    Flag to add privileges to the response.
-   * @throws Exception        Error.
    */
   @Override
   public void processResponse(HttpSession httpSession,
@@ -73,7 +65,7 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
           sourceNode.remove(IndexRecordFieldNames.opPrefix + o.getId());
         }
       }
-    });
+    }, true);
     generator.flush();
     generator.close();
   }
@@ -85,7 +77,7 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
    * @param doc         Query result.
    * @param selections  List of selected metadata uuids.
    */
-  private void addSelectionInfo(ObjectNode doc, Set<String> selections) {
+  protected void addSelectionInfo(ObjectNode doc, Set<String> selections) {
     final String uuid = getSourceFieldAsString(doc, IndexRecordFieldNames.uuid);
     doc.put(Constants.Elem.SELECTED, selections.contains(uuid));
   }
@@ -100,7 +92,7 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
    * @param doc         Query result.
    * @param userInfo    User information.
    */
-  private void addUserInfo(ObjectNode doc, UserInfo userInfo)  {
+  protected void addUserInfo(ObjectNode doc, UserInfo userInfo) {
     final Integer owner = getSourceFieldAsInteger(doc, IndexRecordFieldNames.owner);
     final Integer groupOwner = getSourceFieldAsInteger(doc, IndexRecordFieldNames.groupOwner);
 

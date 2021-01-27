@@ -38,39 +38,39 @@ gn:
       -
         name: json
         mimeType: application/json
-        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
       -
         name: xml
         mimeType: application/xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl
+        responseProcessor: XmlResponseProcessorImpl
       -
         name: html
         mimeType: text/html
-        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
       -
         name : dcat
         mimeType : application/dcat2+xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+        responseProcessor: XsltResponseProcessorImpl
       -
         name : gn
         mimeType : application/gn+xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+        responseProcessor: XsltResponseProcessorImpl
       -
         name : jsonld
         mimeType : application/ld+json
-        responseProcessor: org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl
+        responseProcessor: JsonLdResponseProcessorImpl
       -
         name : iso19139
         mimeType : application/iso19139+xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+        responseProcessor: XsltResponseProcessorImpl
       -
         name : iso19115-3
         mimeType : application/iso19115-3+xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl
+        responseProcessor: XsltResponseProcessorImpl
       -
         name : rss
         mimeType : application/rss+xml
-        responseProcessor: org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl
+        responseProcessor: RssResponseProcessorImpl
     defaultMimeType: application/json
     sources:
       - "resourceTitleObject"

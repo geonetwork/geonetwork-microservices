@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.common.search.processor.impl;
@@ -38,7 +37,7 @@ import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("RssResponseProcessorImpl")
 public class RssResponseProcessorImpl implements SearchResponseProcessor {
 
   @Value("${gn.baseurl}")
@@ -67,7 +66,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
 
     new ResponseParser().matchHits(parser, generator, doc -> {
       writeItem(generator, streamToClient, doc);
-    });
+    }, false);
 
     generator.writeEndElement();
     generator.writeEndElement();
@@ -104,9 +103,6 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
 
     // Optional elements
     // https://www.rssboard.org/rss-specification#optionalChannelElements
-
-
-
 
     generator.flush();
   }
