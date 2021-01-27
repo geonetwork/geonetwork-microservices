@@ -152,7 +152,6 @@ public class ItemApiController implements RecordApi {
           String recordId,
       HttpServletRequest request,
       HttpServletResponse response) {
-
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
@@ -173,8 +172,7 @@ public class ItemApiController implements RecordApi {
       JsonParser parser = factory.createParser(queryResponse);
       JsonNode actualObj = mapper.readTree(parser);
 
-      JsonNode totalValue = actualObj.get("hits").get("total").get("value");
-
+      JsonNode totalValue = actualObj.get("size");
       if ((totalValue == null) || (totalValue.intValue() == 0)) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,
             messages.getMessage("ogcapir.exception.collectionItem.notFound",
@@ -182,12 +180,9 @@ public class ItemApiController implements RecordApi {
                 ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
       }
 
-      JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
-      IndexRecord record = mapper.readValue(
-          recordValue.get(IndexRecordFieldNames.source).toPrettyString(),
-          IndexRecord.class);
+      JsonNode record = actualObj.get("DataFeed").get(0);
       streamResult(response,
-          new JsonLdRecord(record).toString(),
+          record.toString(),
           GnMediaType.APPLICATION_JSON_LD_VALUE);
       return ResponseEntity.ok().build();
     } catch (Exception ex) {

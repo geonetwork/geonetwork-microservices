@@ -4,6 +4,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
+import javax.servlet.http.HttpSession;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.JsonUtils;
@@ -11,11 +16,6 @@ import org.fao.geonet.index.converter.JsonLdRecord;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.stereotype.Component;
-import javax.servlet.http.HttpSession;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component("JsonLdResponseProcessorImpl")
 public class JsonLdResponseProcessorImpl
@@ -36,13 +36,20 @@ public class JsonLdResponseProcessorImpl
     //    SelectionManager.getManager(ApiUtils.getUserSession(httpSession)).getSelection(bucket)
     //    : new HashSet<>());
     Set<String> selections = new HashSet<>();
-
+    ResponseParser responseParser = new ResponseParser();
     generator.writeStartObject();
-    generator.writeNumberField("took", 0);
-    generator.writeNumberField("total", 0);
-    generator.writeArrayFieldStart("items");
+    // https://schema.org/DataFeed
+    generator.writeStringField("@context", "https://schema.org/");
+    generator.writeStringField("@type", "DataFeed");
+    // name
+    // url
+    // thumbnailUrl
+    // description
+    // contentReferenceTime
+    // position ie. startindex?
+    generator.writeArrayFieldStart("dataFeedElement");
     {
-      new ResponseParser().matchHits(parser, generator, doc -> {
+      responseParser.matchHits(parser, generator, doc -> {
         if (addPermissions) {
           addUserInfo(doc, userInfo);
           addSelectionInfo(doc, selections);
@@ -60,12 +67,13 @@ public class JsonLdResponseProcessorImpl
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);
           JsonLdRecord jsonLdRecord = new JsonLdRecord(record);
-          System.out.println(jsonLdRecord.toString());
           generator.writeRawValue(jsonLdRecord.toString());
         }
       }, false);
     }
     generator.writeEndArray();
+    //    generator.writeNumberField("took", 0);
+    generator.writeNumberField("size", responseParser.total);
     generator.writeEndObject();
     generator.flush();
     generator.close();

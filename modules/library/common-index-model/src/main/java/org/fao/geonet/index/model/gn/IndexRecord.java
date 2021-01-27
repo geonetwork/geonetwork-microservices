@@ -77,7 +77,7 @@ public class IndexRecord extends IndexDocument {
 
   private int popularity;
   private String mainLanguage;
-  private List<String> resourceType;
+  private List<String> resourceType = new ArrayList<>();
 
   private Integer valid;
   private Integer feedbackCount;
@@ -131,7 +131,7 @@ public class IndexRecord extends IndexDocument {
   private List<RecordLink> associatedRecords;
 
   @JsonProperty(IndexRecordFieldNames.link)
-  private List<Link> links;
+  private List<Link> links = new ArrayList<>();
 
 
   //  resourceTemporalDateRange: [{
