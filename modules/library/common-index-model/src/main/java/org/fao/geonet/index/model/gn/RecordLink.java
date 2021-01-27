@@ -15,4 +15,6 @@ public class RecordLink {
   // TODO: Multilingual
   private String title;
   private String url;
+  private String associationType;
+  private String initiativeType;
 }

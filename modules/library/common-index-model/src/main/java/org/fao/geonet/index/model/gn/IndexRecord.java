@@ -93,6 +93,7 @@ public class IndexRecord extends IndexDocument {
   private boolean isMultilingual;
   private List<String> otherLanguage = new ArrayList<>();
   private List<String> otherLanguageId = new ArrayList<>();
+  private List<String> resourceLanguage = new ArrayList<>();
 
   //  resourceTitleObject: {
   //    default: "Organisation de la protection civile dans
@@ -102,12 +103,21 @@ public class IndexRecord extends IndexDocument {
   @JsonProperty(IndexRecordFieldNames.resourceTitle)
   Map<String, String> resourceTitle = new HashMap<>();
 
+  @JsonProperty(IndexRecordFieldNames.resourceAltTitle)
+  List<HashMap<String, String>> resourceAltTitle = new ArrayList<>();
+
   @JsonProperty(IndexRecordFieldNames.resourceAbstract)
   Map<String, String> resourceAbstract = new HashMap<>();
+
+  @JsonProperty(IndexRecordFieldNames.resourceCredit)
+  Map<String, String> resourceCredit = new HashMap<>();
 
   @JsonProperty(IndexRecordFieldNames.tag)
   ArrayList<HashMap<String, String>> tag = new ArrayList<>();
 
+
+  @JsonProperty(IndexRecordFieldNames.resourceIdentifier)
+  private ArrayList<String> resourceIdentifier;
 
   @JsonProperty(IndexRecordFieldNames.org)
   private List<String> org;
@@ -115,6 +125,7 @@ public class IndexRecord extends IndexDocument {
   private List<String> orgForResource;
   // others eg. pointOfContactOrgForResource are in other properties
   private List<Contact> contact = new ArrayList<>();
+  private List<Contact> contactForResource = new ArrayList<>();
 
 
   @JsonProperty(IndexRecordFieldNames.format)

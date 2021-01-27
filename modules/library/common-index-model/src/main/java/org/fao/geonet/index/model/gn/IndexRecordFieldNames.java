@@ -18,7 +18,12 @@ public class IndexRecordFieldNames {
   public static final String isHarvested = "isHarvested";
   public static final String isPublishedToAll = "isPublishedToAll";
   public static final String resourceTitle = "resourceTitleObject";
+  public static final String resourceAltTitle = "resourceAltTitleObject";
   public static final String resourceAbstract = "resourceAbstractObject";
+  public static final String resourceCredit = "resourceCreditObject";
+  public static final String resourceIdentifier = "resourceIdentifier";
+  public static final String resourceLanguage = "resourceLanguage";
+  public static final String resourceDate = "resourceDate";
   public static final String org = "Org";
   public static final String orgForResource = "OrgForResource";
   public static final String recordLink = "recordLink";
@@ -30,7 +35,6 @@ public class IndexRecordFieldNames {
   public static final String tag = "tag";
   public static final String serviceType = "serviceType";
   public static final String format = "format";
-  public static final String resourceDate = "resourceDate";
   public static final String resourceTemporalDateRange = "resourceTemporalDateRange";
   public static final String revisionYearForResource = "revisionYearForResource";
   public static final String revisionMonthForResource = "revisionMonthForResource";

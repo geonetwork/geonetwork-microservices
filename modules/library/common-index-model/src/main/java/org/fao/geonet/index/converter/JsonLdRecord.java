@@ -1,27 +1,53 @@
 package org.fao.geonet.index.converter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.gn.IndexRecord;
-import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 
 /**
- * See
- * https://github.com/geonetwork/core-geonetwork/blob/master/schemas/iso19139/src/main/plugin/iso19139/formatter/jsonld/iso19139-to-jsonld.xsl
+ * See https://github.com/geonetwork/core-geonetwork/blob/master/schemas/iso19139/src/main/plugin/iso19139/formatter/jsonld/iso19139-to-jsonld.xsl
  * https://schema.org/Dataset
  */
 public class JsonLdRecord {
 
-  ObjectNode root = JsonNodeFactory.instance.objectNode();
+  private ObjectNode root = JsonNodeFactory.instance.objectNode();
+
+  private ObjectMapper mapper = new ObjectMapper();
+
+  public enum Types {
+    Dataset,
+    DataFeed,
+    Organization,
+    ContactPoint,
+    Distribution,
+    DataDownload,
+    AggregateRating,
+    ImageObject,
+    Url;
+  }
+
+  public static Map<String, String> dateMapping = Map.ofEntries(
+      new AbstractMap.SimpleEntry<>("creation", "dateCreated"),
+      new AbstractMap.SimpleEntry<>("publication", "datePublished"),
+      new AbstractMap.SimpleEntry<>("revision", "dateModified"),
+      new AbstractMap.SimpleEntry<>("superseded", "expires")
+  );
+
 
   public JsonLdRecord() {
   }
 
   /**
    * Convert an index document into a JSON LD document.
-   *
    */
   public JsonLdRecord(IndexRecord record) {
     root.put("@context", "http://schema.org/");
@@ -31,21 +57,76 @@ public class JsonLdRecord {
         root.put("@type", type);
       });
     } else {
-      root.put("@type", "Dataset");
+      root.put("@type", Types.Dataset.name());
     }
 
     root.put("@id", record.getMetadataIdentifier());
     root.put("name", record.getResourceTitle().get(CommonField.defaultText));
 
+    // url
+    // URL of the item.
+    // > DOI?
+
+    // A secondary title of the CreativeWork.
+    record.getResourceAltTitle().forEach(t -> {
+      root.put("alternativeHeadline", t.get(CommonField.defaultText));
+    });
+
+    // version
+    // The version of the CreativeWork embodied by a specified resource.
+    // identifier
+    // The identifier property represents any kind of identifier
+    // for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.
+    // Schema.org provides dedicated properties for representing many of
+    // these, either as textual strings or as URL (URI) links.
+    // See background notes for more details.
+    record.getResourceIdentifier().forEach(i -> {
+      addOptional(root, "resourceIdentifier", i);
+    });
+
     // An abstract is a short description that summarizes a CreativeWork.
     root.put("abstract", record.getResourceAbstract().get(CommonField.defaultText));
 
-    // alternativeHeadline
-    // A secondary title of the CreativeWork.
 
+    if (record.getOverview().size() > 0) {
+      ArrayNode array = root.putArray("thumbnailUrl");
+      record.getOverview().forEach(o -> {
+        ObjectNode overview = createThing(null, Types.Url, null);
+        addOptional(overview, "url", o.getUrl());
+        // Add a description
+        array.add(overview);
+      });
+    }
 
-    root.put("dateCreated", record.getCreateDate());
-    root.put("dateModified", record.getChangeDate());
+    record.getResourceDate().forEach(d -> {
+      String type = dateMapping.get(d.getType());
+      // TODO: Handle multiple date of same type?
+      if (type != null) {
+        addOptional(root, type, d.getDate());
+      }
+    });
+
+    // The status of a creative work in terms of its stage in a lifecycle.
+    // Example terms include Incomplete, Draft, Published, Obsolete.
+    // Some organizations define a set of terms for the stages of
+    // their publication lifecycle.
+    addOptional(root, "creativeWorkStatus",
+        record.getOtherProperties().get(Codelists.status));
+
+    // Text that can be used to credit person(s) and/or organization(s)
+    // associated with a published Creative Work.
+    addOptional(root, "creditText",
+        record.getResourceCredit());
+
+    // Keywords or tags used to describe this content.
+    // Multiple entries in a keywords list are typically delimited by commas.
+
+    if (record.getTag().size() > 0) {
+      ArrayNode array = root.putArray("keywords");
+      record.getTag().forEach(k -> {
+        addOptional(array, "keywords", k.get(CommonField.defaultText));
+      });
+    }
 
     // conditionsOfAccess
     // Conditions that affect the availability of, or method(s) of access to,
@@ -54,48 +135,233 @@ public class JsonLdRecord {
     // This property is not suitable for use as a general Web access control
     // mechanism. It is expressed only in natural language.
 
+    // license
+    // A license document that applies to this content, typically indicated by URL.
+
     // acquireLicensePage
     // Indicates a page documenting how licenses can be purchased or
     // otherwise acquired, for the current item.
+
+    // isAccessibleForFree
+    // A boolean flag to signal that the item, event, or place is accessible for free.
+    // Supersedes free.
 
     // distribution
     // A downloadable form of this dataset, at a specific location,
     // in a specific format.
     // https://schema.org/DataDownload
-    record.getLinks().forEach(l -> {
-      ObjectNode distribution = root.putObject("distribution");
-      distribution.put("@type", "DataDownload");
-      // Actual bytes of the media object, for example the image file or video file.
-      distribution.put("url", l.getUrl());
-      if (StringUtils.isNotEmpty(l.getName())) {
-        distribution.put("name", l.getName());
-      }
-      if (StringUtils.isNotEmpty(l.getDescription())) {
-        distribution.put("abstract", l.getDescription());
-      }
-    });
+    if (record.getLinks().size() > 0) {
+      ArrayNode array = root.putArray("distribution");
+      record.getLinks().forEach(l -> {
+        ObjectNode distribution =
+            createThing(null, Types.DataDownload, null);
+        // Actual bytes of the media object, for example the image file or video file.
+        distribution.put("url", l.getUrl());
+        addOptional(distribution, "name", l.getName());
+        addOptional(distribution, "abstract", l.getDescription());
+
+        array.add(distribution);
+      });
+    }
+
+    // encoding
+    // A media object that encodes this CreativeWork.
+    // This property is a synonym for associatedMedia. Supersedes encodings.
+    // > Formats ?
+
+    // encodingFormat
+    // Media type typically expressed using a MIME format
+    // (see IANA site and MDN reference) e.g. application/zip
+    // for a SoftwareApplication binary, audio/mpeg for .mp3 etc.).
+    // Supersedes fileFormat.
+
+    if (record.getResourceLanguage().size() > 0) {
+      ArrayNode array = root.putArray("inLanguage");
+      record.getResourceLanguage().forEach(l -> {
+        addOptional(array, "inLanguage", l);
+      });
+    }
+
+    // spatialCoverage
+    // The spatialCoverage of a CreativeWork indicates the place(s)
+    // which are the focus of the content. It is a subproperty of
+    // contentLocation intended primarily for more technical and
+    // detailed materials. For example with a Dataset, it indicates
+    // areas that the dataset describes: a dataset of New York weather
+    // would have spatialCoverage which was the place: the state of New York.
+
+    // temporalCoverage
+    // The temporalCoverage of a CreativeWork indicates the period
+    // that the content applies to, i.e. that it describes, either
+    // as a DateTime or as a textual string indicating a time period
+    // in ISO 8601 time interval format. In the case of a Dataset
+    // it will typically indicate the relevant time period in a
+    // precise notation (e.g. for a 2011 census dataset, the year
+    // 2011 would be written "2011/2012"). Other forms of content
+    // e.g. ScholarlyArticle, Book, TVSeries or TVEpisode may
+    // indicate their temporalCoverage in broader terms -
+    // textually or via well-known URL. Written works such as books
+    // may sometimes have precise temporal coverage too,
+    // e.g. a work set in 1939 - 1945 can be indicated in ISO 8601
+    // interval format format via "1939/1945".
+    //
+    //Open-ended date ranges can be written with ".." in place of
+    // the end date. For example, "2015-11/.." indicates a range
+    // beginning in November 2015 and with no specified final date.
+    // This is tentative and might be updated in future when ISO 8601
+    // is officially updated. Supersedes datasetTimeInterval.
+
+    // # Contact
+    // accountablePerson
+    // contributor
+    // copyrightHolder
+    // creator
+    // editor
+    // funder
+    // maintainer
+    // producer
+    // provider
+    // publisher
+    // sourceOrganization
+    // translator
+
+    // The author of this content or rating. Please note that author is
+    // special in that HTML 5 provides a special mechanism for
+    // indicating authorship via the rel tag.
+    // That is equivalent to this and may be used interchangeably.
+    // > Author of the record or dataset ?
+
+    if (record.getContactForResource().size() > 0) {
+      ArrayNode array = root.putArray("organization");
+      record.getContactForResource().forEach(c -> {
+        // https://schema.org/Organization
+        ObjectNode organization =
+            createThing(null, Types.Organization, null);
+        addOptional(organization, "name", c.getOrganisation());
+        addOptional(organization, "address", c.getAddress());
+        addOptional(organization, "email", c.getEmail());
+
+        // https://schema.org/URL
+        ObjectNode url = createThing("url", Types.Url, null);
+        addOptional(url, "url", c.getWebsite());
+
+        addOptional(organization, "telephone", c.getPhone());
+
+        // https://schema.org/ContactPoint
+        ObjectNode contactPoint = createThing("contactPoint", Types.ContactPoint, organization);
+        addOptional(contactPoint, "name", c.getIndividual());
+        addOptional(contactPoint, "description", c.getPosition());
+        // A person or organization can have different contact points,
+        // for different purposes. For example, a sales contact point,
+        // a PR contact point and so on. This property is used to
+        // specify the kind of contact point.
+        addOptional(contactPoint, "contactType", c.getRole());
+
+        // logo
+        ObjectNode logo = createThing("logo", Types.ImageObject, null);
+        addOptional(logo, "url", c.getLogo());
+
+        array.add(organization);
+      });
+    }
 
     // associatedMedia
     // A media object that encodes this CreativeWork.
     // This property is a synonym for encoding.
+    // > cl_characterSet
+
+    // measurementTechnique
+    // A technique or technology used in a Dataset (or DataDownload, DataCatalog),
+    // corresponding to the method used for measuring the corresponding variable
+    // (s) (described using variableMeasured).
+    // This is oriented towards scientific and scholarly dataset publication
+    // but may have broader applicability; it is not intended as a full
+    // representation of measurement, but rather as a high level summary
+    // for dataset discovery.
+    // > Sensor for imagery
+
+    // variableMeasured
+    // The variableMeasured property can indicate (repeated as necessary)
+    // the variables that are measured in some dataset,
+    // either described as text or as pairs of identifier and
+    // description using PropertyValue.
+    // > Could be keywords about parameters
 
     // The overall rating, based on a collection of reviews or ratings, of the item.
     // https://schema.org/AggregateRating
-    if (record.getRating() != null) {
-      ObjectNode rating = root.putObject("aggregateRating");
-      rating.put("@type", "AggregateRating");
-      rating.put("ratingValue", record.getRating());
+    if (record.getRating() != null && record.getRating() != 0) {
+      ObjectNode rating =
+          createThing("aggregateRating", Types.AggregateRating, null);
+      addOptional(rating, "ratingValue", record.getRating());
     }
 
+    // usageInfo
+    //
     // comment
     // Comments, typically from users.
     // https://schema.org/Comment
+    // feedbackCount
+    if (record.getFeedbackCount() != null  && record.getFeedbackCount() != 0) {
+      addOptional(root, "feedbackCount", record.getFeedbackCount());
+    }
 
     // commentCount
     // The number of comments this CreativeWork (e.g. Article, Question or Answer)
     // has received. This is most applicable to works published in Web sites
     // with commenting system; additional comments may exist elsewhere.
 
+    // discussionUrl
+    // A link to the page containing the comments of the CreativeWork.
+
+    // hasPart
+    // isPartOf
+    // Indicates an item or CreativeWork that this item, or
+    // CreativeWork (in some sense), is part of.
+    // > parent
+    // isBasedOn
+    // > source
+    // mentions
+    // > DQ report
+
+    // includedInDataCatalog
+    // A data catalog which contains this dataset. Supersedes catalog, includedDataCatalog.
+    //Inverse property: dataset
+  }
+
+  private void addOptional(ContainerNode thing, String name, String value) {
+    if (StringUtils.isNotEmpty(value)) {
+      if (thing instanceof ObjectNode) {
+        ((ObjectNode) thing).put(name, value);
+      } else {
+        ((ArrayNode) thing).add(value);
+      }
+    }
+  }
+
+  private void addOptional(ContainerNode thing, String name, Integer value) {
+    if (thing instanceof ObjectNode) {
+      ((ObjectNode) thing).put(name, value);
+    } else {
+      ((ArrayNode) thing).add(value);
+    }
+  }
+
+  private void addOptional(ContainerNode thing, String name, Object value) {
+    if (value instanceof HashMap && name.startsWith(Codelists.prefix)) {
+      addOptional(thing, name, ((HashMap<?, ?>) value).get(CommonField.defaultText));
+    }
+  }
+
+  private ObjectNode createThing(String name, Types type,
+      ObjectNode in) {
+    ObjectNode thing;
+    if (name == null) {
+      thing = mapper.createObjectNode();
+    } else {
+      thing = in != null ? in.putObject(name) : root.putObject(name);
+    }
+    thing.put("@type", type.name());
+    return thing;
   }
 
   public String toString() {

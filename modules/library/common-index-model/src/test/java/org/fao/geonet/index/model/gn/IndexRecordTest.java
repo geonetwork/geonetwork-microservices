@@ -39,7 +39,7 @@ public class IndexRecordTest {
           record.resourceTitle.get(defaultText)
           );
 
-      Assert.assertEquals(61, record.getOtherProperties().size());
+      Assert.assertEquals(59, record.getOtherProperties().size());
 
       Assert.assertEquals("gmd:MD_Metadata", record.getRoot());
 
