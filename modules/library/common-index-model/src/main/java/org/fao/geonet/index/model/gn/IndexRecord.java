@@ -71,7 +71,7 @@ public class IndexRecord extends IndexDocument {
 
   @XmlElement(name = IndexRecordFieldNames.isPublishedToAll)
   private boolean publishedToAll;
-  private String groupPublished;
+  private List<String> groupPublished = new ArrayList<>();
 
   // TODO: op0: "1",
 
