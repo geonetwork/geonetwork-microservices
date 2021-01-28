@@ -8,14 +8,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.fao.geonet.index.model.gn.Contact;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
 
 /**
- * See https://github.com/geonetwork/core-geonetwork/blob/master/schemas/iso19139/src/main/plugin/iso19139/formatter/jsonld/iso19139-to-jsonld.xsl
- * https://schema.org/Dataset
+ * Index document to JSON-LD mapping.
+ *
+ * <p>Previous implementation https://github.com/geonetwork/core-geonetwork/blob/master/schemas/iso19139/src/main/plugin/iso19139/formatter/jsonld/iso19139-to-jsonld.xsl
+ *
+ * <p>Based on https://schema.org/Dataset
+ *
+ * <p>Tested with https://search.google.com/test/rich-results
+ *
+ * <p>TODO: Add support to translation https://bib.schema.org/workTranslation
  */
 public class JsonLdRecord {
 
@@ -32,6 +45,7 @@ public class JsonLdRecord {
     DataDownload,
     AggregateRating,
     ImageObject,
+    GeoShape,
     Url;
   }
 
@@ -41,7 +55,44 @@ public class JsonLdRecord {
       new AbstractMap.SimpleEntry<>("revision", "dateModified"),
       new AbstractMap.SimpleEntry<>("superseded", "expires")
   );
+  public static Map<String, String> contactRoleMapping = Map.ofEntries(
+      new AbstractMap.SimpleEntry<>("author", "author"),
+      new AbstractMap.SimpleEntry<>("coAuthor", "author"),
+      new AbstractMap.SimpleEntry<>("pointOfContact", "creator"),
+      new AbstractMap.SimpleEntry<>("originator", "creator"),
+      new AbstractMap.SimpleEntry<>("processor", "contributor"),
+      new AbstractMap.SimpleEntry<>("contributor", "contributor"),
+      new AbstractMap.SimpleEntry<>("resourceProvider", "provider"),
+      new AbstractMap.SimpleEntry<>("custodian", "maintainer"),
+      new AbstractMap.SimpleEntry<>("owner", "copyrightHolder"),
+      new AbstractMap.SimpleEntry<>("rightsHolder", "copyrightHolder"),
+      new AbstractMap.SimpleEntry<>("user", "user"),
+      new AbstractMap.SimpleEntry<>("collaborator", "user"),
+      new AbstractMap.SimpleEntry<>("principalInvestigator", "sourceOrganization"),
+      new AbstractMap.SimpleEntry<>("publisher", "publisher"),
+      new AbstractMap.SimpleEntry<>("sponsor", "sponsor"),
+      new AbstractMap.SimpleEntry<>("editor", "editor"),
+      new AbstractMap.SimpleEntry<>("funder", "funder"),
 
+      // No equivalent in ISO?
+      new AbstractMap.SimpleEntry<>("accountablePerson", "accountablePerson"),
+      new AbstractMap.SimpleEntry<>("producer", "producer"),
+      new AbstractMap.SimpleEntry<>("translator", "translator")
+  );
+  public static Map<String, String> resourceTypeMapping = Map.ofEntries(
+      new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
+      new AbstractMap.SimpleEntry<>("series", "Dataset"),
+      new AbstractMap.SimpleEntry<>("service", "WebAPI"),
+      new AbstractMap.SimpleEntry<>("application", "SoftwareApplication"),
+      new AbstractMap.SimpleEntry<>("collectionHardware", "Thing"),
+      new AbstractMap.SimpleEntry<>("nonGeographicDataset", "Dataset"),
+      new AbstractMap.SimpleEntry<>("dimensionGroup", "TechArticle"),
+      new AbstractMap.SimpleEntry<>("featureType", "Dataset"),
+      new AbstractMap.SimpleEntry<>("model", "TechArticle"),
+      new AbstractMap.SimpleEntry<>("tile", "Dataset"),
+      new AbstractMap.SimpleEntry<>("fieldSession", "Project"),
+      new AbstractMap.SimpleEntry<>("collectionSession", "Project")
+  );
 
   public JsonLdRecord() {
   }
@@ -54,7 +105,8 @@ public class JsonLdRecord {
 
     if (record.getResourceType().size() > 0) {
       record.getResourceType().forEach(type -> {
-        root.put("@type", type);
+        root.put("@type",
+            resourceTypeMapping.get(type) != null ? resourceTypeMapping.get(type) : type);
       });
     } else {
       root.put("@type", Types.Dataset.name());
@@ -68,33 +120,36 @@ public class JsonLdRecord {
     // > DOI?
 
     // A secondary title of the CreativeWork.
-    record.getResourceAltTitle().forEach(t -> {
-      root.put("alternativeHeadline", t.get(CommonField.defaultText));
-    });
+    if (record.getResourceAltTitle().size() > 0) {
+      ArrayNode array = root.putArray("alternateName");
+      record.getResourceAltTitle().forEach(t -> {
+        addOptional(array, null, t.get(CommonField.defaultText));
+      });
+    }
 
     // version
     // The version of the CreativeWork embodied by a specified resource.
     // identifier
+
     // The identifier property represents any kind of identifier
     // for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.
     // Schema.org provides dedicated properties for representing many of
     // these, either as textual strings or as URL (URI) links.
     // See background notes for more details.
-    record.getResourceIdentifier().forEach(i -> {
-      addOptional(root, "resourceIdentifier", i);
-    });
+    if (record.getResourceIdentifier().size() > 0) {
+      ArrayNode array = root.putArray("identifier");
+      record.getResourceIdentifier().forEach(i -> {
+        addOptional(array, null, i);
+      });
+    }
 
     // An abstract is a short description that summarizes a CreativeWork.
-    root.put("abstract", record.getResourceAbstract().get(CommonField.defaultText));
-
+    root.put("description", record.getResourceAbstract().get(CommonField.defaultText));
 
     if (record.getOverview().size() > 0) {
       ArrayNode array = root.putArray("thumbnailUrl");
       record.getOverview().forEach(o -> {
-        ObjectNode overview = createThing(null, Types.Url, null);
-        addOptional(overview, "url", o.getUrl());
-        // Add a description
-        array.add(overview);
+        array.add(o.getUrl());
       });
     }
 
@@ -156,9 +211,10 @@ public class JsonLdRecord {
         ObjectNode distribution =
             createThing(null, Types.DataDownload, null);
         // Actual bytes of the media object, for example the image file or video file.
-        distribution.put("url", l.getUrl());
+        distribution.put("contentUrl", l.getUrl());
         addOptional(distribution, "name", l.getName());
         addOptional(distribution, "abstract", l.getDescription());
+        addOptional(distribution, "encodingFormat", l.getProtocol());
 
         array.add(distribution);
       });
@@ -174,6 +230,12 @@ public class JsonLdRecord {
     // (see IANA site and MDN reference) e.g. application/zip
     // for a SoftwareApplication binary, audio/mpeg for .mp3 etc.).
     // Supersedes fileFormat.
+    if (record.getFormats().size() > 0) {
+      ArrayNode array = root.putArray("encodingFormat");
+      record.getFormats().forEach(l -> {
+        addOptional(array, null, l);
+      });
+    }
 
     if (record.getResourceLanguage().size() > 0) {
       ArrayNode array = root.putArray("inLanguage");
@@ -189,6 +251,26 @@ public class JsonLdRecord {
     // detailed materials. For example with a Dataset, it indicates
     // areas that the dataset describes: a dataset of New York weather
     // would have spatialCoverage which was the place: the state of New York.
+    if (record.getGeometries().size() > 0) {
+      ObjectNode spatialCoverage = root.putObject("spatialCoverage");
+      ArrayNode geo = spatialCoverage.putArray("geo");
+      record.getGeometries().forEach(g -> {
+        GeoJsonReader geoJsonReader = new GeoJsonReader();
+        try {
+          ObjectNode shape = createThing(null, Types.GeoShape, null);
+          Geometry geometry = geoJsonReader.read(g);
+          Envelope envelope = geometry.getEnvelopeInternal();
+          // https://schema.org/GeoShape
+          addOptional(shape, "box",
+              String.format("%s %s %s %s",
+                  envelope.getMinY(), envelope.getMinX(),
+                  envelope.getMaxY(), envelope.getMaxX()));
+          geo.add(shape);
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+      });
+    }
 
     // temporalCoverage
     // The temporalCoverage of a CreativeWork indicates the period
@@ -211,58 +293,58 @@ public class JsonLdRecord {
     // This is tentative and might be updated in future when ISO 8601
     // is officially updated. Supersedes datasetTimeInterval.
 
-    // # Contact
-    // accountablePerson
-    // contributor
-    // copyrightHolder
-    // creator
-    // editor
-    // funder
-    // maintainer
-    // producer
-    // provider
-    // publisher
-    // sourceOrganization
-    // translator
-
     // The author of this content or rating. Please note that author is
     // special in that HTML 5 provides a special mechanism for
     // indicating authorship via the rel tag.
     // That is equivalent to this and may be used interchangeably.
     // > Author of the record or dataset ?
+    if (record.getResourceTemporalExtentDateRange().size() > 0) {
+      ArrayNode array = root.putArray("temporalCoverage");
+      record.getResourceTemporalExtentDateRange().forEach(r -> {
+        addOptional(array, null,
+            String.format("%s/%s", r.getGte(), r.getLte()));
+      });
+    }
 
     if (record.getContactForResource().size() > 0) {
-      ArrayNode array = root.putArray("organization");
-      record.getContactForResource().forEach(c -> {
-        // https://schema.org/Organization
-        ObjectNode organization =
-            createThing(null, Types.Organization, null);
-        addOptional(organization, "name", c.getOrganisation());
-        addOptional(organization, "address", c.getAddress());
-        addOptional(organization, "email", c.getEmail());
+      record.getContactForResource()
+          .stream()
+          .collect(Collectors.groupingBy(Contact::getRole))
+          .forEach((role, contacts) -> {
+            ArrayNode array = root.putArray(contactRoleMapping.get(role));
+            contacts.forEach(c -> {
+              // https://schema.org/Organization
+              ObjectNode organization =
+                  createThing(null, Types.Organization, null);
+              addOptional(organization, "name", c.getOrganisation());
+              addOptional(organization, "address", c.getAddress());
+              addOptional(organization, "email", c.getEmail());
 
-        // https://schema.org/URL
-        ObjectNode url = createThing("url", Types.Url, null);
-        addOptional(url, "url", c.getWebsite());
+              // https://schema.org/URL
+              ObjectNode url = createThing("url", Types.Url, null);
+              addOptional(url, "url", c.getWebsite());
 
-        addOptional(organization, "telephone", c.getPhone());
+              addOptional(organization, "telephone", c.getPhone());
 
-        // https://schema.org/ContactPoint
-        ObjectNode contactPoint = createThing("contactPoint", Types.ContactPoint, organization);
-        addOptional(contactPoint, "name", c.getIndividual());
-        addOptional(contactPoint, "description", c.getPosition());
-        // A person or organization can have different contact points,
-        // for different purposes. For example, a sales contact point,
-        // a PR contact point and so on. This property is used to
-        // specify the kind of contact point.
-        addOptional(contactPoint, "contactType", c.getRole());
+              // https://schema.org/ContactPoint
+              ObjectNode contactPoint = createThing("contactPoint", Types.ContactPoint,
+                  organization);
+              addOptional(contactPoint, "name", c.getIndividual());
+              addOptional(contactPoint, "description", c.getPosition());
+              // A person or organization can have different contact points,
+              // for different purposes. For example, a sales contact point,
+              // a PR contact point and so on. This property is used to
+              // specify the kind of contact point.
+              addOptional(contactPoint, "contactType", c.getRole());
 
-        // logo
-        ObjectNode logo = createThing("logo", Types.ImageObject, null);
-        addOptional(logo, "url", c.getLogo());
+              // logo
+              ObjectNode logo = createThing("logo", Types.ImageObject, null);
+              addOptional(logo, "contentUrl", c.getLogo());
 
-        array.add(organization);
-      });
+              array.add(organization);
+            });
+
+          });
     }
 
     // associatedMedia
@@ -301,7 +383,7 @@ public class JsonLdRecord {
     // Comments, typically from users.
     // https://schema.org/Comment
     // feedbackCount
-    if (record.getFeedbackCount() != null  && record.getFeedbackCount() != 0) {
+    if (record.getFeedbackCount() != null && record.getFeedbackCount() != 0) {
       addOptional(root, "feedbackCount", record.getFeedbackCount());
     }
 
@@ -325,7 +407,10 @@ public class JsonLdRecord {
 
     // includedInDataCatalog
     // A data catalog which contains this dataset. Supersedes catalog, includedDataCatalog.
-    //Inverse property: dataset
+    // Inverse property: dataset
+    // "includedInDataCatalog":[{
+    // "url":"<xsl:value-of select="concat($baseUrl, 'search#', $catalogueName)"/>",
+    // "name":"<xsl:value-of select="$catalogueName"/>"}],
   }
 
   private void addOptional(ContainerNode thing, String name, String value) {

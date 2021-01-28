@@ -14,29 +14,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.locationtech.jts.geom.Coordinate;
 
-public class LocationDeserializer extends JsonDeserializer<List<Coordinate>> {
-
-  private String separator = ",";
+public class NodeTreeAsStringDeserializer extends JsonDeserializer<List<String>> {
 
   @Override
-  public List<Coordinate> deserialize(JsonParser p, DeserializationContext ctxt)
+  public List<String> deserialize(JsonParser p, DeserializationContext ctxt)
       throws IOException {
     ObjectCodec oc = p.getCodec();
     JsonNode node = oc.readTree(p);
-    List<Coordinate> geometries = new ArrayList<>();
+    List<String> geometries = new ArrayList<>();
     if (node.isArray()) {
       node.elements().forEachRemaining(c -> {
-        String[] coords = c.textValue().split(separator);
-        geometries.add(new Coordinate(Double.valueOf(coords[0]), Double.valueOf(coords[1]), 0));
+        geometries.add(c.toString());
       });
-    } else if (node.isTextual()) {
-      String text = node.asText();
-      String[] coords = text.split(separator);
-      if (coords.length == 2) {
-        geometries.add(new Coordinate(Double.valueOf(coords[0]), Double.valueOf(coords[1]), 0));
-      }
+    } else {
+      geometries.add(node.toString());
     }
     return geometries;
   }

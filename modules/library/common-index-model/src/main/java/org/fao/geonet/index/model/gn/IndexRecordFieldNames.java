@@ -35,6 +35,7 @@ public class IndexRecordFieldNames {
   public static final String tag = "tag";
   public static final String serviceType = "serviceType";
   public static final String format = "format";
+  public static final String resourceTemporalExtentDateRange = "resourceTemporalExtentDateRange";
   public static final String resourceTemporalDateRange = "resourceTemporalDateRange";
   public static final String revisionYearForResource = "revisionYearForResource";
   public static final String revisionMonthForResource = "revisionMonthForResource";

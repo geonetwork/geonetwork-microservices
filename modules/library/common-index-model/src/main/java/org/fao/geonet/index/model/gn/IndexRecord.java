@@ -149,6 +149,7 @@ public class IndexRecord extends IndexDocument {
   //    gte: "2017-02-03T14:00:00",
   //    lte: "2017-02-03T14:00:00"
   private List<DateRange> resourceTemporalDateRange = new ArrayList<>();
+  private List<DateRange> resourceTemporalExtentDateRange = new ArrayList<>();
 
   // TODO XML
   @XmlTransient
@@ -161,7 +162,8 @@ public class IndexRecord extends IndexDocument {
   // TODO XML
   @XmlTransient
   @JsonProperty(IndexRecordFieldNames.geom)
-  private List<ResourceGeometry> geometries;
+  @JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
+  private List<String> geometries;
 
   //  @JsonAnyGetter
   private Map<String, ArrayList<String>> otherProperties = new HashMap<>();

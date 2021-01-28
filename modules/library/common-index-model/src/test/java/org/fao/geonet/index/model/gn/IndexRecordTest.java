@@ -39,7 +39,7 @@ public class IndexRecordTest {
           record.resourceTitle.get(defaultText)
           );
 
-      Assert.assertEquals(59, record.getOtherProperties().size());
+      Assert.assertEquals(58, record.getOtherProperties().size());
 
       Assert.assertEquals("gmd:MD_Metadata", record.getRoot());
 
@@ -66,7 +66,8 @@ public class IndexRecordTest {
       Assert.assertEquals(47.10185, locations.get(0).getX(), .0001);
       Assert.assertEquals(-22.3441, locations.get(0).getY(), .0001);
 
-      //     "location" : [ "47.10185,-22.3441", "52.8737,17.1007" ],
+      Assert.assertEquals("{\"type\":\"Polygon\",\"coordinates\":[[[-31.2684,27.6375],[-13.4198,27.6375],[-13.4198,66.5662],[-31.2684,66.5662],[-31.2684,27.6375]]]}",
+          record.getGeometries().get(0));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       Assert.fail();
