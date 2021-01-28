@@ -53,46 +53,53 @@
             <xsl:with-param name="breadcrumb" select="$subTitle"/>
           </xsl:call-template>
 
-          <section class="bg-white border-b py-8">
-            <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800">
+          <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
+            <div class="w-2/3">
               <xsl:choose>
                 <xsl:when test="model/results">
-                  <div class="w-full tracking-wide text-4xl mb-4">
-                    <xsl:choose>
-                      <xsl:when test="model/results/total/total = 0">
-                        No record found. Search for something else or in another collection?
-                      </xsl:when>
-                      <xsl:when test="model/results/total/total = 1">
-                        <xsl:value-of select="model/results/total/total"/> record.
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of select="model/results/total/total"/> records.
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </div>
+                  <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
+                    <div class="px-3 py-4 sm:px-5 bg-gray-50">
+                      <h2 class="font-medium">
+                        <xsl:choose>
+                          <xsl:when test="model/results/total/total = 0">
+                            No record found. Search for something else or in another collection?
+                          </xsl:when>
+                          <xsl:when test="model/results/total/total = 1">
+                            <xsl:value-of select="model/results/total/total"/> record
+                          </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:value-of select="model/results/total/total"/> records
+                          </xsl:otherwise>
+                        </xsl:choose>
+                      </h2>
+                    </div>
 
-                  <xsl:for-each select="model/results/results">
-                    <xsl:call-template name="render-record-preview-title"/>
-                  </xsl:for-each>
+                    <div class="border-t border-gray-200 flex flex-wrap">
+                      <xsl:for-each select="model/results/results">
+                        <xsl:call-template name="render-record-preview-title"/>
+                      </xsl:for-each>
+                    </div>
+                  </section>
                 </xsl:when>
                 <xsl:otherwise>
                   <a href="{$requestUrl}/items">
                     <button class="p-4 rounded-full bg-gray-800 text-white
-                               transition duration-500 ease-in-out
-                               hover:underline
-                               focus:outline-none focus:shadow-outline
-                               transform transition hover:scale-105 duration-300 ease-in-out">
+                                transition duration-500 ease-in-out
+                                focus:outline-none focus:shadow-outline
+                                transform transition hover:scale-105 duration-300 ease-in-out">
                       Browse datasets and maps...</button>
                   </a>
                 </xsl:otherwise>
               </xsl:choose>
             </div>
-          </section>
+            <div class="w-1/3">
+              <xsl:call-template name="render-page-format-links">
+                <xsl:with-param name="formats"
+                                select="$outputFormats"/>
+              </xsl:call-template>
+            </div>
+          </div>
 
-          <xsl:call-template name="render-page-format-links">
-            <xsl:with-param name="formats"
-                            select="$outputFormats"/>
-          </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </html>

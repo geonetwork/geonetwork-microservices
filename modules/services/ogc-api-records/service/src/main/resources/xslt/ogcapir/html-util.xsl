@@ -8,24 +8,26 @@
     <xsl:param name="label" as="xs:string?"/>
     <xsl:param name="text" as="xs:string?"/>
 
-    <div class="w-1/3">
-      <xsl:value-of select="$label"/>
-    </div>
-    <div class="w-2/3 font-medium">
-      <xsl:value-of select="$text"/>
+    <div class="px-3 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 w-full border-b border-gray-200 odd:bg-gray-50">
+      <div class="text-sm font-medium text-gray-500">
+        <xsl:value-of select="$label"/>
+      </div>
+      <div class="text-sm text-gray-900">
+        <xsl:value-of select="$text"/>
+      </div>
     </div>
   </xsl:template>
 
 
   <xsl:template name="render-record-preview-title">
     <div
-      class="h-10 w-full border-b border-gray-200 transition duration-200 hover:bg-gray-100 border-gray-300">
+      class="w-full border-b hover:bg-gray-100 border-gray-200">
       <a href="items/{uuid}">
-        <div class="h-full flex flex-row items-center">
-          <div class="h-12 w-12 relative flex-shrink-0 overflow-hidden">
+        <div class="h-full flex flex-row items-center px-3 py-3 sm:px-5">
+          <div class="h-10 w-10 relative flex-shrink-0 overflow-hidden">
             <xsl:choose>
               <xsl:when test="source/overview/url != ''">
-                <img class="w-10 h-full flex-shrink-0 border-r border-gray-200 bg-gray-100"
+                <img class="w-10 h-full flex-shrink-0 border border-gray-200 bg-gray-100 rounded"
                      src="{source/overview/url}"/>
               </xsl:when>
               <xsl:otherwise>
@@ -33,11 +35,11 @@
               </xsl:otherwise>
             </xsl:choose>
           </div>
-          <div class="flex-grow h-full px-1 py-1 flex flex-col overflow-hidden">
-            <h1 class="title-font text-sm font-bold text-gray-900 truncate md:overflow-clip">
+          <div class="flex-grow h-full px-3 py-3 flex flex-col overflow-hidden">
+            <h3 class="text-sm text-gray-900 truncate md:overflow-clip">
               <xsl:value-of
                 select="(source/resourceTitleObject/entry[key = 'default']/value|uuid)[1]"/>
-            </h1>
+            </h3>
           </div>
         </div>
       </a>
@@ -50,9 +52,10 @@
                as="xs:string*"/>
 
     <xsl:if test="count($formats) > 0">
-      <div class="flex flex-row-reverse p-4 bg-white">
+      <div class="flex flex-row-reverse pb-6">
         <xsl:for-each select="$formats">
-          <a class="mr-2 bg-gray-600 text-white text-xs p-2 rounded leading-none flex items-center"
+          <a class="ml-2 bg-blue-500 hover:bg-blue-600 text-white text-xs p-3 rounded leading-none flex items-center focus:outline-none focus:shadow-outline
+                   transform transition hover:scale-105 duration-300 ease-in-out"
              href="?f={.}"><xsl:value-of select="."/></a>
         </xsl:for-each>
       </div>

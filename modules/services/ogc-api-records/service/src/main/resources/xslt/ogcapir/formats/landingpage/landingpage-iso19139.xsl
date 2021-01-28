@@ -10,26 +10,28 @@
 
   <xsl:template match="gmd:MD_Metadata"
                 mode="landingpage">
-    <div class="flex space-x-2 mb-4">
-      <section class="rounded border-2 bg-white p-2 w-2/3">
-        <div class="pb-2 border-solid border-b-4">
-          <h1 class="text-4xl text-blue-900 font-medium">Data</h1>
+    <div class="flex space-x-4 mb-4 w-full">
+      <section class="rounded shadow border border-gray-200 bg-white w-1/3">
+        <div class="px-3 py-4 sm:px-5 bg-gray-50">
+          <h3 class="font-medium">Data</h3>
         </div>
 
-        <gn-ui-record-data uuid="12345" bbox="" links="">
-          <img src="{$geonetworkUrl}/srv/api/records/{gmd:fileIdentifier/*/text()}/extents.png"
-               class="w-full rounded"/>
-        </gn-ui-record-data>
+        <div class="border-t border-gray-200 flex flex-wrap p-4">
+          <gn-ui-record-data uuid="12345" bbox="" links="">
+            <img src="{$geonetworkUrl}/srv/api/records/{gmd:fileIdentifier/*/text()}/extents.png"
+                class="w-full"/>
+          </gn-ui-record-data>
+        </div>
       </section>
 
-      <section class="rounded border-2 bg-white p-2 w-1/3">
-        <div class="pb-2 border-solid border-b-4">
-          <h1 class="text-4xl text-blue-900 font-medium">Summary</h1>
+      <section class="rounded shadow border border-gray-200 bg-white w-2/3">
+        <div class="px-3 py-4 sm:px-5 bg-gray-50">
+          <h3 class="font-medium">Summary</h3>
         </div>
 
-        <div class="flex flex-wrap">
+        <div class="border-t border-gray-200 flex flex-wrap">
           <xsl:apply-templates mode="landingpage"
-                               select="gmd:identificationInfo/*/gmd:citation/*/gmd:edition
+                                select="gmd:identificationInfo/*/gmd:citation/*/gmd:edition
                                       |gmd:identificationInfo/*/gmd:citation/*/gmd:date
                                       |gmd:identificationInfo/*/gmd:resourceMaintenance"/>
         </div>
@@ -37,32 +39,29 @@
 
     </div>
 
-    <section class="w-full rounded border-2 bg-white p-2">
-      <div class="pb-2 border-solid border-b-4">
-        <h1 class="text-4xl text-blue-900 font-medium">Informations</h1>
-
-        <div class="flex flex-wrap">
-          <xsl:apply-templates mode="landingpage" select="gmd:identificationInfo"/>
-        </div>
+    <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
+      <div class="px-3 py-4 sm:px-5 bg-gray-50">
+        <h3 class="font-medium">Informations</h3>
+      </div>
+      <div class="border-t border-gray-200 flex flex-wrap">
+        <xsl:apply-templates mode="landingpage" select="gmd:identificationInfo"/>
       </div>
     </section>
 
-    <section class="w-full rounded border-2 bg-white p-2">
-      <div class="pb-2 border-solid border-b-4">
-        <h1 class="text-4xl text-blue-900 font-medium">Download</h1>
+    <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
+      <div class="px-3 py-4 sm:px-5 bg-gray-50">
+        <h3 class="font-medium">Download</h3>
       </div>
-
-      <div class="flex flex-wrap">
+      <div class="border-t border-gray-200 flex flex-wrap">
         <xsl:apply-templates mode="landingpage" select="gmd:distributionInfo"/>
       </div>
     </section>
 
-    <section class="w-full rounded border-2 bg-white p-2">
-      <div class="pb-2 border-solid border-b-4">
-        <h1 class="text-4xl text-blue-900 font-medium">More info</h1>
+    <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
+      <div class="px-3 py-4 sm:px-5 bg-gray-50">
+        <h3 class="font-medium">More info</h3>
       </div>
-
-      <div class="flex flex-wrap">
+      <div class="border-t border-gray-200 flex flex-wrap">
         <xsl:apply-templates mode="landingpage"
                              select="*[
                              name() != 'gmd:identificationInfo'
