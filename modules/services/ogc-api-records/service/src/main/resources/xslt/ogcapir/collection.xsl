@@ -55,23 +55,28 @@
 
           <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
             <div class="w-2/3">
-
-              <form>
-                <label for="collection_search" class="block text-sm font-medium text-gray-800 uppercase">
-                  search
-                </label>
-                <div class="mt-1 mb-4 flex">
-                  <input type="text" name="q" id="collection_search" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded rounded-r-none focus:rounded-r-none sm:text-sm border border-gray-300 px-4" placeholder="type a search term" />
-                  <button class="inline-flex items-center px-4 py-2 rounded-r border border-l-0 border-gray-800 bg-gray-800 text-white text-sm" type="submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </button>
-                </div>          
-              </form>
-
               <xsl:choose>
                 <xsl:when test="model/results">
+                  <form>
+                    <label for="collection_search"
+                           class="block text-sm font-medium text-gray-800 uppercase">
+                      search
+                    </label>
+                    <div class="mt-1 mb-4 flex">
+                      <input type="text"
+                             name="q"
+                             id="collection_search"
+                             class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded rounded-r-none focus:rounded-r-none sm:text-sm border border-gray-300 px-4"
+                             placeholder="type a search term"
+                             autofocus=""/>
+                      <button class="inline-flex items-center px-4 py-2 rounded-r border border-l-0 border-gray-800 bg-gray-800 text-white text-sm" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </form>
+
                   <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
                     <div class="px-3 py-4 sm:px-5 bg-gray-50">
                       <h2 class="font-medium">

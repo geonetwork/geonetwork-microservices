@@ -1,9 +1,15 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.common.search;
 
 import org.springframework.http.MediaType;
 import org.springframework.util.MimeType;
 
 public class GnMediaType extends MimeType {
+
 
   public GnMediaType(String type) {
     super(type);
@@ -17,6 +23,10 @@ public class GnMediaType extends MimeType {
 
   public static final String APPLICATION_ISO19139_XML_VALUE = "application/iso19139+xml";
   public static final MediaType APPLICATION_ISO19139_XML;
+
+  public static final String APPLICATION_OPENSEARCH_XML_VALUE =
+      "application/opensearchdescription+xml";
+  public static final MediaType APPLICATION_OPENSEARCH_XML;
 
   public static final String APPLICATION_RDF_XML_VALUE = "application/rdf+xml";
   public static final MediaType APPLICATION_RDF_XML;
@@ -35,6 +45,7 @@ public class GnMediaType extends MimeType {
 
     APPLICATION_DCAT2_XML = new MediaType("application", "dcat2+xml");
     APPLICATION_RDF_XML = new MediaType("application", "rdf+xml");
+    APPLICATION_OPENSEARCH_XML = new MediaType("application", "opensearch+xml");
     APPLICATION_ISO19139_XML = new MediaType("application", "iso19139+xml");
     APPLICATION_ISO19115_3_XML = new MediaType("application", "iso19115-3+xml");
     APPLICATION_GN_XML = new MediaType("application", "gn+xml");

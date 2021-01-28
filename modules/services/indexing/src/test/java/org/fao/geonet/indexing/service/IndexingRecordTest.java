@@ -72,7 +72,7 @@ class IndexingRecordTest {
     assertNotNull(result.getIndexingDate());
     assertEquals("INSPIRE - Sites protégés en Wallonie (BE)", result.getResourceTitle().get(defaultText));
 
-    ObjectMapper mapper = JsonUtils.getObjectMapper();
-    System.out.println(mapper.writeValueAsString(result));
+    //    ObjectMapper mapper = JsonUtils.getObjectMapper();
+    //    System.out.println(mapper.writeValueAsString(result));
   }
 }

@@ -6,7 +6,7 @@
 package org.fao.geonet.searching;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.domain.Profile;
-import org.fao.geonet.searching.controller.XsltSearchController;
+import org.fao.geonet.searching.controller.MainSearchController;
+import org.fao.geonet.searching.controller.SecurityTesterController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,9 +49,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableWebSecurity
 @ContextConfiguration(classes = {
-    XsltSearchController.class,
+    MainSearchController.class,
+    SecurityTesterController.class,
     SecurityConfigurer.class})
-public class XsltSearchControllerSecurityConfigurerTest {
+public class SearchControllerSecurityConfigurerTest {
 
   @MockBean
   private ElasticSearchProxy esProxy;
@@ -92,8 +94,7 @@ public class XsltSearchControllerSecurityConfigurerTest {
         .when(esProxy).search(Mockito.any(),Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any());
 
     this.mockMvc
-        .perform(
-            post("/portal/api/search/records/xslt")
+        .perform(get("/search/secured")
                 .header("Authorization", "Bearer " + token))
         .andExpect(status()
             .isOk());
@@ -123,7 +124,7 @@ public class XsltSearchControllerSecurityConfigurerTest {
 
     this.mockMvc
       .perform(
-          post("/portal/api/search/records/xslt")
+          get("/search/secured")
           .header("Authorization", "Bearer " + token))
       .andExpect(status()
       .isOk());

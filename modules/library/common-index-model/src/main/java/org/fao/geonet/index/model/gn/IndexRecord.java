@@ -153,7 +153,6 @@ public class IndexRecord extends IndexDocument {
 
   // TODO XML
   @XmlTransient
-  @JsonIgnore
   @JsonProperty(IndexRecordFieldNames.location)
   @JsonDeserialize(using = LocationDeserializer.class)
   @JsonSerialize(using = LocationSerializer.class)
@@ -162,7 +161,6 @@ public class IndexRecord extends IndexDocument {
 
   // TODO XML
   @XmlTransient
-  @JsonIgnore
   @JsonProperty(IndexRecordFieldNames.geom)
   @JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
   private List<String> geometries = new ArrayList<>();

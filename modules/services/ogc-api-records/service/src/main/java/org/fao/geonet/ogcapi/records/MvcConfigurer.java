@@ -38,6 +38,8 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .parameterName("f")
         .defaultContentType(MediaType.parseMediaType(searchConfiguration.getDefaultMimeType()));
 
+    configurer.mediaType("opensearch",
+        GnMediaType.APPLICATION_OPENSEARCH_XML);
 
     searchConfiguration.getFormats().forEach(f -> {
       configurer.mediaType(f.getName(),

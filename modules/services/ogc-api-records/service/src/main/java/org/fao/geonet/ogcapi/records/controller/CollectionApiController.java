@@ -2,12 +2,15 @@ package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.ApiParam;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.fao.geonet.common.search.GnMediaType;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
@@ -43,6 +46,8 @@ public class CollectionApiController implements CollectionApi {
   @Value("${gn.baseurl}")
   String baseUrl;
 
+  @Autowired
+  SearchConfiguration searchConfiguration;
   @Autowired
   ViewUtility viewUtility;
   @Autowired
@@ -89,7 +94,9 @@ public class CollectionApiController implements CollectionApi {
    * Collections as XML.
    */
   @GetMapping(value = "/collections/{collectionId}",
-      produces = {"application/xml"})
+      produces = {
+        MediaType.APPLICATION_XML_VALUE
+      })
   public ResponseEntity<CollectionInfo> describeCollectionAsXml(
       @PathVariable("collectionId") String collectionId) {
     return describeCollection(collectionId);
@@ -99,7 +106,9 @@ public class CollectionApiController implements CollectionApi {
    * Collection as HTML.
    */
   @GetMapping(value = "/collections/{collectionId}",
-      produces = {"text/html"})
+      produces = {
+        MediaType.TEXT_HTML_VALUE
+      })
   public String describeCollectionAsHtml(
       @PathVariable("collectionId") String collectionId,
       HttpServletRequest request,
@@ -124,7 +133,7 @@ public class CollectionApiController implements CollectionApi {
       produces = {
           MediaType.APPLICATION_RSS_XML_VALUE,
           MediaType.APPLICATION_ATOM_XML_VALUE,
-          "application/opensearchdescription+xml"
+          GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE
       },
       method = RequestMethod.GET)
   @ResponseBody
@@ -136,16 +145,29 @@ public class CollectionApiController implements CollectionApi {
     OpenSearchDescription openSearchDescription = new OpenSearchDescription();
     String label = source.getLabel(locale.getISO3Language());
     String[] labelAndDescription = label.split("\\|");
+
+    //Contains a brief human-readable title that identifies this search engine.
     openSearchDescription.setShortName(labelAndDescription[0]);
     if (labelAndDescription.length == 2) {
-      openSearchDescription.setLongName(labelAndDescription[1]);
+      // Contains a human-readable text description of the search engine.
+      openSearchDescription.setDescription(labelAndDescription[1]);
     }
-    Url url = new Url();
-    url.setTemplate(String.format("%s/collections/%s/items?f=%s",
-        baseUrl,
-        source.getUuid(),
-        "rss"));
-    openSearchDescription.getUrl().add(url);
+
+    // Describes an interface by which a client can make requests
+    // for an external resource, such as search results,
+    // search suggestions, or additional description documents.
+    searchConfiguration.getFormats().forEach(f -> {
+      Url url = new Url();
+      url.setType(f.getMimeType());
+      url.setIndexOffset(BigInteger.valueOf(0));
+      url.setTemplate(String.format(
+          "%s/collections/%s/items?f=%s&q={searchTerms}&startIndex={startIndex?}",
+          baseUrl,
+          source.getUuid(),
+          f.getName()));
+      openSearchDescription.getUrl().add(url);
+    });
+
 
     // Does not return document with namespace ? TODO
     //    return openSearchDescription;
