@@ -45,26 +45,6 @@ In standalone mode, the service requires an Elasticsearch instance and database 
 
 Test the search:
 ```shell script
-
-# RSS Search service 
-curl 127.0.0.1:9902/portal/api/search/records/rss \
-    -H "Accept: application/rss+xml"
-
-# XSLT based search service 
-# - Response in record format
-curl 127.0.0.1:9902/portal/api/search/records/xslt \
-    -H "Accept: application/gn+xml" \
-    -H "Content-type: application/json" \
-    -X POST \
-    -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'
-
-# - Response in record DCAT format
-curl 127.0.0.1:9902/portal/api/search/records/xslt \
-    -H "Accept: application/dcat2+xml" \
-    -H "Content-type: application/json" \
-    -X POST \
-    -d '{"from": 0, "size": 1, "query": {"query_string": {"query": "+isTemplate:n"}}}'
-
 # Elasticsearch service
 curl 127.0.0.1:9902/portal/api/search/records/_search \
     -H "Accept: application/json" \
