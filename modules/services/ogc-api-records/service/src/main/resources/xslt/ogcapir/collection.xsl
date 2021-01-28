@@ -58,6 +58,11 @@
               <xsl:choose>
                 <xsl:when test="model/results">
                   <section class="w-full rounded shadow border border-gray-200 bg-white mb-4">
+
+                    <form>
+                      <input type="text" name="q"/>
+                      <button type="submit"/>
+                    </form>
                     <div class="px-3 py-4 sm:px-5 bg-gray-50">
                       <h2 class="font-medium">
                         <xsl:choose>
