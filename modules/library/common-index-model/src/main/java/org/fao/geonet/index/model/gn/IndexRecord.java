@@ -117,12 +117,12 @@ public class IndexRecord extends IndexDocument {
 
 
   @JsonProperty(IndexRecordFieldNames.resourceIdentifier)
-  private ArrayList<String> resourceIdentifier;
+  private ArrayList<String> resourceIdentifier = new ArrayList<>();
 
   @JsonProperty(IndexRecordFieldNames.org)
-  private List<String> org;
+  private List<String> org = new ArrayList<>();
   @JsonProperty(IndexRecordFieldNames.orgForResource)
-  private List<String> orgForResource;
+  private List<String> orgForResource = new ArrayList<>();
   // others eg. pointOfContactOrgForResource are in other properties
   private List<Contact> contact = new ArrayList<>();
   private List<Contact> contactForResource = new ArrayList<>();
@@ -156,14 +156,14 @@ public class IndexRecord extends IndexDocument {
   @JsonProperty(IndexRecordFieldNames.location)
   @JsonDeserialize(using = LocationDeserializer.class)
   @JsonSerialize(using = LocationSerializer.class)
-  private List<Coordinate> locations;
+  private List<Coordinate> locations = new ArrayList<>();
 
 
   // TODO XML
   @XmlTransient
   @JsonProperty(IndexRecordFieldNames.geom)
   @JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
-  private List<String> geometries;
+  private List<String> geometries = new ArrayList<>();
 
   //  @JsonAnyGetter
   private Map<String, ArrayList<String>> otherProperties = new HashMap<>();
