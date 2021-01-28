@@ -6,6 +6,11 @@
                 version="3.0">
   <xsl:include href="landingpage-iso19139.xsl"/>
 
+  <xsl:template mode="getTitle" match="*"/>
+  <xsl:template mode="getOverviews" match="*"/>
+  <xsl:template mode="getShortAbstract" match="*"/>
+  <xsl:template mode="getAfterShortAbstract" match="*"/>
+
   <!-- Browse the tree here and add specific schema templates
   to catch what should be displayed in that mode. -->
   <xsl:template match="@*|node()" mode="landingpage">
