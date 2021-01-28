@@ -10,17 +10,19 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
@@ -28,8 +30,6 @@ import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
-import org.fao.geonet.index.converter.JsonLdRecord;
-import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -49,6 +49,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
@@ -143,7 +144,9 @@ public class ItemApiController implements RecordApi {
   @GetMapping(
       value = "/collections/{collectionId}/items/{recordId}",
       produces = {
-          GnMediaType.APPLICATION_JSON_LD_VALUE
+          GnMediaType.APPLICATION_JSON_LD_VALUE,
+          GnMediaType.TEXT_TURTLE_VALUE,
+          GnMediaType.APPLICATION_RDF_XML_VALUE
       })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
@@ -152,6 +155,8 @@ public class ItemApiController implements RecordApi {
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")
           String recordId,
+      @RequestHeader("Accept")
+          String acceptHeader,
       HttpServletRequest request,
       HttpServletResponse response) {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
@@ -183,9 +188,20 @@ public class ItemApiController implements RecordApi {
       }
 
       JsonNode record = actualObj.get("dataFeedElement").get(0);
-      streamResult(response,
-          record.toString(),
-          GnMediaType.APPLICATION_JSON_LD_VALUE);
+      if (GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader)
+          || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader)) {
+        org.eclipse.rdf4j.model.Model model = Rio.parse(
+            new ByteArrayInputStream(record.toString().getBytes()),
+            "", RDFFormat.JSONLD);
+
+        Rio.write(model, response.getOutputStream(),
+            GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader)
+                ? RDFFormat.RDFXML : RDFFormat.TURTLE);
+      } else {
+        streamResult(response,
+            record.toString(),
+            GnMediaType.APPLICATION_JSON_LD_VALUE);
+      }
       return ResponseEntity.ok().build();
     } catch (Exception ex) {
       // TODO: Log exception
@@ -327,9 +343,9 @@ public class ItemApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
-        MediaType.APPLICATION_JSON_VALUE,
-        GnMediaType.APPLICATION_JSON_LD_VALUE,
-        MediaType.APPLICATION_RSS_XML_VALUE})
+          MediaType.APPLICATION_JSON_VALUE,
+          GnMediaType.APPLICATION_JSON_LD_VALUE,
+          MediaType.APPLICATION_RSS_XML_VALUE})
   @Override
   // TODO: support datetime, type, q, externalids
   public ResponseEntity<Void> collectionsCollectionIdItemsGet(
@@ -406,7 +422,7 @@ public class ItemApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
-        MediaType.APPLICATION_XML_VALUE
+          MediaType.APPLICATION_XML_VALUE
       })
   public ResponseEntity<Void> collectionsCollectionIdItemsGetAsXml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
@@ -447,7 +463,7 @@ public class ItemApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
-        MediaType.TEXT_HTML_VALUE
+          MediaType.TEXT_HTML_VALUE
       })
   public String collectionsCollectionIdItemsGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)

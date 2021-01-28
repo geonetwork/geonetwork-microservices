@@ -60,13 +60,21 @@ gn:
         mimeType : application/ld+json
         responseProcessor: JsonLdResponseProcessorImpl
       -
-        name : iso19139
-        mimeType : application/iso19139+xml
-        responseProcessor: XsltResponseProcessorImpl
+        name : turtle
+        mimeType : text/turtle
+        responseProcessor: JsonLdResponseProcessorImpl
       -
-        name : iso19115-3
-        mimeType : application/iso19115-3+xml
-        responseProcessor: XsltResponseProcessorImpl
+        name : rdfxml
+        mimeType : application/rdf+xml
+        responseProcessor: JsonLdResponseProcessorImpl
+#      -
+#        name : iso19139
+#        mimeType : application/iso19139+xml
+#        responseProcessor: XsltResponseProcessorImpl
+#      -
+#        name : iso19115-3
+#        mimeType : application/iso19115-3+xml
+#        responseProcessor: XsltResponseProcessorImpl
       -
         name : rss
         mimeType : application/rss+xml

@@ -76,7 +76,7 @@ curl 127.0.0.1:9901/collections/$firstCollection/items \
         -H "Accept: application/xml" 
 
 curl 127.0.0.1:9901/collections/$firstCollection/items \
-        -H "Accept: application/rss+xml" 
+        -H "Accept: application/rss+xml"
 
 # Search parameters
 # Use `limit` for the number of records per page
@@ -126,6 +126,12 @@ curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
  
 curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/dcat2+xml 
+
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
+        -H "Accept: text/turtle" 
+
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
+        -H "Accept: application/rdf+xml" 
 ```
 
 API also `f` URL parameter to set the output format eg. http://localhost:9901/collections?f=xml

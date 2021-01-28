@@ -9,11 +9,17 @@ public class GnMediaType extends MimeType {
     super(type);
   }
 
+  public static final MediaType TEXT_TURTLE;
+  public static final String TEXT_TURTLE_VALUE = "text/turtle";
+
   public static final String APPLICATION_DCAT2_XML_VALUE = "application/dcat2+xml";
   public static final MediaType APPLICATION_DCAT2_XML;
 
   public static final String APPLICATION_ISO19139_XML_VALUE = "application/iso19139+xml";
   public static final MediaType APPLICATION_ISO19139_XML;
+
+  public static final String APPLICATION_RDF_XML_VALUE = "application/rdf+xml";
+  public static final MediaType APPLICATION_RDF_XML;
 
   public static final String APPLICATION_ISO19115_3_XML_VALUE = "application/iso19115-3+xml";
   public static final MediaType APPLICATION_ISO19115_3_XML;
@@ -25,7 +31,10 @@ public class GnMediaType extends MimeType {
   public static final MediaType APPLICATION_JSON_LD;
 
   static {
+    TEXT_TURTLE = new MediaType("text", "turtle");
+
     APPLICATION_DCAT2_XML = new MediaType("application", "dcat2+xml");
+    APPLICATION_RDF_XML = new MediaType("application", "rdf+xml");
     APPLICATION_ISO19139_XML = new MediaType("application", "iso19139+xml");
     APPLICATION_ISO19115_3_XML = new MediaType("application", "iso19115-3+xml");
     APPLICATION_GN_XML = new MediaType("application", "gn+xml");
