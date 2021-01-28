@@ -52,9 +52,9 @@
                as="xs:string*"/>
 
     <xsl:if test="count($formats) > 0">
-      <div class="flex flex-row-reverse pb-6">
+      <div class="flex flex-row-reverse flex-wrap pb-6 pl-4">
         <xsl:for-each select="$formats">
-          <a class="ml-2 bg-blue-500 hover:bg-blue-600 text-white text-xs p-3 rounded leading-none flex items-center focus:outline-none focus:shadow-outline
+          <a class="ml-2 mb-2 bg-blue-500 hover:bg-blue-600 text-white text-xs p-3 rounded leading-none flex items-center focus:outline-none focus:shadow-outline
                    transform transition hover:scale-105 duration-300 ease-in-out"
              href="?f={.}"><xsl:value-of select="."/></a>
         </xsl:for-each>

@@ -22,6 +22,28 @@
       <!--Replace with your tailwind.css once created-->
       <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700"
             rel="stylesheet"/>
+      <style>
+        .clamp-1 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+
+        .clamp-2 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+
+        .clamp-3 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+        }
+      </style>
     </head>
   </xsl:template>
 

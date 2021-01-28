@@ -53,7 +53,7 @@
         <xsl:with-param name="link" select="concat($requestUrl, '/main')"/>
         <xsl:with-param name="content">
 
-          <div class="container mx-auto flex flex-wrap text-gray-800 md:px-4">
+          <div class="container mx-auto flex flex-wrap text-gray-800 md:pr-4">
             <div class="w-2/3">
               <xsl:call-template name="html-breadcrumb">
                 <xsl:with-param name="breadcrumb">
@@ -105,7 +105,7 @@
             </h1>
           </xsl:if>
 
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <xsl:for-each select="$collections">
               <xsl:variable name="label"
                             select="gn-ogcapir-util:getCollectionName(., $language)"
@@ -137,15 +137,21 @@
     <xsl:param name="logo" as="xs:string?"/>
     <xsl:param name="url" as="xs:string?"/>
 
-    <section class="rounded shadow border border-gray-200 bg-white mr-4 mb-4">
+    <section class="h-full border bg-white rounded-sm overflow-hidden transition duration-200 transform hover:scale-105 border-gray-200 hover:bg-gray-50">
       <a href="{$url}" class="no-underline hover:no-underline">
-        <div class="px-3 py-4 sm:px-5 bg-gray-50">
-          <h3 class="font-medium">
-            <xsl:value-of select="$title"/>
-          </h3>
-        </div>
-        <div class="border-t border-gray-200 flex flex-wrap h-40"
-            style="background-image: url({$logo})">
+
+        <div class="flex flex-col min-h-full">
+          <img class="lg:h-48 md:h-36 border-b border-gray-200 bg-gray-100" src="{$logo}" />
+
+          <div class="flex-grow p-4">
+            <h3 class="title-font text-lg font-medium mb-3 clamp-2">
+              <xsl:value-of select="$title"/>
+            </h3>
+            <p class="leading-relaxed text-sm text-gray-700 clamp-3 hover:text-gray-800">
+              <xsl:value-of select="$subTitle"/>
+              
+            </p>
+          </div>
         </div>
       </a>
     </section>
