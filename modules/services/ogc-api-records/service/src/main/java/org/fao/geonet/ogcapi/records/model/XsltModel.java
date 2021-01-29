@@ -52,6 +52,9 @@ public class XsltModel {
   @XmlElement(name = "outputFormat")
   List<Format> outputFormats;
 
+
+  String seoJsonLdSnippet;
+
   EsSearchResults results;
 
   /**

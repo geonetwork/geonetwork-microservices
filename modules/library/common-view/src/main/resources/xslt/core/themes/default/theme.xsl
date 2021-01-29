@@ -44,6 +44,12 @@
           -webkit-box-orient: vertical;
         }
       </style>
+
+      <xsl:if test="/model/seoJsonLdSnippet">
+      <script type="application/ld+json">
+        <xsl:value-of select="/model/seoJsonLdSnippet"/>
+      </script>
+      </xsl:if>
     </head>
   </xsl:template>
 

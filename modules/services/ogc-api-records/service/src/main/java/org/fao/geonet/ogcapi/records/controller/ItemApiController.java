@@ -31,6 +31,9 @@ import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -106,30 +109,10 @@ public class ItemApiController implements RecordApi {
     HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
 
     try {
-      String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = recordsEsQueryBuilder.buildQuerySingleRecord(
-          recordId, collectionFilter, null);
-
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
-      ObjectMapper mapper = new ObjectMapper();
-      JsonFactory factory = mapper.getFactory();
-      JsonParser parser = factory.createParser(queryResponse);
-      JsonNode actualObj = mapper.readTree(parser);
-
-      JsonNode totalValue = actualObj.get("hits").get("total").get("value");
-
-      if ((totalValue == null) || (totalValue.intValue() == 0)) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-            messages.getMessage("ogcapir.exception.collectionItem.notFound",
-                new String[]{recordId, collectionId},
-                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
-      }
-
-      JsonNode recordValue = actualObj.get("hits").get("hits").get(0);
+      JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "json");
 
       streamResult(response,
-          recordValue.toPrettyString(),
+          record.toPrettyString(),
           MediaType.APPLICATION_JSON_VALUE);
       return ResponseEntity.ok().build();
     } catch (Exception ex) {
@@ -170,25 +153,8 @@ public class ItemApiController implements RecordApi {
     }
 
     try {
-      String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "schema.org");
 
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
-      ObjectMapper mapper = new ObjectMapper();
-      JsonFactory factory = mapper.getFactory();
-      JsonParser parser = factory.createParser(queryResponse);
-      JsonNode actualObj = mapper.readTree(parser);
-
-      JsonNode totalValue = actualObj.get("size");
-      if ((totalValue == null) || (totalValue.intValue() == 0)) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-            messages.getMessage("ogcapir.exception.collectionItem.notFound",
-                new String[]{recordId, collectionId},
-                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
-      }
-
-      JsonNode record = actualObj.get("dataFeedElement").get(0);
       String formatParameter = request.getParameter("f");
       boolean isTurtle =
           (formatParameter != null && "turtle".equals(formatParameter))
@@ -198,7 +164,7 @@ public class ItemApiController implements RecordApi {
               || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
       if (isTurtle || isRdfXml) {
         org.eclipse.rdf4j.model.Model model = Rio.parse(
-            new ByteArrayInputStream(actualObj.get("dataFeedElement").toString().getBytes()),
+            new ByteArrayInputStream(record.toString().getBytes()),
             "", RDFFormat.JSONLD);
         // TODO name, abstract properties are missing in the model. Why?
         Rio.write(model, response.getOutputStream(),
@@ -214,6 +180,39 @@ public class ItemApiController implements RecordApi {
       throw new RuntimeException(ex);
     }
 
+  }
+
+  private JsonNode getRecordAsJson(
+      String collectionId,
+      String recordId,
+      HttpServletRequest request,
+      Source source,
+      String type) throws Exception {
+    String collectionFilter = collectionService.retrieveCollectionFilter(source);
+    String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+
+    String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+
+    ObjectMapper mapper = new ObjectMapper();
+    JsonFactory factory = mapper.getFactory();
+    JsonParser parser = factory.createParser(queryResponse);
+    JsonNode actualObj = mapper.readTree(parser);
+
+    JsonNode totalValue =
+        "json".equals(type)
+            ? actualObj.get("hits").get("total").get("value")
+            : actualObj.get("size");
+
+    if ((totalValue == null) || (totalValue.intValue() == 0)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collectionItem.notFound",
+              new String[]{recordId, collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+    }
+
+    return "json".equals(type)
+        ? actualObj.get("hits").get("hits").get(0)
+        : actualObj.get("dataFeedElement").get(0);
   }
 
   /**
@@ -300,8 +299,9 @@ public class ItemApiController implements RecordApi {
     }
 
     try {
-      Metadata record = metadataRepository.findOneByUuid(recordId);
+      JsonNode recordAsJson = getRecordAsJson(collectionId, recordId, request, source, "json");
 
+      Metadata record = metadataRepository.findOneByUuid(recordId);
       if (record == null) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,
             messages.getMessage("ogcapir.exception.collectionItem.notFound",
@@ -310,12 +310,18 @@ public class ItemApiController implements RecordApi {
       }
 
       XsltModel modelSource = new XsltModel();
+      IndexRecord recordPojo = JsonUtils.getObjectMapper().readValue(
+          recordAsJson.get(IndexRecordFieldNames.source).toPrettyString(),
+          IndexRecord.class);
+      modelSource.setSeoJsonLdSnippet(
+          SchemaOrgConverter.convert(recordPojo).toString());
       modelSource.setRequestParameters(request.getParameterMap());
       modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.item));
       modelSource.setCollection(source);
       modelSource.setItems(List.of(
           new Item(recordId, null, record.getData())
       ));
+
       model.addAttribute("source", modelSource.toSource());
       viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()), request);
       return "ogcapir/item";

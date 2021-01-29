@@ -713,7 +713,8 @@ public class ElasticSearchProxy {
     return requestBody.toString();
   }
 
-  private void processResponse(HttpServletRequest request, HttpSession httpSession,
+  private void processResponse(
+      HttpServletRequest request, HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
       boolean addPermissions, String selectionBucket, UserInfo userInfo) throws Exception {
 
