@@ -5,8 +5,8 @@
                 exclude-result-prefixes="#all"
                 version="3.0">
 
-  <xsl:import href="../../schemas/iso19139-tpl.xsl"/>
-  <xsl:import href="../../html-util.xsl"/>
+  <xsl:include href="../../schemas/iso19139-tpl.xsl"/>
+  <xsl:include href="../../html-util.xsl"/>
 
   <xsl:template match="gmd:MD_Metadata"
                 mode="landingpage">

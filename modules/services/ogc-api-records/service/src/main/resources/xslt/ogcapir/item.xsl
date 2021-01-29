@@ -94,7 +94,7 @@
 
                   <div class="border-t border-gray-200 flex flex-wrap">
                       <xsl:for-each select="$overviews">
-                        <img class="rounded shadow my-4 mx-2" src="{url}">
+                        <img class="rounded shadow" src="{url}">
                           <xsl:if test="label">
                             <xsl:attribute name="title" select="label"/>
                           </xsl:if>
