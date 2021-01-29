@@ -2,7 +2,6 @@ package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.google.common.base.Throwables;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -69,14 +68,13 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
           String xsltFileName = String.format(
               "xslt/ogcapir/formats/%s/%s-%s.xsl",
               transformation, transformation, r.getDataInfo().getSchemaId(), transformation);
-          try {
-            File xsltFile = new ClassPathResource(xsltFileName).getFile();
-
-            if (!xsltFile.exists()) {
-              throw new IllegalArgumentException(String.format(
-                  "Transformation '%s' does not exist for schema %s.", transformation
-              ));
-            }
+          try (InputStream xsltFile =
+              new ClassPathResource(xsltFileName).getInputStream()) {
+            //  if (!xsltFile.exists()) {
+            //    throw new IllegalArgumentException(String.format(
+            //        "Transformation '%s' does not exist for schema %s.", transformation
+            //    ));
+            //  }
 
             XsltUtil.transformAndStreamInDocument(
                 r.getData(),

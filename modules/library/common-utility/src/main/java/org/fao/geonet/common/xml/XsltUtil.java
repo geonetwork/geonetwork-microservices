@@ -8,6 +8,7 @@ package org.fao.geonet.common.xml;
 
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -67,7 +68,7 @@ public class XsltUtil {
    */
   public static void transformAndStreamInDocument(
       String inputXmlString,
-      File xsltFile,
+      InputStream xsltFile,
       XMLStreamWriter streamWriter) {
     try {
       Processor proc = new Processor(false);
