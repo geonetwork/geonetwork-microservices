@@ -29,7 +29,7 @@
                   select="model/collection"
                   as="node()?"/>
     <xsl:variable name="outputFormats"
-                  select="/model/outputFormats/outputFormat/name"
+                  select="model/outputFormats/outputFormat/name"
                   as="node()*"/>
 
     <xsl:variable name="title" as="xs:string">
@@ -80,12 +80,10 @@
               </div>
               <div class="w-1/3 pl-4">
 
-                <div class="-bt-4">
-                  <xsl:call-template name="render-page-format-links">
-                    <xsl:with-param name="formats"
-                                    select="$outputFormats"/>
-                  </xsl:call-template>
-                </div>
+                <xsl:call-template name="render-page-format-links">
+                  <xsl:with-param name="formats"
+                                  select="$outputFormats"/>
+                </xsl:call-template>
 
                 <section class="w-full rounded shadow border border-gray-200 bg-white">
                   <div class="px-3 py-4 sm:px-5">

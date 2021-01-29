@@ -197,9 +197,9 @@ public class ItemApiController implements RecordApi {
               || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
       if (isTurtle || isRdfXml) {
         org.eclipse.rdf4j.model.Model model = Rio.parse(
-            new ByteArrayInputStream(record.toString().getBytes()),
+            new ByteArrayInputStream(actualObj.get("dataFeedElement").toString().getBytes()),
             "", RDFFormat.JSONLD);
-
+        // TODO name, abstract properties are missing in the model. Why?
         Rio.write(model, response.getOutputStream(),
             isRdfXml ? RDFFormat.RDFXML : RDFFormat.TURTLE);
       } else {
@@ -310,12 +310,12 @@ public class ItemApiController implements RecordApi {
 
       XsltModel modelSource = new XsltModel();
       modelSource.setRequestParameters(request.getParameterMap());
+      modelSource.setOutputFormats(searchConfiguration.getFormats());
       modelSource.setCollection(source);
       modelSource.setItems(List.of(
           new Item(recordId, null, record.getData())
       ));
       model.addAttribute("source", modelSource.toSource());
-      modelSource.setOutputFormats(searchConfiguration.getFormats());
       viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()), request);
       return "ogcapir/item";
     } catch (Exception ex) {

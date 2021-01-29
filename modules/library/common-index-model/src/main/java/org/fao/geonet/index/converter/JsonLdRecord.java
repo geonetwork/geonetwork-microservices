@@ -101,6 +101,7 @@ public class JsonLdRecord {
    * Convert an index document into a JSON LD document.
    */
   public JsonLdRecord(IndexRecord record) {
+    // ObjectNode context = root.putObject("@context");
     root.put("@context", "http://schema.org/");
 
     if (record.getResourceType().size() > 0) {
@@ -114,6 +115,8 @@ public class JsonLdRecord {
 
     root.put("@id", record.getMetadataIdentifier());
     root.put("name", record.getResourceTitle().get(CommonField.defaultText));
+    // root.put("http://schema.org/name",
+    // record.getResourceTitle().get(CommonField.defaultText));
 
     // url
     // URL of the item.

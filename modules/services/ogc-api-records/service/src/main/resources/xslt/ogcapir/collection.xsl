@@ -72,21 +72,20 @@
                              id="collection_search"
                              class="border border-gray-300
                                     flex-1 block w-full
-                                    rounded rounded-r-none
-                                    sm:text-sm px-4
-                                    focus:ring-indigo-500 focus:border-indigo-500 focus:rounded-r-none"
+                                    rounded-l
+                                    sm:text-sm px-4"
                              placeholder="Search"
                              autofocus=""
                              value="{$q}"/>
 
-                      <button class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-800 bg-gray-800 text-white text-sm" type="submit">
+                      <button class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 bg-gray-800 text-white text-sm" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                       </button>
 
                       <a href="items"
-                         class="inline-flex items-center px-4 py-2 rounded-r border border-l-0 border-gray-800 text-sm">
+                         class="inline-flex items-center px-4 py-2 rounded-r border border-l-0 border-gray-300 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
                           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -165,12 +164,10 @@
               </xsl:choose>
             </div>
             <div class="w-1/3">
-              <xsl:if test="$total > 0">
-                <xsl:call-template name="render-page-format-links">
-                  <xsl:with-param name="formats"
-                                  select="$outputFormats"/>
-                </xsl:call-template>
-              </xsl:if>
+              <xsl:call-template name="render-page-format-links">
+                <xsl:with-param name="formats"
+                                select="$outputFormats"/>
+              </xsl:call-template>
             </div>
           </div>
 
