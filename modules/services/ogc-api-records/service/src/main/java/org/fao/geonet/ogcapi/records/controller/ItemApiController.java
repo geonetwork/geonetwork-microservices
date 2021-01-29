@@ -188,15 +188,20 @@ public class ItemApiController implements RecordApi {
       }
 
       JsonNode record = actualObj.get("dataFeedElement").get(0);
-      if (GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader)
-          || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader)) {
+      String formatParameter = request.getParameter("f");
+      boolean isTurtle =
+          (formatParameter != null && "turtle".equals(formatParameter))
+              || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
+      boolean isRdfXml =
+          (formatParameter != null && "rdfxml".equals(formatParameter))
+              || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
+      if (isTurtle || isRdfXml) {
         org.eclipse.rdf4j.model.Model model = Rio.parse(
             new ByteArrayInputStream(record.toString().getBytes()),
             "", RDFFormat.JSONLD);
 
         Rio.write(model, response.getOutputStream(),
-            GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader)
-                ? RDFFormat.RDFXML : RDFFormat.TURTLE);
+            isRdfXml ? RDFFormat.RDFXML : RDFFormat.TURTLE);
       } else {
         streamResult(response,
             record.toString(),
