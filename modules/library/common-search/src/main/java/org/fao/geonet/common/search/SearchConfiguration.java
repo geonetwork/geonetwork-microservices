@@ -17,12 +17,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "gn.search")
 public class SearchConfiguration {
+
   public enum Operations {
     collections,
     collection,
     items,
     item
   }
+
   String defaultMimeType;
 
   String queryBase;
@@ -33,15 +35,19 @@ public class SearchConfiguration {
 
   List<Format> formats = new ArrayList<>();
 
+  /**
+   * Get formats list for an operation.
+   */
   public List<Format> getFormats(Operations operation) {
     return formats.stream()
-            .filter(f -> f.getOperations() != null)
-            .filter(f -> f.getOperations().contains(operation))
-            .collect(Collectors.toList());
+        .filter(f -> f.getOperations() != null)
+        .filter(f -> f.getOperations().contains(operation))
+        .collect(Collectors.toList());
   }
 
   @Data
   public static class Format {
+
     String name;
     String mimeType;
     String responseProcessor;

@@ -31,6 +31,7 @@ import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.fao.geonet.index.model.gn.Overview;
 import org.fao.geonet.index.model.gn.ResourceDate;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
@@ -47,7 +48,6 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
 
   /**
    * Process the search response and return RSS feed.
-   *
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
@@ -125,12 +125,12 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
 
 
   /**
-   * GeoNetwork 3 implementation:
-   * See https://github.com/geonetwork/core-geonetwork/blob/master/web/src/main/webapp/xslt/services/rss/rss-utils.xsl
+   * GeoNetwork 3 implementation: See https://github.com/geonetwork/core-geonetwork/blob/master/web/src/main/webapp/xslt/services/rss/rss-utils.xsl
    *
    * <p>Differences:
-   * * No GeoRSS support
-   * * Link only target the landing page of the record
+   * * No GeoRSS support * Link only target the landing page of the record
+   *
+   * <p>Validation: https://validator.w3.org/feed/check.cgi
    */
   private Item toRssItem(ObjectNode doc) {
     try {
@@ -140,10 +140,11 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       // https://www.rssboard.org/rss-specification#hrelementsOfLtitemgt
       Item item = new Item();
       Guid guid = new Guid();
+      guid.setIsPermaLink(false);
       guid.setValue(record.getMetadataIdentifier());
       item.setGuid(guid);
       item.setTitle(record.getResourceTitle().get(defaultText));
-      item.setDescription(record.getResourceAbstract().get(defaultText));
+      item.setDescription(buildDescription(record));
       item.setLink(buildLandingPageLink(record));
 
       // Email address of the author of the item.
@@ -177,6 +178,24 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private String buildDescription(IndexRecord record) {
+    StringBuilder description = new StringBuilder();
+
+    Optional<Overview> first = record.getOverview().stream().findFirst();
+    if (first.isPresent()) {
+      String label = first.get().getLabel().get(defaultText);
+      description.append(String.format(
+          "<a href='%s' title='%s'><img src='%s' width='100'/></a>",
+          first.get().getUrl(),
+          label == null ? "" : label,
+          first.get().getUrl()
+      ));
+    }
+    description.append(record.getResourceAbstract().get(defaultText));
+
+    return String.format("<![CDATA[%s]]>", description.toString());
   }
 
   private String buildLandingPageLink(IndexRecord record) {
