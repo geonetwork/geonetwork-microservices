@@ -13,11 +13,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
 import org.fao.geonet.ogcapi.records.CollectionApi;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.resource.HttpResource;
 
 
 @Controller
@@ -61,7 +59,7 @@ public class CollectionApiController implements CollectionApi {
   @Autowired
   MessageSource messages;
   @Autowired
-  private OgcApiConfiguration configuration;
+  private SearchConfiguration configuration;
 
   /**
    * Describe a collection.
@@ -119,7 +117,7 @@ public class CollectionApiController implements CollectionApi {
       Model model) {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
     XsltModel modelSource = new XsltModel();
-    modelSource.setOutputFormats(configuration.getFormats());
+    modelSource.setOutputFormats(configuration.getFormats(Operations.collection));
     modelSource.setCollection(source);
     model.addAttribute("source", modelSource.toSource());
     Locale locale = LocaleContextHolder.getLocale();

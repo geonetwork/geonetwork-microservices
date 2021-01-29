@@ -55,7 +55,9 @@
 
           <xsl:call-template name="html-breadcrumb">
             <xsl:with-param name="breadcrumb">
-              <a href="{$requestUrl}/collections">  <xsl:value-of select="map:get($i18n, 'ogcapir.collections.browseCollections') || '&#160;'"/></a>
+              <a href="{$requestUrl}/collections">
+                <xsl:value-of select="map:get($i18n, 'ogcapir.collections.browseCollections') || '&#160;'"/>
+              </a>
             </xsl:with-param>
           </xsl:call-template>
 

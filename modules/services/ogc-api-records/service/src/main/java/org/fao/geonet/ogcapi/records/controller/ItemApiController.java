@@ -27,6 +27,7 @@ import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Format;
+import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
@@ -310,7 +311,7 @@ public class ItemApiController implements RecordApi {
 
       XsltModel modelSource = new XsltModel();
       modelSource.setRequestParameters(request.getParameterMap());
-      modelSource.setOutputFormats(searchConfiguration.getFormats());
+      modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.item));
       modelSource.setCollection(source);
       modelSource.setItems(List.of(
           new Item(recordId, null, record.getData())
@@ -509,7 +510,7 @@ public class ItemApiController implements RecordApi {
     modelSource.setRequestParameters(request.getParameterMap());
     modelSource.setCollection(source);
     modelSource.setResults(results);
-    modelSource.setOutputFormats(searchConfiguration.getFormats());
+    modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.items));
     model.addAttribute("source", modelSource.toSource());
     viewUtility.addi18n(model, locale, request);
     return "ogcapir/collection";

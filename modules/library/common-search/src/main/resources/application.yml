@@ -35,18 +35,32 @@ gn:
       - "rating:desc"
       - "popularity:desc"
     formats:
+      - name: html
+        mimeType: text/html
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
       -
         name: json
         mimeType: application/json
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
       -
         name: xml
         mimeType: application/xml
         responseProcessor: XmlResponseProcessorImpl
-      -
-        name: html
-        mimeType: text/html
-        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
       -
         name : dcat
         mimeType : application/dcat2+xml
@@ -56,17 +70,29 @@ gn:
         mimeType : application/gn+xml
         responseProcessor: XsltResponseProcessorImpl
       -
-        name : jsonld
+        name: opensearch
+        mimeType: application/opensearchdescription+xml
+        operations:
+          - collection
+      -
+        name : schema.org
         mimeType : application/ld+json
         responseProcessor: JsonLdResponseProcessorImpl
+        operations:
+          - items
+          - item
       -
         name : turtle
         mimeType : text/turtle
         responseProcessor: JsonLdResponseProcessorImpl
+        operations :
+          - item
       -
         name : rdfxml
         mimeType : application/rdf+xml
         responseProcessor: JsonLdResponseProcessorImpl
+        operations:
+          - item
 #      -
 #        name : iso19139
 #        mimeType : application/iso19139+xml
@@ -79,6 +105,8 @@ gn:
         name : rss
         mimeType : application/rss+xml
         responseProcessor: RssResponseProcessorImpl
+        operations:
+          - items
     defaultMimeType: application/json
     sources:
       - "resourceTitleObject"

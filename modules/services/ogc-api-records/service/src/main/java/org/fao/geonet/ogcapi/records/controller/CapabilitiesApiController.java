@@ -5,16 +5,10 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
 import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
@@ -37,6 +31,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
@@ -57,7 +57,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
   private SourceRepository sourceRepository;
 
   @Autowired
-  private OgcApiConfiguration configuration;
+  private SearchConfiguration configuration;
 
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
@@ -118,7 +118,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       Model model) {
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
-    modelSource.setOutputFormats(configuration.getFormats());
+    modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
     Locale locale = LocaleContextHolder.getLocale();
@@ -184,7 +184,7 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       Model model) {
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
-    modelSource.setOutputFormats(configuration.getFormats());
+    modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
     Locale locale = LocaleContextHolder.getLocale();

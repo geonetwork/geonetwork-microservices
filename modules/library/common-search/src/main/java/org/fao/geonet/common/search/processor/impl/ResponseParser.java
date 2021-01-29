@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -25,7 +26,7 @@ public class ResponseParser {
 
   boolean copyJson;
   JsonGenerator jsonGenerator;
-  Double total;
+  BigInteger total;
   String totalRelation;
   Double took;
 
@@ -132,7 +133,7 @@ public class ResponseParser {
       parser.nextToken(); // object
       parser.nextToken(); // value
       parser.nextToken();
-      this.total = parser.getDoubleValue();
+      this.total = parser.getBigIntegerValue();
       parser.nextToken(); // relation
       parser.nextToken();
       this.totalRelation = parser.getValueAsString();
