@@ -35,6 +35,10 @@ public class XsltModel {
   Map<String, String> i18n;
   Map<String, String> settings;
 
+  @XmlElementWrapper(name = "request")
+  @XmlElement(name = "parameter")
+  Map<String, String[]> requestParameters;
+
   @XmlElementWrapper(name = "collections")
   @XmlElement(name = "collection")
   List<Source> collections;

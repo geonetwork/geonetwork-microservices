@@ -54,7 +54,7 @@
     <xsl:param name="link" as="xs:string?" required="false"/>
     <xsl:param name="content" as="node()*"/>
 
-    <body class="leading-normal tracking-normal antialiased font-sans bg-white pt-24">
+    <body class="leading-normal tracking-normal antialiased font-sans bg-white pt-16">
       <xsl:call-template name="header">
         <xsl:with-param name="title" select="$title"/>
         <xsl:with-param name="logo" select="$logo"/>
@@ -117,7 +117,7 @@
                  href="#">Map</a>
             </li>-->
           </ul>
-          <button
+          <!--<button
             id="navAction"
             class="bg-gray-800 text-white rounded
                    mx-auto lg:mx-0 mt-4 lg:mt-0 py-2 px-5 
@@ -125,7 +125,7 @@
                    transform transition hover:scale-105 duration-300 ease-in-out"
           >
             Sign in
-          </button>
+          </button>-->
         </div>
       </div>
     </nav>

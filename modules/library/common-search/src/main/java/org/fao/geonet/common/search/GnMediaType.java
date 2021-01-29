@@ -45,7 +45,7 @@ public class GnMediaType extends MimeType {
 
     APPLICATION_DCAT2_XML = new MediaType("application", "dcat2+xml");
     APPLICATION_RDF_XML = new MediaType("application", "rdf+xml");
-    APPLICATION_OPENSEARCH_XML = new MediaType("application", "opensearch+xml");
+    APPLICATION_OPENSEARCH_XML = new MediaType("application", "opensearchdescription+xml");
     APPLICATION_ISO19139_XML = new MediaType("application", "iso19139+xml");
     APPLICATION_ISO19115_3_XML = new MediaType("application", "iso19115-3+xml");
     APPLICATION_GN_XML = new MediaType("application", "gn+xml");

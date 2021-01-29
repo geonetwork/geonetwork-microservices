@@ -294,25 +294,6 @@ public class ItemApiController implements RecordApi {
     }
 
     try {
-      //      String collectionFilter = collectionService.retrieveCollectionFilter(source);
-      //      String query = RecordsEsQueryBuilder.buildQuerySingleRecord(
-      //      recordId, collectionFilter, null);
-      //
-      //      String queryResponse = proxy.searchAndGetResult(
-      //      request.getSession(), request, query, null);
-      //
-      //      Document queryResult = XmlUtil.parseXmlString(queryResponse);
-      //      String total = queryResult.getChildNodes().item(0)
-      //      .getAttributes().getNamedItem("total")
-      //          .getNodeValue();
-      //
-      //      if (Integer.parseInt(total) == 0) {
-      //        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find item");
-      //      }
-      //      Node metadataResult = queryResult.getChildNodes().item(0).getFirstChild();
-      //      streamResult(response, XmlUtil.getNodeString(metadataResult),
-      //          MediaType.APPLICATION_XML_VALUE);
-
       Metadata record = metadataRepository.findOneByUuid(recordId);
 
       if (record == null) {
@@ -323,6 +304,7 @@ public class ItemApiController implements RecordApi {
       }
 
       XsltModel modelSource = new XsltModel();
+      modelSource.setRequestParameters(request.getParameterMap());
       modelSource.setCollection(source);
       modelSource.setItems(List.of(
           new Item(recordId, null, record.getData())
@@ -340,6 +322,9 @@ public class ItemApiController implements RecordApi {
 
   /**
    * Collection items as XML.
+   *
+   * <p>In RSS, By default RSS feed is sorted by record
+   * change date unless you defined a custom sort parameter.
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
@@ -516,6 +501,7 @@ public class ItemApiController implements RecordApi {
     }
 
     XsltModel modelSource = new XsltModel();
+    modelSource.setRequestParameters(request.getParameterMap());
     modelSource.setCollection(source);
     modelSource.setResults(results);
     modelSource.setOutputFormats(searchConfiguration.getFormats());

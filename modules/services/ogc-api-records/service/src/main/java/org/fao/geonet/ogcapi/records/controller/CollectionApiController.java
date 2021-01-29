@@ -1,11 +1,13 @@
 package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.ApiParam;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.HttpResource;
 
 
 @Controller
@@ -138,7 +142,8 @@ public class CollectionApiController implements CollectionApi {
       method = RequestMethod.GET)
   @ResponseBody
   public String describeCollectionsAsOpenSearch(
-      @PathVariable("collectionId") String collectionId
+      @PathVariable("collectionId") String collectionId,
+      HttpServletResponse response
   ) {
     Locale locale = LocaleContextHolder.getLocale();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
@@ -175,9 +180,13 @@ public class CollectionApiController implements CollectionApi {
       JAXBContext context = JAXBContext.newInstance(OpenSearchDescription.class);
       StringWriter sw = new StringWriter();
       Marshaller marshaller = context.createMarshaller();
-      marshaller.marshal(openSearchDescription, sw);
-      return sw.toString();
-    } catch (JAXBException e) {
+      response.setContentType(GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE);
+      response.setHeader(
+          "Content-Disposition",
+          String.format("attachment; filename=\"collection-%s-opensearch-description.xml\"",
+              collectionId));
+      marshaller.marshal(openSearchDescription, response.getWriter());
+    } catch (JAXBException | IOException e) {
       e.printStackTrace();
     }
     return "";
