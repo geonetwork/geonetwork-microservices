@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,11 +36,7 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
  *
  * <p>TODO: Add support to translation https://bib.schema.org/workTranslation
  */
-public class JsonLdRecord {
-
-  private ObjectNode root = JsonNodeFactory.instance.objectNode();
-
-  private ObjectMapper mapper = new ObjectMapper();
+public class SchemaOrgConverter {
 
   public enum Types {
     Dataset,
@@ -94,13 +96,14 @@ public class JsonLdRecord {
       new AbstractMap.SimpleEntry<>("collectionSession", "Project")
   );
 
-  public JsonLdRecord() {
-  }
+  private static ObjectMapper mapper = new ObjectMapper();
 
   /**
    * Convert an index document into a JSON LD document.
    */
-  public JsonLdRecord(IndexRecord record) {
+  public static ObjectNode convert(IndexRecord record) {
+    ObjectNode root = JsonNodeFactory.instance.objectNode();
+
     // ObjectNode context = root.putObject("@context");
     root.put("@context", "http://schema.org/");
 
@@ -212,7 +215,7 @@ public class JsonLdRecord {
       ArrayNode array = root.putArray("distribution");
       record.getLinks().forEach(l -> {
         ObjectNode distribution =
-            createThing(null, Types.DataDownload, null);
+            createThing(null, Types.DataDownload, root);
         // Actual bytes of the media object, for example the image file or video file.
         distribution.put("contentUrl", l.getUrl());
         addOptional(distribution, "name", l.getName());
@@ -260,7 +263,7 @@ public class JsonLdRecord {
       record.getGeometries().forEach(g -> {
         GeoJsonReader geoJsonReader = new GeoJsonReader();
         try {
-          ObjectNode shape = createThing(null, Types.GeoShape, null);
+          ObjectNode shape = createThing(null, Types.GeoShape, root);
           Geometry geometry = geoJsonReader.read(g);
           Envelope envelope = geometry.getEnvelopeInternal();
           // https://schema.org/GeoShape
@@ -318,13 +321,13 @@ public class JsonLdRecord {
             contacts.forEach(c -> {
               // https://schema.org/Organization
               ObjectNode organization =
-                  createThing(null, Types.Organization, null);
+                  createThing(null, Types.Organization, root);
               addOptional(organization, "name", c.getOrganisation());
               addOptional(organization, "address", c.getAddress());
               addOptional(organization, "email", c.getEmail());
 
               // https://schema.org/URL
-              ObjectNode url = createThing("url", Types.Url, null);
+              ObjectNode url = createThing("url", Types.Url, organization);
               addOptional(url, "url", c.getWebsite());
 
               addOptional(organization, "telephone", c.getPhone());
@@ -341,7 +344,7 @@ public class JsonLdRecord {
               addOptional(contactPoint, "contactType", c.getRole());
 
               // logo
-              ObjectNode logo = createThing("logo", Types.ImageObject, null);
+              ObjectNode logo = createThing("logo", Types.ImageObject, organization);
               addOptional(logo, "contentUrl", c.getLogo());
 
               array.add(organization);
@@ -376,7 +379,7 @@ public class JsonLdRecord {
     // https://schema.org/AggregateRating
     if (record.getRating() != null && record.getRating() != 0) {
       ObjectNode rating =
-          createThing("aggregateRating", Types.AggregateRating, null);
+          createThing("aggregateRating", Types.AggregateRating, root);
       addOptional(rating, "ratingValue", record.getRating());
     }
 
@@ -414,9 +417,11 @@ public class JsonLdRecord {
     // "includedInDataCatalog":[{
     // "url":"<xsl:value-of select="concat($baseUrl, 'search#', $catalogueName)"/>",
     // "name":"<xsl:value-of select="$catalogueName"/>"}],
+
+    return root;
   }
 
-  private void addOptional(ContainerNode thing, String name, String value) {
+  private static void addOptional(ContainerNode thing, String name, String value) {
     if (StringUtils.isNotEmpty(value)) {
       if (thing instanceof ObjectNode) {
         ((ObjectNode) thing).put(name, value);
@@ -426,7 +431,7 @@ public class JsonLdRecord {
     }
   }
 
-  private void addOptional(ContainerNode thing, String name, Integer value) {
+  private static void addOptional(ContainerNode thing, String name, Integer value) {
     if (thing instanceof ObjectNode) {
       ((ObjectNode) thing).put(name, value);
     } else {
@@ -434,25 +439,21 @@ public class JsonLdRecord {
     }
   }
 
-  private void addOptional(ContainerNode thing, String name, Object value) {
+  private static void addOptional(ContainerNode thing, String name, Object value) {
     if (value instanceof HashMap && name.startsWith(Codelists.prefix)) {
       addOptional(thing, name, ((HashMap<?, ?>) value).get(CommonField.defaultText));
     }
   }
 
-  private ObjectNode createThing(String name, Types type,
+  private static ObjectNode createThing(String name, Types type,
       ObjectNode in) {
     ObjectNode thing;
     if (name == null) {
       thing = mapper.createObjectNode();
     } else {
-      thing = in != null ? in.putObject(name) : root.putObject(name);
+      thing = in.putObject(name);
     }
     thing.put("@type", type.name());
     return thing;
-  }
-
-  public String toString() {
-    return root.toPrettyString();
   }
 }

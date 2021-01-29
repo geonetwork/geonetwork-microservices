@@ -6,14 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.fao.geonet.domain.MetadataType;
 import org.fao.geonet.index.JsonUtils;
-import org.fao.geonet.index.converter.JsonLdRecord;
-import org.fao.geonet.index.model.gn.IndexDocumentType;
-import org.fao.geonet.index.model.gn.IndexRecord;
-import org.fao.geonet.index.model.gn.Link;
-import org.fao.geonet.index.model.gn.Overview;
-import org.fao.geonet.index.model.gn.ResourceDate;
+import org.fao.geonet.index.converter.SchemaOrgConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -93,7 +89,7 @@ public class IndexRecordTest {
           record.resourceTitle.get(defaultText)
       );
 
-      JsonLdRecord jsonLdRecord = new JsonLdRecord(record);
+      ObjectNode jsonLdDocument = SchemaOrgConverter.convert(record);
       //      Assert.assertEquals("{\n"
       //              + "  \"@context\" : \"http://schema.org/\",\n"
       //              + "  \"@type\" : \"dataset\",\n"

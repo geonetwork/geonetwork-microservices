@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.JsonUtils;
-import org.fao.geonet.index.converter.JsonLdRecord;
+import org.fao.geonet.index.converter.SchemaOrgConverter;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.stereotype.Component;
@@ -66,8 +66,8 @@ public class JsonLdResponseProcessorImpl
           IndexRecord record = objectMapper.readValue(
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);
-          JsonLdRecord jsonLdRecord = new JsonLdRecord(record);
-          generator.writeRawValue(jsonLdRecord.toString());
+          ObjectNode node = SchemaOrgConverter.convert(record);
+          generator.writeRawValue(node.toString());
         }
       }, false);
     }
