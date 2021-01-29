@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j(topic = "org.fao.geonet.index.converter")
 public class RssConverter {
 
   @Value("${gn.baseurl}")
@@ -88,7 +91,16 @@ public class RssConverter {
         pubDate = record.getDateStamp();
       }
       if (StringUtils.isNotEmpty(pubDate)) {
-        item.setPubDate(OffsetDateTime.parse(pubDate).format(rssDateFormat));
+        try {
+          if (pubDate.length() == 10) {
+            pubDate += "T12:00:00";
+          }
+          item.setPubDate(OffsetDateTime.parse(pubDate).format(rssDateFormat));
+        } catch (DateTimeParseException parseException) {
+          log.warn(String.format(
+              "Failed to parse date %s in record %s",
+              pubDate, record.getMetadataIdentifier()));
+        }
       }
 
       return item;

@@ -5,20 +5,12 @@
 
 package org.fao.geonet.common.search.processor.impl;
 
-import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,15 +18,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.converter.RssConverter;
-import org.fao.geonet.index.model.gn.IndexRecord;
-import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
-import org.fao.geonet.index.model.gn.Overview;
-import org.fao.geonet.index.model.gn.ResourceDate;
-import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
