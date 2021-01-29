@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -513,7 +515,14 @@ public class ItemApiController implements RecordApi {
     }
 
     XsltModel modelSource = new XsltModel();
-    modelSource.setRequestParameters(request.getParameterMap());
+    Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
+    if(request.getParameter("limit") == null) {
+      parameterMap.put("limit", new String[]{limit + ""});
+    }
+    if(request.getParameter("startindex") == null) {
+      parameterMap.put("startindex", new String[]{startindex + ""});
+    }
+    modelSource.setRequestParameters(parameterMap);
     modelSource.setCollection(source);
     modelSource.setResults(results);
     modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.items));

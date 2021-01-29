@@ -134,15 +134,14 @@
 
                     <xsl:variable name="isEndOfResults"
                                   as="xs:boolean"
-                                  select="($startindex + $limit) > $total"/>
-
+                                  select="($startindex + $limit) >= $total"/>
                     <xsl:if test="not($isEndOfResults)">
                       <xsl:variable name="requestParameters"
                                     as="xs:string"
                                     select="concat(
-                                    if($q) then concat('q=', $q, '&amp;') else '',
-                                    if($startindex) then concat('startindex=', $startindex + $limit, '&amp;') else '',
-                                    if($limit) then concat('limit=', $limit) else ''
+                                    if($q != '') then concat('q=', $q, '&amp;') else '',
+                                    if($startindex > -1) then concat('startindex=', $startindex + $limit, '&amp;') else '',
+                                    if($limit > -1) then concat('limit=', $limit) else ''
                                     )"/>
                       <a href="items?{$requestParameters}"
                          class="inline-flex items-center px-4 py-2 text-sm">
