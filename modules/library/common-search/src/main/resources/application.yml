@@ -107,7 +107,7 @@ gn:
         responseProcessor: RssResponseProcessorImpl
         operations:
           - items
-    defaultMimeType: application/json
+    defaultMimeType: text/html
     sources:
       - "resourceTitleObject"
       - "resourceAbstractObject"

@@ -282,7 +282,8 @@ public class ItemApiController implements RecordApi {
   @GetMapping(
       value = "/collections/{collectionId}/items/{recordId}",
       produces = {
-          MediaType.TEXT_HTML_VALUE
+          MediaType.TEXT_HTML_VALUE,
+          MediaType.ALL_VALUE
       })
   public String collectionsCollectionIdItemsRecordIdGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
@@ -462,7 +463,8 @@ public class ItemApiController implements RecordApi {
    */
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
-          MediaType.TEXT_HTML_VALUE
+          MediaType.TEXT_HTML_VALUE,
+          MediaType.ALL_VALUE
       })
   public String collectionsCollectionIdItemsGetAsHtml(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
