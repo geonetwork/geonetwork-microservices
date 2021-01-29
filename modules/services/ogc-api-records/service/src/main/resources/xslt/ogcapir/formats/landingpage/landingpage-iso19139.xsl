@@ -6,7 +6,6 @@
                 version="3.0">
 
   <xsl:include href="../../schemas/iso19139-tpl.xsl"/>
-  <xsl:include href="../../html-util.xsl"/>
 
   <xsl:template match="gmd:MD_Metadata"
                 mode="landingpage">
@@ -92,7 +91,7 @@
     <xsl:call-template name="render-field">
       <xsl:with-param name="label" select="if ($label) then $label else $labelKey"/>
       <xsl:with-param name="text">
-        <xsl:call-template name="getText"/>
+        <xsl:call-template name="getText-iso19139"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>

@@ -4,6 +4,9 @@
                 xmlns:gco="http://www.isotc211.org/2005/gco"
                 exclude-result-prefixes="#all"
                 version="3.0">
+
+  <xsl:include href="../../html-util.xsl"/>
+  <xsl:include href="landingpage-iso19115-3.2018.xsl"/>
   <xsl:include href="landingpage-iso19139.xsl"/>
 
   <xsl:template mode="getTitle" match="*"/>
