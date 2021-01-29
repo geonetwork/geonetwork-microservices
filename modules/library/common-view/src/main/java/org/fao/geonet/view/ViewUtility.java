@@ -120,7 +120,7 @@ public class ViewUtility {
       try {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
-        Document doc = docBuilder.parse(labels.getFile());
+        Document doc = docBuilder.parse(labels.getInputStream());
         return Optional.of(doc);
       } catch (IOException ioException) {
         ioException.printStackTrace();
