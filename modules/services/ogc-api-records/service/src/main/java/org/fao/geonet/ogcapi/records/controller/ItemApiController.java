@@ -516,10 +516,10 @@ public class ItemApiController implements RecordApi {
 
     XsltModel modelSource = new XsltModel();
     Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    if(request.getParameter("limit") == null) {
+    if (request.getParameter("limit") == null) {
       parameterMap.put("limit", new String[]{limit + ""});
     }
-    if(request.getParameter("startindex") == null) {
+    if (request.getParameter("startindex") == null) {
       parameterMap.put("startindex", new String[]{startindex + ""});
     }
     modelSource.setRequestParameters(parameterMap);
