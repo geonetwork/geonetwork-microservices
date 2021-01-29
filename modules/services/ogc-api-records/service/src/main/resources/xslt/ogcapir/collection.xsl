@@ -99,7 +99,9 @@
                       <h2 class="font-medium">
                         <xsl:choose>
                           <xsl:when test="$total = 0">
-                            No record found. <a href="items">Search for something else or in another collection?</a>
+                            No record found.
+                            <a href="items" class="underline">Search for something else</a> or
+                            <a href=".." class="underline">in another collection?</a>
                           </xsl:when>
                           <xsl:when test="$total = 1">
                             <xsl:value-of select="$total"/> record
