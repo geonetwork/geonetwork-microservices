@@ -141,7 +141,7 @@
       <a href="{$url}" class="no-underline hover:no-underline">
 
         <div class="flex flex-col min-h-full">
-          <img class="lg:h-48 md:h-36 border-b border-gray-200 bg-gray-100" src="{$logo}" />
+          <img class="lg:h-48 md:h-36 object-cover border-b border-gray-200 bg-gray-100" src="{$logo}" />
 
           <div class="flex-grow p-4">
             <h3 class="title-font text-lg font-medium mb-3 clamp-2">
