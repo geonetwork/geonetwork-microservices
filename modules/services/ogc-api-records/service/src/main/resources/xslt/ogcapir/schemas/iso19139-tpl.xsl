@@ -51,7 +51,8 @@
   </xsl:template>
 
 
-  <xsl:template name="getText" match="*[gco:CharacterString]">
+  <xsl:template name="getText-iso19139"
+                match="*[gco:CharacterString]">
     <xsl:value-of select="gco:CharacterString/text()"/>
   </xsl:template>
 </xsl:stylesheet>

@@ -6,7 +6,9 @@
 
 package org.fao.geonet.indexing.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -15,18 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.fao.geonet.domain.Metadata;
-import org.fao.geonet.index.model.IndexRecord;
-import org.fao.geonet.index.model.IndexRecords;
-import org.fao.geonet.index.model.IndexingReport;
-import org.junit.runner.RunWith;
+import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.model.gn.IndexDocumentType;
+import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecords;
+import org.fao.geonet.index.model.gn.IndexingReport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -67,15 +64,15 @@ class IndexingRecordTest {
     IndexRecord result = results.getIndexRecord().get(0);
 
     assertEquals(999, result.getInternalId());
-    assertEquals("metadata", result.getDocType());
+    assertEquals(IndexDocumentType.metadata, result.getDocType());
     assertEquals("ISO 19115", result.getStandardName());
     assertEquals("ffc45d44-1cc2-4924-bb8c-214096eb9058", result.getMetadataIdentifier());
     assertEquals("fre", result.getMainLanguage());
     assertEquals(0, result.getOtherLanguage().size());
     assertNotNull(result.getIndexingDate());
-    assertEquals("INSPIRE - Sites protégés en Wallonie (BE)", result.getResourceTitle().get("default"));
+    assertEquals("INSPIRE - Sites protégés en Wallonie (BE)", result.getResourceTitle().get(defaultText));
 
-    ObjectMapper mapper = new ObjectMapper();
-    System.out.println(mapper.writeValueAsString(result));
+    //    ObjectMapper mapper = JsonUtils.getObjectMapper();
+    //    System.out.println(mapper.writeValueAsString(result));
   }
 }

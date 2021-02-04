@@ -111,7 +111,10 @@
     },
     "hasOverview" : "true",
     "overview" : [ {
-      "url" : "https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png"
+      "url" : "https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png",
+      "text": {
+        "default": "Global overview"
+      }
     } ],
     "resourceLanguage" : [ "eng" ],
     "inspireTheme_syn" : [ "Land cover" ],

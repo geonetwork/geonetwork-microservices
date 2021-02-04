@@ -1,31 +1,38 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
+import org.fao.geonet.index.converter.RssConverter;
+import org.fao.geonet.index.model.rss.Item;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("RssResponseProcessorImpl")
 public class RssResponseProcessorImpl implements SearchResponseProcessor {
+
+  @Value("${gn.baseurl}")
+  String baseUrl;
+
   /**
    * Process the search response and return RSS feed.
-   *
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
@@ -43,8 +50,8 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     parser.nextToken();
 
     new ResponseParser().matchHits(parser, generator, doc -> {
-      writeItem(generator, doc);
-    });
+      writeItem(generator, streamToClient, doc);
+    }, false);
 
     generator.writeEndElement();
     generator.writeEndElement();
@@ -54,45 +61,50 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   }
 
   private void writeChannelProperties(XMLStreamWriter generator) throws XMLStreamException {
+    // TODO: Get Collection info
+    // And build it from metadata record if set
     String title = "GeoNetwork opensource";
     String link = "http://localhost:8080/geonetwork";
     String description = "Search for datasets, services and maps...";
 
+    // The name of the channel.
+    // It's how people refer to your service.
+    // If you have an HTML website that contains the same information
+    // as your RSS file, the title of your channel should be
+    // the same as the title of your website.
     generator.writeStartElement("title");
     generator.writeCharacters(title);
     generator.writeEndElement();
+
+    // The URL to the HTML website corresponding to the channel.
     generator.writeStartElement("link");
     generator.writeCharacters(link);
     generator.writeEndElement();
+
+    // Phrase or sentence describing the channel.
     generator.writeStartElement("description");
     generator.writeCharacters(description);
     generator.writeEndElement();
+
+    // Optional elements
+    // https://www.rssboard.org/rss-specification#optionalChannelElements
+
+    generator.flush();
   }
 
   private void writeItem(XMLStreamWriter generator,
-      com.fasterxml.jackson.databind.node.ObjectNode doc) throws XMLStreamException {
+      OutputStream stream, ObjectNode doc) throws XMLStreamException {
 
-    Map<String, String> itemProperties = new HashMap<>();
-    itemProperties.put("title", "/_source/resourceTitleObject/default");
-    itemProperties.put("link", "/_id");
-    itemProperties.put("description", "/_source/resourceAbstractObject/default");
-
-    generator.writeStartElement("item");
-
-    for (Entry<String, String> entry : itemProperties.entrySet()) {
-      String property = entry.getKey();
-      String path = entry.getValue();
-      generator.writeStartElement(property);
-      JsonNode node = doc.at(path);
-      if (node != null) {
-        String value = node.asText();
-        if (property.equals("link")) {
-          value = "http://localhost:8080/geonetwork/srv/api/records/" + value;
-        }
-        generator.writeCharacters(value);
-      }
-      generator.writeEndElement();
+    Item item = RssConverter.convert(doc);
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(Item.class);
+      OutputStreamWriter osw = new OutputStreamWriter(stream);
+      Marshaller marshaller = jaxbContext.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+      marshaller.marshal(item, osw);
+      osw.flush();
+    } catch (JAXBException | IOException e) {
+      e.printStackTrace();
     }
-    generator.writeEndElement();
   }
 }

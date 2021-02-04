@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,10 +38,8 @@ import org.fao.geonet.common.search.domain.Profile;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
-import org.fao.geonet.common.search.processor.impl.JsonUserAndSelectionAwareResponseProcessorImpl;
-import org.fao.geonet.common.search.processor.impl.RssResponseProcessorImpl;
-import org.fao.geonet.common.search.processor.impl.XmlResponseProcessorImpl;
 import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -62,48 +62,7 @@ public class ElasticSearchProxy {
       new String[]{"host", "x-xsrf-token", "cookie", "accept", "content-type"});
 
 
-  static final Map<String, Class<? extends SearchResponseProcessor>>
-      RESPONSE_PROCESSOR = Map.ofEntries(
-          Map.entry(
-              MediaType.APPLICATION_JSON_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              MediaType.TEXT_HTML_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              "json",
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          // "text/plain", CsvResponseProcessorImpl.class,
-          // "application/iso19139+xml", FormatterResponseProcessorImpl.class,
-          // "application/iso19115-3+xml", FormatterResponseProcessorImpl.class,
-          Map.entry(
-              MediaType.APPLICATION_XML_VALUE,
-              XmlResponseProcessorImpl.class),
-          Map.entry(
-              "xml",
-              XmlResponseProcessorImpl.class),
-          Map.entry(
-              MediaType.APPLICATION_RSS_XML_VALUE,
-              RssResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_GN_XML_VALUE,
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              "gn",
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_DCAT2_XML_VALUE,
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              "dcat",
-              XsltResponseProcessorImpl.class),
-          Map.entry(
-              GnMediaType.APPLICATION_JSON_LD_VALUE,
-              JsonUserAndSelectionAwareResponseProcessorImpl.class),
-          Map.entry(
-              "jsonld",
-              JsonUserAndSelectionAwareResponseProcessorImpl.class)
-      );
+  private HashMap<String, SearchResponseProcessor> responseProcessors;
 
   static final Map<String, String>
       ACCEPT_FORMATTERS =
@@ -117,8 +76,43 @@ public class ElasticSearchProxy {
   public ElasticSearchProxy() {
   }
 
+  /**
+   * Load response processors configuration for each output formats.
+   */
+  @PostConstruct
+  public void init() {
+    responseProcessors = new HashMap<String, SearchResponseProcessor>();
+
+    searchConfiguration.getFormats().forEach(f -> {
+      try {
+        if (StringUtils.isNotEmpty(f.getResponseProcessor())) {
+
+          SearchResponseProcessor responseProcessor =
+              (SearchResponseProcessor) applicationContext.getBean(f.getResponseProcessor());
+
+          responseProcessors.put(f.getName(), responseProcessor);
+          responseProcessors.put(f.getMimeType(),responseProcessor);
+
+          // Crawlers may use */* Accept header.
+          if (searchConfiguration.getDefaultMimeType().equals(f.getMimeType())) {
+            responseProcessors.put(MediaType.ALL_VALUE, responseProcessor);
+          }
+        }
+      } catch (Exception ex) {
+        log.error(
+            "Error while registering format {} with processor {}. Error is: {}."
+                + "Check that the processor as a name"
+                + " eg. '@Component(\"JsonLdResponseProcessorImpl\")'",
+            f.getName(), f.getResponseProcessor(), ex.getMessage());
+      }
+    });
+  }
+
   @Autowired
   ApplicationContext applicationContext;
+
+  @Autowired
+  SearchConfiguration searchConfiguration;
 
   @Autowired
   FilterBuilder filterBuilder;
@@ -412,7 +406,7 @@ public class ElasticSearchProxy {
             Arrays.asList(new String[]{"accept-encoding"}));
 
         connectionWithFinalHost.setDoOutput(true);
-        log.debug(requestBody);
+        log.debug("ES query: {}", requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host
@@ -518,7 +512,7 @@ public class ElasticSearchProxy {
 
   private boolean isSearch(HttpServletRequest request) {
     String accept = getAcceptValue(request);
-    return RESPONSE_PROCESSOR.containsKey(accept);
+    return responseProcessors.containsKey(accept);
   }
 
 
@@ -711,11 +705,11 @@ public class ElasticSearchProxy {
             //session.setProperty(Geonet.Session.SEARCH_REQUEST + selectionBucket, node);
           }
         }
-        final JsonNode sourceNode = node.get("_source");
+        final JsonNode sourceNode = node.get(IndexRecordFieldNames.source);
         if (sourceNode != null) {
           final JsonNode sourceIncludes = sourceNode.get("includes");
           if (sourceIncludes != null && sourceIncludes.isArray()) {
-            ((ArrayNode) sourceIncludes).add("op*");
+            ((ArrayNode) sourceIncludes).add(IndexRecordFieldNames.opPrefix + "*");
           }
         }
       }
@@ -725,32 +719,25 @@ public class ElasticSearchProxy {
     return requestBody.toString();
   }
 
-  private void processResponse(HttpServletRequest request, HttpSession httpSession,
+  private void processResponse(
+      HttpServletRequest request, HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
       boolean addPermissions, String selectionBucket, UserInfo userInfo) throws Exception {
 
     // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
-    Class<? extends SearchResponseProcessor> responseProcessorClass =
-        RESPONSE_PROCESSOR.get(acceptHeader);
-    if (responseProcessorClass == null) {
+    SearchResponseProcessor responseProcessor =
+        responseProcessors.get(acceptHeader);
+    if (responseProcessor == null) {
       throw new UnsupportedOperationException(String.format(
           "No response processor configured for '%s'. Use one of %s.",
           acceptHeader,
-          RESPONSE_PROCESSOR.keySet().stream().collect(Collectors.joining(", "))));
-    }
-
-    SearchResponseProcessor responseProcessor =
-        applicationContext.getBean(responseProcessorClass);
-    if (responseProcessor == null) {
-      throw new UnsupportedOperationException(String.format(
-          "No response processor bean found for '%s'.",
-          acceptHeader));
+          responseProcessors.keySet().stream().collect(Collectors.joining(", "))));
     }
 
     if (responseProcessor instanceof XsltResponseProcessorImpl) {
-      ((XsltResponseProcessorImpl) responseProcessor).setTransformation(
-          ACCEPT_FORMATTERS.get(acceptHeader)
+      ((XsltResponseProcessorImpl) responseProcessor)
+          .setTransformation(ACCEPT_FORMATTERS.get(acceptHeader)
       );
     }
 
@@ -758,7 +745,7 @@ public class ElasticSearchProxy {
         httpSession,
         streamFromServer, streamToClient,
         userInfo, selectionBucket, addPermissions);
-    streamToClient.flush();
 
+    streamToClient.flush();
   }
 }

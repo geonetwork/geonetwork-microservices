@@ -1,14 +1,12 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.common.search.processor.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.google.common.base.Throwables;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -20,18 +18,19 @@ import lombok.Setter;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
-import org.fao.geonet.common.search.Constants.IndexFieldNames;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("XsltResponseProcessorImpl")
 public class XsltResponseProcessorImpl implements SearchResponseProcessor {
+
   @Autowired
   MetadataRepository metadataRepository;
 
@@ -41,7 +40,6 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
   /**
    * Process the search response and return RSS feed.
-   *
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
@@ -53,8 +51,6 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
     s.setOutputStream(streamToClient);
     XMLStreamWriter generator = s.getXMLStreamWriter();
 
-
-
     generator.writeStartDocument("UTF-8", "1.0");
     {
       JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
@@ -62,8 +58,10 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
       List<Integer> ids = new ArrayList<>();
       new ResponseParser().matchHits(parser, generator, doc -> {
-        ids.add(doc.get(IndexFieldNames.SOURCE).get(IndexFieldNames.ID).asInt());
-      });
+        ids.add(doc
+            .get(IndexRecordFieldNames.source)
+            .get(IndexRecordFieldNames.id).asInt());
+      }, false);
 
       List<Metadata> records = metadataRepository.findAllById(ids);
 
@@ -74,14 +72,13 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
           String xsltFileName = String.format(
               "xslt/ogcapir/formats/%s/%s-%s.xsl",
               transformation, transformation, r.getDataInfo().getSchemaId());
-          try {
-            File xsltFile = new ClassPathResource(xsltFileName).getFile();
-
-            if (!xsltFile.exists()) {
-              throw new IllegalArgumentException(String.format(
-                  "Transformation '%s' does not exist for schema %s.", transformation
-              ));
-            }
+          try (InputStream xsltFile =
+              new ClassPathResource(xsltFileName).getInputStream()) {
+            //  if (!xsltFile.exists()) {
+            //    throw new IllegalArgumentException(String.format(
+            //        "Transformation '%s' does not exist for schema %s.", transformation
+            //    ));
+            //  }
 
             XsltUtil.transformAndStreamInDocument(
                 r.getData(),

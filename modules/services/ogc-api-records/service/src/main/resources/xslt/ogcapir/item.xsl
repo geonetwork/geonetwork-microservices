@@ -28,6 +28,9 @@
     <xsl:variable name="collection"
                   select="model/collection"
                   as="node()?"/>
+    <xsl:variable name="outputFormats"
+                  select="model/outputFormats/outputFormat/name"
+                  as="node()*"/>
 
     <xsl:variable name="title" as="xs:string">
       <xsl:variable name="text">
@@ -77,12 +80,10 @@
               </div>
               <div class="w-1/3 pl-4">
 
-                <div class="-bt-4">
-                  <xsl:call-template name="render-page-format-links">
-                    <xsl:with-param name="formats"
-                                    select="('json', 'jsonld', 'xml', 'dcat', 'gn')"/>
-                  </xsl:call-template>
-                </div>
+                <xsl:call-template name="render-page-format-links">
+                  <xsl:with-param name="formats"
+                                  select="$outputFormats"/>
+                </xsl:call-template>
 
                 <section class="w-full rounded shadow border border-gray-200 bg-white">
                   <div class="px-3 py-4 sm:px-5">
@@ -91,7 +92,7 @@
 
                   <div class="border-t border-gray-200 flex flex-wrap">
                       <xsl:for-each select="$overviews">
-                        <img class="rounded shadow my-4 mx-2" src="{url}">
+                        <img class="rounded shadow" src="{url}">
                           <xsl:if test="label">
                             <xsl:attribute name="title" select="label"/>
                           </xsl:if>

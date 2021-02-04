@@ -1,0 +1,122 @@
+gn:
+  search:
+    # Full text on all fields
+    # 'queryBase': '${any}',
+    # Full text but more boost on title match
+    queryBase: 'any:(${any}) resourceTitleObject.default:(${any})^2'
+    scoreConfig: >
+      {
+        "boost": "5",
+        "functions": [
+          { // Boost down member of a series
+            "filter": { "exists": { "field": "parentUuid" } },
+            "weight": 0.3
+          },
+          { // Boost down obsolete records
+            "filter": { "match": { "cl_status.key": "obsolete" } },
+            "weight": 0.3
+          },
+          {
+            "gauss": {
+              "dateStamp": {
+                "scale": "365d",
+                "offset": "90d",
+                "decay": 0.5
+              }
+            }
+          }
+        ],
+        "score_mode": "multiply"
+      }
+    sortables:
+      - "relevance"
+      - "createDate:desc"
+      - "resourceTitleObject.default.keyword"
+      - "rating:desc"
+      - "popularity:desc"
+    formats:
+      - name: html
+        mimeType: text/html
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
+      -
+        name: json
+        mimeType: application/json
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
+      -
+        name: xml
+        mimeType: application/xml
+        responseProcessor: XmlResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
+      -
+        name : dcat
+        mimeType : application/dcat2+xml
+        responseProcessor: XsltResponseProcessorImpl
+      -
+        name : gn
+        mimeType : application/gn+xml
+        responseProcessor: XsltResponseProcessorImpl
+      -
+        name: opensearch
+        mimeType: application/opensearchdescription+xml
+        operations:
+          - collection
+      -
+        name : schema.org
+        mimeType : application/ld+json
+        responseProcessor: JsonLdResponseProcessorImpl
+        operations:
+          - items
+          - item
+      -
+        name : turtle
+        mimeType : text/turtle
+        responseProcessor: JsonLdResponseProcessorImpl
+        operations :
+          - item
+      -
+        name : rdfxml
+        mimeType : application/rdf+xml
+        responseProcessor: JsonLdResponseProcessorImpl
+        operations:
+          - item
+#      -
+#        name : iso19139
+#        mimeType : application/iso19139+xml
+#        responseProcessor: XsltResponseProcessorImpl
+#      -
+#        name : iso19115-3
+#        mimeType : application/iso19115-3+xml
+#        responseProcessor: XsltResponseProcessorImpl
+      -
+        name : rss
+        mimeType : application/rss+xml
+        responseProcessor: RssResponseProcessorImpl
+        operations:
+          - items
+    defaultMimeType: text/html
+    sources:
+      - "resourceTitleObject"
+      - "resourceAbstractObject"
+      - "resourceType"
+      - "overview"
+      - "uuid"
+      - "schema"
+      - "link"
+      - "allKeywords"
+      - "contactForResource"
+      - "cl_status"
+      - "edit"

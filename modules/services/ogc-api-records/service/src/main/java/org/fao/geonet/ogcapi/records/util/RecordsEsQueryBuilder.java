@@ -1,110 +1,158 @@
 package org.fao.geonet.ogcapi.records.util;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.fao.geonet.ogcapi.records.OgcApiConfiguration;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.common.geo.ShapeRelation;
+import org.elasticsearch.geometry.Rectangle;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.GeoShapeQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConstructorBinding
+@Slf4j(topic = "org.fao.geonet.ogcapi")
 public class RecordsEsQueryBuilder {
 
-  private static OgcApiConfiguration configuration;
+  @Autowired
+  private SearchConfiguration configuration;
 
-  private static List<String> defaultSources = Arrays.asList("resourceTitle", "resourceAbstract",
-      "resourceType", "uuid", "schema", "link", "allKeywords",
-      "contactForResource", "cl_status", "edit", "id");
+  // TODO: Sources depends on output type
+  private static List<String> defaultSources = Arrays.asList(
+      "resourceTitleObject", "resourceAbstractObject",
+      "resourceType", "resourceDate",
+      "id", "metadataIdentifier", "schema",
+      "link", "allKeywords",
+      "contactForResource",
+      "cl_status",
+      "edit");
 
-  public RecordsEsQueryBuilder(OgcApiConfiguration configuration) {
-    this.configuration = configuration;
-  }
+  private static String defaultTypeFilter = "+isTemplate:n";
+  private static String defaultSpatialOperation = "intersects";
 
   /**
    * Creates a ElasticSearch query for a single record.
    *
-   * @param recordId         Record uuid.
+   * @param uuid             Record uuid.
    * @param collectionFilter Filter to select the record in a collection scope.
    * @param includes         List of fields to return (null, retuns all).
    * @return ElasticSearch query.
    */
-  public static String buildQuerySingleRecord(String recordId, String collectionFilter,
+  public String buildQuerySingleRecord(String uuid,
+      String collectionFilter,
       List<String> includes) {
 
-    if (includes == null) {
-      return String.format("{\"from\": %d, \"size\": %d, "
-              + "\"query\": {\"query_string\": "
-              + "{\"query\": \"+_id:%s %s +isTemplate:n\"}}}",
-          0, 1, recordId, collectionFilter);
-    } else {
-      return String.format("{\"from\": %d, \"size\": %d, "
-              + "\"query\": {\"query_string\": "
-              + "{\"query\": \"+_id:%s %s +isTemplate:n\"}}, "
-              + "\"_source\": {\"includes\": [" + includes.stream().collect(
-          Collectors.joining("\",\"", "\"", "\"")) + "]}}",
-          0, 1, recordId, collectionFilter);
-
-    }
+    return String.format("{\"from\": %d, \"size\": %d, "
+            + "\"query\": {\"query_string\": "
+            + "{\"query\": \"+_id:\\\"%s\\\" %s %s\"}}, "
+            + "\"_source\": {\"includes\": [%s]}}",
+        0, 1, uuid,
+        collectionFilter == null ? "" : collectionFilter,
+        defaultTypeFilter,
+        includes == null ? "\"*\""
+            : includes.stream().collect(
+                Collectors.joining("\", \"", "\"", "\""))
+    );
   }
 
   /**
    * Creates a ElasticSearch query from Records API parameters.
    */
-  public static String buildQuery(List<BigDecimal> bbox, Integer startIndex, Integer limit,
+  public String buildQuery(
+      List<String> q,
+      List<String> externalids,
+      List<BigDecimal> bbox,
+      Integer startIndex, Integer limit,
       String collectionFilter, List<String> sortBy) {
-    String geoFilter = "";
-
-    if (bbox != null) {
-      geoFilter = String.format(", {\"geo_shape\": {\"geom\": {\n"
-          + "                \"shape\": {\n"
-          + "                    \"type\": \"envelope\",\n"
-          + "                    \"coordinates\": [\n"
-          + "                        [\n"
-          + "                            %f,\n"
-          + "                            %f\n"
-          + "                        ],\n"
-          + "                        [\n"
-          + "                            %f,\n"
-          + "                            %f\n"
-          + "                        ]\n"
-          + "                    ]\n"
-          + "                },\n"
-          + "                \"relation\": \"intersects\"\n"
-          + "            }}}", bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
-    }
-
-    String sortByValue = "\"_score\"";
+    SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+    sourceBuilder.from(startIndex).size(limit);
 
     if (sortBy != null) {
-      List<String> sortByList = new ArrayList<>();
       sortBy.forEach(s -> {
         String[] sortByTokens = s.split(":");
-
-        if (sortByTokens.length == 2) {
-          sortByList.add(String.format("{\"%s\": \"%s\"}", sortByTokens[0], sortByTokens[1]));
-        }
+        sourceBuilder.sort(
+            new FieldSortBuilder(sortByTokens[0])
+                .order(
+                    sortByTokens.length == 2
+                        && "desc".equalsIgnoreCase(sortByTokens[1])
+                        ? SortOrder.DESC : SortOrder.ASC));
       });
-
-      sortByValue = String.join(",", sortByList);
     }
 
     Set<String> sources = new HashSet(defaultSources);
     sources.addAll(configuration.getSources());
+    sourceBuilder.fetchSource(sources.toArray(new String[]{}), null);
 
-    return String.format("{\"from\": %d, \"size\": %d, "
-            + "\"_source\": [%s],"
-            + "\"sort\": [%s],"
-            + "\"query\": {\"query_string\": "
-            + "{\"query\": \"%s +isTemplate:n\"}} %s} ",
-        startIndex, limit,
-        sources
-            .stream()
-            .collect(Collectors.joining("\",\"", "\"", "\"")),
-        sortByValue, collectionFilter, geoFilter);
+    BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+    QueryBuilder fullTextQuery =
+        QueryBuilders.queryStringQuery(buildFullTextSearchQuery(q));
+    boolQuery.must(fullTextQuery);
+
+    if (externalids != null && externalids.size() > 0) {
+      boolQuery.must(
+          QueryBuilders.termsQuery(
+              IndexRecordFieldNames.uuid,
+              externalids));
+    }
+
+    GeoShapeQueryBuilder geoQuery;
+    if (bbox != null && bbox.size() == 4) {
+      Rectangle rectangle = new Rectangle(
+          bbox.get(0).doubleValue(),
+          bbox.get(2).doubleValue(),
+          bbox.get(3).doubleValue(),
+          bbox.get(1).doubleValue());
+
+      try {
+        geoQuery = QueryBuilders
+            .geoShapeQuery(IndexRecordFieldNames.geom, rectangle)
+            .relation(ShapeRelation.getRelationByName(defaultSpatialOperation));
+        boolQuery.must(geoQuery);
+      } catch (IOException ioException) {
+        ioException.printStackTrace();
+      }
+    }
+
+    String filterQueryString = defaultTypeFilter;
+    if (StringUtils.isNotEmpty(collectionFilter)) {
+      filterQueryString += " " + collectionFilter;
+    }
+    boolQuery.filter(QueryBuilders.queryStringQuery(filterQueryString));
+    sourceBuilder.query(boolQuery);
+
+    log.debug("OGC API query: {}", sourceBuilder.toString());
+
+    return sourceBuilder.toString();
+  }
+
+  private String buildFullTextSearchQuery(List<String> q) {
+    String queryString = "*:*";
+    if (q != null && q.size() > 0) {
+      String values = q.stream().collect(Collectors.joining(" AND "));
+      if (StringUtils.isNotEmpty(configuration.getQueryBase())) {
+        queryString = configuration.getQueryBase().replaceAll(
+            "\\$\\{any\\}",
+            values);
+      } else {
+        queryString = values;
+      }
+    }
+    return queryString;
   }
 }

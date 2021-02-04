@@ -30,6 +30,10 @@ mvn process-resources
 # TODO: Check how to update shared XSLT from other module with CLI? 
 # Build module in Intellij works fine.
 # cd modules/library/common-view; mvn compile
+# Other workaround:
+#cd modules/services/ogc-api-records/service/src/main/resources/xslt
+#ln -s ../../../../../../../library/common-view/src/main/resources/xslt/core core
+
 ```
 
 
@@ -37,54 +41,100 @@ mvn process-resources
 
 ```shell script
 
-curl 127.0.0.1:9991/collections \
+# Collections
+curl 127.0.0.1:9901/collections \
         -H "Accept: application/json"
 
-curl 127.0.0.1:9991/collections \
+curl 127.0.0.1:9901/collections \
         -H "Accept: text/html" -H "Accept-Language: fr"
 
-curl 127.0.0.1:9991/collections.l=fr \
+curl 127.0.0.1:9901/collections?l=fr \
         -H "Accept: text/html"
 
+
+# A collection
 firstCollection=$( \
-curl 127.0.0.1:9991/collections \
+curl 127.0.0.1:9901/collections \
         -H "Accept: application/json" \
          | jq -r '.collections[0].name')
 
-curl 127.0.0.1:9991/collections/$firstCollection \
+curl 127.0.0.1:9901/collections/$firstCollection \
         -H "Accept: application/json"
 
-curl 127.0.0.1:9991/collections/$firstCollection/sortables \
+curl 127.0.0.1:9901/collections/$firstCollection \
+        -H "Accept: application/opensearchdescription+xml"
+
+curl 127.0.0.1:9901/collections/$firstCollection/sortables \
         -H "Accept: application/json"
 
-curl 127.0.0.1:9991/collections/$firstCollection/items \
+
+# Collection records & search
+curl 127.0.0.1:9901/collections/$firstCollection/items \
         -H "Accept: application/json" 
 
-curl 127.0.0.1:9991/collections/$firstCollection/items \
+curl 127.0.0.1:9901/collections/$firstCollection/items \
         -H "Accept: application/xml" 
 
+curl 127.0.0.1:9901/collections/$firstCollection/items \
+        -H "Accept: application/rss+xml"
+
+# Search parameters
+# Use `limit` for the number of records per page
+curl 127.0.0.1:9901/collections/$firstCollection/items?limit=20 \
+        -H "Accept: application/json" 
+## Should we add a max limit ?
+
+# Use `startindex` for paging. Default is 0.
+curl 127.0.0.1:9901/collections/$firstCollection/items?startindex=20&limit=20 \
+        -H "Accept: application/json" 
+
+# Full text search using `q`. Full text search is configurable in `application.yml` > `queryBase`
+curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
+        -H "Accept: application/json" 
+
+# Full text search using `q`. Full text search is configurable in `application.yml` > `queryBase`
+curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
+        -H "Accept: application/json" 
+
+# Bbox search using `bbox` (relation: intersects)
+curl 127.0.0.1:9901/collections/$firstCollection/items?bbox=-100,40,-80,50 \
+        -H "Accept: application/json" 
+
+# Search by record UUID using `externalids`
+curl 127.0.0.1:9901/collections/$firstCollection/items?externalids=8306437bc59910b70223865b44100ffab97ba069&externalids=8a9bc9e8f86cb02be8be4450e310d261415ac909 \
+        -H "Accept: application/json" 
+
+
+
+# One record
 uuid=$( \
-    curl 127.0.0.1:9991/collections/$firstCollection/items \
+    curl 127.0.0.1:9901/collections/$firstCollection/items \
                  -H "Accept: application/json"  \
         | jq -r '.hits.hits[0]._id')
 
-curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/json" 
 
-curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/ld+json" 
 
-curl 127.0.0.1:9991/collections/$firstCollection/items/8108e203-59db-4672-b9e0-c1863fd6523b \
+curl 127.0.0.1:9901/collections/$firstCollection/items/8108e203-59db-4672-b9e0-c1863fd6523b \
                  -H "Accept: application/ld+json" 
 
-curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/xml"
  
-curl 127.0.0.1:9991/collections/$firstCollection/items/$uuid \
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
                  -H "Accept: application/dcat2+xml 
+
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
+        -H "Accept: text/turtle" 
+
+curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
+        -H "Accept: application/rdf+xml" 
 ```
 
-API also `f` URL parameter to set the output format eg. http://localhost:9991/collections?f=xml
+API also `f` URL parameter to set the output format eg. http://localhost:9901/collections?f=xml
 
 
 ## Start as standalone service

@@ -51,6 +51,10 @@
       <artifactId>gn-cloud-common-utility</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-common-index-model</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom</artifactId>
     </dependency>

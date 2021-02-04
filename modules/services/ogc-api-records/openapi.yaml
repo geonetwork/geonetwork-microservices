@@ -282,7 +282,7 @@ paths:
           maximum: 9999
           minimum: 0
           type: integer
-          default: 9
+          default: 0
       - name: type
         in: query
         required: false

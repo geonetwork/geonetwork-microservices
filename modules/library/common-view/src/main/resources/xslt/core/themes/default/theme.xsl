@@ -22,6 +22,34 @@
       <!--Replace with your tailwind.css once created-->
       <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700"
             rel="stylesheet"/>
+      <style>
+        .clamp-1 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+
+        .clamp-2 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+
+        .clamp-3 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+        }
+      </style>
+
+      <xsl:if test="/model/seoJsonLdSnippet">
+      <script type="application/ld+json">
+        <xsl:value-of select="/model/seoJsonLdSnippet"/>
+      </script>
+      </xsl:if>
     </head>
   </xsl:template>
 
@@ -32,7 +60,7 @@
     <xsl:param name="link" as="xs:string?" required="false"/>
     <xsl:param name="content" as="node()*"/>
 
-    <body class="leading-normal tracking-normal antialiased font-sans bg-white pt-24">
+    <body class="leading-normal tracking-normal antialiased font-sans bg-white pt-16">
       <xsl:call-template name="header">
         <xsl:with-param name="title" select="$title"/>
         <xsl:with-param name="logo" select="$logo"/>
@@ -95,7 +123,7 @@
                  href="#">Map</a>
             </li>-->
           </ul>
-          <button
+          <!--<button
             id="navAction"
             class="bg-gray-800 text-white rounded
                    mx-auto lg:mx-0 mt-4 lg:mt-0 py-2 px-5 
@@ -103,7 +131,7 @@
                    transform transition hover:scale-105 duration-300 ease-in-out"
           >
             Sign in
-          </button>
+          </button>-->
         </div>
       </div>
     </nav>
@@ -138,6 +166,13 @@
     <footer class="bg-white border-t border-gray-200">
       <div class="container mx-auto px-8 py-6 md:px-4">
 
+        <a href="{$baseUrl}" class="float-left m-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+            <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+          </svg>
+        </a>
+        |
         <a href="https://geonetwork-opensource.org/" target="_blank">
           Powered by GeoNetwork
         </a>

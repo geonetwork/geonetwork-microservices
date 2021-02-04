@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.ogcapi.records.CapabilitiesApi;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
@@ -23,6 +25,7 @@ import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -38,15 +41,24 @@ import org.springframework.web.context.request.NativeWebRequest;
 @Controller
 public class CapabilitiesApiController implements CapabilitiesApi {
 
+  @Value("${gn.baseurl}")
+  String baseUrl;
+
   @Autowired
   MessageSource messages;
 
   @Autowired
   ViewUtility viewUtility;
+
   @Autowired
   ConcurrentMapCacheManager cacheManager;
+
   @Autowired
   private SourceRepository sourceRepository;
+
+  @Autowired
+  private SearchConfiguration configuration;
+
   /**
    * Only to support sample responses from {@link CapabilitiesApi}, remove once all its methods are
    * implemented.
@@ -66,25 +78,52 @@ public class CapabilitiesApiController implements CapabilitiesApi {
         .toString();
 
     Root root = new Root();
+
     root.addLinksItem(new Link()
         .href(baseUrl)
         .rel("self").type(MediaType.APPLICATION_JSON.toString()));
-    //    root.addLinksItem(new Link()
-    //        .href(baseUrl + "conformance")
-    //        .rel("conformance").type(MediaType.APPLICATION_JSON.toString()));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=json")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_JSON_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=xml")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.APPLICATION_XML_VALUE));
-    root.addLinksItem(new Link()
-        .href(baseUrl + "collections?f=html")
-        .type("Catalogue collections")
-        .rel("self").type(MediaType.TEXT_HTML_VALUE));
+
+    configuration.getFormats().forEach(f -> {
+      root.addLinksItem(new Link()
+          .href(baseUrl + "collections?f=" + f.getName())
+          .type("Catalogue collections")
+          .rel("self").type(f.getMimeType()));
+
+    });
+
     return ResponseEntity.ok(root);
+  }
+
+  /**
+   * Landing page as XML.
+   */
+  @RequestMapping(value = "/",
+      produces = {
+          MediaType.APPLICATION_XML_VALUE
+      },
+      method = RequestMethod.GET)
+  public ResponseEntity<Root> getLandingPageAsXml() {
+    return getLandingPage();
+  }
+
+  /**
+   * Landing page as HTML.
+   */
+  @RequestMapping(value = "/",
+      produces = {
+          MediaType.TEXT_HTML_VALUE
+      },
+      method = RequestMethod.GET)
+  public String getLandingPageAsHtml(HttpServletRequest request,
+      Model model) {
+    List<Source> sources = sourceRepository.findAll();
+    XsltModel modelSource = new XsltModel();
+    modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
+    modelSource.setCollections(sources);
+    model.addAttribute("source", modelSource.toSource());
+    Locale locale = LocaleContextHolder.getLocale();
+    viewUtility.addi18n(model, locale, request);
+    return "ogcapir/landingpage";
   }
 
   @Override
@@ -118,7 +157,9 @@ public class CapabilitiesApiController implements CapabilitiesApi {
    * Collections as XML.
    */
   @RequestMapping(value = "/collections",
-      produces = {"application/xml"},
+      produces = {
+          MediaType.APPLICATION_XML_VALUE
+      },
       method = RequestMethod.GET)
   public ResponseEntity<Content> describeCollectionsAsXml(
       @RequestParam(required = false) Integer limit,
@@ -131,7 +172,9 @@ public class CapabilitiesApiController implements CapabilitiesApi {
    * Collections as HTML.
    */
   @RequestMapping(value = "/collections",
-      produces = {"text/html"},
+      produces = {
+          MediaType.TEXT_HTML_VALUE
+      },
       method = RequestMethod.GET)
   public String describeCollectionsAsHtml(
       @RequestParam(required = false) Integer limit,
@@ -139,11 +182,12 @@ public class CapabilitiesApiController implements CapabilitiesApi {
       @RequestParam(required = false) String time,
       HttpServletRequest request,
       Model model) {
-    Locale locale = LocaleContextHolder.getLocale();
     List<Source> sources = sourceRepository.findAll();
     XsltModel modelSource = new XsltModel();
+    modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
     modelSource.setCollections(sources);
     model.addAttribute("source", modelSource.toSource());
+    Locale locale = LocaleContextHolder.getLocale();
     viewUtility.addi18n(model, locale, request);
     return "ogcapir/collections";
   }
