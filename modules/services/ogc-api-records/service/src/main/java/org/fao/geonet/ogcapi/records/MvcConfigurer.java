@@ -38,7 +38,10 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
     String defaultMimeType = MediaType.TEXT_HTML_VALUE;
     if (StringUtils.isEmpty(searchConfiguration.getDefaultMimeType())) {
-      log.warn("Default mime type in current search configuration is empty. Using the default one {} but you should check your configuration. Maybe check that common-search/application.yml is available in your configuration folder?",
+      log.warn("Default mime type in current search configuration is empty."
+              + " Using the default one {} but you should check your configuration. "
+              + "Maybe check that common-search/application.yml "
+              + "is available in your configuration folder?",
           defaultMimeType);
     } else {
       defaultMimeType = searchConfiguration.getDefaultMimeType();
