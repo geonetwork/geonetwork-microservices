@@ -22,6 +22,7 @@ import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.index.model.gn.Overview;
 import org.fao.geonet.index.model.gn.ResourceDate;
+import org.fao.geonet.index.model.rss.Enclosure;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,6 +69,16 @@ public class RssConverter {
       item.setDescription(buildDescription(record));
       item.setLink(buildLandingPageLink(record));
 
+      Optional<Overview> overview = record.getOverview().stream().findFirst();
+      if (overview.isPresent()) {
+        Enclosure enclosure = new Enclosure();
+        String url = overview.get().getUrl();
+        enclosure.setUrl(url);
+        String extension = url.substring(url.lastIndexOf(".") + 1);
+        enclosure.setType("image/" + extension);
+        item.setEnclosure(enclosure);
+      }
+
       // Email address of the author of the item.
       record.getContact().forEach(c ->
           item.setAuthor(c.getEmail())
@@ -111,21 +122,7 @@ public class RssConverter {
   }
 
   private static String buildDescription(IndexRecord record) {
-    StringBuilder description = new StringBuilder();
-
-    Optional<Overview> first = record.getOverview().stream().findFirst();
-    if (first.isPresent()) {
-      String label = first.get().getLabel().get(defaultText);
-      description.append(String.format(
-          "<a href='%s' title='%s'><img src='%s' width='100'/></a>",
-          first.get().getUrl(),
-          label == null ? "" : label,
-          first.get().getUrl()
-      ));
-    }
-    description.append(record.getResourceAbstract().get(defaultText));
-
-    return String.format("<![CDATA[%s]]>", description.toString());
+    return record.getResourceAbstract().get(defaultText);
   }
 
   private static String buildLandingPageLink(IndexRecord record) {
