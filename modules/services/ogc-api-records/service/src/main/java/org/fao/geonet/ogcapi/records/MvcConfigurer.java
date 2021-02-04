@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Language;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 @Configuration
+@Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class MvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Autowired
@@ -33,10 +36,17 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Override
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    String defaultMimeType = MediaType.TEXT_HTML_VALUE;
+    if (StringUtils.isEmpty(searchConfiguration.getDefaultMimeType())) {
+      log.warn("Default mime type in current search configuration is empty. Using the default one {} but you should check your configuration. Maybe check that common-search/application.yml is available in your configuration folder?",
+          defaultMimeType);
+    } else {
+      defaultMimeType = searchConfiguration.getDefaultMimeType();
+    }
     configurer
         .favorParameter(true)
         .parameterName("f")
-        .defaultContentType(MediaType.parseMediaType(searchConfiguration.getDefaultMimeType()));
+        .defaultContentType(MediaType.parseMediaType(defaultMimeType));
 
     searchConfiguration.getFormats().forEach(f -> {
       configurer.mediaType(f.getName(),
