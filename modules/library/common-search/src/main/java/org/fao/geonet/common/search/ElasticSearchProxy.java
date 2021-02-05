@@ -13,8 +13,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -121,6 +123,16 @@ public class ElasticSearchProxy {
   @Setter
   @Value("${gn.index.records:gn-cloud-records}")
   String defaultIndex;
+
+  @Getter
+  @Setter
+  @Value("${gn.index.username}")
+  private String username;
+
+  @Getter
+  @Setter
+  @Value("${gn.index.password}")
+  private String password;
 
   @Getter
   @Setter
@@ -270,6 +282,13 @@ public class ElasticSearchProxy {
 
         // copy headers from client's request to request that will be send to the final host
         copyHeadersToConnection(request, connectionWithFinalHost);
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+          String auth = username + ":" + password;
+          byte[] encodedAuth = Base64.getEncoder().encode(
+              auth.getBytes(StandardCharsets.UTF_8));
+          String authHeaderValue = "Basic " + new String(encodedAuth);
+          connectionWithFinalHost.setRequestProperty("Authorization", authHeaderValue);
+        }
 
         connectionWithFinalHost.setDoOutput(true);
         log.debug(requestBody);
@@ -404,6 +423,14 @@ public class ElasticSearchProxy {
         // exclude "accept-encoding" to avoid compressed results in this case
         copyHeadersToConnection(request, connectionWithFinalHost,
             Arrays.asList(new String[]{"accept-encoding"}));
+
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+          String auth = username + ":" + password;
+          byte[] encodedAuth = Base64.getEncoder().encode(
+              auth.getBytes(StandardCharsets.UTF_8));
+          String authHeaderValue = "Basic " + new String(encodedAuth);
+          connectionWithFinalHost.setRequestProperty("Authorization", authHeaderValue);
+        }
 
         connectionWithFinalHost.setDoOutput(true);
         log.debug("ES query: {}", requestBody);
