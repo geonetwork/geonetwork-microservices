@@ -71,7 +71,7 @@ public class CollectionService {
     if (source.getType() == SourceType.subportal) {
       collectionFilter = source.getFilter();
     } else if (source.getType() == SourceType.harvester) {
-      collectionFilter = String.format("+harvesterUuid:\"%s\"", source.getUuid());
+      collectionFilter = String.format("+harvesterUuid:\\\"%s\\\"", source.getUuid());
     }
 
     return collectionFilter;
