@@ -192,7 +192,7 @@ services:
     networks:
       - gn-cloud-network
   ogc-records:
-    image: gn-ogc-api-records-service:${TAG}
+    image: gn-cloud-ogc-api-records-service:${TAG}
     depends_on:
       - config
       - rabbitmq
