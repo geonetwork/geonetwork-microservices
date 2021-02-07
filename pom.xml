@@ -141,7 +141,7 @@
       </dependency>
       <dependency>
         <groupId>org.geonetwork-opensource.cloud</groupId>
-        <artifactId>gn-ogc-api-records-generated</artifactId>
+        <artifactId>gn-cloud-ogc-api-records-generated</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -151,7 +151,7 @@
       </dependency>
       <dependency>
         <groupId>org.geonetwork-opensource.cloud</groupId>
-        <artifactId>gn-ogc-api-records-service</artifactId>
+        <artifactId>gn-cloud-ogc-api-records-service</artifactId>
         <version>${project.version}</version>
       </dependency>
 
