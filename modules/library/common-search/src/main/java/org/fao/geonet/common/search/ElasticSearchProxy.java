@@ -93,7 +93,7 @@ public class ElasticSearchProxy {
               (SearchResponseProcessor) applicationContext.getBean(f.getResponseProcessor());
 
           responseProcessors.put(f.getName(), responseProcessor);
-          responseProcessors.put(f.getMimeType(),responseProcessor);
+          responseProcessors.put(f.getMimeType(), responseProcessor);
 
           // Crawlers may use */* Accept header.
           if (searchConfiguration.getDefaultMimeType().equals(f.getMimeType())) {
@@ -430,10 +430,11 @@ public class ElasticSearchProxy {
               auth.getBytes(StandardCharsets.UTF_8));
           String authHeaderValue = "Basic " + new String(encodedAuth);
           connectionWithFinalHost.setRequestProperty("Authorization", authHeaderValue);
+          log.debug("Setting auth for user '{}'", username);
         }
 
         connectionWithFinalHost.setDoOutput(true);
-        log.debug("ES query: {}", requestBody);
+        log.debug("Searching in '{}' query: {}", url, requestBody);
         connectionWithFinalHost.getOutputStream().write(requestBody.getBytes(Constants.ENCODING));
 
         // connect to remote host
