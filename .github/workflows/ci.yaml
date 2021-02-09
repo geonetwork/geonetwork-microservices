@@ -1,6 +1,9 @@
+env:
+  TAG: 0.1-SNAPSHOT
 on:
   push:
   pull_request:
+  release:
 
 jobs:
   test:
@@ -24,3 +27,34 @@ jobs:
 
     - name: "Run the testsuite"
       run: ./mvnw clean install -P-docker --no-transfer-progress -B
+
+    - name: "Get the version name"
+      #if: github.event_name == 'release' && github.event.action == 'created'
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: "Login onto docker.io"
+      uses: azure/docker-login@v1
+      if: github.repository == 'geonetwork/geonetwork-microservices' # && github.event_name == 'release' && github.event.action == 'created'
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "publish the docker images on docker-hub"
+      if: github.repository == 'geonetwork/geonetwork-microservices' # &&  github.event_name == 'release' && github.event.action == 'created'
+      run: |
+        docker tag gn-cloud-searching:${{ env.TAG }}               geonetwork/gn-cloud-searching:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-discovery :${{ env.TAG }}              geonetwork/gn-cloud-discovery:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-ogc-api-records-service:${{ env.TAG }} geonetwork/gn-cloud-ogc-api-records-service:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-gateway:${{ env.TAG }}                 geonetwork/gn-cloud-gateway:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-indexing:${{ env.TAG }}                geonetwork/gn-cloud-indexing:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-authorizing:${{ env.TAG }}             geonetwork/gn-cloud-authorizing:${{ steps.get_version.outputs.VERSION }}
+        docker tag gn-cloud-configuring:${{ env.TAG }}             geonetwork/gn-cloud-configuring:${{ steps.get_version.outputs.VERSION }}
+
+        docker push geonetwork/gn-cloud-searching:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-discovery:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-ogc-api-records-service:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-gateway:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-indexing:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-authorizing:${{ steps.get_version.outputs.VERSION }}
+        docker push geonetwork/gn-cloud-configuring:${{ steps.get_version.outputs.VERSION }}
