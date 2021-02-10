@@ -148,7 +148,22 @@ SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.locat
 ```
 
 
-## Start as WAR
+## Start as standalone service with docker
+
+```shell script
+./mvnw clean install -Drelax
+mkdir ogcapiconfig
+cp modules/services/ogc-api-records/service/src/main/resources/bootstrap.yml ogcapiconfig/.
+cp modules/library/common-search/src/main/resources/application.yml ogcapiconfig/.
+# Adjust database and Elasticsearch connection info.
+docker run -it -p8080:8080 \
+  -v "`pwd`/ogcapiconfig:/ogcapiconfig/" \
+  -e "SPRING_PROFILES_ACTIVE=standalone" \
+  -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
+  gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
+```
+
+## Start as standalone service with a WAR
 
 Use the `war` profile to build the WAR:
 
@@ -158,3 +173,5 @@ mvn package -Pwar,-docker
 
 mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.location=./service/src/main/resources/
 ```
+
+
