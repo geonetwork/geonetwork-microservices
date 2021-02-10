@@ -1,6 +1,7 @@
 on:
   push:
   pull_request:
+  release:
 
 jobs:
   test:
@@ -23,4 +24,40 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Run the testsuite"
-      run: ./mvnw clean install -P-docker --no-transfer-progress -B
+      run: ./mvnw clean install -P-docker --no-transfer-progress -B -Dspring-boot.build-image.imageName=docker.io/geonetwork/\${project.artifactId}:latest
+
+    - name: "Generate the docker images"
+      if: github.event_name == 'release' && github.event.action == 'created'
+      run: |
+        ./mvnw  install --no-transfer-progress -B -Dspring-boot.build-image.imageName=docker.io/geonetwork/\${project.artifactId}:latest
+
+    - name: "Get the version name"
+      if: github.event_name == 'release' && github.event.action == 'created'
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: "Login onto docker.io"
+      uses: azure/docker-login@v1
+      if: github.repository == 'geonetwork/geonetwork-microservices' && github.event_name == 'release' && github.event.action == 'created'
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "publish the docker images on docker-hub"
+      if: github.repository == 'geonetwork/geonetwork-microservices' &&  github.event_name == 'release' && github.event.action == 'created'
+      run: |
+        docker tag docker.io/geonetwork/gn-cloud-searching:latest               docker.io/geonetwork/gn-cloud-searching:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-discovery:latest               docker.io/geonetwork/gn-cloud-discovery:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-ogc-api-records-service:latest docker.io/geonetwork/gn-cloud-ogc-api-records-service:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-gateway:latest                 docker.io/geonetwork/gn-cloud-gateway:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-indexing:latest                docker.io/geonetwork/gn-cloud-indexing:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-authorizing:latest             docker.io/geonetwork/gn-cloud-authorizing:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.io/geonetwork/gn-cloud-configuring:latest             docker.io/geonetwork/gn-cloud-configuring:${{ steps.get_version.outputs.VERSION }}
+
+        docker push docker.io/geonetwork/gn-cloud-searching:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-discovery:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-ogc-api-records-service:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-gateway:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-indexing:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-authorizing:${{ steps.get_version.outputs.VERSION }}
+        docker push docker.io/geonetwork/gn-cloud-configuring:${{ steps.get_version.outputs.VERSION }}
