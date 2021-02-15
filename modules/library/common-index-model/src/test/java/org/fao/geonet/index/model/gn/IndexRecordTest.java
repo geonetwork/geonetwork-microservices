@@ -3,17 +3,27 @@ package org.fao.geonet.index.model.gn;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.fao.geonet.domain.MetadataType;
+import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.JsonUtils;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.dcat2.Concept;
+import org.fao.geonet.index.model.dcat2.Dataset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.springframework.core.io.ClassPathResource;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
 
@@ -105,4 +115,6 @@ public class IndexRecordTest {
       Assert.fail();
     }
   }
+
+
 }
