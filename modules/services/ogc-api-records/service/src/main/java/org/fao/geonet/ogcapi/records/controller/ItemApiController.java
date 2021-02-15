@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -63,6 +64,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @Controller
+@Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class ItemApiController implements RecordApi {
 
   @Autowired
@@ -313,11 +315,17 @@ public class ItemApiController implements RecordApi {
       }
 
       XsltModel modelSource = new XsltModel();
-      IndexRecord recordPojo = JsonUtils.getObjectMapper().readValue(
-          recordAsJson.get(IndexRecordFieldNames.source).toPrettyString(),
-          IndexRecord.class);
-      modelSource.setSeoJsonLdSnippet(
-          SchemaOrgConverter.convert(recordPojo).toString());
+      try {
+        IndexRecord recordPojo = JsonUtils.getObjectMapper().readValue(
+            recordAsJson.get(IndexRecordFieldNames.source).toPrettyString(),
+            IndexRecord.class);
+        modelSource.setSeoJsonLdSnippet(
+            SchemaOrgConverter.convert(recordPojo).toString());
+      } catch (Exception e) {
+        log.error(String.format(
+            "An error occurred while building JSON-LD representation of record '%s'. Error is: %s",
+            recordId, e.getMessage()));
+      }
       modelSource.setRequestParameters(request.getParameterMap());
       modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.item));
       modelSource.setCollection(source);

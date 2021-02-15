@@ -117,7 +117,7 @@ public class IndexRecord extends IndexDocument {
 
 
   @JsonProperty(IndexRecordFieldNames.resourceIdentifier)
-  private ArrayList<String> resourceIdentifier = new ArrayList<>();
+  private ArrayList<ResourceIdentifier> resourceIdentifier = new ArrayList<>();
 
   @JsonProperty(IndexRecordFieldNames.org)
   private List<String> org = new ArrayList<>();
