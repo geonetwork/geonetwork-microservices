@@ -1,6 +1,6 @@
 package org.fao.geonet.index.model.dcat2;
 
-import static org.fao.geonet.index.model.dcat2.Namespaces.SKOS_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.VCARD_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,8 +15,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 @Builder
-public class Subject {
-
-  @XmlElement(name = "Concept", namespace = SKOS_URI)
-  SkosConcept skosConcept;
+public class DcatContactPoint {
+  @XmlElement(name = "Kind", namespace = VCARD_URI)
+  VcardContact contact;
 }
