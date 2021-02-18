@@ -1,12 +1,10 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.model.dcat2;
 
-import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.FOAF_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,8 +26,8 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class FoafAgent extends RdfResource {
 
-  @XmlElement(namespace = DCT_URI)
-  Subject type;
+  //  @XmlElement(namespace = DCT_URI)
+  //  Subject type;
 
   @NonNull
   @XmlElement(namespace = FOAF_URI)
@@ -43,7 +41,7 @@ public class FoafAgent extends RdfResource {
    */
   @Builder
   public FoafAgent(String about, String resource, String name) {
-    super(about, resource);
+    super(about, resource, null);
     this.name = name;
     this.type = type;
   }

@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.converter;
@@ -37,19 +36,6 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
  * <p>TODO: Add support to translation https://bib.schema.org/workTranslation
  */
 public class SchemaOrgConverter {
-
-  public enum Types {
-    Dataset,
-    DataFeed,
-    Organization,
-    ContactPoint,
-    Distribution,
-    DataDownload,
-    AggregateRating,
-    ImageObject,
-    GeoShape,
-    Url;
-  }
 
   public static Map<String, String> dateMapping = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("creation", "dateCreated"),
@@ -95,7 +81,6 @@ public class SchemaOrgConverter {
       new AbstractMap.SimpleEntry<>("fieldSession", "Project"),
       new AbstractMap.SimpleEntry<>("collectionSession", "Project")
   );
-
   private static ObjectMapper mapper = new ObjectMapper();
 
   /**
@@ -455,5 +440,18 @@ public class SchemaOrgConverter {
     }
     thing.put("@type", type.name());
     return thing;
+  }
+
+  public enum Types {
+    Dataset,
+    DataFeed,
+    Organization,
+    ContactPoint,
+    Distribution,
+    DataDownload,
+    AggregateRating,
+    ImageObject,
+    GeoShape,
+    Url;
   }
 }

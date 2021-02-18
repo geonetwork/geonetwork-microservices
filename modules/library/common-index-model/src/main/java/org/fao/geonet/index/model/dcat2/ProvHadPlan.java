@@ -5,8 +5,7 @@
 
 package org.fao.geonet.index.model.dcat2;
 
-
-import static org.fao.geonet.index.model.dcat2.Namespaces.VCARD_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,16 +17,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@XmlRootElement(name = "Kind", namespace = VCARD_URI)
+@XmlRootElement(name = "hadPlan", namespace = PROV_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class VcardContact {
+public class ProvHadPlan {
 
-  @XmlElement(namespace = VCARD_URI)
-  String hasEmail;
-  // TODO
+  @XmlElement(namespace = PROV_URI)
+  RdfResource wasDerivedFrom;
 }

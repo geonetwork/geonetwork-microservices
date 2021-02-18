@@ -64,7 +64,9 @@ gn:
       -
         name : dcat
         mimeType : application/dcat2+xml
-        responseProcessor: XsltResponseProcessorImpl
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - item
       -
         name : gn
         mimeType : application/gn+xml
@@ -84,13 +86,13 @@ gn:
       -
         name : turtle
         mimeType : text/turtle
-        responseProcessor: JsonLdResponseProcessorImpl
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations :
           - item
       -
         name : rdfxml
         mimeType : application/rdf+xml
-        responseProcessor: JsonLdResponseProcessorImpl
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
           - item
 #      -

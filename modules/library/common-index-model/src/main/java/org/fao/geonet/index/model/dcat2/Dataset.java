@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.model.dcat2;
@@ -25,6 +24,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,137 +48,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Dataset {
 
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> title = new ArrayList();
-
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> description = new ArrayList();
-
-  /**
-   * A unique identifier of the item.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<String> identifier = new ArrayList();
-
-  @Deprecated
-  @XmlElement(namespace = DCT_URI)
-  List<Subject> subject = new ArrayList();
-
-  @XmlElement(namespace = DCAT_URI)
-  List<Subject> keyword = new ArrayList();
-
-  @XmlElement(namespace = DCAT_URI)
-  List<Subject> theme = new ArrayList();
-
-  /**
-   * This property refers to the type of the Dataset. A controlled vocabulary for the values has not
-   * been established in [DCAT-AP].
-   *
-   * <p>In GeoDCAT-AP, this property SHOULD take as value one of the URIs of the "Resource types"
-   * code
-   * list operated by the INSPIRE Registry [INSPIRE-RT]. For Datasets, the possible values are those
-   * corresponding to "Spatial data set" and "Spatial data set series".
-   */
-  // Can also be a RdfResource
-  @XmlElement(namespace = DCT_URI)
-  Subject type;
-
-  //  /**
-  //   * An identifier in a particular context, consisting of the string that is the identifier; an
-  //   * optional identifier for the identifier scheme;
-  //   an optional identifier for the version of the
-  //   * identifier scheme; an optional identifier for the agency that manages the identifier scheme
-  //   */
-  //  @XmlElement(name = "identifier", namespace = ADMS_URI)
-  //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
-
-  /**
-   * This property contains a description of the differences between this version and a previous
-   * version of the Dataset.
-   */
-  @XmlElement(namespace = ADMS_URI)
-  List<String> versionNotes = new ArrayList();
-
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatDocument> landingPage = new ArrayList();
-
-  @XmlElement(namespace = FOAF_URI)
-  List<DcatDocument> page;
-
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatDistributionContainer> distribution = new ArrayList();
-
-
-  /**
-   * An association class for attaching additional information to a relationship between DCAT
-   * Resources.
-   */
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatRelationship> qualifiedRelation = new ArrayList();
-
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> isReferencedBy = new ArrayList<>();
-
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> relation = new ArrayList<>();
-
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> isVersionOf = new ArrayList<>();
-
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> hasVersionOf = new ArrayList<>();
-
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> source = new ArrayList<>();
-
-  /**
-   * Minimum spatial separation resolvable in a dataset, measured in meters.
-   *
-   * <p>If the dataset is an image or grid this should correspond to the spacing of items. For
-   * other kinds of spatial datasets, this property will usually indicate the smallest distance
-   * between items in the dataset.</p>
-   */
-  @XmlElement(namespace = DCAT_URI)
-  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
-
-  /**
-   * Minimum time period resolvable in the dataset.
-   *
-   * <p>
-   * If the dataset is a time-series this should correspond to the spacing of items in the series.
-   * For other kinds of dataset, this property will usually indicate the smallest time difference
-   * between items in the dataset.</p>
-   */
-  // TODO: Adapter
-  @XmlElement(namespace = DCAT_URI)
-  List<Duration> temporalResolution = new ArrayList();
-
-
-  /**
-   * This property MAY include information regarding access or restrictions based on privacy,
-   * security, or other policies.
-   *
-   * <p>
-   * For INSPIRE metadata, this property SHOULD be used with the URIs of the "Limitations on public
-   * access" code list operated by the INSPIRE Registry</p>
-   */
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatAccessRights> accessRights = new ArrayList();
-
-  @XmlElement(namespace = DCT_URI)
-  DcatLicenseDocumentContainer license;
-
-
-  /**
-   * This property refers to the frequency at which the Dataset is updated.
-   *
-   * <p>eg. http://publications.europa.eu/resource/authority/frequency/IRREG</p>
-   */
-  @XmlElement(namespace = DCT_URI)
-  RdfResource accrualPeriodicity;
-
   public static String EU_PUBLICATION_URI_PREFIX = "http://publications.europa.eu/resource/authority/";
   public static String ACCRUAL_PERIODICITY_URI_PREFIX = EU_PUBLICATION_URI_PREFIX + "frequency/";
   public static Map<String, String> ACCRUAL_PERIODICITY_TO_ISO = Map.ofEntries(
@@ -194,8 +63,117 @@ public class Dataset {
       new AbstractMap.SimpleEntry<String, String>("irregular", "IRREG"),
       new AbstractMap.SimpleEntry<String, String>("unknown", "UNKNOWN")
   );
+  @NonNull
+  @XmlElement(namespace = DCT_URI)
+  List<String> title = new ArrayList();
+  @NonNull
+  @XmlElement(namespace = DCT_URI)
+  List<String> description = new ArrayList();
+  /**
+   * A unique identifier of the item.
+   */
+  @XmlElement(namespace = DCT_URI)
+  List<String> identifier = new ArrayList();
+  // "Replaced by dcat:theme."
+  @Deprecated
+  @XmlElement(namespace = DCT_URI)
+  List<Subject> subject = new ArrayList();
 
-
+  //  /**
+  //   * An identifier in a particular context, consisting of the string that is the identifier; an
+  //   * optional identifier for the identifier scheme;
+  //   an optional identifier for the version of the
+  //   * identifier scheme; an optional identifier for the agency that manages the identifier scheme
+  //   */
+  //  @XmlElement(name = "identifier", namespace = ADMS_URI)
+  //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
+  @XmlElement(namespace = DCAT_URI)
+  List<Subject> keyword = new ArrayList();
+  @XmlElement(namespace = DCAT_URI)
+  List<Subject> theme = new ArrayList();
+  /**
+   * This property refers to the type of the Dataset. A controlled vocabulary for the values has not
+   * been established in [DCAT-AP].
+   *
+   * <p>In GeoDCAT-AP, this property SHOULD take as value one of the URIs of the "Resource types"
+   * code
+   * list operated by the INSPIRE Registry [INSPIRE-RT]. For Datasets, the possible values are those
+   * corresponding to "Spatial data set" and "Spatial data set series".
+   */
+  @XmlElements({
+      @XmlElement(namespace = DCT_URI, type = Subject.class),
+      @XmlElement(namespace = DCT_URI, type = RdfResource.class)
+  })
+  List<Object> type;
+  /**
+   * This property contains a description of the differences between this version and a previous
+   * version of the Dataset.
+   */
+  @XmlElement(namespace = ADMS_URI)
+  List<String> versionNotes = new ArrayList();
+  @XmlElement(namespace = DCAT_URI)
+  List<DcatDocument> landingPage = new ArrayList();
+  @XmlElement(namespace = FOAF_URI)
+  List<DcatDocument> page;
+  @XmlElement(namespace = DCAT_URI)
+  List<DcatDistributionContainer> distribution = new ArrayList();
+  /**
+   * An association class for attaching additional information to a relationship between DCAT
+   * Resources.
+   */
+  @XmlElement(namespace = DCAT_URI)
+  List<DcatRelationship> qualifiedRelation = new ArrayList();
+  @XmlElement(namespace = DCT_URI)
+  List<RdfResource> isReferencedBy = new ArrayList<>();
+  @XmlElement(namespace = DCT_URI)
+  List<RdfResource> relation = new ArrayList<>();
+  @XmlElement(namespace = DCT_URI)
+  List<RdfResource> isVersionOf = new ArrayList<>();
+  @XmlElement(namespace = DCT_URI)
+  List<RdfResource> hasVersionOf = new ArrayList<>();
+  @XmlElement(namespace = DCT_URI)
+  List<RdfResource> source = new ArrayList<>();
+  @XmlElement(namespace = DCT_URI)
+  List<DctSpatial> spatial = new ArrayList<>();
+  /**
+   * Minimum spatial separation resolvable in a dataset, measured in meters.
+   *
+   * <p>If the dataset is an image or grid this should correspond to the spacing of items. For
+   * other kinds of spatial datasets, this property will usually indicate the smallest distance
+   * between items in the dataset.</p>
+   */
+  @XmlElement(namespace = DCAT_URI)
+  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
+  /**
+   * Minimum time period resolvable in the dataset.
+   *
+   * <p>
+   * If the dataset is a time-series this should correspond to the spacing of items in the series.
+   * For other kinds of dataset, this property will usually indicate the smallest time difference
+   * between items in the dataset.</p>
+   */
+  // TODO: Adapter
+  @XmlElement(namespace = DCAT_URI)
+  List<Duration> temporalResolution = new ArrayList();
+  /**
+   * This property MAY include information regarding access or restrictions based on privacy,
+   * security, or other policies.
+   *
+   * <p>
+   * For INSPIRE metadata, this property SHOULD be used with the URIs of the "Limitations on public
+   * access" code list operated by the INSPIRE Registry</p>
+   */
+  @XmlElement(namespace = DCAT_URI)
+  List<DcatAccessRights> accessRights = new ArrayList();
+  @XmlElement(namespace = DCT_URI)
+  DcatLicenseDocumentContainer license;
+  /**
+   * This property refers to the frequency at which the Dataset is updated.
+   *
+   * <p>eg. http://publications.europa.eu/resource/authority/frequency/IRREG</p>
+   */
+  @XmlElement(namespace = DCT_URI)
+  RdfResource accrualPeriodicity;
   @XmlElement(namespace = DCT_URI)
   RdfResource conformsTo;
 
@@ -208,12 +186,16 @@ public class Dataset {
   @XmlElement(namespace = DCT_URI)
   Date modified;
 
+  @XmlElement(namespace = DCT_URI)
+  List<DctTemporal> temporal;
+
+
   /**
    * A statement of any changes in ownership and custody of a resource since its creation that are
    * significant for its authenticity, integrity, and interpretation.
    */
   @XmlElement(namespace = DCT_URI)
-  String provenance;
+  List<Provenance> provenance;
 
   // Can be a LinguisticSystem
   @XmlElement(namespace = DCT_URI)

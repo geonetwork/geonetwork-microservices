@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 @XmlSchema(
@@ -16,6 +15,7 @@
         @XmlNs(prefix = DC_PREFIX, namespaceURI = DC_URI),
         @XmlNs(prefix = DCT_PREFIX, namespaceURI = DCT_URI),
         @XmlNs(prefix = FOAF_PREFIX, namespaceURI = FOAF_URI),
+        @XmlNs(prefix = LOCN_PREFIX, namespaceURI = LOCN_URI),
         @XmlNs(prefix = VCARD_PREFIX, namespaceURI = VCARD_URI),
         @XmlNs(prefix = ADMS_PREFIX, namespaceURI = ADMS_URI)
     }
@@ -34,6 +34,8 @@ import static org.fao.geonet.index.model.dcat2.Namespaces.DC_PREFIX;
 import static org.fao.geonet.index.model.dcat2.Namespaces.DC_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.FOAF_PREFIX;
 import static org.fao.geonet.index.model.dcat2.Namespaces.FOAF_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.LOCN_PREFIX;
+import static org.fao.geonet.index.model.dcat2.Namespaces.LOCN_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.OWL_PREFIX;
 import static org.fao.geonet.index.model.dcat2.Namespaces.OWL_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_PREFIX;

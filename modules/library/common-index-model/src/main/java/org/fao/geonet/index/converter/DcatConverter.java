@@ -1,57 +1,292 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.converter;
 
+import static org.fao.geonet.index.model.dcat2.Dataset.ACCRUAL_PERIODICITY_TO_ISO;
+import static org.fao.geonet.index.model.dcat2.Dataset.ACCRUAL_PERIODICITY_URI_PREFIX;
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists.topic;
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ContainerNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
-import org.fao.geonet.index.model.gn.Contact;
+import org.fao.geonet.index.model.dcat2.Dataset;
+import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;
+import org.fao.geonet.index.model.dcat2.DcatActivity;
+import org.fao.geonet.index.model.dcat2.DcatContactPoint;
+import org.fao.geonet.index.model.dcat2.DcatDistribution;
+import org.fao.geonet.index.model.dcat2.DcatDistribution.DcatDistributionBuilder;
+import org.fao.geonet.index.model.dcat2.DcatDistributionContainer;
+import org.fao.geonet.index.model.dcat2.DcatDocument;
+import org.fao.geonet.index.model.dcat2.DctLocation;
+import org.fao.geonet.index.model.dcat2.DctPeriodOfTime;
+import org.fao.geonet.index.model.dcat2.DctSpatial;
+import org.fao.geonet.index.model.dcat2.DctTemporal;
+import org.fao.geonet.index.model.dcat2.FoafDocument;
+import org.fao.geonet.index.model.dcat2.ProvActivity;
+import org.fao.geonet.index.model.dcat2.ProvGenerated;
+import org.fao.geonet.index.model.dcat2.ProvHadPlan;
+import org.fao.geonet.index.model.dcat2.ProvQualifiedAssociation;
+import org.fao.geonet.index.model.dcat2.Provenance;
+import org.fao.geonet.index.model.dcat2.ProvenanceStatement;
+import org.fao.geonet.index.model.dcat2.RdfResource;
+import org.fao.geonet.index.model.dcat2.SkosConcept;
+import org.fao.geonet.index.model.dcat2.Subject;
+import org.fao.geonet.index.model.dcat2.VcardContact;
+import org.fao.geonet.index.model.gn.Codelist;
 import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.geojson.GeoJsonReader;
+import org.fao.geonet.index.model.gn.ResourceIdentifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Index document to DCAT mapping.
- *
  */
 public class DcatConverter {
 
-  public enum Types {
-    Dataset,
-    DataFeed,
-    Organization,
-    ContactPoint,
-    Distribution,
-    DataDownload,
-    AggregateRating,
-    ImageObject,
-    GeoShape,
-    Url;
-  }
+  public static Map<String, String> resourceTypeMapping = Map.ofEntries(
+      new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
+      new AbstractMap.SimpleEntry<>("series", "Dataset"),
+      new AbstractMap.SimpleEntry<>("service", "DataService"),
+      new AbstractMap.SimpleEntry<>("application", "DataService"),
+      new AbstractMap.SimpleEntry<>("nonGeographicDataset", "Dataset"),
+      new AbstractMap.SimpleEntry<>("featureType", "Dataset"),
+      new AbstractMap.SimpleEntry<>("tile", "Dataset")
+  );
+
+  static Map<String, String> inspireDegreeOfConformity = Map.of(
+      "true", "conformant",
+      "false", "notConformant",
+      "", "notEvaluated"
+  );
+
+  private static String DEFAULT_LANGUAGE;
 
   private static ObjectMapper mapper = new ObjectMapper();
 
-  /**
-   * Convert an index document into a JSON LD document.
-   */
-  public static ObjectNode convert(IndexRecord record) {
+  @Value("${gn.language.default}")
+  String defaultLanguage;
 
-    return null;
+  /**
+   * Convert an index document into a DCAT object.
+   */
+  public static Dataset convert(JsonNode doc) {
+    Dataset dcatDataset = null;
+    try {
+      IndexRecord record = new ObjectMapper()
+          .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+          .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
+
+      String recordIdentifier = record.getMetadataIdentifier();
+      String recordUri = RssConverter.buildLandingPageLink(record);
+      Optional<ResourceIdentifier> resourceIdentifier =
+          record.getResourceIdentifier().stream().filter(Objects::nonNull).findFirst();
+
+      // TODO: Define strategy to build IRI
+      final String resourceIdentifierUri = resourceIdentifier.isPresent()
+          ? "local:" + resourceIdentifier.get().getCode()
+          : null;
+
+      String language = record.getMainLanguage() == null
+          ? DEFAULT_LANGUAGE : record.getMainLanguage();
+      String languageUpperCase = language.toUpperCase();
+      // TODO: Need language mapper
+      String iso2letterLanguage = language.substring(0, 2);
+
+      List<String> resourceLanguage = record.getResourceLanguage();
+
+      List<String> resourceType = record.getResourceType();
+      boolean isInspireResource = resourceType.contains("dataset")
+          || resourceType.contains("series")
+          || resourceType.contains("service");
+
+      // TODO: Add multilingual support
+      // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
+      DatasetBuilder datasetBuilder = Dataset.builder()
+          // TODO: Where to put resource identifier ?
+          .identifier(List.of(record.getMetadataIdentifier()))
+          .title(List.of(record.getResourceTitle().get(defaultText)))
+          .description(List.of(record.getResourceAbstract().get(defaultText)))
+          .landingPage(List.of(DcatDocument.builder()
+              .foafDocument(FoafDocument.builder()
+                  .about(RssConverter.buildLandingPageLink(record))
+                  .title(record.getResourceTitle().get(defaultText))
+                  .build()).build()))
+          .provenance(
+              record.getResourceLineage().stream().map(l ->
+                  Provenance.builder().provenanceStatement(
+                      ProvenanceStatement.builder().label(l.get(defaultText)).build()
+                  ).build()
+              ).collect(Collectors.toList())
+          )
+          .type(record.getResourceType().stream().map(t ->
+              new RdfResource(null, "dcat:" + resourceTypeMapping.get(t), null))
+              .collect(Collectors.toList()))
+          // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
+          .modified(toDate(record.getChangeDate()))
+          .theme(record.getCodelists().get(topic).stream().map(t -> Subject.builder()
+              .skosConcept(SkosConcept.builder()
+                  // TODO: rdf:resource="{$TopicCategoryCodelistUri}/{$TopicCategory}"
+                  .prefLabel(t.getProperties().get(defaultText))
+                  .build()).build()).collect(Collectors.toList()))
+          .theme(record.getTag().stream().map(t -> Subject.builder()
+              // TODO: <skos:ConceptScheme rdf:about="{$OriginatingControlledVocabularyURI}">
+              // TODO: skos:inScheme
+              // See https://github.com/SEMICeu/iso-19139-to-dcat-ap/blob/master/iso-19139-to-dcat-ap.xsl#L2803-L2864
+              .skosConcept(SkosConcept.builder()
+                  .prefLabel(t.get(defaultText))
+                  .build()).build()).collect(Collectors.toList()));
+
+      record.getResourceDate().stream()
+          .filter(d -> "creation".equals(d.getType()))
+          .forEach(d -> datasetBuilder.created(toDate(d.getDate())));
+      record.getResourceDate().stream()
+          .filter(d -> "publication".equals(d.getType()))
+          .forEach(d -> datasetBuilder.issued(toDate(d.getDate())));
+      // TODO: dct:modified already bound to date stamp ?
+      //      record.getResourceDate().stream()
+      //          .filter(d -> "revision".equals(d.getType()))
+      //          .forEach(d -> datasetBuilder.modified(toDate(d.getDate())));
+
+      // TODO: Convert to meter ?
+      datasetBuilder.spatialResolutionInMeters(
+          record.getResolutionScaleDenominator().stream()
+              .map(BigDecimal::new).collect(Collectors.toList()));
+
+      // INSPIRE
+      if (record.getSpecificationConformance().size() > 0) {
+        datasetBuilder.wasUsedBy(
+            record.getSpecificationConformance().stream().map(c ->
+                DcatActivity.builder().activity(
+                    // TODO: Check RDF encoding
+                    // https://github.com/SEMICeu/iso-19139-to-dcat-ap/blob/master/iso-19139-to-dcat-ap.xsl#L837-L840
+                    ProvActivity.builder()
+                        .used(
+                            new RdfResource(null, resourceIdentifierUri, null)
+                        )
+                        .qualifiedAssociation(
+                            ProvQualifiedAssociation.builder()
+                                .hadPlan(ProvHadPlan.builder()
+                                    .wasDerivedFrom(
+                                        new RdfResource("Resource", null, null, c.getTitle(), null))
+                                    .build())
+                                .build()
+                        )
+                        .generated(
+                            ProvGenerated.builder()
+                                .type(new RdfResource(
+                                    "http://inspire.ec.europa.eu/metadata-codelist/DegreeOfConformity/"
+                                        + inspireDegreeOfConformity.get(c.getPass()),
+                                    null))
+                                .description(c.getExplanation()).build()
+                        )
+                        .build()).build()
+            ).collect(Collectors.toList())
+        );
+      }
+
+      //datasetBuilder.conformsTo(new RdfResource(null, "http://data.europa.eu/r5r/", null));
+      // http://data.europa.eu/930/
+      // dct:source used to link to metadata standard ?
+      // (https://github.com/SEMICeu/iso-19139-to-dcat-ap/blob/master/iso-19139-to-dcat-ap.xsl#L955-L991)
+      // datasetBuilder.source()
+
+      if (record.getMainLanguage() != null) {
+        // TODO: Where to put resource language ?
+        datasetBuilder.language(List.of(
+            new RdfResource(null,
+                "http://publications.europa.eu/resource/authority/language/"
+                    + record.getMainLanguage().toUpperCase(), null)));
+      }
+
+      ArrayList<Codelist> updateFrequencyList = record.getCodelists()
+          .get(Codelists.maintenanceAndUpdateFrequency);
+      if (updateFrequencyList.size() > 0) {
+        datasetBuilder.accrualPeriodicity(
+            new RdfResource(
+                null,
+                ACCRUAL_PERIODICITY_URI_PREFIX
+                    + ACCRUAL_PERIODICITY_TO_ISO
+                    .get(updateFrequencyList.get(0)
+                        .getProperties().get(CommonField.key)), null));
+      }
+
+      // <dct:spatial rdf:parseType="Resource">
+      datasetBuilder.spatial(record.getGeometries().stream().map(g -> DctSpatial.builder()
+          .location(DctLocation.builder().geometry(g).build()).build()).collect(
+          Collectors.toList()));
+
+      datasetBuilder.temporal(
+          record.getResourceTemporalExtentDateRange().stream().map(range -> DctTemporal.builder()
+              .periodOfTime(DctPeriodOfTime.builder()
+                  .startDate(toDate(range.getGte()))
+                  .endDate(toDate(range.getLte())).build()
+              )
+              .build()).collect(Collectors.toList()));
+
+      record.getLinks().stream().forEach(link -> {
+        DcatDistributionBuilder dcatDistributionBuilder = DcatDistribution.builder()
+            .title(List.of(link.getName()))
+            .description(List.of(link.getDescription()))
+            // TODO <dcat:accessService rdf:parseType="Resource">...
+            // TODO: representation technique = gmd:MD_SpatialRepresentationTypeCode?
+            .representationTechnique(Subject.builder()
+                .skosConcept(SkosConcept.builder()
+                    .prefLabel(link.getProtocol()).build()).build());
+
+        // TODO: depending on function/protocol build page/accessUrl/downloadUrl
+        dcatDistributionBuilder.accessUrl(link.getUrl());
+
+        datasetBuilder.distribution(List.of(DcatDistributionContainer.builder()
+            .distribution(dcatDistributionBuilder.build()).build()));
+      });
+
+      datasetBuilder.contactPoint(
+          record.getContactForResource().stream().map(contact ->
+              DcatContactPoint.builder()
+                  .contact(VcardContact.builder()
+                      .hasEmail(contact.getEmail()).build()).build()
+          ).collect(Collectors.toList()));
+
+
+      dcatDataset = datasetBuilder.build();
+
+    } catch (JsonMappingException e) {
+      e.printStackTrace();
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+    return dcatDataset;
+  }
+
+  private static Date toDate(String date) {
+    return Date.from(
+        Instant.from(
+            DateTimeFormatter.ISO_DATE_TIME.parse(date)));
+  }
+
+  @Value("${gn.language.default}")
+  public void setNameStatic(String defaultLanguage) {
+    DcatConverter.DEFAULT_LANGUAGE = defaultLanguage;
   }
 
 }

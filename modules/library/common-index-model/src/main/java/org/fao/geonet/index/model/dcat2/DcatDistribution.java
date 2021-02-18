@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.model.dcat2;
@@ -44,10 +43,10 @@ public class DcatDistribution {
 
   @NonNull
   @XmlElement(name = "accessURL", namespace = DCAT_URI)
-  RdfResource accessUrl;
+  String accessUrl;
 
   @XmlElement(name = "downloadURL", namespace = DCAT_URI)
-  List<RdfResource> downloadUrl = new ArrayList();
+  List<String> downloadUrl = new ArrayList();
 
   @XmlElement(namespace = DCT_URI)
   List<String> title = new ArrayList();
@@ -56,17 +55,17 @@ public class DcatDistribution {
   List<String> description = new ArrayList();
 
   @XmlElement(namespace = ADMS_URI)
-  SkosConcept representationTechnique;
+  Subject representationTechnique;
 
   @XmlElement(namespace = ADMS_URI)
-  SkosConcept status;
+  Subject status;
 
   /**
    * This property indicates how long it is planned to keep the Distribution of the Dataset
    * available.
    */
   @XmlElement(namespace = DCATAP_URI)
-  List<SkosConcept> availability = new ArrayList<>();
+  List<Subject> availability = new ArrayList<>();
 
   @XmlElement(namespace = DCAT_URI)
   BigInteger byteSize;

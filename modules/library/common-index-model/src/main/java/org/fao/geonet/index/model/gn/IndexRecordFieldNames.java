@@ -40,6 +40,9 @@ public class IndexRecordFieldNames {
   public static final String revisionYearForResource = "revisionYearForResource";
   public static final String revisionMonthForResource = "revisionMonthForResource";
   public static final String dateStamp = "dateStamp";
+  public static final String resourceLineage = "lineageObject";
+  public static final String specificationConformance = "specificationConformance";
+  public static final String resolutionScaleDenominator = "resolutionScaleDenominator";
 
   public class Codelists {
 
@@ -47,6 +50,9 @@ public class IndexRecordFieldNames {
     public static final String characterSet = prefix + "characterSet";
     public static final String hierarchyLevel = prefix + "hierarchyLevel";
     public static final String status = prefix + "status";
+    public static final String topic = prefix + "topic";
+    public static final String maintenanceAndUpdateFrequency =
+        prefix + "maintenanceAndUpdateFrequency";
   }
 
   public class CommonField {

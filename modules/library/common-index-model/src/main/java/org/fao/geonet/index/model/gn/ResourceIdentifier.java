@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResourceIdentifier {
+
   String code;
   String codeSpace;
   String link;

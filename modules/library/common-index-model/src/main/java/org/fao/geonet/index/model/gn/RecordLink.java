@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class RecordLink {
+
   private String type;
   private String origin;
   private String to;

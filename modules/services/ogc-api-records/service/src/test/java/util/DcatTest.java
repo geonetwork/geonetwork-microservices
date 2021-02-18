@@ -27,6 +27,7 @@ import org.fao.geonet.index.model.dcat2.DcatRelation;
 import org.fao.geonet.index.model.dcat2.DcatRelationship;
 import org.fao.geonet.index.model.dcat2.FoafDocument;
 import org.fao.geonet.index.model.dcat2.ProvAttribution;
+import org.fao.geonet.index.model.dcat2.ProvenanceStatement;
 import org.fao.geonet.index.model.dcat2.RdfResource;
 import org.fao.geonet.index.model.dcat2.RightsStatement;
 import org.fao.geonet.index.model.dcat2.SkosConcept;
@@ -76,18 +77,18 @@ public class DcatTest {
         .accrualPeriodicity(
             new RdfResource(
                 null,
-                ACCRUAL_PERIODICITY_URI_PREFIX + ACCRUAL_PERIODICITY_TO_ISO.get("daily")))
+                ACCRUAL_PERIODICITY_URI_PREFIX + ACCRUAL_PERIODICITY_TO_ISO.get("daily"), null))
         .conformsTo(
-            new RdfResource(null, "http://iso19115-3.schema.org")
+            new RdfResource(null, "http://iso19115-3.schema.org", null)
         )
         .created(new Date())
-        .isReferencedBy(List.of(new RdfResource(null, "https://isReferencedBy")))
-        .relation(List.of(new RdfResource(null, "https://relation")))
+        .isReferencedBy(List.of(new RdfResource(null, "https://isReferencedBy", null)))
+        .relation(List.of(new RdfResource(null, "https://relation", null)))
         .language(List.of(
-            new RdfResource(null, "http://publications.europa.eu/resource/authority/language/FRE")))
-        .type(Subject.builder().skosConcept(
+            new RdfResource(null, "http://publications.europa.eu/resource/authority/language/FRE", null)))
+        .type(List.of(Subject.builder().skosConcept(
             SkosConcept.builder().prefLabel("dataset").build()
-        ).build())
+        ).build()))
         .page(List.of(DcatDocument.builder()
             .foafDocument(FoafDocument.builder()
                 .about("https://apps.titellus.net/ogcapi/collections/main/items/" + identifier)
@@ -95,14 +96,13 @@ public class DcatTest {
         .versionInfo("1.0")
         .qualifiedAttribution(List.of(DcatQualifiedAttribution.builder()
             .attribution(ProvAttribution.builder()
-                .agent(new RdfResource(null, "http://agent"))
-                .hadRole(new RdfResource(null, "http://role/creator"))
+                .agent(new RdfResource(null, "http://agent", null))
+                .hadRole(new RdfResource(null, "http://role/creator", null))
                 .build()).build()))
         .comment(List.of("Comments ..."))
         .distribution(List.of(DcatDistributionContainer.builder()
             .distribution(DcatDistribution.builder()
-                .accessUrl(new RdfResource(null,
-                    "https://sdi.eea.europa.eu/webdav/continental/europe/natural_areas/birds_directive/eea_v_3035_10_mio_art12-2008-2012_i_2008-2012_v01_r01/Art12-2008-2012_SHP"))
+                .accessUrl("https://sdi.eea.europa.eu/webdav/continental/europe/natural_areas/birds_directive/eea_v_3035_10_mio_art12-2008-2012_i_2008-2012_v01_r01/Art12-2008-2012_SHP")
                 .build()).build()))
         .license(DcatLicenseDocumentContainer.builder()
             // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")

@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -35,7 +39,10 @@ import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.converter.DcatConverter;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.dcat2.Dataset;
+import org.fao.geonet.index.model.dcat2.SkosConcept;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.RecordApi;
@@ -127,14 +134,85 @@ public class ItemApiController implements RecordApi {
   }
 
   /**
+   * Collection item as DCAT (RDF/XML or Turtle).
+   */
+  @GetMapping(
+      value = "/collections/{collectionId}/items/{recordId}",
+      produces = {
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
+          GnMediaType.TEXT_TURTLE_VALUE,
+          GnMediaType.APPLICATION_RDF_XML_VALUE
+      })
+  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsDcat(
+      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
+      @PathVariable("collectionId")
+          String collectionId,
+      @ApiParam(value = "Identifier (name) of a specific record", required = true)
+      @PathVariable("recordId")
+          String recordId,
+      @RequestHeader("Accept")
+          String acceptHeader,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
+
+    if (source == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collection.notFound",
+              new String[]{collectionId},
+              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+    }
+
+    try {
+
+      JAXBContext context = null;
+      context = JAXBContext.newInstance(SkosConcept.class, Dataset.class);
+      Marshaller marshaller = context.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+      JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "json");
+      Dataset dcatDataset = DcatConverter.convert(record);
+      StringWriter sw = new StringWriter();
+      marshaller.marshal(dcatDataset, sw);
+      String dcatXml = sw.toString();
+
+      String formatParameter = request.getParameter("f");
+      boolean isTurtle =
+          (formatParameter != null && "turtle".equals(formatParameter))
+              || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
+      boolean isRdfXml =
+          (formatParameter != null && "rdfxml".equals(formatParameter))
+              || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
+      if (isTurtle) {
+        org.eclipse.rdf4j.model.Model model = Rio.parse(
+            new ByteArrayInputStream(dcatXml.getBytes()),
+            "", RDFFormat.RDFXML);
+        StringWriter turtleWriter = new StringWriter();
+        Rio.write(model, turtleWriter, RDFFormat.TURTLE);
+        streamResult(response,
+            turtleWriter.toString(),
+            GnMediaType.TEXT_TURTLE_VALUE);
+      } else {
+        streamResult(response,
+            dcatXml,
+            MediaType.APPLICATION_XML_VALUE);
+      }
+      return ResponseEntity.ok().build();
+    } catch (Exception ex) {
+      // TODO: Log exception
+      throw new RuntimeException(ex);
+    }
+
+  }
+
+  /**
    * Collection item as JSON.
    */
   @GetMapping(
       value = "/collections/{collectionId}/items/{recordId}",
       produces = {
-          GnMediaType.APPLICATION_JSON_LD_VALUE,
-          GnMediaType.TEXT_TURTLE_VALUE,
-          GnMediaType.APPLICATION_RDF_XML_VALUE
+          GnMediaType.APPLICATION_JSON_LD_VALUE
       })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
@@ -159,25 +237,9 @@ public class ItemApiController implements RecordApi {
     try {
       JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "schema.org");
 
-      String formatParameter = request.getParameter("f");
-      boolean isTurtle =
-          (formatParameter != null && "turtle".equals(formatParameter))
-              || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
-      boolean isRdfXml =
-          (formatParameter != null && "rdfxml".equals(formatParameter))
-              || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
-      if (isTurtle || isRdfXml) {
-        org.eclipse.rdf4j.model.Model model = Rio.parse(
-            new ByteArrayInputStream(record.toString().getBytes()),
-            "", RDFFormat.JSONLD);
-        // TODO name, abstract properties are missing in the model. Why?
-        Rio.write(model, response.getOutputStream(),
-            isRdfXml ? RDFFormat.RDFXML : RDFFormat.TURTLE);
-      } else {
-        streamResult(response,
-            record.toString(),
-            GnMediaType.APPLICATION_JSON_LD_VALUE);
-      }
+      streamResult(response,
+          record.toString(),
+          GnMediaType.APPLICATION_JSON_LD_VALUE);
       return ResponseEntity.ok().build();
     } catch (Exception ex) {
       // TODO: Log exception

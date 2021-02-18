@@ -5,15 +5,14 @@
 
 package org.fao.geonet.index.model.gn;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Data;
 
 @Data
-public class Overview {
+public class SpecificationConformance {
 
-  @JsonProperty("text")
-  Map<String, String> label = new HashMap<>();
-  private String url;
+  private String link;
+  private String title;
+  private String explanation;
+  private String date;
+  private String pass;
 }

@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.converter;
@@ -32,17 +31,10 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.index.converter")
 public class RssConverter {
 
+  public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
+  private static String BASE_URL;
   @Value("${gn.baseurl}")
   String baseUrl;
-
-  private static String BASE_URL;
-
-  @Value("${gn.baseurl}")
-  public void setNameStatic(String baseurl) {
-    RssConverter.BASE_URL = baseurl;
-  }
-
-  public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
 
   /**
    * Convert JSON index document _source node to RSS Item.
@@ -125,10 +117,18 @@ public class RssConverter {
     return record.getResourceAbstract().get(defaultText);
   }
 
-  private static String buildLandingPageLink(IndexRecord record) {
+  /**
+   * Build link to items landing page.
+   */
+  public static String buildLandingPageLink(IndexRecord record) {
     return String.format("%s/collections/%s/items/%s",
         BASE_URL,
         "main",
         record.getMetadataIdentifier());
+  }
+
+  @Value("${gn.baseurl}")
+  public void setNameStatic(String baseurl) {
+    RssConverter.BASE_URL = baseurl;
   }
 }

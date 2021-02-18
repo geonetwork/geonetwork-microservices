@@ -963,6 +963,8 @@ public class OpenSearchDescription {
   @XmlType(name = "")
   public static class Url {
 
+    @XmlAnyAttribute
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
     @XmlAttribute(name = "template", required = true)
     @XmlSchemaType(name = "anySimpleType")
     protected String template;
@@ -973,8 +975,6 @@ public class OpenSearchDescription {
     protected BigInteger indexOffset;
     @XmlAttribute(name = "pageOffset")
     protected BigInteger pageOffset;
-    @XmlAnyAttribute
-    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the template property.
@@ -1062,7 +1062,8 @@ public class OpenSearchDescription {
      * <p>the map is keyed by the name of the attribute and the value is the string value of the
      * attribute.
      *
-     * <p>the map returned by this method is live, and you can add new attribute by updating the map
+     * <p>the map returned by this method is live, and you can add new attribute by updating the
+     * map
      * directly. Because of this design, there's no setter.
      *
      * @return always non-null

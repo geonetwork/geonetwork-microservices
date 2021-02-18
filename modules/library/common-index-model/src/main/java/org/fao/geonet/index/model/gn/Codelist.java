@@ -6,19 +6,16 @@
 package org.fao.geonet.index.model.gn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Contact {
+public class Codelist {
 
-  private String role;
-  private String individual;
-  private String organisation;
-  private String email;
-  private String logo;
-  private String phone;
-  private String address;
-  private String website;
-  private String position;
+  Map<String, String> properties;
 }

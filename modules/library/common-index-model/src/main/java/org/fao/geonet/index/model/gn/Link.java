@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class Link {
+
   private String protocol;
   private String url;
   // TODO: Multilingual
