@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 import static org.fao.geonet.index.model.dcat2.Namespaces.VCARD_URI;
@@ -16,6 +22,7 @@ import lombok.Data;
 @Data
 @Builder
 public class DcatContactPoint {
+
   @XmlElement(name = "Kind", namespace = VCARD_URI)
   VcardContact contact;
 }

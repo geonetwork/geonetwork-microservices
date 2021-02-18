@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 
@@ -37,11 +43,11 @@ import lombok.NonNull;
 public class DcatDistribution {
 
   @NonNull
-  @XmlElement(namespace = DCAT_URI)
-  RdfResource accessURL;
+  @XmlElement(name = "accessURL", namespace = DCAT_URI)
+  RdfResource accessUrl;
 
-  @XmlElement(namespace = DCAT_URI)
-  List<RdfResource> downloadURL = new ArrayList();
+  @XmlElement(name = "downloadURL", namespace = DCAT_URI)
+  List<RdfResource> downloadUrl = new ArrayList();
 
   @XmlElement(namespace = DCT_URI)
   List<String> title = new ArrayList();

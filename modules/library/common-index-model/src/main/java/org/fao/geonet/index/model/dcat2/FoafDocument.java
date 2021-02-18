@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
@@ -34,6 +40,9 @@ public class FoafDocument extends RdfResource {
   @XmlElement(namespace = DCT_URI)
   String format;
 
+  /**
+   * Foaf document.
+   */
   @Builder
   public FoafDocument(String about, String resource, String title, String description,
       String format) {

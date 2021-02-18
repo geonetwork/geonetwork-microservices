@@ -1,8 +1,15 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Date;
 
 /**
  * An activity carried out by an Agent over an entity, according to a plan, and generating another
@@ -32,16 +38,18 @@ import java.util.Date;
 public class ProvActivity {
 
   /**
-   * This property refers to the entity (e.g., a Catalogue, a Dataset, a Data Service) which was the subject of the Activity.
+   * This property refers to the entity (e.g., a Catalogue, a Dataset, a Data Service) which was the
+   * subject of the Activity.
    *
-   * This property MAY be omitted in case its inverse property prov:wasUsedBy is specified.
+   * <p>This property MAY be omitted in case its inverse property prov:wasUsedBy is specified.
    */
   // TODO needs improvement
   @XmlElement(namespace = PROV_URI)
   RdfResource used;
 
   /**
-   * This property refers to the Plan according to which the Activity has been carried out, and possibly to the Agent who played a role in it.
+   * This property refers to the Plan according to which the Activity has been carried out, and
+   * possibly to the Agent who played a role in it.
    */
   @XmlElement(namespace = PROV_URI)
   RdfResource qualifiedAssociation;

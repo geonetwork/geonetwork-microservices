@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 import static org.fao.geonet.index.model.dcat2.Namespaces.FOAF_URI;
@@ -11,7 +17,8 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * A textual resource intended for human consumption that contains information, e.g., a Web page about a Dataset.
+ * A textual resource intended for human consumption that contains information, e.g., a Web page
+ * about a Dataset.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)

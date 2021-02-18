@@ -1,3 +1,9 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license,
+ * available at the root application directory.
+ */
+
 package org.fao.geonet.index.model.dcat2;
 
 import static org.fao.geonet.index.model.dcat2.Namespaces.ADMS_URI;
@@ -30,7 +36,6 @@ import lombok.NonNull;
  * A conceptual entity that represents the information published.
  *
  * <p>GeoDCAT-AP 2 model.
- * <p>
  * https://www.w3.org/TR/vocab-dcat-2/ https://semiceu.github.io/GeoDCAT-AP/drafts/latest/
  * https://semiceu.github.io/GeoDCAT-AP/drafts/latest/geodcat-ap_v2.0.0.svg
  */
@@ -71,8 +76,8 @@ public class Dataset {
    * This property refers to the type of the Dataset. A controlled vocabulary for the values has not
    * been established in [DCAT-AP].
    *
-   * <p>
-   * In GeoDCAT-AP, this property SHOULD take as value one of the URIs of the "Resource types" code
+   * <p>In GeoDCAT-AP, this property SHOULD take as value one of the URIs of the "Resource types"
+   * code
    * list operated by the INSPIRE Registry [INSPIRE-RT]. For Datasets, the possible values are those
    * corresponding to "Spatial data set" and "Spatial data set series".
    */
@@ -107,7 +112,8 @@ public class Dataset {
 
 
   /**
-   * An association class for attaching additional information to a relationship between DCAT Resources.
+   * An association class for attaching additional information to a relationship between DCAT
+   * Resources.
    */
   @XmlElement(namespace = DCAT_URI)
   List<DcatRelationship> qualifiedRelation = new ArrayList();
@@ -204,7 +210,7 @@ public class Dataset {
 
   /**
    * A statement of any changes in ownership and custody of a resource since its creation that are
-   * significant for its authenticity, integrity, and interpretation
+   * significant for its authenticity, integrity, and interpretation.
    */
   @XmlElement(namespace = DCT_URI)
   String provenance;
@@ -213,17 +219,22 @@ public class Dataset {
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> language = new ArrayList<>();
 
-  /**
-   * Represents the evaluation of a given resource (as a Data Service, Dataset, or Distribution) against a specific quality metric.
-   *
-   * In GeoDCAT-AP, this class corresponds to the notion of "spatial resolution", as defined in [INSPIRE-MD-REG], [ISO-19115], and [ISO-19115-1].
-   */
+  //  /**
+  //   * Represents the evaluation of a given resource
+  //   * (as a Data Service, Dataset, or Distribution)
+  //   * against a specific quality metric.
+  //   *
+  //   * In GeoDCAT-AP, this class corresponds to the notion of
+  //   * "spatial resolution", as defined in [INSPIRE-MD-REG],
+  //   * [ISO-19115], and [ISO-19115-1].
+  //   */
   // TODO
   //  @XmlElement(namespace = DQV_URI)
   //  QualityMeasurement hasQualityMeasurement = new ArrayList();
 
   /**
-   * This property contains a version number or other version designation of the Dataset.
+   * This property contains a version number
+   * or other version designation of the Dataset.
    */
   @XmlElement(namespace = OWL_URI)
   String versionInfo;

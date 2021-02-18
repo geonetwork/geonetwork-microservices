@@ -101,11 +101,11 @@ public class DcatTest {
         .comment(List.of("Comments ..."))
         .distribution(List.of(DcatDistributionContainer.builder()
             .distribution(DcatDistribution.builder()
-                .accessURL(new RdfResource(null,
+                .accessUrl(new RdfResource(null,
                     "https://sdi.eea.europa.eu/webdav/continental/europe/natural_areas/birds_directive/eea_v_3035_10_mio_art12-2008-2012_i_2008-2012_v01_r01/Art12-2008-2012_SHP"))
                 .build()).build()))
         .license(DcatLicenseDocumentContainer.builder()
-            .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
+            // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
             .license(DcatLicenseDocument.builder()
                 .type(Subject.builder()
                     .skosConcept(SkosConcept.builder().prefLabel("CC0").build())
