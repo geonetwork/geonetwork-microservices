@@ -43,9 +43,9 @@ spring:
   rabbitmq.host: localhost
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/gn
-    username: www-data
-    password: www-data
+    url: jdbc:postgresql://localhost:5432/GN4
+    username: postgres
+    password: postgres
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     jpa.generate-ddl: false
@@ -68,8 +68,8 @@ gn:
   index:
     url: http://localhost:9200
     records: gn-records
-    username: elastic
-    password: aaaaaa
+    username:
+    password:
 #logging.level:
 #  org.springframework: DEBUG
 #  org.hibernate.SQL: DEBUG

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
@@ -20,6 +19,11 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+
 
 @Configuration
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
@@ -85,5 +89,15 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
     resolver.setSupportedLocales(supportedLocales);
     resolver.setDefaultLocale(Locale.ENGLISH);
     return resolver;
+  }
+
+  @Bean
+  public Docket api() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .select()
+        .apis(RequestHandlerSelectors.basePackage(
+            "org.fao.geonet.ogcapi.records.controller"))
+        .paths(PathSelectors.any())
+        .build();
   }
 }

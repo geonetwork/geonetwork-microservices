@@ -20,7 +20,7 @@ public class LinksItemsBuilder {
     List<Link> links = new ArrayList<>();
     links.add(currentDoc);
 
-    for (MediaType supportedMediaType : MediaTypeUtil.supportedMediaTypes) {
+    for (MediaType supportedMediaType : MediaTypeUtil.defaultSupportedMediaTypes) {
       if (!supportedMediaType.equals(mediaType)) {
         Link alternateDoc = new Link();
         alternateDoc.setRel("alternate");
