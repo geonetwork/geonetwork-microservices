@@ -68,8 +68,8 @@ gn:
   index:
     url: http://localhost:9200
     records: gn-records
-    username: elastic
-    password: aaaaaa
+    username: 
+    password: 
 #logging.level:
 #  org.springframework: DEBUG
 #  org.hibernate.SQL: DEBUG
