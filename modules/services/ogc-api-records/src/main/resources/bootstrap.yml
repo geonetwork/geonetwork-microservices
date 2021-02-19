@@ -43,9 +43,9 @@ spring:
   rabbitmq.host: localhost
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/geonetwork
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:5432/gn
+    username: www-data
+    password: www-data
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     jpa.generate-ddl: false
