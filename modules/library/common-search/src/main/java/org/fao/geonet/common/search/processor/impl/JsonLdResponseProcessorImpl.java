@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.JsonUtils;
@@ -17,6 +18,8 @@ import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.stereotype.Component;
 
+
+@Slf4j(topic = "org.fao.geonet.searching")
 @Component("JsonLdResponseProcessorImpl")
 public class JsonLdResponseProcessorImpl
     extends JsonUserAndSelectionAwareResponseProcessorImpl {
@@ -70,8 +73,9 @@ public class JsonLdResponseProcessorImpl
             ObjectNode node = SchemaOrgConverter.convert(record);
             generator.writeRawValue(node.toString());
           } catch (Exception ex) {
-            // TODO
-            System.out.println("Null SchemaOrgConverter results.");
+            log.error(String.format(
+                "JSON-LD conversion returned null result for uuid %s. Check http://localhost:9901/collections/main/items/%s?f=schema.org",
+                doc.get("_id").asText(), doc.get("_id").asText()));
           }
         }
       }, false);
