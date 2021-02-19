@@ -227,7 +227,7 @@ public class DcatConverter {
 
       ArrayList<Codelist> updateFrequencyList = record.getCodelists()
           .get(Codelists.maintenanceAndUpdateFrequency);
-      if (updateFrequencyList.size() > 0) {
+      if (updateFrequencyList != null && updateFrequencyList.size() > 0) {
         datasetBuilder.accrualPeriodicity(
             new RdfResource(
                 null,
