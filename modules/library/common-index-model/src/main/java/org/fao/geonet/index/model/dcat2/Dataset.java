@@ -42,7 +42,7 @@ import lombok.experimental.SuperBuilder;
  * https://portal.opengeospatial.org/files/?artifact_id=82475 https://www.w3.org/TR/vocab-dcat-2/
  * https://semiceu.github.io/GeoDCAT-AP/drafts/latest/ https://semiceu.github.io/GeoDCAT-AP/drafts/latest/geodcat-ap_v2.0.0.svg
  */
-@XmlRootElement(namespace = DCAT_URI)
+@XmlRootElement(name = "Dataset", namespace = DCAT_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data

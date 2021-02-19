@@ -24,29 +24,15 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
-@XmlRootElement(namespace = DCAT_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource {
+public class Resource extends Base {
 
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> title = new ArrayList();
-
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> description = new ArrayList();
-  /**
-   * A unique identifier of the item.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<String> identifier = new ArrayList();
   // "Replaced by dcat:theme."
-
   @Deprecated
   @XmlElement(namespace = DCT_URI)
   List<Subject> subject = new ArrayList();
@@ -93,58 +79,6 @@ public class Resource {
 
   @XmlElement(namespace = DCT_URI)
   DcatLicenseDocumentContainer license;
-
-  /**
-   * An established standard to which the described resource conforms.
-   *
-   * <p>This property SHOULD be used to indicate the model, schema, ontology, view or profile that
-   * the catalog record metadata conforms to.</p>
-   */
-  @XmlElement(namespace = DCT_URI)
-  RdfResource conformsTo;
-
-
-  @XmlElement(namespace = DCT_URI)
-  Date created;
-
-  /**
-   * The date of listing (i.e. formal recording) of the corresponding dataset or service in the
-   * catalog.
-   *
-   * <p>This indicates the date of listing the dataset in the catalog and not the publication date
-   * of the dataset itself.</p>
-   */
-  @XmlElement(namespace = DCT_URI)
-  Date issued;
-
-  /**
-   * Most recent date on which the catalog entry was changed, updated or modified.
-   *
-   * <p>This indicates the date of last change of a catalog entry, i.e. the catalog metadata
-   * description of the dataset, and not the date of the dataset itself.</p>
-   */
-  @XmlElement(namespace = DCT_URI)
-  Date modified;
-
-  // Can be a LinguisticSystem
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> language = new ArrayList<>();
-
-  @XmlElement(namespace = PROV_URI)
-  List<DcatQualifiedAttribution> qualifiedAttribution = new ArrayList();
-
-
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatContactPoint> contactPoint = new ArrayList();
-
-  @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> creator = new ArrayList();
-
-  /**
-   * A type of organisation that acts as a publisher.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> publisher = new ArrayList();
 
   /**
    * An association class for attaching additional information to a relationship between DCAT

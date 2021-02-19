@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.fao.geonet.index.model.dcat2.CatalogRecord;
+import org.fao.geonet.index.model.dcat2.CatalogRecord.CatalogRecordBuilder;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;
 import org.fao.geonet.index.model.dcat2.DcatActivity;
@@ -46,6 +48,7 @@ import org.fao.geonet.index.model.dcat2.ProvQualifiedAssociation;
 import org.fao.geonet.index.model.dcat2.Provenance;
 import org.fao.geonet.index.model.dcat2.ProvenanceStatement;
 import org.fao.geonet.index.model.dcat2.RdfResource;
+import org.fao.geonet.index.model.dcat2.ResourceContainer;
 import org.fao.geonet.index.model.dcat2.SkosConcept;
 import org.fao.geonet.index.model.dcat2.Subject;
 import org.fao.geonet.index.model.dcat2.VcardContact;
@@ -88,7 +91,8 @@ public class DcatConverter {
   /**
    * Convert an index document into a DCAT object.
    */
-  public static Dataset convert(JsonNode doc) {
+  public static CatalogRecord convert(JsonNode doc) {
+    CatalogRecord catalogRecord = null;
     Dataset dcatDataset = null;
     try {
       IndexRecord record = new ObjectMapper()
@@ -120,9 +124,12 @@ public class DcatConverter {
 
       // TODO: Add multilingual support
       // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
+
+
       DatasetBuilder datasetBuilder = Dataset.builder()
-          // TODO: Where to put resource identifier ?
-          .identifier(List.of(record.getMetadataIdentifier()))
+          .identifier(record.getResourceIdentifier().stream()
+              .map(c -> c.getCode()).collect(
+              Collectors.toList()))
           .title(List.of(record.getResourceTitle().get(defaultText)))
           .description(List.of(record.getResourceAbstract().get(defaultText)))
           .landingPage(List.of(DcatDocument.builder()
@@ -159,15 +166,13 @@ public class DcatConverter {
           .filter(d -> "creation".equals(d.getType()))
           .forEach(d -> datasetBuilder.created(toDate(d.getDate())));
 
-      // TODO: Maybe we should introduce CatalogRecord element for record dates
-      //  and resource dates
       record.getResourceDate().stream()
           .filter(d -> "publication".equals(d.getType()))
           .forEach(d -> datasetBuilder.issued(toDate(d.getDate())));
-      // TODO: dct:modified already bound to date stamp ?
-      //      record.getResourceDate().stream()
-      //          .filter(d -> "revision".equals(d.getType()))
-      //          .forEach(d -> datasetBuilder.modified(toDate(d.getDate())));
+
+      record.getResourceDate().stream()
+          .filter(d -> "revision".equals(d.getType()))
+          .forEach(d -> datasetBuilder.modified(toDate(d.getDate())));
 
       // TODO: Convert to meter ?
       datasetBuilder.spatialResolutionInMeters(
@@ -212,12 +217,12 @@ public class DcatConverter {
       // (https://github.com/SEMICeu/iso-19139-to-dcat-ap/blob/master/iso-19139-to-dcat-ap.xsl#L955-L991)
       // datasetBuilder.source()
 
-      if (record.getMainLanguage() != null) {
+      if (record.getResourceLanguage() != null) {
         // TODO: Where to put resource language ?
-        datasetBuilder.language(List.of(
+        datasetBuilder.language(record.getResourceLanguage().stream().map(l ->
             new RdfResource(null,
                 "http://publications.europa.eu/resource/authority/language/"
-                    + record.getMainLanguage().toUpperCase(), null)));
+                    + l.toUpperCase(), null)).collect(Collectors.toList()));
       }
 
       ArrayList<Codelist> updateFrequencyList = record.getCodelists()
@@ -274,13 +279,24 @@ public class DcatConverter {
 
       dcatDataset = datasetBuilder.build();
 
+
+      catalogRecord = CatalogRecord.builder()
+          .identifier(List.of(record.getMetadataIdentifier()))
+          .created(toDate(record.getCreateDate()))
+          .modified(toDate(record.getChangeDate()))
+          .language(List.of(new RdfResource(null,
+              "http://publications.europa.eu/resource/authority/language/"
+                  + record.getMainLanguage().toUpperCase())))
+          .primaryTopic(List.of(new ResourceContainer(dcatDataset, null))).build();
+
     } catch (JsonMappingException e) {
       e.printStackTrace();
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
 
-    return dcatDataset;
+
+    return catalogRecord;
   }
 
   private static Date toDate(String date) {

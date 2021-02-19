@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.catalog.Catalog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -41,6 +42,8 @@ import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.JsonUtils;
 import org.fao.geonet.index.converter.DcatConverter;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.dcat2.CatalogRecord;
+import org.fao.geonet.index.model.dcat2.DataService;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.SkosConcept;
 import org.fao.geonet.index.model.gn.IndexRecord;
@@ -166,15 +169,16 @@ public class ItemApiController implements RecordApi {
     try {
 
       JAXBContext context = null;
-      context = JAXBContext.newInstance(SkosConcept.class, Dataset.class);
+      context = JAXBContext.newInstance(
+          CatalogRecord.class, Dataset.class, DataService.class);
       Marshaller marshaller = context.createMarshaller();
       marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
       marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
       JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "json");
-      Dataset dcatDataset = DcatConverter.convert(record);
+      CatalogRecord catalogRecord = DcatConverter.convert(record);
       StringWriter sw = new StringWriter();
-      marshaller.marshal(dcatDataset, sw);
+      marshaller.marshal(catalogRecord, sw);
       String dcatXml = sw.toString();
 
       String formatParameter = request.getParameter("f");
