@@ -64,6 +64,8 @@ eureka:
     fetch-registry: false
 gn:
   baseurl: http://localhost:9901
+  language:
+    default: eng
   legacy.url: http://localhost:8080/geonetwork
   index:
     url: http://localhost:9200

@@ -44,15 +44,6 @@ gn:
           - items
           - item
       -
-        name: json
-        mimeType: application/json
-        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
-        operations:
-          - collections
-          - collection
-          - items
-          - item
-      -
         name: xml
         mimeType: application/xml
         responseProcessor: XmlResponseProcessorImpl
@@ -62,9 +53,14 @@ gn:
           - items
           - item
       -
-        name : dcat
-        mimeType : application/dcat2+xml
-        responseProcessor: XsltResponseProcessorImpl
+        name: json
+        mimeType: application/json
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
+          - collections
+          - collection
+          - items
+          - item
       -
         name : gn
         mimeType : application/gn+xml
@@ -82,16 +78,16 @@ gn:
           - items
           - item
       -
-        name : turtle
-        mimeType : text/turtle
-        responseProcessor: JsonLdResponseProcessorImpl
-        operations :
+        name: dcat
+        mimeType: application/rdf+xml
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations:
           - item
       -
-        name : rdfxml
-        mimeType : application/rdf+xml
-        responseProcessor: JsonLdResponseProcessorImpl
-        operations:
+        name : turtle
+        mimeType : text/turtle
+        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        operations :
           - item
 #      -
 #        name : iso19139

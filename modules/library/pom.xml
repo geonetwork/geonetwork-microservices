@@ -18,7 +18,7 @@
   </parent>
   <artifactId>gn-cloud-lib</artifactId>
   <packaging>pom</packaging>
-  <name>gn-cloud-services</name>
+  <name>GeoNetwork library</name>
   <description>Parent pom for geonetwork micro services library modules</description>
 
   <modules>

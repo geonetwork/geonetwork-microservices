@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,6 +25,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.fao.geonet.domain.AbstractMetadata;
 import org.fao.geonet.domain.MetadataDraft;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.locationtech.jts.geom.Coordinate;
 
 @Data
@@ -33,68 +35,6 @@ import org.locationtech.jts.geom.Coordinate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IndexRecord extends IndexDocument {
 
-  private Integer internalId;
-  private String metadataIdentifier;
-
-  private IndexDocumentType docType;
-
-  // Unused for now. Was used to store XML document.
-  private String document;
-
-  // eg. iso19139
-  private String documentStandard;
-  private String schema;
-
-  // eg. ISO 19119/2005
-  private String standardName;
-
-  private String draft;
-  private Character isTemplate;
-  private String root;
-
-  private String indexingDate;
-
-  @JsonIgnore
-  private String dateStamp;
-  private String changeDate;
-  private String createDate;
-
-  @JsonProperty(IndexRecordFieldNames.resourceDate)
-  private List<ResourceDate> resourceDate = new ArrayList<>();
-
-  private Integer owner;
-  private Integer groupOwner;
-  private String recordOwner;
-  private String userinfo;
-  private String sourceCatalogue;
-  private String logo;
-
-  @XmlElement(name = IndexRecordFieldNames.isPublishedToAll)
-  private boolean publishedToAll;
-  private List<String> groupPublished = new ArrayList<>();
-
-  // TODO: op0: "1",
-
-  private int popularity;
-  private String mainLanguage;
-  private List<String> resourceType = new ArrayList<>();
-
-  private Integer valid;
-  private Integer feedbackCount;
-  private Integer rating;
-
-  @XmlElement(name = IndexRecordFieldNames.isHarvested)
-  private boolean harvested;
-  private String harvesterUuid;
-
-  private boolean hasxlinks;
-  private boolean hasOverview;
-
-  private boolean isMultilingual;
-  private List<String> otherLanguage = new ArrayList<>();
-  private List<String> otherLanguageId = new ArrayList<>();
-  private List<String> resourceLanguage = new ArrayList<>();
-
   //  resourceTitleObject: {
   //    default: "Organisation de la protection civile dans
   //    le canton de Fribourg - Organisation des Zivilschutzes im Kanton Freiburg",
@@ -102,20 +42,62 @@ public class IndexRecord extends IndexDocument {
   //        - Organisation des Zivilschutzes im Kanton Freiburg"
   @JsonProperty(IndexRecordFieldNames.resourceTitle)
   Map<String, String> resourceTitle = new HashMap<>();
-
   @JsonProperty(IndexRecordFieldNames.resourceAltTitle)
   List<HashMap<String, String>> resourceAltTitle = new ArrayList<>();
-
+  @JsonProperty(IndexRecordFieldNames.resourceLineage)
+  List<HashMap<String, String>> resourceLineage = new ArrayList<>();
   @JsonProperty(IndexRecordFieldNames.resourceAbstract)
   Map<String, String> resourceAbstract = new HashMap<>();
-
   @JsonProperty(IndexRecordFieldNames.resourceCredit)
   Map<String, String> resourceCredit = new HashMap<>();
-
   @JsonProperty(IndexRecordFieldNames.tag)
   ArrayList<HashMap<String, String>> tag = new ArrayList<>();
+  private Integer internalId;
+  private String metadataIdentifier;
+  private IndexDocumentType docType;
+  // Unused for now. Was used to store XML document.
+  private String document;
+  // eg. iso19139
+  private String documentStandard;
+  private String schema;
+  // eg. ISO 19119/2005
+  private String standardName;
+  private String draft;
+  private Character isTemplate;
+  private String root;
+  private String indexingDate;
+  @JsonIgnore
+  private String dateStamp;
+  private String changeDate;
+  private String createDate;
+  @JsonProperty(IndexRecordFieldNames.resourceDate)
+  private List<ResourceDate> resourceDate = new ArrayList<>();
+  private Integer owner;
+  private Integer groupOwner;
 
-
+  // TODO: op0: "1",
+  private String recordOwner;
+  private String userinfo;
+  private String sourceCatalogue;
+  private String logo;
+  @XmlElement(name = IndexRecordFieldNames.isPublishedToAll)
+  private boolean publishedToAll;
+  private List<String> groupPublished = new ArrayList<>();
+  private int popularity;
+  private String mainLanguage;
+  private List<String> resourceType = new ArrayList<>();
+  private Integer valid;
+  private Integer feedbackCount;
+  private Integer rating;
+  @XmlElement(name = IndexRecordFieldNames.isHarvested)
+  private boolean harvested;
+  private String harvesterUuid;
+  private boolean hasxlinks;
+  private boolean hasOverview;
+  private boolean isMultilingual;
+  private List<String> otherLanguage = new ArrayList<>();
+  private List<String> otherLanguageId = new ArrayList<>();
+  private List<String> resourceLanguage = new ArrayList<>();
   @JsonProperty(IndexRecordFieldNames.resourceIdentifier)
   private ArrayList<ResourceIdentifier> resourceIdentifier = new ArrayList<>();
 
@@ -144,6 +126,8 @@ public class IndexRecord extends IndexDocument {
   @JsonProperty(IndexRecordFieldNames.link)
   private List<Link> links = new ArrayList<>();
 
+  @JsonProperty(IndexRecordFieldNames.resolutionScaleDenominator)
+  private List<String> resolutionScaleDenominator = new ArrayList<>();
 
   //  resourceTemporalDateRange: [{
   //    gte: "2017-02-03T14:00:00",
@@ -165,29 +149,13 @@ public class IndexRecord extends IndexDocument {
   @JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
   private List<String> geometries = new ArrayList<>();
 
+  @JsonProperty(IndexRecordFieldNames.specificationConformance)
+  private List<SpecificationConformance> specificationConformance = new ArrayList();
+
   //  @JsonAnyGetter
   private Map<String, ArrayList<String>> otherProperties = new HashMap<>();
 
-  /**
-   * Collect all other properties in a map.
-   */
-  @JsonAnySetter
-  public void ignored(String name, Object value) {
-    // Ignore class fields.
-    try {
-      IndexRecord.class.getDeclaredField(name);
-    } catch (NoSuchFieldException e) {
-      ArrayList<String> s = otherProperties.get(name);
-      if (s == null) {
-        s = new ArrayList<>(1);
-        s.add(value.toString());
-        otherProperties.put(name, s);
-      } else {
-        s.add(value.toString());
-      }
-    }
-  }
-
+  private Map<String, ArrayList<Codelist>> codelists = new HashMap<>();
 
   /**
    * Record to be loaded in the index.
@@ -225,6 +193,40 @@ public class IndexRecord extends IndexDocument {
     this.setRating(r.getDataInfo().getRating());
   }
 
+
   public IndexRecord() {
   }
+
+  /**
+   * Collect all other properties in a map.
+   */
+  @JsonAnySetter
+  public void ignored(String name, Object value) {
+    // Ignore class fields.
+    try {
+      IndexRecord.class.getDeclaredField(name);
+    } catch (NoSuchFieldException e) {
+      if (name.startsWith(Codelists.prefix)) {
+        ArrayList<Codelist> codelist = codelists.get(name);
+        if (codelist == null) {
+          codelist = new ArrayList<Codelist>();
+          codelists.put(name, codelist);
+        }
+        if (value instanceof List) {
+          codelist.addAll(((List<HashMap>) value).stream().map(c ->
+              new Codelist(c)).collect(Collectors.toList()));
+        }
+      } else {
+        ArrayList<String> s = otherProperties.get(name);
+        if (s == null) {
+          s = new ArrayList<>(1);
+          s.add(value.toString());
+          otherProperties.put(name, s);
+        } else {
+          s.add(value.toString());
+        }
+      }
+    }
+  }
+
 }

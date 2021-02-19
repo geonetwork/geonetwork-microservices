@@ -10,7 +10,7 @@
   </parent>
   <artifactId>gn-cloud-standards</artifactId>
   <packaging>pom</packaging>
-  <name>gn-cloud-services</name>
+  <name>GeoNetwork standards</name>
   <description>Parent pom for geonetwork standards modules</description>
 
   <modules>

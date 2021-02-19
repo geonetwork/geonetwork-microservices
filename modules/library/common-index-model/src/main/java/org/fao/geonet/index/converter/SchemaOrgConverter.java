@@ -1,7 +1,6 @@
 /**
- * (c) 2020 Open Source Geospatial Foundation - all rights reserved
- * This code is licensed under the GPL 2.0 license,
- * available at the root application directory.
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
  */
 
 package org.fao.geonet.index.converter;
@@ -38,19 +37,6 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
  */
 public class SchemaOrgConverter {
 
-  public enum Types {
-    Dataset,
-    DataFeed,
-    Organization,
-    ContactPoint,
-    Distribution,
-    DataDownload,
-    AggregateRating,
-    ImageObject,
-    GeoShape,
-    Url;
-  }
-
   public static Map<String, String> dateMapping = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("creation", "dateCreated"),
       new AbstractMap.SimpleEntry<>("publication", "datePublished"),
@@ -65,6 +51,7 @@ public class SchemaOrgConverter {
       new AbstractMap.SimpleEntry<>("processor", "contributor"),
       new AbstractMap.SimpleEntry<>("contributor", "contributor"),
       new AbstractMap.SimpleEntry<>("resourceProvider", "provider"),
+      new AbstractMap.SimpleEntry<>("distributor", "provider"),
       new AbstractMap.SimpleEntry<>("custodian", "maintainer"),
       new AbstractMap.SimpleEntry<>("owner", "copyrightHolder"),
       new AbstractMap.SimpleEntry<>("rightsHolder", "copyrightHolder"),
@@ -95,7 +82,6 @@ public class SchemaOrgConverter {
       new AbstractMap.SimpleEntry<>("fieldSession", "Project"),
       new AbstractMap.SimpleEntry<>("collectionSession", "Project")
   );
-
   private static ObjectMapper mapper = new ObjectMapper();
 
   /**
@@ -317,39 +303,41 @@ public class SchemaOrgConverter {
           .stream()
           .collect(Collectors.groupingBy(Contact::getRole))
           .forEach((role, contacts) -> {
-            ArrayNode array = root.putArray(contactRoleMapping.get(role));
-            contacts.forEach(c -> {
-              // https://schema.org/Organization
-              ObjectNode organization =
-                  createThing(null, Types.Organization, root);
-              addOptional(organization, "name", c.getOrganisation());
-              addOptional(organization, "address", c.getAddress());
-              addOptional(organization, "email", c.getEmail());
+            String jsonRole = contactRoleMapping.get(role);
+            if (jsonRole != null) {
+              ArrayNode array = root.putArray(jsonRole);
+              contacts.forEach(c -> {
+                // https://schema.org/Organization
+                ObjectNode organization =
+                    createThing(null, Types.Organization, root);
+                addOptional(organization, "name", c.getOrganisation());
+                addOptional(organization, "address", c.getAddress());
+                addOptional(organization, "email", c.getEmail());
 
-              // https://schema.org/URL
-              ObjectNode url = createThing("url", Types.Url, organization);
-              addOptional(url, "url", c.getWebsite());
+                // https://schema.org/URL
+                ObjectNode url = createThing("url", Types.Url, organization);
+                addOptional(url, "url", c.getWebsite());
 
-              addOptional(organization, "telephone", c.getPhone());
+                addOptional(organization, "telephone", c.getPhone());
 
-              // https://schema.org/ContactPoint
-              ObjectNode contactPoint = createThing("contactPoint", Types.ContactPoint,
-                  organization);
-              addOptional(contactPoint, "name", c.getIndividual());
-              addOptional(contactPoint, "description", c.getPosition());
-              // A person or organization can have different contact points,
-              // for different purposes. For example, a sales contact point,
-              // a PR contact point and so on. This property is used to
-              // specify the kind of contact point.
-              addOptional(contactPoint, "contactType", c.getRole());
+                // https://schema.org/ContactPoint
+                ObjectNode contactPoint = createThing("contactPoint", Types.ContactPoint,
+                    organization);
+                addOptional(contactPoint, "name", c.getIndividual());
+                addOptional(contactPoint, "description", c.getPosition());
+                // A person or organization can have different contact points,
+                // for different purposes. For example, a sales contact point,
+                // a PR contact point and so on. This property is used to
+                // specify the kind of contact point.
+                addOptional(contactPoint, "contactType", c.getRole());
 
-              // logo
-              ObjectNode logo = createThing("logo", Types.ImageObject, organization);
-              addOptional(logo, "contentUrl", c.getLogo());
+                // logo
+                ObjectNode logo = createThing("logo", Types.ImageObject, organization);
+                addOptional(logo, "contentUrl", c.getLogo());
 
-              array.add(organization);
-            });
-
+                array.add(organization);
+              });
+            }
           });
     }
 
@@ -455,5 +443,18 @@ public class SchemaOrgConverter {
     }
     thing.put("@type", type.name());
     return thing;
+  }
+
+  public enum Types {
+    Dataset,
+    DataFeed,
+    Organization,
+    ContactPoint,
+    Distribution,
+    DataDownload,
+    AggregateRating,
+    ImageObject,
+    GeoShape,
+    Url;
   }
 }

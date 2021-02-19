@@ -37,18 +37,16 @@ public class MediaTypeUtil {
           MediaType.APPLICATION_ATOM_XML,
           GnMediaType.APPLICATION_OPENSEARCH_XML);
 
-  public static final List<MediaType> jsonLdSupportedMediaTypes =
+  public static final List<MediaType> ldSupportedMediaTypes =
       Arrays.asList(
           GnMediaType.APPLICATION_JSON_LD,
           GnMediaType.TEXT_TURTLE,
-          GnMediaType.APPLICATION_RDF_XML);
-
-
-  public static final List<MediaType> xmlDcatMediaTypes =
-      Arrays.asList(
-          MediaType.APPLICATION_XML,
-          GnMediaType.APPLICATION_GN_XML,
+          GnMediaType.APPLICATION_RDF_XML,
           GnMediaType.APPLICATION_DCAT2_XML);
+
+
+  public static final List<MediaType> xmlMediaTypes =
+      Arrays.asList(MediaType.APPLICATION_XML);
 
 
   public MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request) {

@@ -13,8 +13,7 @@ import lombok.Data;
 @Data
 public class Overview {
 
-  private String url;
-
   @JsonProperty("text")
   Map<String, String> label = new HashMap<>();
+  private String url;
 }

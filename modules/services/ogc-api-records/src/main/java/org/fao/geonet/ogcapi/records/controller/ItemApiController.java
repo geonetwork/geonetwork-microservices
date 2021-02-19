@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +44,11 @@ import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.converter.DcatConverter;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.dcat2.CatalogRecord;
+import org.fao.geonet.index.model.dcat2.DataService;
+import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.model.Item;
@@ -110,9 +117,9 @@ public class ItemApiController {
           MediaType.TEXT_HTML_VALUE,
           MediaType.APPLICATION_RSS_XML_VALUE,
           MediaType.APPLICATION_ATOM_XML_VALUE,
-          GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE,
           MediaType.APPLICATION_XML_VALUE,
-          GnMediaType.APPLICATION_GN_XML_VALUE,
+          GnMediaType.APPLICATION_JSON_LD_VALUE,
+          GnMediaType.APPLICATION_RDF_XML_VALUE,
           GnMediaType.APPLICATION_DCAT2_XML_VALUE,
           GnMediaType.TEXT_TURTLE_VALUE})
   @ResponseStatus(HttpStatus.OK)
@@ -139,7 +146,7 @@ public class ItemApiController {
 
     List<MediaType> allowedMediaTypes =
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
-            MediaTypeUtil.jsonLdSupportedMediaTypes);
+            MediaTypeUtil.ldSupportedMediaTypes);
 
     MediaType mediaType =
         mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
@@ -158,11 +165,11 @@ public class ItemApiController {
         throw new RuntimeException(ex);
       }
 
-    } else if (MediaTypeUtil.jsonLdSupportedMediaTypes.contains(mediaType)) {
+    } else if (MediaTypeUtil.ldSupportedMediaTypes.contains(mediaType)) {
       return collectionsCollectionIdItemsRecordIdGetAsJsonLd(collectionId, recordId,
           mediaType.toString(), request, response);
 
-    } else if (MediaTypeUtil.xmlDcatMediaTypes.contains(mediaType)) {
+    } else if (MediaTypeUtil.xmlMediaTypes.contains(mediaType)) {
       return collectionsCollectionIdItemsRecordIdGetAsXml(collectionId, recordId,
           request, response);
 
@@ -258,22 +265,49 @@ public class ItemApiController {
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     try {
-      JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "schema.org");
-
       String formatParameter = request.getParameter("f");
       boolean isTurtle =
           (formatParameter != null && "turtle".equals(formatParameter))
               || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
+      boolean isDcat =
+          (formatParameter != null && "dcat".equals(formatParameter))
+              || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
       boolean isRdfXml =
           (formatParameter != null && "rdfxml".equals(formatParameter))
               || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
-      if (isTurtle || isRdfXml) {
-        org.eclipse.rdf4j.model.Model model = Rio.parse(
-            new ByteArrayInputStream(record.toString().getBytes()),
-            "", RDFFormat.JSONLD);
-        // TODO name, abstract properties are missing in the model. Why?
-        Rio.write(model, response.getOutputStream(),
-            isRdfXml ? RDFFormat.RDFXML : RDFFormat.TURTLE);
+      boolean isLinkedData = (isTurtle || isRdfXml || isDcat);
+
+      JsonNode record = getRecordAsJson(collectionId, recordId, request, source,
+          isLinkedData ? "json" : "schema.org");
+
+      if (isLinkedData) {
+        JAXBContext context = null;
+        context = JAXBContext.newInstance(
+            CatalogRecord.class, Dataset.class, DataService.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+        CatalogRecord catalogRecord = DcatConverter.convert(record);
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(catalogRecord, sw);
+        String dcatXml = sw.toString();
+
+        if (isTurtle) {
+          org.eclipse.rdf4j.model.Model model = Rio.parse(
+              new ByteArrayInputStream(dcatXml.getBytes()),
+              "", RDFFormat.RDFXML);
+          StringWriter turtleWriter = new StringWriter();
+          Rio.write(model, turtleWriter, RDFFormat.TURTLE);
+          streamResult(response,
+              turtleWriter.toString(),
+              GnMediaType.TEXT_TURTLE_VALUE);
+        } else {
+          streamResult(response,
+              dcatXml,
+              MediaType.APPLICATION_XML_VALUE);
+        }
+
       } else {
         streamResult(response,
             record.toString(),

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ListOfValues {
+
   @XmlElement
   private List<Values> values = new ArrayList<>();
 

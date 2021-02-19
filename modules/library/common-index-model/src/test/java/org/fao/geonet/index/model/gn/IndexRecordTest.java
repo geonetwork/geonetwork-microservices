@@ -35,7 +35,7 @@ public class IndexRecordTest {
           record.resourceTitle.get(defaultText)
           );
 
-      Assert.assertEquals(58, record.getOtherProperties().size());
+      Assert.assertEquals(49, record.getOtherProperties().size());
 
       Assert.assertEquals("gmd:MD_Metadata", record.getRoot());
 
@@ -105,4 +105,6 @@ public class IndexRecordTest {
       Assert.fail();
     }
   }
+
+
 }
