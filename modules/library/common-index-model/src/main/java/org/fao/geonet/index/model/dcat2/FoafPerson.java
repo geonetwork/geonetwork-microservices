@@ -5,6 +5,7 @@
 
 package org.fao.geonet.index.model.dcat2;
 
+import static org.fao.geonet.index.model.dcat2.Namespaces.DC_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.FOAF_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,6 +25,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FoafPerson {
 
+  @XmlElement(namespace = DC_URI)
+  String type;
+
   @XmlElement(namespace = FOAF_URI)
   String name;
 
@@ -32,4 +36,6 @@ public class FoafPerson {
 
   @XmlElement(namespace = FOAF_URI)
   String phone;
+
+  // TODO org:memberOf, locn:address, foaf:workplaceHomepage
 }

@@ -28,6 +28,8 @@ public class SkosConcept extends RdfResource {
   @XmlElement(namespace = SKOS_URI)
   String prefLabel;
 
+  // TODO: skos:inScheme
+
   @Builder
   public SkosConcept(String about, String resource, String prefLabel) {
     super(about, resource, null);

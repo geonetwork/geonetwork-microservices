@@ -90,6 +90,9 @@ public abstract class Base {
   @XmlElement(namespace = DCT_URI)
   List<FoafOrganization> creator = new ArrayList();
 
+  @XmlElement(namespace = DCT_URI)
+  List<FoafOrganization> rightsHolder = new ArrayList();
+
   /**
    * A type of organisation that acts as a publisher.
    */

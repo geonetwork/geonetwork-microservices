@@ -5,11 +5,9 @@
 
 package org.fao.geonet.index.model.dcat2;
 
-import static org.fao.geonet.index.model.dcat2.Namespaces.DCAT_URI;
-import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
-import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_URI;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +21,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+
+import static org.fao.geonet.index.model.dcat2.Namespaces.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -86,4 +86,56 @@ public class Resource extends Base {
    */
   @XmlElement(namespace = DCAT_URI)
   List<DcatRelationship> qualifiedRelation = new ArrayList();
+
+
+  /**
+   * Minimum spatial separation resolvable in a dataset, measured in meters.
+   *
+   * <p>If the dataset is an image or grid this should correspond to the spacing of items. For
+   * other kinds of spatial datasets, this property will usually indicate the smallest distance
+   * between items in the dataset.</p>
+   */
+  @XmlElement(namespace = DCAT_URI)
+  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
+
+  /**
+   * Minimum time period resolvable in the dataset.
+   *
+   * <p>
+   * If the dataset is a time-series this should correspond to the spacing of items in the series.
+   * For other kinds of dataset, this property will usually indicate the smallest time difference
+   * between items in the dataset.</p>
+   */
+  // TODO: Adapter
+  @XmlElement(namespace = DCAT_URI)
+  List<Duration> temporalResolution = new ArrayList();
+
+
+  /**
+   * The geographical area covered by the dataset.
+   */
+  @XmlElement(namespace = DCT_URI)
+  List<DctSpatial> spatial = new ArrayList<>();
+
+  @XmlElement(namespace = DCT_URI)
+  List<DctTemporal> temporal;
+
+  //  /**
+  //   * Represents the evaluation of a given resource
+  //   * (as a Data Service, Dataset, or Distribution)
+  //   * against a specific quality metric.
+  //   *
+  //   * In GeoDCAT-AP, this class corresponds to the notion of
+  //   * "spatial resolution", as defined in [INSPIRE-MD-REG],
+  //   * [ISO-19115], and [ISO-19115-1].
+  //   */
+  // TODO
+  //  @XmlElement(namespace = DQV_URI)
+  //  QualityMeasurement hasQualityMeasurement = new ArrayList();
+
+  @XmlElement(namespace = PROV_URI)
+  List<DcatActivity> wasUsedBy = new ArrayList();
+
+  @XmlElement(namespace = RDFS_URI)
+  List<String> comment = new ArrayList();
 }

@@ -75,6 +75,7 @@ public class Dataset extends Resource {
   //   */
   //  @XmlElement(name = "identifier", namespace = ADMS_URI)
   //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
+  // TODO: adms:identifier, adms:sample
 
   /**
    * This property contains a description of the differences between this version and a previous
@@ -100,33 +101,6 @@ public class Dataset extends Resource {
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> source = new ArrayList<>();
 
-  /**
-   * The geographical area covered by the dataset.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<DctSpatial> spatial = new ArrayList<>();
-
-  /**
-   * Minimum spatial separation resolvable in a dataset, measured in meters.
-   *
-   * <p>If the dataset is an image or grid this should correspond to the spacing of items. For
-   * other kinds of spatial datasets, this property will usually indicate the smallest distance
-   * between items in the dataset.</p>
-   */
-  @XmlElement(namespace = DCAT_URI)
-  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
-
-  /**
-   * Minimum time period resolvable in the dataset.
-   *
-   * <p>
-   * If the dataset is a time-series this should correspond to the spacing of items in the series.
-   * For other kinds of dataset, this property will usually indicate the smallest time difference
-   * between items in the dataset.</p>
-   */
-  // TODO: Adapter
-  @XmlElement(namespace = DCAT_URI)
-  List<Duration> temporalResolution = new ArrayList();
 
   /**
    * This property refers to the frequency at which the Dataset is updated.
@@ -137,29 +111,12 @@ public class Dataset extends Resource {
   @XmlElement(namespace = DCT_URI)
   RdfResource accrualPeriodicity;
 
-  @XmlElement(namespace = DCT_URI)
-  List<DctTemporal> temporal;
-
-
   /**
    * A statement of any changes in ownership and custody of a resource since its creation that are
    * significant for its authenticity, integrity, and interpretation.
    */
   @XmlElement(namespace = DCT_URI)
   List<Provenance> provenance;
-
-  //  /**
-  //   * Represents the evaluation of a given resource
-  //   * (as a Data Service, Dataset, or Distribution)
-  //   * against a specific quality metric.
-  //   *
-  //   * In GeoDCAT-AP, this class corresponds to the notion of
-  //   * "spatial resolution", as defined in [INSPIRE-MD-REG],
-  //   * [ISO-19115], and [ISO-19115-1].
-  //   */
-  // TODO
-  //  @XmlElement(namespace = DQV_URI)
-  //  QualityMeasurement hasQualityMeasurement = new ArrayList();
 
   /**
    * This property contains a version number or other version designation of the Dataset.
@@ -174,12 +131,4 @@ public class Dataset extends Resource {
   @XmlElement(namespace = PROV_URI)
   List<DcatActivity> wasGeneratedBy = new ArrayList();
 
-  @XmlElement(namespace = PROV_URI)
-  List<DcatActivity> wasUsedBy = new ArrayList();
-
-  @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> rightsHolder = new ArrayList();
-
-  @XmlElement(namespace = RDFS_URI)
-  List<String> comment = new ArrayList();
 }
