@@ -1,8 +1,11 @@
 package org.fao.geonet.ogcapi.records;
 
+import static springfox.documentation.builders.PathSelectors.regex;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +25,15 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @Configuration
+@EnableSwagger2
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class MvcConfigurer extends WebMvcConfigurerAdapter {
   @Value("${metadata.license.name}")
@@ -121,7 +125,11 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
         .select()
         .apis(RequestHandlerSelectors.basePackage(
             "org.fao.geonet.ogcapi.records.controller"))
-        .paths(PathSelectors.any())
+        .paths(documentedPaths())
         .build();
+  }
+
+  private Predicate<String> documentedPaths() {
+    return regex(servletContext.getContextPath() + "/.*");
   }
 }
