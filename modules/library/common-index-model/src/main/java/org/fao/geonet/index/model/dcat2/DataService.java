@@ -8,6 +8,7 @@ package org.fao.geonet.index.model.dcat2;
 import static org.fao.geonet.index.model.dcat2.Namespaces.DCAT_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,7 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import java.util.List;
 
 @XmlRootElement(namespace = DCAT_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
