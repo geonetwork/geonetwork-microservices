@@ -13,6 +13,7 @@ import org.fao.geonet.domain.Language;
 import org.fao.geonet.repository.IsoLanguageRepository;
 import org.fao.geonet.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -31,6 +32,12 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class MvcConfigurer extends WebMvcConfigurerAdapter {
+  @Value("${metadata.license.name}")
+  String licenseName;
+
+  @Value("${metadata.license.url}")
+  String licenseUrl;
+
   @Autowired
   LanguageRepository languageRepository;
 
@@ -107,6 +114,8 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
             .title("OGC API Records")
             .description("An API to create, modify, and query metadata on the Web. ")
             .version("0.1")
+            .license(licenseName)
+            .licenseUrl(licenseUrl)
             .build())
         .tags(new Tag("OGC API Records", "Endpoints for OGC API Records API"))
         .select()

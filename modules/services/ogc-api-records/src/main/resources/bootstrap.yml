@@ -43,7 +43,7 @@ spring:
   rabbitmq.host: localhost
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/geonetwork
+    url: jdbc:postgresql://localhost:5432/GN4
     username: postgres
     password: postgres
   jpa:
@@ -81,3 +81,8 @@ logging:
     org.fao.geonet: INFO
     org.fao.geonet.ogcapi: DEBUG
     org.fao.geonet.searching: DEBUG
+
+metadata:
+  license:
+    name: GNU General Public License v2.0
+    url: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
