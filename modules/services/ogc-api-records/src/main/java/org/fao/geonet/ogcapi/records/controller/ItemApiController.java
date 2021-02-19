@@ -9,12 +9,17 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +28,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -38,10 +44,10 @@ import org.fao.geonet.index.JsonUtils;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
-import org.fao.geonet.ogcapi.records.RecordApi;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
+import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.fao.geonet.ogcapi.records.util.XmlUtil;
 import org.fao.geonet.repository.MetadataRepository;
@@ -56,16 +62,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import springfox.documentation.annotations.ApiIgnore;
 
+
+@Api(tags = "OGC API Records")
 @Controller
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
-public class ItemApiController implements RecordApi {
+public class ItemApiController {
 
   @Autowired
   ElasticSearchProxy proxy;
@@ -73,6 +83,8 @@ public class ItemApiController implements RecordApi {
   MetadataRepository metadataRepository;
   @Autowired
   ViewUtility viewUtility;
+  @Autowired
+  ViewResolver viewResolver;
   @Autowired
   CollectionService collectionService;
   @Autowired
@@ -82,23 +94,38 @@ public class ItemApiController implements RecordApi {
   @Autowired
   SearchConfiguration searchConfiguration;
 
+
   /**
-   * Only to support sample responses from {@link RecordApi}, remove once all its methods are
-   * implemented.
+   * Describe a collection item.
+   *
    */
-  @Autowired
-  private NativeWebRequest nativeWebRequest;
-
-  @Override
-  public Optional<NativeWebRequest> getRequest() {
-    return Optional.of(nativeWebRequest);
-  }
-
-
-  @Override
+  @io.swagger.v3.oas.annotations.Operation(
+      summary = "Describe a collection item.",
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
+  @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE,
+          MediaType.TEXT_HTML_VALUE,
+          MediaType.APPLICATION_RSS_XML_VALUE,
+          MediaType.APPLICATION_ATOM_XML_VALUE,
+          GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE,
+          MediaType.APPLICATION_XML_VALUE,
+          GnMediaType.APPLICATION_GN_XML_VALUE,
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
+          GnMediaType.TEXT_TURTLE_VALUE})
+  @ResponseStatus(HttpStatus.OK)
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Describe a collection item.")
+  })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGet(
-      String collectionId,
-      String recordId) {
+      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
+      @PathVariable("collectionId") String collectionId,
+      @ApiParam(value = "Identifier (name) of a specific record", required = true)
+      @PathVariable("recordId")String recordId,
+      @ApiIgnore HttpServletRequest request,
+      @ApiIgnore HttpServletResponse response,
+      @ApiIgnore Model model) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
@@ -106,55 +133,128 @@ public class ItemApiController implements RecordApi {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND,
           messages.getMessage("ogcapir.exception.collection.notFound",
               new String[]{collectionId},
-              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+              request.getLocale()));
     }
 
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
-    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
+    List<MediaType> allowedMediaTypes =
+        ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
+            MediaTypeUtil.jsonLdSupportedMediaTypes);
 
-    try {
-      JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "json");
+    MediaType mediaType =
+        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
-      streamResult(response,
-          record.toPrettyString(),
-          MediaType.APPLICATION_JSON_VALUE);
-      return ResponseEntity.ok().build();
-    } catch (Exception ex) {
-      // TODO: Log exception
-      throw new RuntimeException(ex);
+
+    if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+      try {
+        JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "json");
+
+        streamResult(response,
+            record.toPrettyString(),
+            MediaType.APPLICATION_JSON_VALUE);
+        return ResponseEntity.ok().build();
+      } catch (Exception ex) {
+        // TODO: Log exception
+        throw new RuntimeException(ex);
+      }
+
+    } else if (MediaTypeUtil.jsonLdSupportedMediaTypes.contains(mediaType)) {
+      return collectionsCollectionIdItemsRecordIdGetAsJsonLd(collectionId, recordId,
+          mediaType.toString(), request, response);
+
+    } else if (MediaTypeUtil.xmlDcatMediaTypes.contains(mediaType)) {
+      return collectionsCollectionIdItemsRecordIdGetAsXml(collectionId, recordId,
+          request, response);
+
+    } else {
+      return collectionsCollectionIdItemsRecordIdGetAsHtml(collectionId, recordId,
+          request, response, model);
     }
-
   }
 
+
   /**
-   * Collection item as JSON.
+   * Describe the collection items.
+   *
    */
-  @GetMapping(
-      value = "/collections/{collectionId}/items/{recordId}",
+  @io.swagger.v3.oas.annotations.Operation(
+      summary = "Describe the collection items.",
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
+  @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
+          MediaType.APPLICATION_XML_VALUE,
+          MediaType.APPLICATION_JSON_VALUE,
           GnMediaType.APPLICATION_JSON_LD_VALUE,
-          GnMediaType.TEXT_TURTLE_VALUE,
-          GnMediaType.APPLICATION_RDF_XML_VALUE
+          MediaType.APPLICATION_RSS_XML_VALUE,
+          MediaType.TEXT_HTML_VALUE
       })
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
+  @ResponseStatus(HttpStatus.OK)
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Describe a collection item.")
+  })
+  public ResponseEntity<Void> collectionsCollectionIdItemsGet(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId")
           String collectionId,
-      @ApiParam(value = "Identifier (name) of a specific record", required = true)
-      @PathVariable("recordId")
-          String recordId,
-      @RequestHeader("Accept")
-          String acceptHeader,
+      @ApiParam(value = "")
+      @RequestParam(value = "bbox", required = false)
+          List<BigDecimal> bbox,
+      @ApiParam(value = "")
+      @RequestParam(value = "datetime", required = false)
+          String datetime,
+      @ApiParam(value = "", defaultValue = "10")
+      @RequestParam(value = "limit", required = false, defaultValue = "10")
+          Integer limit,
+      @ApiParam(value = "", defaultValue = "0")
+      @RequestParam(value = "startindex", required = false, defaultValue = "0")
+          Integer startindex,
+      @ApiParam(value = "")
+      @RequestParam(value = "type", required = false)
+          String type,
+      @ApiParam(value = "")
+      @RequestParam(value = "q", required = false)
+          List<String> q,
+      @ApiParam(value = "")
+      @RequestParam(value = "externalids", required = false)
+          List<String> externalids,
+      @ApiParam(value = "")
+      @RequestParam(value = "sortby", required = false)
+          List<String> sortby,
+      @ApiIgnore HttpServletRequest request,
+      @ApiIgnore HttpServletResponse response,
+      @ApiIgnore Model model) throws Exception {
+
+    List<MediaType> allowedMediaTypes =
+        ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
+            Arrays.asList(GnMediaType.APPLICATION_JSON_LD, MediaType.APPLICATION_RSS_XML));
+    MediaType mediaType =
+        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
+
+    if (mediaType.equals(MediaType.APPLICATION_XML)
+        || mediaType.equals(MediaType.APPLICATION_JSON)
+        || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
+        || mediaType.equals(MediaType.APPLICATION_RSS_XML)) {
+
+      return collectionsCollectionIdItemsGetInternal(
+          collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby,
+          request, response);
+
+    } else {
+      return collectionsCollectionIdItemsGetAsHtml(collectionId, bbox, datetime, limit,
+          startindex, type, q, externalids, sortby, request, response, model);
+    }
+  }
+
+
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
+      String collectionId,
+      String recordId,
+      String acceptHeader,
       HttpServletRequest request,
       HttpServletResponse response) {
-    Source source = collectionService.retrieveSourceForCollection(collectionId);
 
-    if (source == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-          messages.getMessage("ogcapir.exception.collection.notFound",
-              new String[]{collectionId},
-              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
-    }
+    Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     try {
       JsonNode record = getRecordAsJson(collectionId, recordId, request, source, "schema.org");
@@ -186,56 +286,10 @@ public class ItemApiController implements RecordApi {
 
   }
 
-  private JsonNode getRecordAsJson(
+
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
       String collectionId,
       String recordId,
-      HttpServletRequest request,
-      Source source,
-      String type) throws Exception {
-    String collectionFilter = collectionService.retrieveCollectionFilter(source);
-    String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
-
-    String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
-    ObjectMapper mapper = new ObjectMapper();
-    JsonFactory factory = mapper.getFactory();
-    JsonParser parser = factory.createParser(queryResponse);
-    JsonNode actualObj = mapper.readTree(parser);
-
-    JsonNode totalValue =
-        "json".equals(type)
-            ? actualObj.get("hits").get("total").get("value")
-            : actualObj.get("size");
-
-    if ((totalValue == null) || (totalValue.intValue() == 0)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-          messages.getMessage("ogcapir.exception.collectionItem.notFound",
-              new String[]{recordId, collectionId},
-              ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
-    }
-
-    return "json".equals(type)
-        ? actualObj.get("hits").get("hits").get(0)
-        : actualObj.get("dataFeedElement").get(0);
-  }
-
-  /**
-   * Collection item as XML / DCAT.
-   */
-  @GetMapping(
-      value = "/collections/{collectionId}/items/{recordId}",
-      produces = {
-          MediaType.APPLICATION_XML_VALUE,
-          GnMediaType.APPLICATION_GN_XML_VALUE,
-          GnMediaType.APPLICATION_DCAT2_XML_VALUE
-      })
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
-      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
-      @PathVariable("collectionId")
-          String collectionId,
-      @ApiParam(value = "Identifier (name) of a specific record", required = true)
-      @PathVariable("recordId")
-          String recordId,
       HttpServletRequest request,
       HttpServletResponse response) {
 
@@ -262,7 +316,7 @@ public class ItemApiController implements RecordApi {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,
             messages.getMessage("ogcapir.exception.collectionItem.notFound",
                 new String[]{recordId, collectionId},
-                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+                request.getLocale()));
       }
 
       Node metadataResult = queryResult.getChildNodes().item(0).getFirstChild();
@@ -278,22 +332,11 @@ public class ItemApiController implements RecordApi {
   }
 
 
-  /**
-   * Collection item as HTML.
-   */
-  @GetMapping(
-      value = "/collections/{collectionId}/items/{recordId}",
-      produces = {
-          MediaType.TEXT_HTML_VALUE,
-          MediaType.ALL_VALUE
-      })
-  public String collectionsCollectionIdItemsRecordIdGetAsHtml(
-      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
-      @PathVariable("collectionId")
-          String collectionId,
-      @ApiParam(value = "Identifier (name) of a specific record", required = true)
-      @PathVariable("recordId")
-          String recordId, HttpServletRequest request,
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsHtml(
+      String collectionId,
+      String recordId,
+      HttpServletRequest request,
+      HttpServletResponse response,
       Model model) {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
@@ -311,7 +354,7 @@ public class ItemApiController implements RecordApi {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,
             messages.getMessage("ogcapir.exception.collectionItem.notFound",
                 new String[]{recordId, collectionId},
-                ((HttpServletRequest) nativeWebRequest.getNativeRequest()).getLocale()));
+                request.getLocale()));
       }
 
       XsltModel modelSource = new XsltModel();
@@ -335,7 +378,11 @@ public class ItemApiController implements RecordApi {
 
       model.addAttribute("source", modelSource.toSource());
       viewUtility.addi18n(model, locale, List.of(record.getDataInfo().getSchemaId()), request);
-      return "ogcapir/item";
+
+      View view = viewResolver.resolveViewName("ogcapir/item", locale);
+      view.render(model.asMap(), request, response);
+
+      return ResponseEntity.ok().build();
     } catch (Exception ex) {
       // TODO: Log exception
       throw new RuntimeException(ex);
@@ -343,46 +390,39 @@ public class ItemApiController implements RecordApi {
   }
 
 
-  /**
-   * Collection items as XML.
-   *
-   * <p>In RSS, By default RSS feed is sorted by record
-   * change date unless you defined a custom sort parameter.
-   */
-  @GetMapping(value = "/collections/{collectionId}/items",
-      produces = {
-          MediaType.APPLICATION_JSON_VALUE,
-          GnMediaType.APPLICATION_JSON_LD_VALUE,
-          MediaType.APPLICATION_RSS_XML_VALUE})
-  @Override
-  // TODO: support datetime, type, q, externalids
-  public ResponseEntity<Void> collectionsCollectionIdItemsGet(
+  private JsonNode getRecordAsJson(
       String collectionId,
-      List<BigDecimal> bbox,
-      String datetime,
-      Integer limit,
-      Integer startindex,
-      String type,
-      List<String> q,
-      List<String> externalids,
-      List<String> sortby) {
+      String recordId,
+      HttpServletRequest request,
+      Source source,
+      String type) throws Exception {
+    String collectionFilter = collectionService.retrieveCollectionFilter(source);
+    String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
-    HttpServletResponse response = ((HttpServletResponse) nativeWebRequest.getNativeResponse());
+    String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
 
-    sortby = setDefaultRssSortBy(sortby, request);
+    ObjectMapper mapper = new ObjectMapper();
+    JsonFactory factory = mapper.getFactory();
+    JsonParser parser = factory.createParser(queryResponse);
+    JsonNode actualObj = mapper.readTree(parser);
 
-    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
-        externalids, sortby);
+    JsonNode totalValue =
+        "json".equals(type)
+            ? actualObj.get("hits").get("total").get("value")
+            : actualObj.get("size");
 
-    try {
-      streamResult(response, queryResponse, getResponseContentType(request));
-    } catch (IOException ioException) {
-      throw new RuntimeException(ioException);
+    if ((totalValue == null) || (totalValue.intValue() == 0)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          messages.getMessage("ogcapir.exception.collectionItem.notFound",
+              new String[]{recordId, collectionId},
+              request.getLocale()));
     }
 
-    return ResponseEntity.ok().build();
+    return "json".equals(type)
+        ? actualObj.get("hits").get("hits").get(0)
+        : actualObj.get("dataFeedElement").get(0);
   }
+
 
   private List<String> setDefaultRssSortBy(List<String> sortby, HttpServletRequest request) {
     if ("rss".equals(request.getParameter("f"))
@@ -394,6 +434,7 @@ public class ItemApiController implements RecordApi {
     return sortby;
   }
 
+
   private String search(
       String collectionId,
       List<BigDecimal> bbox,
@@ -403,15 +444,14 @@ public class ItemApiController implements RecordApi {
       String type,
       List<String> q,
       List<String> externalids,
-      List<String> sortby) {
+      List<String> sortby,
+      HttpServletRequest request) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
     }
-
-    HttpServletRequest request = ((HttpServletRequest) nativeWebRequest.getNativeRequest());
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = recordsEsQueryBuilder
@@ -425,85 +465,51 @@ public class ItemApiController implements RecordApi {
   }
 
 
-  /**
-   * Collection items as XML.
-   */
-  @GetMapping(value = "/collections/{collectionId}/items",
-      produces = {
-          MediaType.APPLICATION_XML_VALUE
-      })
-  public ResponseEntity<Void> collectionsCollectionIdItemsGetAsXml(
-      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
-      @PathVariable("collectionId")
-          String collectionId,
-      @ApiParam(value = "")
-      @RequestParam(value = "bbox", required = false)
-          List<BigDecimal> bbox,
-      @ApiParam(value = "")
-      @RequestParam(value = "datetime", required = false)
-          String datetime,
-      @ApiParam(value = "", defaultValue = "10")
-      @RequestParam(value = "limit", required = false, defaultValue = "10")
-          Integer limit,
-      @ApiParam(value = "", defaultValue = "0")
-      @RequestParam(value = "startindex", required = false, defaultValue = "0")
-          Integer startindex,
-      @ApiParam(value = "")
-      @RequestParam(value = "type", required = false)
-          String type,
-      @ApiParam(value = "")
-      @RequestParam(value = "q", required = false)
-          List<String> q,
-      @ApiParam(value = "")
-      @RequestParam(value = "externalids", required = false)
-          List<String> externalids,
-      @ApiParam(value = "")
-      @RequestParam(value = "sortby", required = false)
-          List<String> sortby) {
+  private ResponseEntity<Void> collectionsCollectionIdItemsGetInternal(
+      String collectionId,
+      List<BigDecimal> bbox,
+      String datetime,
+      Integer limit,
+      Integer startindex,
+      String type,
+      List<String> q,
+      List<String> externalids,
+      List<String> sortby,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
-    return collectionsCollectionIdItemsGet(
-        collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby);
+    sortby = setDefaultRssSortBy(sortby, request);
+
+    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
+        externalids, sortby, request);
+
+    try {
+      streamResult(response, queryResponse, getResponseContentType(request));
+    } catch (IOException ioException) {
+      throw new RuntimeException(ioException);
+    }
+
+    return ResponseEntity.ok().build();
   }
 
 
   /**
    * Collection items as HTML.
    */
-  @GetMapping(value = "/collections/{collectionId}/items",
-      produces = {
-          MediaType.TEXT_HTML_VALUE,
-          MediaType.ALL_VALUE
-      })
-  public String collectionsCollectionIdItemsGetAsHtml(
-      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
-      @PathVariable("collectionId")
-          String collectionId,
-      @ApiParam(value = "")
-      @RequestParam(value = "bbox", required = false)
-          List<BigDecimal> bbox,
-      @ApiParam(value = "")
-      @RequestParam(value = "datetime", required = false)
-          String datetime,
-      @ApiParam(value = "", defaultValue = "10")
-      @RequestParam(value = "limit", required = false, defaultValue = "10")
-          Integer limit,
-      @ApiParam(value = "", defaultValue = "0")
-      @RequestParam(value = "startindex", required = false, defaultValue = "0")
-          Integer startindex,
-      @ApiParam(value = "")
-      @RequestParam(value = "type", required = false)
-          String type,
-      @ApiParam(value = "")
-      @RequestParam(value = "q", required = false)
-          List<String> q,
-      @ApiParam(value = "")
-      @RequestParam(value = "externalids", required = false)
-          List<String> externalids,
-      @ApiParam(value = "")
-      @RequestParam(value = "sortby", required = false)
-          List<String> sortby,
-      Model model,
-      HttpServletRequest request) {
+  private ResponseEntity<Void> collectionsCollectionIdItemsGetAsHtml(
+      String collectionId,
+      List<BigDecimal> bbox,
+      String datetime,
+      Integer limit,
+      Integer startindex,
+      String type,
+      List<String> q,
+      List<String> externalids,
+      List<String> sortby,
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Model model) throws Exception {
+
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
@@ -538,7 +544,11 @@ public class ItemApiController implements RecordApi {
     modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.items));
     model.addAttribute("source", modelSource.toSource());
     viewUtility.addi18n(model, locale, request);
-    return "ogcapir/collection";
+
+    View view = viewResolver.resolveViewName("ogcapir/collection", locale);
+    view.render(model.asMap(), request, response);
+
+    return ResponseEntity.ok().build();
   }
 
 

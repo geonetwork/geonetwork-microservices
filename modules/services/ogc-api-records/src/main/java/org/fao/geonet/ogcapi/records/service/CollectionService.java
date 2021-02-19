@@ -80,8 +80,8 @@ public class CollectionService {
   /**
    * Retrieves the sortables related to a collection from the user interface configuration.
    */
-  public List<Object> getSortables(Source source) {
-    List<Object> sortables = new ArrayList<>();
+  public List<String> getSortables(Source source) {
+    List<String> sortables = new ArrayList<>();
 
     Optional<UiSetting> uiSetting = null;
     if (source.getType() == SourceType.portal) {

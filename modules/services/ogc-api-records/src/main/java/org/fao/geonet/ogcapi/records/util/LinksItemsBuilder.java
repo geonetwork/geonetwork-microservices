@@ -2,7 +2,7 @@ package org.fao.geonet.ogcapi.records.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.springframework.http.MediaType;
 
 public class LinksItemsBuilder {
@@ -20,7 +20,7 @@ public class LinksItemsBuilder {
     List<Link> links = new ArrayList<>();
     links.add(currentDoc);
 
-    for (MediaType supportedMediaType : MediaTypeUtil.supportedMediaTypes) {
+    for (MediaType supportedMediaType : MediaTypeUtil.defaultSupportedMediaTypes) {
       if (!supportedMediaType.equals(mediaType)) {
         Link alternateDoc = new Link();
         alternateDoc.setRel("alternate");
