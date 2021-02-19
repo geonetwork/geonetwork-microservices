@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -19,8 +20,10 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
@@ -28,7 +31,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class MvcConfigurer extends WebMvcConfigurerAdapter {
-
   @Autowired
   LanguageRepository languageRepository;
 
@@ -37,6 +39,9 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Autowired
   SearchConfiguration searchConfiguration;
+
+  @Autowired
+  ServletContext servletContext;
 
   @Override
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -98,6 +103,12 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
+        .apiInfo(new ApiInfoBuilder()
+            .title("OGC API Records")
+            .description("An API to create, modify, and query metadata on the Web. ")
+            .version("0.1")
+            .build())
+        .tags(new Tag("OGC API Records", "Endpoints for OGC API Records API"))
         .select()
         .apis(RequestHandlerSelectors.basePackage(
             "org.fao.geonet.ogcapi.records.controller"))

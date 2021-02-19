@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -70,8 +72,7 @@ import org.w3c.dom.Node;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-@Tag(name = "item-api-controller",
-    description = "Collection items API operations")
+@Api(tags = "OGC API Records")
 @Controller
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class ItemApiController {
@@ -111,7 +112,8 @@ public class ItemApiController {
           GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE,
           MediaType.APPLICATION_XML_VALUE,
           GnMediaType.APPLICATION_GN_XML_VALUE,
-          GnMediaType.APPLICATION_DCAT2_XML_VALUE})
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
+          GnMediaType.TEXT_TURTLE_VALUE})
   @ResponseStatus(HttpStatus.OK)
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Describe a collection item.")
@@ -185,8 +187,7 @@ public class ItemApiController {
           MediaType.APPLICATION_JSON_VALUE,
           GnMediaType.APPLICATION_JSON_LD_VALUE,
           MediaType.APPLICATION_RSS_XML_VALUE,
-          MediaType.TEXT_HTML_VALUE,
-          MediaType.ALL_VALUE
+          MediaType.TEXT_HTML_VALUE
       })
   @ResponseStatus(HttpStatus.OK)
   @ApiResponses(value = {
@@ -224,8 +225,11 @@ public class ItemApiController {
       @ApiIgnore HttpServletResponse response,
       @ApiIgnore Model model) throws Exception {
 
+    List<MediaType> allowedMediaTypes =
+        ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
+            Arrays.asList(GnMediaType.APPLICATION_JSON_LD, MediaType.APPLICATION_RSS_XML));
     MediaType mediaType =
-        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
+        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     if (mediaType.equals(MediaType.APPLICATION_XML)
         || mediaType.equals(MediaType.APPLICATION_JSON)

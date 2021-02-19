@@ -5,6 +5,7 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,8 +42,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import springfox.documentation.annotations.ApiIgnore;
 
-@Tag(name = "capabilities-api-controller",
-    description = "Capabilities API operations")
+@Api(tags = "OGC API Records")
 @Controller
 public class CapabilitiesApiController {
 
