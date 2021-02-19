@@ -100,7 +100,8 @@ public class ItemApiController {
   RecordsEsQueryBuilder recordsEsQueryBuilder;
   @Autowired
   SearchConfiguration searchConfiguration;
-
+  @Autowired
+  MediaTypeUtil mediaTypeUtil;
 
   /**
    * Describe a collection item.
@@ -147,7 +148,7 @@ public class ItemApiController {
             MediaTypeUtil.ldSupportedMediaTypes);
 
     MediaType mediaType =
-        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
+        mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
 
     if (mediaType.equals(MediaType.APPLICATION_JSON)) {
@@ -235,7 +236,7 @@ public class ItemApiController {
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
             Arrays.asList(GnMediaType.APPLICATION_JSON_LD, MediaType.APPLICATION_RSS_XML));
     MediaType mediaType =
-        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
+        mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     if (mediaType.equals(MediaType.APPLICATION_XML)
         || mediaType.equals(MediaType.APPLICATION_JSON)
