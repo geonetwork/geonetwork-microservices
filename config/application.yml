@@ -9,6 +9,8 @@ gn:
   index:
     url: http://elasticsearch:9200
     records: gn-records
+    username:
+    password:
   indexing:
     batch.size: 40
     threadPool.size: 20

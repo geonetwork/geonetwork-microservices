@@ -18,7 +18,7 @@
   </parent>
   <artifactId>gn-cloud-services</artifactId>
   <packaging>pom</packaging>
-  <name>gn-cloud-services</name>
+  <name>GeoNetwork services</name>
   <description>Parent pom for geonetwork micro services</description>
 
   <dependencies>

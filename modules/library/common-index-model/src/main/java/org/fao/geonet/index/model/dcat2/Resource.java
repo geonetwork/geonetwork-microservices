@@ -5,24 +5,24 @@
 
 package org.fao.geonet.index.model.dcat2;
 
+import static org.fao.geonet.index.model.dcat2.Namespaces.DCAT_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.RDFS_URI;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-
-import static org.fao.geonet.index.model.dcat2.Namespaces.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
