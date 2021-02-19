@@ -1,23 +1,19 @@
-package org.fao.geonet.ogcapi.records.rest.ogc.model;
+package org.fao.geonet.ogcapi.records.controller.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
-import org.openapitools.jackson.nullable.JsonNullable;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import javax.xml.bind.annotation.*;
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * CollectionInfo
+ * CollectionInfo entity.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-18T08:34:42.274802+01:00[Europe/Madrid]")
 @JacksonXmlRootElement(localName = "CollectionInfo")
 @XmlRootElement(name = "CollectionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,10 +50,10 @@ public class CollectionInfo   {
   }
 
   /**
-   * identifier of the collection used, for example, in URIs
-   * @return name
-  */
-  @ApiModelProperty(example = "buildings", required = true, value = "identifier of the collection used, for example, in URIs")
+   * Identifier of the collection used, for example, in URIs.
+   */
+  @ApiModelProperty(example = "buildings", required = true,
+      value = "identifier of the collection used, for example, in URIs")
   public String getName() {
     return name;
   }
@@ -72,9 +68,8 @@ public class CollectionInfo   {
   }
 
   /**
-   * human readable title of the collection
-   * @return title
-  */
+   * Human readable title of the collection.
+   */
   @ApiModelProperty(example = "Buildings", value = "human readable title of the collection")
   public String getTitle() {
     return title;
@@ -90,10 +85,10 @@ public class CollectionInfo   {
   }
 
   /**
-   * a description of the data in the collection
-   * @return description
-  */
-  @ApiModelProperty(example = "Buildings in the city of Bonn.", value = "a description of the data in the collection")
+   * A description of the data in the collection.
+   */
+  @ApiModelProperty(example = "Buildings in the city of Bonn.",
+      value = "a description of the data in the collection")
   public String getDescription() {
     return description;
   }
@@ -113,9 +108,8 @@ public class CollectionInfo   {
   }
 
   /**
-   * Get links
-   * @return links
-  */
+   * Get links.
+   */
   @ApiModelProperty(example = "[{\"href\":\"http://data.example.org/collections/buildings/items\",\"rel\":\"item\",\"type\":\"application/geo+json\",\"title\":\"Buildings\"},{\"href\":\"http://example.org/concepts/building.html\",\"rel\":\"describedBy\",\"type\":\"text/html\",\"title\":\"Coverage for buildings\"}]", required = true, value = "")
   public List<Link> getLinks() {
     return links;
@@ -131,9 +125,8 @@ public class CollectionInfo   {
   }
 
   /**
-   * Get extent
-   * @return extent
-  */
+   * Get extent.
+   */
   @ApiModelProperty(value = "")
   public Extent getExtent() {
     return extent;
@@ -148,6 +141,9 @@ public class CollectionInfo   {
     return this;
   }
 
+  /**
+   * Adds a CrsItem.
+   */
   public CollectionInfo addCrsItem(String crsItem) {
     if (this.crs == null) {
       this.crs = new ArrayList<>();
@@ -157,9 +153,11 @@ public class CollectionInfo   {
   }
 
   /**
-   * The coordinate reference systems in which geometries may be retrieved. Coordinate reference systems are identified by a URI. The first coordinate reference system is the coordinate reference system that is used by default. This is always \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\", i.e. WGS84 longitude/latitude.
-   * @return crs
-  */
+   * The coordinate reference systems in which geometries may be retrieved. Coordinate reference
+   * systems are identified by a URI. The first coordinate reference system is the coordinate
+   * reference system that is used by default. This is always
+   * \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\", i.e. WGS84 longitude/latitude.
+   */
   @ApiModelProperty(value = "The coordinate reference systems in which geometries may be retrieved. Coordinate reference systems are identified by a URI. The first coordinate reference system is the coordinate reference system that is used by default. This is always \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\", i.e. WGS84 longitude/latitude.")
   public List<String> getCrs() {
     return crs;
@@ -179,12 +177,12 @@ public class CollectionInfo   {
       return false;
     }
     CollectionInfo collectionInfo = (CollectionInfo) o;
-    return Objects.equals(this.name, collectionInfo.name) &&
-        Objects.equals(this.title, collectionInfo.title) &&
-        Objects.equals(this.description, collectionInfo.description) &&
-        Objects.equals(this.links, collectionInfo.links) &&
-        Objects.equals(this.extent, collectionInfo.extent) &&
-        Objects.equals(this.crs, collectionInfo.crs);
+    return Objects.equals(this.name, collectionInfo.name)
+        && Objects.equals(this.title, collectionInfo.title)
+        && Objects.equals(this.description, collectionInfo.description)
+        && Objects.equals(this.links, collectionInfo.links)
+        && Objects.equals(this.extent, collectionInfo.extent)
+        && Objects.equals(this.crs, collectionInfo.crs);
   }
 
   @Override

@@ -1,22 +1,19 @@
-package org.fao.geonet.ogcapi.records.rest.ogc.model;
+package org.fao.geonet.ogcapi.records.controller.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
-import org.openapitools.jackson.nullable.JsonNullable;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import javax.xml.bind.annotation.*;
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Root
+ * Root entity.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-18T08:34:42.274802+01:00[Europe/Madrid]")
 @JacksonXmlRootElement(localName = "Root")
 @XmlRootElement(name = "Root")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -37,9 +34,8 @@ public class Root   {
   }
 
   /**
-   * Get links
-   * @return links
-  */
+   * Get links.
+   */
   @ApiModelProperty(example = "[{\"href\":\"http://data.example.org/\",\"rel\":\"self\",\"type\":\"application/json\",\"title\":\"this document\"},{\"href\":\"http://data.example.org/api\",\"rel\":\"service\",\"type\":\"application/openapi+json;version=3.0\",\"title\":\"the API definition\"},{\"href\":\"http://data.example.org/conformance\",\"rel\":\"conformance\",\"type\":\"application/json\",\"title\":\"OGC conformance classes implemented by this API\"},{\"href\":\"http://data.example.org/collections\",\"title\":\"Metadata about the resource collections\"}]", required = true, value = "")
   public List<Link> getLinks() {
     return links;

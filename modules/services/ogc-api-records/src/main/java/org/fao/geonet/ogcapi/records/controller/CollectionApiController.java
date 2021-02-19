@@ -1,6 +1,9 @@
 package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
@@ -11,9 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.collections.ListUtils;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
@@ -21,8 +21,8 @@ import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -73,11 +73,14 @@ public class CollectionApiController {
   private SearchConfiguration configuration;
 
 
+  /**
+   * Describe a collection.
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Describe a collection.",
-      description = "Collection Information is the set of metadata that describes a " +
-          "single collection. An abbreviated copy of this information is returned for each " +
-          "Collection in the /collections response.")
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
   @GetMapping(value = "/collections/{collectionId}",
       produces = {MediaType.APPLICATION_JSON_VALUE,
           MediaType.APPLICATION_XML_VALUE,
@@ -89,9 +92,8 @@ public class CollectionApiController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Describe a collection.")
   })
-  public
   @ResponseBody
-  ResponseEntity<CollectionInfo> describeCollection(
+  public ResponseEntity<CollectionInfo> describeCollection(
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId") String collectionId,
       @ApiIgnore HttpServletRequest request,
@@ -188,11 +190,14 @@ public class CollectionApiController {
   }
 
 
+  /**
+   * Describe of the sorting capabilities offered on a collection.
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Describe of the sorting capabilities offered on a collection.",
-      description = "Collection Information is the set of metadata that describes a " +
-          "single collection. An abbreviated copy of this information is returned for each " +
-          "Collection in the /collections response.")
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
   @GetMapping(value = "/collections/{collectionId}/sortables",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   @ResponseBody

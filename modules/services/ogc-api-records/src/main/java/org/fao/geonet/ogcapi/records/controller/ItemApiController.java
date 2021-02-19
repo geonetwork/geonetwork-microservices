@@ -10,6 +10,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,8 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
@@ -68,6 +69,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import springfox.documentation.annotations.ApiIgnore;
 
+
+@Tag(name = "item-api-controller",
+    description = "Collection items API operations")
 @Controller
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class ItemApiController {
@@ -90,12 +94,16 @@ public class ItemApiController {
   SearchConfiguration searchConfiguration;
 
 
+  /**
+   * Describe a collection item.
+   *
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Describe a collection item.",
-      description = "Collection Information is the set of metadata that describes a " +
-          "single collection. An abbreviated copy of this information is returned for each " +
-          "Collection in the /collections response.")
-  @GetMapping(value ="/collections/{collectionId}/items/{recordId}",
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
+  @GetMapping(value = "/collections/{collectionId}/items/{recordId}",
       produces = {MediaType.APPLICATION_JSON_VALUE,
           MediaType.TEXT_HTML_VALUE,
           MediaType.APPLICATION_RSS_XML_VALUE,
@@ -109,9 +117,9 @@ public class ItemApiController {
       @ApiResponse(responseCode = "200", description = "Describe a collection item.")
   })
   public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGet(
-      @ApiParam(value = "Identifier (name) of a specific collection",required=true)
+      @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId") String collectionId,
-      @ApiParam(value = "Identifier (name) of a specific record",required=true)
+      @ApiParam(value = "Identifier (name) of a specific record", required = true)
       @PathVariable("recordId")String recordId,
       @ApiIgnore HttpServletRequest request,
       @ApiIgnore HttpServletResponse response,
@@ -148,22 +156,29 @@ public class ItemApiController {
       }
 
     } else if (MediaTypeUtil.jsonLdSupportedMediaTypes.contains(mediaType)) {
-      return collectionsCollectionIdItemsRecordIdGetAsJsonLd(collectionId, recordId, mediaType.toString(), request, response);
+      return collectionsCollectionIdItemsRecordIdGetAsJsonLd(collectionId, recordId,
+          mediaType.toString(), request, response);
 
     } else if (MediaTypeUtil.xmlDcatMediaTypes.contains(mediaType)) {
-      return collectionsCollectionIdItemsRecordIdGetAsXml(collectionId, recordId, request, response);
+      return collectionsCollectionIdItemsRecordIdGetAsXml(collectionId, recordId,
+          request, response);
 
     } else {
-      return collectionsCollectionIdItemsRecordIdGetAsHtml(collectionId, recordId, request, response, model);
+      return collectionsCollectionIdItemsRecordIdGetAsHtml(collectionId, recordId,
+          request, response, model);
     }
   }
 
 
+  /**
+   * Describe the collection items.
+   *
+   */
   @io.swagger.v3.oas.annotations.Operation(
-      summary = "Describe the collection item.",
-      description = "Collection Information is the set of metadata that describes a " +
-          "single collection. An abbreviated copy of this information is returned for each " +
-          "Collection in the /collections response.")
+      summary = "Describe the collection items.",
+      description = "Collection Information is the set of metadata that describes a "
+          + "single collection. An abbreviated copy of this information is returned for each "
+          + "Collection in the /collections response.")
   @GetMapping(value = "/collections/{collectionId}/items",
       produces = {
           MediaType.APPLICATION_XML_VALUE,
@@ -212,13 +227,14 @@ public class ItemApiController {
     MediaType mediaType =
         MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
-    if (mediaType.equals(MediaType.APPLICATION_XML) ||
-        mediaType.equals(MediaType.APPLICATION_JSON) ||
-        mediaType.equals(GnMediaType.APPLICATION_JSON_LD) ||
-        mediaType.equals(MediaType.APPLICATION_RSS_XML)) {
+    if (mediaType.equals(MediaType.APPLICATION_XML)
+        || mediaType.equals(MediaType.APPLICATION_JSON)
+        || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
+        || mediaType.equals(MediaType.APPLICATION_RSS_XML)) {
 
       return collectionsCollectionIdItemsGetInternal(
-          collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby, request, response);
+          collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby,
+          request, response);
 
     } else {
       return collectionsCollectionIdItemsGetAsHtml(collectionId, bbox, datetime, limit,
@@ -227,7 +243,7 @@ public class ItemApiController {
   }
 
 
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsJsonLd(
       String collectionId,
       String recordId,
       String acceptHeader,
@@ -267,7 +283,7 @@ public class ItemApiController {
   }
 
 
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsXml(
       String collectionId,
       String recordId,
       HttpServletRequest request,
@@ -312,7 +328,7 @@ public class ItemApiController {
   }
 
 
-  public ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsHtml(
+  private ResponseEntity<Void> collectionsCollectionIdItemsRecordIdGetAsHtml(
       String collectionId,
       String recordId,
       HttpServletRequest request,
@@ -445,7 +461,7 @@ public class ItemApiController {
   }
 
 
-  public ResponseEntity<Void> collectionsCollectionIdItemsGetInternal(
+  private ResponseEntity<Void> collectionsCollectionIdItemsGetInternal(
       String collectionId,
       List<BigDecimal> bbox,
       String datetime,
@@ -476,7 +492,7 @@ public class ItemApiController {
   /**
    * Collection items as HTML.
    */
-  public ResponseEntity<Void> collectionsCollectionIdItemsGetAsHtml(
+  private ResponseEntity<Void> collectionsCollectionIdItemsGetAsHtml(
       String collectionId,
       List<BigDecimal> bbox,
       String datetime,

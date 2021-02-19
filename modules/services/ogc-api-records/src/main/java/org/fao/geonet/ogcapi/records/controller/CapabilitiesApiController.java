@@ -5,20 +5,20 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.controller.model.Content;
+import org.fao.geonet.ogcapi.records.controller.model.Link;
+import org.fao.geonet.ogcapi.records.controller.model.Root;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Content;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Root;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -68,11 +68,15 @@ public class CapabilitiesApiController {
   private SearchConfiguration configuration;
 
 
+  /**
+   * Landing page end-point.
+   *
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Landing page.",
-      description = "The landing page provides links to start exploration of the resources " +
-          "offered by an API. Its most important component is a list of links. OGC API - Common " +
-          "already requires some common links. Those links are sufficient for this standard.")
+      description = "The landing page provides links to start exploration of the resources "
+          + "offered by an API. Its most important component is a list of links. OGC API - Common "
+          + "already requires some common links. Those links are sufficient for this standard.")
   @GetMapping(value = "/",
       produces = {MediaType.APPLICATION_JSON_VALUE,
           MediaType.APPLICATION_XML_VALUE,
@@ -123,9 +127,14 @@ public class CapabilitiesApiController {
   }
 
 
+  /**
+   * Collections information end-point.
+   *
+   */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Collections available from this API.",
-      description = "Returns a metadata document that describes the collections available from this API.")
+      description = "Returns a metadata document that describes the collections available "
+          + "from this API.")
   @GetMapping(value = "/collections",
       produces = {MediaType.APPLICATION_JSON_VALUE,
           MediaType.APPLICATION_XML_VALUE,

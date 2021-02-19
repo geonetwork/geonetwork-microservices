@@ -1,19 +1,17 @@
-package org.fao.geonet.ogcapi.records.rest.ogc.model;
+package org.fao.geonet.ogcapi.records.controller.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.openapitools.jackson.nullable.JsonNullable;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import javax.xml.bind.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Link
+ * Link entity.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-18T08:34:42.274802+01:00[Europe/Madrid]")
 @JacksonXmlRootElement(localName = "Link")
 @XmlRootElement(name = "Link")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -40,9 +38,8 @@ public class Link   {
   }
 
   /**
-   * Get href
-   * @return href
-  */
+   * Get href.
+   * */
   @ApiModelProperty(required = true, value = "")
   public String getHref() {
     return href;
@@ -58,9 +55,8 @@ public class Link   {
   }
 
   /**
-   * Get rel
-   * @return rel
-  */
+   * Get rel.
+   */
   @ApiModelProperty(example = "prev", value = "")
   public String getRel() {
     return rel;
@@ -76,9 +72,8 @@ public class Link   {
   }
 
   /**
-   * Get type
-   * @return type
-  */
+   * Get type.
+   */
   @ApiModelProperty(example = "application/geo+json", value = "")
   public String getType() {
     return type;
@@ -94,9 +89,8 @@ public class Link   {
   }
 
   /**
-   * Get hreflang
-   * @return hreflang
-  */
+   * Get hreflang.
+   */
   @ApiModelProperty(example = "en", value = "")
   public String getHreflang() {
     return hreflang;
@@ -116,10 +110,10 @@ public class Link   {
       return false;
     }
     Link link = (Link) o;
-    return Objects.equals(this.href, link.href) &&
-        Objects.equals(this.rel, link.rel) &&
-        Objects.equals(this.type, link.type) &&
-        Objects.equals(this.hreflang, link.hreflang);
+    return Objects.equals(this.href, link.href)
+        && Objects.equals(this.rel, link.rel)
+        && Objects.equals(this.type, link.type)
+        && Objects.equals(this.hreflang, link.hreflang);
   }
 
   @Override

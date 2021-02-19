@@ -1,29 +1,30 @@
-package org.fao.geonet.ogcapi.records.rest.ogc.model;
+package org.fao.geonet.ogcapi.records.controller.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import javax.xml.bind.annotation.*;
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Extent
+ * Extent entity.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-18T08:34:42.274802+01:00[Europe/Madrid]")
 @JacksonXmlRootElement(localName = "Extent")
 @XmlRootElement(name = "Extent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Extent   {
   /**
-   * Coordinate reference system of the coordinates in the spatial extent (property `spatial`). In the Core, only WGS84 longitude/latitude is supported. Extensions may support additional coordinate reference systems.
+   * Coordinate reference system of the coordinates in the spatial extent (property `spatial`).
+   * In the Core, only WGS84 longitude/latitude is supported. Extensions may support additional
+   * coordinate reference systems.
    */
   public enum CrsEnum {
     HTTP_WWW_OPENGIS_NET_DEF_CRS_OGC_1_3_CRS84("http://www.opengis.net/def/crs/OGC/1.3/CRS84");
@@ -44,6 +45,9 @@ public class Extent   {
       return String.valueOf(value);
     }
 
+    /**
+     * Get a CrsEnum value from a string representation.
+     */
     @JsonCreator
     public static CrsEnum fromValue(String value) {
       for (CrsEnum b : CrsEnum.values()) {
@@ -65,7 +69,9 @@ public class Extent   {
   private List<BigDecimal> spatial = null;
 
   /**
-   * Temporal reference system of the coordinates in the temporal extent (property `temporal`). In the Core, only the Gregorian calendar is supported. Extensions may support additional temporal reference systems.
+   * Temporal reference system of the coordinates in the temporal extent (property `temporal`).
+   * In the Core, only the Gregorian calendar is supported. Extensions may support additional
+   * temporal reference systems.
    */
   public enum TrsEnum {
     HTTP_WWW_OPENGIS_NET_DEF_UOM_ISO_8601_0_GREGORIAN("http://www.opengis.net/def/uom/ISO-8601/0/Gregorian");
@@ -86,6 +92,9 @@ public class Extent   {
       return String.valueOf(value);
     }
 
+    /**
+     * Get a TrsEnum value from a string representation.
+     */
     @JsonCreator
     public static TrsEnum fromValue(String value) {
       for (TrsEnum b : TrsEnum.values()) {
@@ -112,10 +121,13 @@ public class Extent   {
   }
 
   /**
-   * Coordinate reference system of the coordinates in the spatial extent (property `spatial`). In the Core, only WGS84 longitude/latitude is supported. Extensions may support additional coordinate reference systems.
-   * @return crs
-  */
-  @ApiModelProperty(value = "Coordinate reference system of the coordinates in the spatial extent (property `spatial`). In the Core, only WGS84 longitude/latitude is supported. Extensions may support additional coordinate reference systems.")
+   * Coordinate reference system of the coordinates in the spatial extent (property `spatial`).
+   * In the Core, only WGS84 longitude/latitude is supported. Extensions may support additional
+   * coordinate reference systems.
+   */
+  @ApiModelProperty(value = "Coordinate reference system of the coordinates in the spatial extent "
+      + "(property `spatial`). In the Core, only WGS84 longitude/latitude is supported. "
+      + "Extensions may support additional coordinate reference systems.")
   public CrsEnum getCrs() {
     return crs;
   }
@@ -129,6 +141,9 @@ public class Extent   {
     return this;
   }
 
+  /**
+   * Adds a spatial item value.
+   */
   public Extent addSpatialItem(BigDecimal spatialItem) {
     if (this.spatial == null) {
       this.spatial = new ArrayList<>();
@@ -138,10 +153,15 @@ public class Extent   {
   }
 
   /**
-   * West, north, east, south edges of the spatial extent. The minimum and maximum values apply to the coordinate reference system WGS84 longitude/latitude that is supported in the Core. If, for example, a projected coordinate reference system is used, the minimum and maximum values need to be adjusted.
-   * @return spatial
-  */
-  @ApiModelProperty(example = "[-180,-90,180,90]", value = "West, north, east, south edges of the spatial extent. The minimum and maximum values apply to the coordinate reference system WGS84 longitude/latitude that is supported in the Core. If, for example, a projected coordinate reference system is used, the minimum and maximum values need to be adjusted.")
+   * West, north, east, south edges of the spatial extent. The minimum and maximum values apply
+   * to the coordinate reference system WGS84 longitude/latitude that is supported in the Core.
+   * If, for example, a projected coordinate reference system is used, the minimum and maximum
+   * values need to be adjusted.
+   */
+  @ApiModelProperty(example = "[-180,-90,180,90]", value = "West, north, east, south edges of the "
+      + "spatial extent. The minimum and maximum values apply to the coordinate reference system "
+      + "WGS84 longitude/latitude that is supported in the Core. If, for example, a projected "
+      + "coordinate reference system is used, the minimum and maximum values need to be adjusted.")
   public List<BigDecimal> getSpatial() {
     return spatial;
   }
@@ -156,10 +176,13 @@ public class Extent   {
   }
 
   /**
-   * Temporal reference system of the coordinates in the temporal extent (property `temporal`). In the Core, only the Gregorian calendar is supported. Extensions may support additional temporal reference systems.
-   * @return trs
-  */
-  @ApiModelProperty(value = "Temporal reference system of the coordinates in the temporal extent (property `temporal`). In the Core, only the Gregorian calendar is supported. Extensions may support additional temporal reference systems.")
+   * Temporal reference system of the coordinates in the temporal extent (property `temporal`).
+   * In the Core, only the Gregorian calendar is supported. Extensions may support additional
+   * temporal reference systems.
+   */
+  @ApiModelProperty(value = "Temporal reference system of the coordinates in the temporal extent "
+      + "(property `temporal`). In the Core, only the Gregorian calendar is supported. "
+      + "Extensions may support additional temporal reference systems.")
   public TrsEnum getTrs() {
     return trs;
   }
@@ -173,6 +196,9 @@ public class Extent   {
     return this;
   }
 
+  /**
+   * Adds a temporal item.
+   */
   public Extent addTemporalItem(String temporalItem) {
     if (this.temporal == null) {
       this.temporal = new ArrayList<>();
@@ -183,9 +209,9 @@ public class Extent   {
 
   /**
    * Begin and end times of the temporal extent.
-   * @return temporal
-  */
-  @ApiModelProperty(example = "[\"2011-11-11T12:22:11.000Z\",\"2012-11-24T12:32:43.000Z\"]", value = "Begin and end times of the temporal extent.")
+   */
+  @ApiModelProperty(example = "[\"2011-11-11T12:22:11.000Z\",\"2012-11-24T12:32:43.000Z\"]",
+      value = "Begin and end times of the temporal extent.")
   public List<String> getTemporal() {
     return temporal;
   }
@@ -204,10 +230,10 @@ public class Extent   {
       return false;
     }
     Extent extent = (Extent) o;
-    return Objects.equals(this.crs, extent.crs) &&
-        Objects.equals(this.spatial, extent.spatial) &&
-        Objects.equals(this.trs, extent.trs) &&
-        Objects.equals(this.temporal, extent.temporal);
+    return Objects.equals(this.crs, extent.crs)
+        && Objects.equals(this.spatial, extent.spatial)
+        && Objects.equals(this.trs, extent.trs)
+        && Objects.equals(this.temporal, extent.temporal);
   }
 
   @Override

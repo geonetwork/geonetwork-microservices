@@ -2,13 +2,10 @@ package org.fao.geonet.ogcapi.records.util;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.common.search.GnMediaType;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.context.request.WebRequest;
-import javax.print.attribute.standard.Media;
-import javax.servlet.http.HttpServletRequest;
 
 public class MediaTypeUtil {
 
@@ -41,10 +38,13 @@ public class MediaTypeUtil {
   public static MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request) {
     return calculatePriorityMediaTypeFromRequest(request, MediaTypeUtil.defaultSupportedMediaTypes);
   }
+
   /**
    * From web request, return the supported media type or JSON.
    */
-  public static MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request, List<MediaType> allowedMediaTypes) {
+  public static MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request,
+      List<MediaType> allowedMediaTypes) {
+
     List<MediaType> mediaTypesInRequest = MediaType
         .parseMediaTypes(request.getHeader(HttpHeaders.ACCEPT));
 

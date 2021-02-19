@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.CollectionInfo;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.CrsEnum;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Extent.TrsEnum;
-import org.fao.geonet.ogcapi.records.rest.ogc.model.Link;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.Extent;
+import org.fao.geonet.ogcapi.records.controller.model.Extent.CrsEnum;
+import org.fao.geonet.ogcapi.records.controller.model.Extent.TrsEnum;
+import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.springframework.http.MediaType;
 
 public class CollectionInfoBuilder {

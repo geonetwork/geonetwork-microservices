@@ -2,16 +2,12 @@
 
 ## Build
 
-Build the OpenApi using `openapi-generator-maven-plugin`
-
 ```
 mvn clean compile
 ```
 
 
 ## Start
-
-Check the `target/generate-sources` folder.
 
 Start the service using:
 ```

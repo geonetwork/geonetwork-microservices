@@ -1,21 +1,19 @@
-package org.fao.geonet.ogcapi.records.rest.ogc.model;
+package org.fao.geonet.ogcapi.records.controller.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import javax.xml.bind.annotation.*;
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * ReqClasses
+ * ReqClasses entity.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-18T08:34:42.274802+01:00[Europe/Madrid]")
 @JacksonXmlRootElement(localName = "ReqClasses")
 @XmlRootElement(name = "ReqClasses")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,9 +34,8 @@ public class ReqClasses   {
   }
 
   /**
-   * Get conformsTo
-   * @return conformsTo
-  */
+   * Get conformsTo.
+   */
   @ApiModelProperty(example = "[\"http://www.opengis.net/spec/ogcapi-common/1.0/conf/core\",\"http://www.opengis.net/spec/ogcapi-common/1.0/conf/collections\",\"http://www.opengis.net/spec/ogcapi-common/1.0/conf/oas3\",\"http://www.opengis.net/spec/ogcapi-common/1.0/conf/html\",\"http://www.opengis.net/spec/ogcapi-common/1.0/conf/geojson\",\"http://www.opengis.net/spec/ogcapi-coverages/1.0/conf/core\"]", required = true, value = "")
   public List<String> getConformsTo() {
     return conformsTo;

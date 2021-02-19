@@ -91,6 +91,10 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
     return resolver;
   }
 
+
+  /**
+   * Bean for springfox documentation.
+   */
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
