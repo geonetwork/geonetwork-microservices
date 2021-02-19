@@ -67,7 +67,12 @@ public class JsonLdResponseProcessorImpl
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);
           ObjectNode node = SchemaOrgConverter.convert(record);
-          generator.writeRawValue(node.toString());
+          if (node != null) {
+            generator.writeRawValue(node.toString());
+          } else {
+            // TODO
+            System.out.println("Null SchemaOrgConverter results.");
+          }
         }
       }, false);
     }

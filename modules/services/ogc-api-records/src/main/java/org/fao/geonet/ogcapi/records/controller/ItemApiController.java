@@ -291,14 +291,21 @@ public class ItemApiController {
         marshaller.marshal(catalogRecord, sw);
         String dcatXml = sw.toString();
 
-        org.eclipse.rdf4j.model.Model model = Rio.parse(
-            new ByteArrayInputStream(record.toString().getBytes()),
-            "", RDFFormat.RDFXML);
-        StringWriter turtleWriter = new StringWriter();
-        Rio.write(model, turtleWriter, RDFFormat.TURTLE);
-        streamResult(response,
-            turtleWriter.toString(),
-            GnMediaType.TEXT_TURTLE_VALUE);
+        if (isTurtle) {
+          org.eclipse.rdf4j.model.Model model = Rio.parse(
+              new ByteArrayInputStream(dcatXml.getBytes()),
+              "", RDFFormat.RDFXML);
+          StringWriter turtleWriter = new StringWriter();
+          Rio.write(model, turtleWriter, RDFFormat.TURTLE);
+          streamResult(response,
+              turtleWriter.toString(),
+              GnMediaType.TEXT_TURTLE_VALUE);
+        } else {
+          streamResult(response,
+              dcatXml,
+              MediaType.APPLICATION_XML_VALUE);
+        }
+
       } else {
         streamResult(response,
             record.toString(),
