@@ -13,36 +13,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
-@XmlRootElement(name = "Agent", namespace = FOAF_URI)
+@XmlRootElement(name = "Person", namespace = FOAF_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoafAgent extends RdfResource {
+public class FoafPerson {
 
-  //  @XmlElement(namespace = DCT_URI)
-  //  Subject type;
-
-  @NonNull
   @XmlElement(namespace = FOAF_URI)
   String name;
 
-  //
-  //locn:Address
+  @XmlElement(namespace = FOAF_URI)
+  String mbox;
 
-  /**
-   * Foaf agent.
-   */
-  @Builder
-  public FoafAgent(String about, String resource, String name) {
-    super(about, resource, null);
-    this.name = name;
-    this.type = type;
-  }
+  @XmlElement(namespace = FOAF_URI)
+  String phone;
 }

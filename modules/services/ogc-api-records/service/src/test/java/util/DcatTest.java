@@ -66,7 +66,7 @@ public class DcatTest {
             .relation(DcatRelation.builder()
                 .relation("http://...TODO")
                 .build()).build()))
-        .spatialResolutionInMeters(List.of(new BigDecimal(10000), new BigDecimal(25000)))
+        .spatialResolutionInMeters(List.of(new BigDecimal(25000)))
         .temporalResolution(List.of(Duration.ofDays(15)))
         .accessRights(List.of(DcatAccessRights.builder()
             .rightsStatement(RightsStatement.builder()

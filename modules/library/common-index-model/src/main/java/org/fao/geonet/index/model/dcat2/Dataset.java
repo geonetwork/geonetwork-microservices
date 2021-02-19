@@ -18,35 +18,38 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.experimental.SuperBuilder;
 
 /**
  * A conceptual entity that represents the information published.
  *
+ * <p>A collection of data, published or curated by a single agent, and available for access or
+ * download in one or more representations. This class describes the actual dataset as published by
+ * the dataset provider. In cases where a distinction between the actual dataset and its entry in
+ * the catalog is necessary (because metadata such as modification date might differ), the catalog
+ * record class can be used for the latter.</p>
+ *
  * <p>GeoDCAT-AP 2 model.
- * https://www.w3.org/TR/vocab-dcat-2/ https://semiceu.github.io/GeoDCAT-AP/drafts/latest/
- * https://semiceu.github.io/GeoDCAT-AP/drafts/latest/geodcat-ap_v2.0.0.svg
+ * https://portal.opengeospatial.org/files/?artifact_id=82475 https://www.w3.org/TR/vocab-dcat-2/
+ * https://semiceu.github.io/GeoDCAT-AP/drafts/latest/ https://semiceu.github.io/GeoDCAT-AP/drafts/latest/geodcat-ap_v2.0.0.svg
  */
 @XmlRootElement(namespace = DCAT_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Dataset {
+public class Dataset extends Resource {
 
   public static String EU_PUBLICATION_URI_PREFIX = "http://publications.europa.eu/resource/authority/";
   public static String ACCRUAL_PERIODICITY_URI_PREFIX = EU_PUBLICATION_URI_PREFIX + "frequency/";
@@ -63,21 +66,6 @@ public class Dataset {
       new AbstractMap.SimpleEntry<String, String>("irregular", "IRREG"),
       new AbstractMap.SimpleEntry<String, String>("unknown", "UNKNOWN")
   );
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> title = new ArrayList();
-  @NonNull
-  @XmlElement(namespace = DCT_URI)
-  List<String> description = new ArrayList();
-  /**
-   * A unique identifier of the item.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<String> identifier = new ArrayList();
-  // "Replaced by dcat:theme."
-  @Deprecated
-  @XmlElement(namespace = DCT_URI)
-  List<Subject> subject = new ArrayList();
 
   //  /**
   //   * An identifier in a particular context, consisting of the string that is the identifier; an
@@ -87,54 +75,37 @@ public class Dataset {
   //   */
   //  @XmlElement(name = "identifier", namespace = ADMS_URI)
   //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
-  @XmlElement(namespace = DCAT_URI)
-  List<Subject> keyword = new ArrayList();
-  @XmlElement(namespace = DCAT_URI)
-  List<Subject> theme = new ArrayList();
-  /**
-   * This property refers to the type of the Dataset. A controlled vocabulary for the values has not
-   * been established in [DCAT-AP].
-   *
-   * <p>In GeoDCAT-AP, this property SHOULD take as value one of the URIs of the "Resource types"
-   * code
-   * list operated by the INSPIRE Registry [INSPIRE-RT]. For Datasets, the possible values are those
-   * corresponding to "Spatial data set" and "Spatial data set series".
-   */
-  @XmlElements({
-      @XmlElement(namespace = DCT_URI, type = Subject.class),
-      @XmlElement(namespace = DCT_URI, type = RdfResource.class)
-  })
-  List<Object> type;
+  
   /**
    * This property contains a description of the differences between this version and a previous
    * version of the Dataset.
    */
   @XmlElement(namespace = ADMS_URI)
   List<String> versionNotes = new ArrayList();
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatDocument> landingPage = new ArrayList();
+
   @XmlElement(namespace = FOAF_URI)
   List<DcatDocument> page;
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatDistributionContainer> distribution = new ArrayList();
+
   /**
-   * An association class for attaching additional information to a relationship between DCAT
-   * Resources.
+   * An available distribution of the dataset.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatRelationship> qualifiedRelation = new ArrayList();
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> isReferencedBy = new ArrayList<>();
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> relation = new ArrayList<>();
+  List<DcatDistributionContainer> distribution = new ArrayList();
+
+
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> isVersionOf = new ArrayList<>();
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> hasVersionOf = new ArrayList<>();
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> source = new ArrayList<>();
+
+  /**
+   * The geographical area covered by the dataset.
+   */
   @XmlElement(namespace = DCT_URI)
   List<DctSpatial> spatial = new ArrayList<>();
+
   /**
    * Minimum spatial separation resolvable in a dataset, measured in meters.
    *
@@ -144,6 +115,7 @@ public class Dataset {
    */
   @XmlElement(namespace = DCAT_URI)
   List<BigDecimal> spatialResolutionInMeters = new ArrayList();
+
   /**
    * Minimum time period resolvable in the dataset.
    *
@@ -155,36 +127,15 @@ public class Dataset {
   // TODO: Adapter
   @XmlElement(namespace = DCAT_URI)
   List<Duration> temporalResolution = new ArrayList();
-  /**
-   * This property MAY include information regarding access or restrictions based on privacy,
-   * security, or other policies.
-   *
-   * <p>
-   * For INSPIRE metadata, this property SHOULD be used with the URIs of the "Limitations on public
-   * access" code list operated by the INSPIRE Registry</p>
-   */
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatAccessRights> accessRights = new ArrayList();
-  @XmlElement(namespace = DCT_URI)
-  DcatLicenseDocumentContainer license;
+
   /**
    * This property refers to the frequency at which the Dataset is updated.
    *
+   * <p>The frequency at which dataset is published.</p>
    * <p>eg. http://publications.europa.eu/resource/authority/frequency/IRREG</p>
    */
   @XmlElement(namespace = DCT_URI)
   RdfResource accrualPeriodicity;
-  @XmlElement(namespace = DCT_URI)
-  RdfResource conformsTo;
-
-  @XmlElement(namespace = DCT_URI)
-  Date created;
-
-  @XmlElement(namespace = DCT_URI)
-  Date issued;
-
-  @XmlElement(namespace = DCT_URI)
-  Date modified;
 
   @XmlElement(namespace = DCT_URI)
   List<DctTemporal> temporal;
@@ -196,10 +147,6 @@ public class Dataset {
    */
   @XmlElement(namespace = DCT_URI)
   List<Provenance> provenance;
-
-  // Can be a LinguisticSystem
-  @XmlElement(namespace = DCT_URI)
-  List<RdfResource> language = new ArrayList<>();
 
   //  /**
   //   * Represents the evaluation of a given resource
@@ -215,33 +162,23 @@ public class Dataset {
   //  QualityMeasurement hasQualityMeasurement = new ArrayList();
 
   /**
-   * This property contains a version number
-   * or other version designation of the Dataset.
+   * This property contains a version number or other version designation of the Dataset.
    */
   @XmlElement(namespace = OWL_URI)
   String versionInfo;
 
-  @XmlElement(namespace = PROV_URI)
-  List<DcatQualifiedAttribution> qualifiedAttribution = new ArrayList();
 
+  /**
+   * An activity that generated, or provides the business context for, the creation of the dataset.
+   */
   @XmlElement(namespace = PROV_URI)
   List<DcatActivity> wasGeneratedBy = new ArrayList();
 
   @XmlElement(namespace = PROV_URI)
   List<DcatActivity> wasUsedBy = new ArrayList();
 
-  @XmlElement(namespace = DCAT_URI)
-  List<DcatContactPoint> contactPoint = new ArrayList();
-
   @XmlElement(namespace = DCT_URI)
-  List<FoafAgent> rightsHolder = new ArrayList();
-  @XmlElement(namespace = DCT_URI)
-  List<FoafAgent> creator = new ArrayList();
-  /**
-   * A type of organisation that acts as a publisher.
-   */
-  @XmlElement(namespace = DCT_URI)
-  List<FoafAgent> publisher = new ArrayList();
+  List<FoafOrganization> rightsHolder = new ArrayList();
 
   @XmlElement(namespace = RDFS_URI)
   List<String> comment = new ArrayList();

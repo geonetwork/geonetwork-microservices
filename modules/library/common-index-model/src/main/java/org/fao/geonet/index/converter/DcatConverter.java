@@ -158,6 +158,8 @@ public class DcatConverter {
       record.getResourceDate().stream()
           .filter(d -> "creation".equals(d.getType()))
           .forEach(d -> datasetBuilder.created(toDate(d.getDate())));
+
+      // TODO: Wrong according dcat2. Should be the metadata date
       record.getResourceDate().stream()
           .filter(d -> "publication".equals(d.getType()))
           .forEach(d -> datasetBuilder.issued(toDate(d.getDate())));

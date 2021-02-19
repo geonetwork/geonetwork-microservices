@@ -41,16 +41,36 @@ import lombok.NonNull;
 @Builder
 public class DcatDistribution {
 
+  /**
+   * A URL of the resource that gives access to a distribution of the dataset. E.g. landing page,
+   * feed, SPARQL endpoint.
+   */
   @NonNull
   @XmlElement(name = "accessURL", namespace = DCAT_URI)
   String accessUrl;
 
+  /**
+   * The URL of the downloadable file in a given format. E.g. CSV file or RDF file. The format is
+   * indicated by the distribution's dct:format and/or dcat:mediaType
+   */
   @XmlElement(name = "downloadURL", namespace = DCAT_URI)
   List<String> downloadUrl = new ArrayList();
 
+  /**
+   * A data service that gives access to the distribution of the dataset.
+   */
+  @XmlElement(name = "accessService", namespace = DCAT_URI)
+  List<RdfResource> accessService = new ArrayList();
+
+  /**
+   * A name given to the distribution.
+   */
   @XmlElement(namespace = DCT_URI)
   List<String> title = new ArrayList();
 
+  /**
+   * A free-text account of the distribution.
+   */
   @XmlElement(namespace = DCT_URI)
   List<String> description = new ArrayList();
 
@@ -83,6 +103,10 @@ public class DcatDistribution {
   // TODO
   /**
    * A media type, e.g. the format of a computer file.
+   *
+   * <p>The media type of the distribution as defined by IANA [IANA-MEDIA-TYPES]. This property
+   * SHOULD be used when the media type of the distribution is defined in IANA [IANA-MEDIA-TYPES],
+   * otherwise dct:format MAY be used with different values.</p>
    */
   @XmlElement(namespace = DCAT_URI)
   String mediaType;
@@ -91,7 +115,9 @@ public class DcatDistribution {
   @XmlElement(namespace = DCAT_URI)
   List<String> packageFormat = new ArrayList();
 
-  // TODO
+  /**
+   * The file format of the distribution.
+   */
   @XmlElement(namespace = DCAT_URI)
   List<RdfResource> format = new ArrayList();
 
@@ -104,22 +130,41 @@ public class DcatDistribution {
   List<Duration> temporalResolution = new ArrayList();
 
 
+  /**
+   * A rights statement that concerns how the distribution is accessed.
+   */
   @XmlElement(namespace = DCAT_URI)
   List<DcatAccessRights> accessRights = new ArrayList();
 
 
+  /**
+   * An established standard to which the distribution conforms.
+   *
+   * <p>This property SHOULD be used to indicate the model, schema, ontology, view or profile that
+   * this representation of a dataset conforms to. This is (generally) a complementary concern to
+   * the media-type or format.</p>
+   */
   @XmlElement(namespace = DCT_URI)
   RdfResource conformsTo;
 
+  /**
+   * Date of formal issuance (e.g., publication) of the distribution.
+   */
   @XmlElement(namespace = DCT_URI)
   Date issued;
 
+  /**
+   * Most recent date on which the distribution was changed, updated or modified.
+   */
   @XmlElement(namespace = DCT_URI)
   Date modified;
 
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> language = new ArrayList<>();
 
+  /**
+   * Information about rights held in and over the distribution.
+   */
   @XmlElement(namespace = DCAT_URI)
   List<DcatAccessRights> rights = new ArrayList();
 
