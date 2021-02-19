@@ -66,10 +66,10 @@ public class JsonLdResponseProcessorImpl
           IndexRecord record = objectMapper.readValue(
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);
-          ObjectNode node = SchemaOrgConverter.convert(record);
-          if (node != null) {
+          try {
+            ObjectNode node = SchemaOrgConverter.convert(record);
             generator.writeRawValue(node.toString());
-          } else {
+          } catch (Exception ex) {
             // TODO
             System.out.println("Null SchemaOrgConverter results.");
           }

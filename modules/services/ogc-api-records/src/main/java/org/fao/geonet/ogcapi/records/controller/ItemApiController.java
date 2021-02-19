@@ -118,6 +118,7 @@ public class ItemApiController {
           MediaType.APPLICATION_RSS_XML_VALUE,
           MediaType.APPLICATION_ATOM_XML_VALUE,
           MediaType.APPLICATION_XML_VALUE,
+          GnMediaType.APPLICATION_JSON_LD_VALUE,
           GnMediaType.APPLICATION_RDF_XML_VALUE,
           GnMediaType.APPLICATION_DCAT2_XML_VALUE,
           GnMediaType.TEXT_TURTLE_VALUE})
