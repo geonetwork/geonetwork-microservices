@@ -72,6 +72,8 @@ public class CollectionApiController {
   @Autowired
   private SearchConfiguration configuration;
 
+  @Autowired
+  MediaTypeUtil mediaTypeUtil;
 
   /**
    * Describe a collection.
@@ -108,7 +110,7 @@ public class CollectionApiController {
             MediaTypeUtil.openSearchSupportedMediaTypes);
 
     MediaType mediaType =
-        MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
+        mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 

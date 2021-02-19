@@ -67,6 +67,8 @@ public class CapabilitiesApiController {
   @Autowired
   private SearchConfiguration configuration;
 
+  @Autowired
+  MediaTypeUtil mediaTypeUtil;
 
   /**
    * Landing page end-point.
@@ -91,7 +93,7 @@ public class CapabilitiesApiController {
       @ApiIgnore Model model) throws Exception {
     String baseUrl = request.getRequestURL().toString();
 
-    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
+    MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
       Root root = new Root();
@@ -151,7 +153,7 @@ public class CapabilitiesApiController {
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
 
-    MediaType mediaType = MediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
+    MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
       Content content = new Content();

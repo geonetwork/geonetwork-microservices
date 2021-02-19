@@ -1,13 +1,29 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.common.search.GnMediaType;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Format;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MediaTypeUtil {
+
+  @Autowired
+  SearchConfiguration searchConfiguration;
 
   public static final List<MediaType> defaultSupportedMediaTypes =
       Arrays.asList(
@@ -35,18 +51,34 @@ public class MediaTypeUtil {
           GnMediaType.APPLICATION_DCAT2_XML);
 
 
-  public static MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request) {
+  public MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request) {
     return calculatePriorityMediaTypeFromRequest(request, MediaTypeUtil.defaultSupportedMediaTypes);
   }
 
   /**
    * From web request, return the supported media type or JSON.
    */
-  public static MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request,
+  public MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request,
       List<MediaType> allowedMediaTypes) {
 
-    List<MediaType> mediaTypesInRequest = MediaType
-        .parseMediaTypes(request.getHeader(HttpHeaders.ACCEPT));
+    String formatValue = request.getParameter("f");
+
+    List<MediaType> mediaTypesInRequest = new ArrayList<>();
+
+    if (StringUtils.isNotEmpty(formatValue)) {
+      Optional<Format> format = searchConfiguration.getFormats()
+          .stream().filter(f -> f.getName().equals(formatValue)).findFirst();
+
+      if (format.isPresent()) {
+        mediaTypesInRequest =  MediaType
+            .parseMediaTypes(format.get().getMimeType());
+      }
+    }
+
+    if (mediaTypesInRequest.isEmpty()) {
+      mediaTypesInRequest = MediaType
+          .parseMediaTypes(request.getHeader(HttpHeaders.ACCEPT));
+    }
 
     MediaType priorityMediatype = null;
     for (MediaType mediaType : mediaTypesInRequest) {
