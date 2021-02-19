@@ -159,7 +159,8 @@ public class DcatConverter {
           .filter(d -> "creation".equals(d.getType()))
           .forEach(d -> datasetBuilder.created(toDate(d.getDate())));
 
-      // TODO: Wrong according dcat2. Should be the metadata date
+      // TODO: Maybe we should introduce CatalogRecord element for record dates
+      //  and resource dates
       record.getResourceDate().stream()
           .filter(d -> "publication".equals(d.getType()))
           .forEach(d -> datasetBuilder.issued(toDate(d.getDate())));
@@ -265,6 +266,8 @@ public class DcatConverter {
           record.getContactForResource().stream().map(contact ->
               DcatContactPoint.builder()
                   .contact(VcardContact.builder()
+                      .title(contact.getOrganisation())
+                      .role(contact.getRole())
                       .hasEmail(contact.getEmail()).build()).build()
           ).collect(Collectors.toList()));
 

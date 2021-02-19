@@ -75,7 +75,7 @@ public class Dataset extends Resource {
   //   */
   //  @XmlElement(name = "identifier", namespace = ADMS_URI)
   //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
-  
+
   /**
    * This property contains a description of the differences between this version and a previous
    * version of the Dataset.

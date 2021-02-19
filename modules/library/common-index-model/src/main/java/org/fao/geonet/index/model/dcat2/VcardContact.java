@@ -28,6 +28,12 @@ import lombok.NoArgsConstructor;
 public class VcardContact {
 
   @XmlElement(namespace = VCARD_URI)
+  String title;
+
+  @XmlElement(namespace = VCARD_URI)
+  String role;
+
+  @XmlElement(namespace = VCARD_URI)
   String hasEmail;
   // TODO
 }

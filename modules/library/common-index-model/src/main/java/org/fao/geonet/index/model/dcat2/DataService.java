@@ -10,10 +10,12 @@ import static org.fao.geonet.index.model.dcat2.Namespaces.DCAT_URI;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.List;
 
 @XmlRootElement(namespace = DCAT_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -23,4 +25,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class DataService extends Resource {
 
+  /**
+   * The root location or primary endpoint of the service (a Web-resolvable IRI).
+   */
+  @XmlElement(name = "endpointURL", namespace = DCAT_URI)
+  List<RdfResource> endpointUrl;
+
+  // TODO: dcat:servesDataset
 }
