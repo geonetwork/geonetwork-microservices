@@ -150,6 +150,8 @@ SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.locat
 
 ## Start as standalone service with docker
 
+Build docker image from source:
+
 ```shell script
 ./mvnw clean install -Drelax
 mkdir ogcapiconfig
@@ -161,6 +163,14 @@ docker run -it -p8080:8080 \
   -e "SPRING_PROFILES_ACTIVE=standalone" \
   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
   gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
+```
+
+or use a published release (create your configuration first like above):
+
+```shell script
+docker pull geonetwork/gn-cloud-ogc-api-records-service:0.1.0
+
+docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING_PROFILES_ACTIVE=standalone"   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" geonetwork/gn-cloud-ogc-api-records-service:0.1.0
 ```
 
 ## Start as standalone service with a WAR
