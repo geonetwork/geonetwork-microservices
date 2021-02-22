@@ -84,13 +84,11 @@ public class RecordsEsQueryBuilder {
 
     if (sortBy != null) {
       sortBy.forEach(s -> {
-        String[] sortByTokens = s.split(":");
+        boolean isDescending = s.startsWith("-");
         sourceBuilder.sort(
-            new FieldSortBuilder(sortByTokens[0])
+            new FieldSortBuilder(s.replaceAll("^[\\+-]", ""))
                 .order(
-                    sortByTokens.length == 2
-                        && "desc".equalsIgnoreCase(sortByTokens[1])
-                        ? SortOrder.DESC : SortOrder.ASC));
+                    isDescending ? SortOrder.DESC : SortOrder.ASC));
       });
     }
 

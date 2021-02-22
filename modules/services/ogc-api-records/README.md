@@ -92,6 +92,10 @@ curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
 curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
         -H "Accept: application/json" 
 
+# Sort by. Use 127.0.0.1:9901/collections/$firstCollection/main/sortables to get the list of sortable fields
+curl 127.0.0.1:9901/collections/$firstCollection/items?sortby=resourceTitleObject.default.keyword \
+        -H "Accept: application/json" 
+
 # Bbox search using `bbox` (relation: intersects)
 curl 127.0.0.1:9901/collections/$firstCollection/items?bbox=-100,40,-80,50 \
         -H "Accept: application/json" 
