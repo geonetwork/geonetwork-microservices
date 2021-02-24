@@ -91,6 +91,8 @@ metadata:
 
 springfox:
   documentation:
+    swaggerUi:
+      baseUrl: /openapi
     openApi:
       v3:
         path: /openapi/v3/api-docs

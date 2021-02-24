@@ -10,6 +10,7 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 import java.net.URI;
 import org.fao.geonet.ogcapi.records.controller.CapabilitiesApiController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import javax.servlet.ServletContext;
 
 
 @SpringBootApplication
@@ -29,6 +31,9 @@ import org.springframework.web.servlet.function.ServerResponse;
 @Configuration
 @EnableCaching
 public class OgcApiRecordApp {
+
+  @Autowired
+  ServletContext servletContext;
 
   public static void main(String[] args) {
     SpringApplication.run(OgcApiRecordApp.class, args);
@@ -40,6 +45,7 @@ public class OgcApiRecordApp {
   @Bean
   RouterFunction<ServerResponse> routerFunction() {
     return route(GET("/openapi"), req ->
-        ServerResponse.temporaryRedirect(URI.create("/swagger-ui/")).build());
+        ServerResponse.temporaryRedirect(URI.create(servletContext.getContextPath() + "/openapi/swagger-ui/")).build());
+
   }
 }
