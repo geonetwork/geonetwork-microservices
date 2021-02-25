@@ -9,15 +9,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.fao.geonet.common.search.ElasticSearchProxy;
 import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.domain.Setting;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.domain.UiSetting;
+import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
+import org.fao.geonet.repository.SettingRepository;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.repository.UiSettingsRepository;
+import org.fao.geonet.repository.specification.SettingSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -32,6 +44,15 @@ public class CollectionService {
 
   @Autowired
   private UiSettingsRepository uiSettingsRepository;
+
+  @Autowired
+  RecordsEsQueryBuilder recordsEsQueryBuilder;
+
+  @Autowired
+  ElasticSearchProxy proxy;
+
+  @Autowired
+  SettingRepository settingRepository;
 
   /**
    * Checks if a collection is defined.
@@ -115,6 +136,54 @@ public class CollectionService {
     }
 
     return sortables;
+  }
+
+
+  public IndexRecord retrieveServiceMetadataForCollection(HttpServletRequest request, Source source) {
+    String serviceRecordUuid = "";
+
+    if (source.getType() == SourceType.portal) {
+      Setting setting = settingRepository.getOne("system/csw/capabilityRecordUuid");
+      if (setting != null) {
+        serviceRecordUuid = setting.getValue();
+      }
+    } else {
+      serviceRecordUuid = source.getServiceRecord();
+    }
+
+    if (StringUtils.isEmpty(serviceRecordUuid)) {
+      return null;
+    }
+
+    try {
+      String collectionFilter = retrieveCollectionFilter(source);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(serviceRecordUuid,
+          collectionFilter, null);
+
+      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+
+      ObjectMapper mapper =  JsonUtils.getObjectMapper();
+      JsonFactory factory = mapper.getFactory();
+      JsonParser parser = factory.createParser(queryResponse);
+      JsonNode recordAsJson = mapper.readTree(parser);
+
+      JsonNode totalValue = recordAsJson.get("hits").get("total").get("value");
+
+      if ((totalValue == null) || (totalValue.intValue() == 0)) {
+        return null;
+      }
+
+      IndexRecord recordPojo = mapper.readValue(
+          recordAsJson.get("hits").get("hits").get(0).get(IndexRecordFieldNames.source).toPrettyString(),
+          IndexRecord.class);
+
+      return recordPojo;
+    } catch (Exception ex) {
+      // TODO: Log exception
+      ex.printStackTrace();
+    }
+
+    return null;
   }
 
 }

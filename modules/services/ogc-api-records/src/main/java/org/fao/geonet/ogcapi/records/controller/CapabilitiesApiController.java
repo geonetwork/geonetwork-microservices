@@ -5,6 +5,7 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,10 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.ogcapi.records.controller.model.Content;
 import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
+import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -69,6 +72,12 @@ public class CapabilitiesApiController {
 
   @Autowired
   MediaTypeUtil mediaTypeUtil;
+
+  @Autowired
+  CollectionService collectionService;
+
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
 
   /**
    * Landing page end-point.
@@ -177,8 +186,10 @@ public class CapabilitiesApiController {
 
       List<Source> sources = sourceRepository.findAll();
       sources.forEach(s -> {
+        IndexRecord serviceRecord = collectionService.retrieveServiceMetadataForCollection(request, s);
+
         content.addCollectionsItem(
-            CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
+            collectionInfoBuilder.buildFromSource(s, serviceRecord, language, baseUrl, mediaType));
       });
 
       // TODO: Accept format parameter.
@@ -192,6 +203,7 @@ public class CapabilitiesApiController {
       modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
       modelSource.setCollections(sources);
       model.addAttribute("source", modelSource.toSource());
+      
       viewUtility.addi18n(model, locale, request);
 
       View view = viewResolver.resolveViewName("ogcapir/collections", locale);
