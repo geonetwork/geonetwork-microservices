@@ -92,7 +92,9 @@ curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
 curl 127.0.0.1:9901/collections/$firstCollection/items?q=map \
         -H "Accept: application/json" 
 
-# Sort by. Use 127.0.0.1:9901/collections/$firstCollection/main/sortables to get the list of sortable fields
+# Sort by. Use 127.0.0.1:9901/collections/main/sortables to get the list of sortable fields
+# Use + to sort in ascending order (default) or - for descending eg. -popularity
+# Use multiple sortby parameters or a comma separated value eg. resourceTitleObject.default.keyword,-createDate
 curl 127.0.0.1:9901/collections/$firstCollection/items?sortby=resourceTitleObject.default.keyword \
         -H "Accept: application/json" 
 

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.geo.ShapeRelation;
@@ -41,6 +42,8 @@ public class RecordsEsQueryBuilder {
       "contactForResource",
       "cl_status",
       "edit");
+
+  private static final String SORT_BY_SEPARATOR = ",";
 
   private static String defaultTypeFilter = "+isTemplate:n";
   private static String defaultSpatialOperation = "intersects";
@@ -83,13 +86,14 @@ public class RecordsEsQueryBuilder {
     sourceBuilder.from(startIndex).size(limit);
 
     if (sortBy != null) {
-      sortBy.forEach(s -> {
-        boolean isDescending = s.startsWith("-");
-        sourceBuilder.sort(
-            new FieldSortBuilder(s.replaceAll("^[\\+-]", ""))
-                .order(
-                    isDescending ? SortOrder.DESC : SortOrder.ASC));
-      });
+      sortBy.forEach(s -> Stream.of(s.split(SORT_BY_SEPARATOR))
+          .forEach(order -> {
+            boolean isDescending = order.startsWith("-");
+            sourceBuilder.sort(
+                new FieldSortBuilder(order.replaceAll("^[\\+-]", ""))
+                    .order(
+                        isDescending ? SortOrder.DESC : SortOrder.ASC));
+          }));
     }
 
     Set<String> sources = new HashSet(defaultSources);
