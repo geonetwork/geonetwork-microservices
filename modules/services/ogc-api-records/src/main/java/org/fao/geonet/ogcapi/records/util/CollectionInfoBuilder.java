@@ -30,9 +30,15 @@ public class CollectionInfoBuilder {
     }
 
     CollectionInfo collectionInfo = new CollectionInfo();
-    collectionInfo.setName(name);
-    collectionInfo.setDescription(source.getLabel(language));
-    collectionInfo.setTitle(source.getLabel(language));
+    collectionInfo.setId(name);
+    String label = source.getLabel(language);
+    // The source label may contain a description
+    // eg. "INSPIRE|Data sets and services for the environment"
+    String[] titleAndDescription = label.split("\\|");
+    collectionInfo.setDescription(
+        titleAndDescription.length > 1 ? titleAndDescription[1] : "");
+    collectionInfo.setTitle(
+        titleAndDescription.length > 1 ? titleAndDescription[0] : label);
     collectionInfo
         .setCrs(Arrays.asList(CrsEnum.HTTP_WWW_OPENGIS_NET_DEF_CRS_OGC_1_3_CRS84.getValue()));
 

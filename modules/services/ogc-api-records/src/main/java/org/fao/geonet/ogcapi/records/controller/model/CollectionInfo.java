@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "CollectionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionInfo   {
-  @JsonProperty("name")
-  @JacksonXmlProperty(localName = "name")
-  private String name;
+  @JsonProperty("id")
+  @JacksonXmlProperty(localName = "id")
+  private String id;
 
   @JsonProperty("title")
   @JacksonXmlProperty(localName = "title")
@@ -44,8 +44,8 @@ public class CollectionInfo   {
   
   private List<String> crs = null;
 
-  public CollectionInfo name(String name) {
-    this.name = name;
+  public CollectionInfo id(String id) {
+    this.id = id;
     return this;
   }
 
@@ -54,12 +54,12 @@ public class CollectionInfo   {
    */
   @ApiModelProperty(example = "buildings", required = true,
       value = "identifier of the collection used, for example, in URIs")
-  public String getName() {
-    return name;
+  public String getId() {
+    return id;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public CollectionInfo title(String title) {
@@ -177,7 +177,7 @@ public class CollectionInfo   {
       return false;
     }
     CollectionInfo collectionInfo = (CollectionInfo) o;
-    return Objects.equals(this.name, collectionInfo.name)
+    return Objects.equals(this.id, collectionInfo.id)
         && Objects.equals(this.title, collectionInfo.title)
         && Objects.equals(this.description, collectionInfo.description)
         && Objects.equals(this.links, collectionInfo.links)
@@ -187,7 +187,7 @@ public class CollectionInfo   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, title, description, links, extent, crs);
+    return Objects.hash(id, title, description, links, extent, crs);
   }
 
   @Override
@@ -195,7 +195,7 @@ public class CollectionInfo   {
     StringBuilder sb = new StringBuilder();
     sb.append("class CollectionInfo {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    name: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    links: ").append(toIndentedString(links)).append("\n");
