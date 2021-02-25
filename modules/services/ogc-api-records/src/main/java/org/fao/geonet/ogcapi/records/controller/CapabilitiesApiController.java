@@ -102,13 +102,14 @@ public class CapabilitiesApiController {
           .href(baseUrl)
           .rel("self").type(MediaType.APPLICATION_JSON.toString()));
 
-      configuration.getFormats().forEach(f -> {
+      configuration.getFormats(Operations.root).forEach(f -> {
         root.addLinksItem(new Link()
             .href(baseUrl + "collections?f=" + f.getName())
             .type("Catalogue collections")
             .rel("self").type(f.getMimeType()));
-
       });
+
+      addOpenApiLinks(root, baseUrl);
 
       return ResponseEntity.ok(root);
     } else {
@@ -126,6 +127,19 @@ public class CapabilitiesApiController {
       return ResponseEntity.ok(new Root());
     }
 
+  }
+
+  private void addOpenApiLinks(Root root, String baseUrl) {
+    String type = "The OpenAPI Documentation";
+    root.addLinksItem(new Link()
+        .href(baseUrl + "/openapi")
+        .type(type)
+        .rel("service-doc").type(MediaType.TEXT_HTML_VALUE));
+
+    root.addLinksItem(new Link()
+        .href(baseUrl + "/openapi?f=json")
+        .type(type)
+        .rel("service-desc").type(MediaType.APPLICATION_JSON_VALUE));
   }
 
 

@@ -84,11 +84,6 @@ logging:
     org.fao.geonet.ogcapi: DEBUG
     org.fao.geonet.searching: DEBUG
 
-metadata:
-  license:
-    name: GNU General Public License v2.0
-    url: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
-
 springfox:
   documentation:
     swaggerUi:

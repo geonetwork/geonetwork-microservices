@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class SearchConfiguration {
 
   public enum Operations {
+    root,
     collections,
     collection,
     items,

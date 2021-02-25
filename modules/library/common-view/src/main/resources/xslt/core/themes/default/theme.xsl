@@ -173,6 +173,10 @@
           </svg>
         </a>
         |
+        <a href="openapi">
+          API
+        </a>
+        |
         <a href="https://geonetwork-opensource.org/" target="_blank">
           Powered by GeoNetwork
         </a>

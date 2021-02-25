@@ -39,6 +39,7 @@ gn:
         mimeType: text/html
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
+          - root
           - collections
           - collection
           - items
@@ -48,6 +49,7 @@ gn:
         mimeType: application/xml
         responseProcessor: XmlResponseProcessorImpl
         operations:
+          - root
           - collections
           - collection
           - items
@@ -57,6 +59,7 @@ gn:
         mimeType: application/json
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
+          - root
           - collections
           - collection
           - items
