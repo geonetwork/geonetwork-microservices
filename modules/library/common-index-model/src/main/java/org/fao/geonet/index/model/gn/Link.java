@@ -6,8 +6,10 @@
 package org.fao.geonet.index.model.gn;
 
 import lombok.Data;
+import javax.xml.bind.annotation.XmlType;
 
 @Data
+@XmlType(name = "ResourceLink")
 public class Link {
 
   private String protocol;

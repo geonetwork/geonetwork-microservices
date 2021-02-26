@@ -6,14 +6,18 @@
 
   <xsl:function name="gn-ogcapir-util:getCollectionName" as="xs:string">
     <xsl:param name="collection" as="element(collection)"/>
-    <xsl:param name="language" as="xs:string"/>
 
     <xsl:value-of select="$collection/(
-                            labelTranslations/entry[key = $language3letters]/value[. != '']
+                            title[. != '']
                             |name[. != '']
                             |uuid)[1]"/>
   </xsl:function>
 
+  <xsl:function name="gn-ogcapir-util:getCollectionDescription" as="xs:string">
+    <xsl:param name="collection" as="element(collection)"/>
+
+    <xsl:value-of select="$collection/description[. != '']"/>
+  </xsl:function>
 
   <!-- Collection logo is:
    * in logo folder for main portal and harvester.
@@ -22,8 +26,8 @@
   <xsl:function name="gn-ogcapir-util:getCollectionLogo" as="xs:string">
     <xsl:param name="collection" as="element(collection)"/>
 
-    <xsl:value-of select="if ($collection/type = ('harvester', 'portal'))
-                          then concat($geonetworkUrl, '/', $logoFolder, '/', $collection/uuid, '.png')
-                          else concat($geonetworkUrl, '/', $harvestingFolder, '/', $collection/logo)"/>
+    <xsl:value-of select="if ($collection/source/type = ('harvester', 'portal'))
+                          then concat($geonetworkUrl, '/', $logoFolder, '/', $collection/source/uuid, '.png')
+                          else concat($geonetworkUrl, '/', $harvestingFolder, '/', $collection/source/logo)"/>
   </xsl:function>
 </xsl:stylesheet>

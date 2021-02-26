@@ -1,5 +1,6 @@
 package org.fao.geonet.ogcapi.records.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,9 +21,11 @@ import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
@@ -75,6 +78,9 @@ public class CollectionApiController {
   @Autowired
   MediaTypeUtil mediaTypeUtil;
 
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
+
   /**
    * Describe a collection.
    */
@@ -126,15 +132,24 @@ public class CollectionApiController {
         String baseUrl = request.getRequestURL()
             .toString().replace(collectionId, "");
 
-        CollectionInfo collectionInfo = CollectionInfoBuilder
-            .buildFromSource(source, language, baseUrl, mediaType);
+        IndexRecord serviceRecord = collectionService
+            .retrieveServiceMetadataForCollection(request, source);
+
+        CollectionInfo collectionInfo = collectionInfoBuilder
+            .buildFromSource(source, serviceRecord, language, baseUrl, mediaType);
 
         return ResponseEntity.ok(collectionInfo);
 
       } else {
         XsltModel modelSource = new XsltModel();
         modelSource.setOutputFormats(configuration.getFormats(Operations.collection));
-        modelSource.setCollection(source);
+        IndexRecord serviceRecord = collectionService
+            .retrieveServiceMetadataForCollection(request, source);
+
+        CollectionInfoExtended collectionInfo = collectionInfoBuilder
+            .buildExtendedFromSource(source, serviceRecord, language, baseUrl, mediaType);
+
+        modelSource.setCollection(collectionInfo);
         model.addAttribute("source", modelSource.toSource());
 
         viewUtility.addi18n(model, locale, request);

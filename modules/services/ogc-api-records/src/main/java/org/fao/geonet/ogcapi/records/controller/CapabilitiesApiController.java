@@ -5,21 +5,32 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.SourceLocator;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 import org.fao.geonet.ogcapi.records.controller.model.Content;
 import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
+import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -70,6 +81,12 @@ public class CapabilitiesApiController {
   @Autowired
   MediaTypeUtil mediaTypeUtil;
 
+  @Autowired
+  CollectionService collectionService;
+
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
+
   /**
    * Landing page end-point.
    *
@@ -91,6 +108,10 @@ public class CapabilitiesApiController {
   public ResponseEntity<Root> getLandingPage(@ApiIgnore HttpServletRequest request,
       @ApiIgnore HttpServletResponse response,
       @ApiIgnore Model model) throws Exception {
+
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+
     String baseUrl = request.getRequestURL().toString();
 
     MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
@@ -116,9 +137,21 @@ public class CapabilitiesApiController {
       List<Source> sources = sourceRepository.findAll();
       XsltModel modelSource = new XsltModel();
       modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
-      modelSource.setCollections(sources);
+
+      List<CollectionInfoExtended> collectionInfoExtendedList = new ArrayList<>();
+      sources.forEach(s -> {
+        IndexRecord serviceRecord = collectionService
+            .retrieveServiceMetadataForCollection(request, s);
+
+        CollectionInfoExtended collectionInfo = collectionInfoBuilder
+            .buildExtendedFromSource(s, serviceRecord, language, baseUrl, mediaType);
+
+        collectionInfoExtendedList.add(collectionInfo);
+      });
+
+      modelSource.setCollections(collectionInfoExtendedList);
+
       model.addAttribute("source", modelSource.toSource());
-      Locale locale = LocaleContextHolder.getLocale();
       viewUtility.addi18n(model, locale, request);
 
       View view = viewResolver.resolveViewName("ogcapir/landingpage", locale);
@@ -176,10 +209,9 @@ public class CapabilitiesApiController {
           .toString();
 
       List<Source> sources = sourceRepository.findAll();
-      sources.forEach(s -> {
-        content.addCollectionsItem(
-            CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
-      });
+      List<CollectionInfo> collectionInfoList =
+          collectionInfoBuilder.buildFromSources(request, sources, language, baseUrl, mediaType);
+      content.setCollections(collectionInfoList);
 
       // TODO: Accept format parameter.
       List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
@@ -190,8 +222,14 @@ public class CapabilitiesApiController {
       List<Source> sources = sourceRepository.findAll();
       XsltModel modelSource = new XsltModel();
       modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
-      modelSource.setCollections(sources);
+
+      List<CollectionInfoExtended> collectionInfoExtendedList =
+          collectionInfoBuilder.buildExtendedFromSources(request, sources,
+              language, baseUrl, mediaType);
+
+      modelSource.setCollections(collectionInfoExtendedList);
       model.addAttribute("source", modelSource.toSource());
+      
       viewUtility.addi18n(model, locale, request);
 
       View view = viewResolver.resolveViewName("ogcapir/collections", locale);
