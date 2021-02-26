@@ -139,7 +139,12 @@ public class CollectionService {
   }
 
 
-  public IndexRecord retrieveServiceMetadataForCollection(HttpServletRequest request, Source source) {
+  /**
+   * Retrieves the service metadata related to a collection.
+   *
+   */
+  public IndexRecord retrieveServiceMetadataForCollection(HttpServletRequest request,
+      Source source) {
     String serviceRecordUuid = "";
 
     if (source.getType() == SourceType.portal) {
@@ -174,8 +179,8 @@ public class CollectionService {
       }
 
       IndexRecord recordPojo = mapper.readValue(
-          recordAsJson.get("hits").get("hits").get(0).get(IndexRecordFieldNames.source).toPrettyString(),
-          IndexRecord.class);
+          recordAsJson.get("hits").get("hits").get(0)
+              .get(IndexRecordFieldNames.source).toPrettyString(), IndexRecord.class);
 
       return recordPojo;
     } catch (Exception ex) {

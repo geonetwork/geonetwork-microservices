@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 
 @Data
 @NoArgsConstructor
@@ -41,8 +42,8 @@ public class XsltModel {
 
   @XmlElementWrapper(name = "collections")
   @XmlElement(name = "collection")
-  List<Source> collections;
-  Source collection;
+  List<CollectionInfoExtended> collections;
+  CollectionInfoExtended collection;
 
   @XmlElementWrapper(name = "items")
   @XmlElement(name = "item")

@@ -25,6 +25,7 @@ import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription;
 import org.fao.geonet.index.model.opensearch.OpenSearchDescription.Url;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
@@ -131,7 +132,8 @@ public class CollectionApiController {
         String baseUrl = request.getRequestURL()
             .toString().replace(collectionId, "");
 
-        IndexRecord serviceRecord = collectionService.retrieveServiceMetadataForCollection(request, source);
+        IndexRecord serviceRecord = collectionService
+            .retrieveServiceMetadataForCollection(request, source);
 
         CollectionInfo collectionInfo = collectionInfoBuilder
             .buildFromSource(source, serviceRecord, language, baseUrl, mediaType);
@@ -141,7 +143,13 @@ public class CollectionApiController {
       } else {
         XsltModel modelSource = new XsltModel();
         modelSource.setOutputFormats(configuration.getFormats(Operations.collection));
-        modelSource.setCollection(source);
+        IndexRecord serviceRecord = collectionService
+            .retrieveServiceMetadataForCollection(request, source);
+
+        CollectionInfoExtended collectionInfo = collectionInfoBuilder
+            .buildExtendedFromSource(source, serviceRecord, language, baseUrl, mediaType);
+
+        modelSource.setCollection(collectionInfo);
         model.addAttribute("source", modelSource.toSource());
 
         viewUtility.addi18n(model, locale, request);

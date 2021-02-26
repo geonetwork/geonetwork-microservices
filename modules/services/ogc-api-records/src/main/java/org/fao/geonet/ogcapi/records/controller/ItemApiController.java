@@ -51,15 +51,19 @@ import org.fao.geonet.index.model.dcat2.DataService;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
+import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.fao.geonet.ogcapi.records.util.XmlUtil;
 import org.fao.geonet.repository.MetadataRepository;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -84,6 +88,9 @@ import springfox.documentation.annotations.ApiIgnore;
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class ItemApiController {
 
+  @Value("${gn.baseurl}")
+  String baseUrl;
+
   @Autowired
   ElasticSearchProxy proxy;
   @Autowired
@@ -102,6 +109,8 @@ public class ItemApiController {
   SearchConfiguration searchConfiguration;
   @Autowired
   MediaTypeUtil mediaTypeUtil;
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
 
   /**
    * Describe a collection item.
@@ -406,7 +415,15 @@ public class ItemApiController {
       }
       modelSource.setRequestParameters(request.getParameterMap());
       modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.item));
-      modelSource.setCollection(source);
+
+      IndexRecord serviceRecord = collectionService
+          .retrieveServiceMetadataForCollection(request, source);
+
+      CollectionInfoExtended collectionInfo = collectionInfoBuilder
+          .buildExtendedFromSource(source, serviceRecord, language, baseUrl, MediaType.TEXT_HTML);
+
+      modelSource.setCollection(collectionInfo);
+
       modelSource.setItems(List.of(
           new Item(recordId, null, record.getData())
       ));
@@ -545,8 +562,6 @@ public class ItemApiController {
       HttpServletResponse response,
       Model model) throws Exception {
 
-    Locale locale = LocaleContextHolder.getLocale();
-    String language = locale.getISO3Language();
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
     if (source == null) {
@@ -574,7 +589,18 @@ public class ItemApiController {
       parameterMap.put("startindex", new String[]{startindex + ""});
     }
     modelSource.setRequestParameters(parameterMap);
-    modelSource.setCollection(source);
+
+    Locale locale = LocaleContextHolder.getLocale();
+    String language = locale.getISO3Language();
+
+    IndexRecord serviceRecord = collectionService
+        .retrieveServiceMetadataForCollection(request, source);
+
+    CollectionInfoExtended collectionInfo = collectionInfoBuilder
+        .buildExtendedFromSource(source, serviceRecord, language, baseUrl, MediaType.TEXT_HTML);
+
+    modelSource.setCollection(collectionInfo);
+
     modelSource.setResults(results);
     modelSource.setOutputFormats(searchConfiguration.getFormats(Operations.items));
     model.addAttribute("source", modelSource.toSource());

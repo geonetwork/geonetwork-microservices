@@ -16,8 +16,10 @@
   <xsl:import href="html-util.xsl"/>
 
   <xsl:template match="/">
+    <xsl:message><xsl:copy-of select="model" /></xsl:message>
+
     <xsl:variable name="collections"
-                  select="model/collections/collection"
+                  select="model/collections/collection/source"
                   as="node()*"/>
 
     <xsl:variable name="mainCollection"
@@ -69,7 +71,5 @@
       </xsl:call-template>
     </html>
   </xsl:template>
-
-
 
 </xsl:stylesheet>

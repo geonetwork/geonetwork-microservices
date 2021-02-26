@@ -17,9 +17,10 @@
 
   <xsl:template match="/">
     <xsl:variable name="collections"
-                  select="model/collections/collection"
+                  select="model/collections/collection/source"
                   as="node()*"/>
 
+    <xsl:message><xsl:copy-of select="model" /></xsl:message>
     <xsl:variable name="mainCollection"
                   select="$collections[type = 'portal']"
                   as="node()?"/>
@@ -94,7 +95,7 @@
 
   <xsl:template name="render-collection-family">
     <xsl:param name="title" as="xs:string"/>
-    <xsl:param name="collections" as="element(collection)*"/>
+    <xsl:param name="collections" as="element(source)*"/>
 
     <xsl:if test="count($collections) > 0">
       <section class="py-4">
@@ -149,7 +150,7 @@
             </h3>
             <p class="leading-relaxed text-sm text-gray-700 clamp-3 hover:text-gray-800">
               <xsl:value-of select="$subTitle"/>
-              
+
             </p>
           </div>
         </div>

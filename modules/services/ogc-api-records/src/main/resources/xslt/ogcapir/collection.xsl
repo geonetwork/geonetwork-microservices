@@ -16,7 +16,7 @@
 
   <xsl:template match="/">
     <xsl:variable name="collection"
-                  select="model/collection"
+                  select="model/collection/source"
                   as="node()?"/>
 
     <xsl:variable name="label"

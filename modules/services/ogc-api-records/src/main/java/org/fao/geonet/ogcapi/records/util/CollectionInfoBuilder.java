@@ -1,20 +1,21 @@
 package org.fao.geonet.ogcapi.records.util;
 
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.index.JsonUtils;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfoExtended;
 import org.fao.geonet.ogcapi.records.controller.model.Extent;
 import org.fao.geonet.ogcapi.records.controller.model.Extent.CrsEnum;
 import org.fao.geonet.ogcapi.records.controller.model.Extent.TrsEnum;
@@ -31,6 +32,44 @@ public class CollectionInfoBuilder {
   CollectionService collectionService;
 
   /**
+   * Build Collection info lists from sources table.
+   */
+  public List<CollectionInfo> buildFromSources(HttpServletRequest request,
+      List<Source> sources, String language, String baseUrl, MediaType mediaType) {
+
+    List<CollectionInfo> collectionInfoList = new ArrayList<>();
+
+    sources.forEach(s -> {
+      IndexRecord serviceRecord = collectionService
+          .retrieveServiceMetadataForCollection(request, s);
+
+      collectionInfoList.add(
+          buildFromSource(s, serviceRecord, language, baseUrl, mediaType));
+    });
+
+    return collectionInfoList;
+  }
+
+  /**
+   * Build Collection info extended list from source table.
+   */
+  public List<CollectionInfoExtended> buildExtendedFromSources(HttpServletRequest request,
+      List<Source> sources, String language, String baseUrl, MediaType mediaType) {
+
+    List<CollectionInfoExtended> collectionInfoList = new ArrayList<>();
+
+    sources.forEach(s -> {
+      IndexRecord serviceRecord = collectionService
+          .retrieveServiceMetadataForCollection(request, s);
+
+      collectionInfoList.add(
+          buildExtendedFromSource(s, serviceRecord, language, baseUrl, mediaType));
+    });
+
+    return collectionInfoList;
+  }
+
+  /**
    * Build Collection info from source table.
    */
   public CollectionInfo buildFromSource(Source source, IndexRecord serviceRecord, String language,
@@ -39,7 +78,7 @@ public class CollectionInfoBuilder {
 
     CollectionInfo collectionInfo;
 
-    if(serviceRecord != null) {
+    if (serviceRecord != null) {
       collectionInfo = buildFromServiceRecordInfo(serviceRecord, language);
     } else {
       collectionInfo = buildFromSourceInfo(source, language);
@@ -67,7 +106,23 @@ public class CollectionInfoBuilder {
     return collectionInfo;
   }
 
+  /**
+   * Build Collection info extended from source table.
+   */
+  public CollectionInfoExtended buildExtendedFromSource(Source source, IndexRecord serviceRecord,
+      String language, String baseUrl, MediaType mediaType) {
+    
+    CollectionInfo collectionInfo =
+        buildFromSource(source, serviceRecord, language, baseUrl, mediaType);
 
+    CollectionInfoExtended collectionInfoExtended = CollectionInfoExtended.from(collectionInfo);
+    collectionInfoExtended.setSource(source);
+    collectionInfoExtended.setRecord(serviceRecord);
+    
+    return collectionInfoExtended;
+  }
+
+  
   private CollectionInfo buildFromSourceInfo(Source source, String language) {
     CollectionInfo collectionInfo = new CollectionInfo();
 

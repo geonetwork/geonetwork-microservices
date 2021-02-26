@@ -5,7 +5,7 @@
                 version="3.0">
 
   <xsl:function name="gn-ogcapir-util:getCollectionName" as="xs:string">
-    <xsl:param name="collection" as="element(collection)"/>
+    <xsl:param name="collection" as="element(source)"/>
     <xsl:param name="language" as="xs:string"/>
 
     <xsl:value-of select="$collection/(
@@ -20,7 +20,7 @@
    * in harvester folder for sub portal.
   -->
   <xsl:function name="gn-ogcapir-util:getCollectionLogo" as="xs:string">
-    <xsl:param name="collection" as="element(collection)"/>
+    <xsl:param name="collection" as="element(source)"/>
 
     <xsl:value-of select="if ($collection/type = ('harvester', 'portal'))
                           then concat($geonetworkUrl, '/', $logoFolder, '/', $collection/uuid, '.png')
