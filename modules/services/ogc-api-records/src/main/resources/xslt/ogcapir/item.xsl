@@ -26,7 +26,7 @@
                   select="parse-xml($item/xml)"
                   as="node()"/>
     <xsl:variable name="collection"
-                  select="model/collection/source"
+                  select="model/collection"
                   as="node()?"/>
     <xsl:variable name="outputFormats"
                   select="model/outputFormats/outputFormat/name"

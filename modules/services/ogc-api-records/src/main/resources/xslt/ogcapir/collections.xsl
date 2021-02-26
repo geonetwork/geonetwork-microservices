@@ -17,21 +17,21 @@
 
   <xsl:template match="/">
     <xsl:variable name="collections"
-                  select="model/collections/collection/source"
+                  select="model/collections/collection"
                   as="node()*"/>
 
-    <xsl:message><xsl:copy-of select="model" /></xsl:message>
     <xsl:variable name="mainCollection"
-                  select="$collections[type = 'portal']"
+                  select="$collections[source/type = 'portal']"
                   as="node()?"/>
     <xsl:variable name="mainCollectionName"
-                  select="gn-ogcapir-util:getCollectionName($mainCollection, $language)"/>
+                  select="gn-ogcapir-util:getCollectionName($mainCollection)"/>
+
 
     <xsl:variable name="portals"
-                  select="$collections[type = 'subportal']"
+                  select="$collections[source/type = 'subportal']"
                   as="node()*"/>
     <xsl:variable name="harvesters"
-                  select="$collections[type = 'harvester']"
+                  select="$collections[source/type = 'harvester']"
                   as="node()*"/>
     <xsl:variable name="outputFormats"
                   select="/model/outputFormats/outputFormat/name"
@@ -45,7 +45,7 @@
 
       <xsl:call-template name="html-body">
         <xsl:with-param name="logo">
-          <img src="{gn-ogcapir-util:getCollectionLogo($mainCollection)}"
+         <img src="{gn-ogcapir-util:getCollectionLogo($mainCollection)}"
                class=""/>
         </xsl:with-param>
         <xsl:with-param name="title">
@@ -95,7 +95,7 @@
 
   <xsl:template name="render-collection-family">
     <xsl:param name="title" as="xs:string"/>
-    <xsl:param name="collections" as="element(source)*"/>
+    <xsl:param name="collections" as="element(collection)*"/>
 
     <xsl:if test="count($collections) > 0">
       <section class="py-4">
@@ -109,7 +109,7 @@
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <xsl:for-each select="$collections">
               <xsl:variable name="label"
-                            select="gn-ogcapir-util:getCollectionName(., $language)"
+                            select="gn-ogcapir-util:getCollectionName(.)"
                             as="xs:string"/>
 
               <xsl:variable name="properties"
@@ -118,11 +118,11 @@
 
               <xsl:call-template name="render-collection">
                 <xsl:with-param name="title"
-                                select="if (empty($properties[1])) then name else $properties[1]"/>
+                                select="if (empty($properties[1])) then source/name else $properties[1]"/>
                 <xsl:with-param name="subTitle"
                                 select="if (empty($properties[2])) then '' else $properties[2]"/>
                 <xsl:with-param name="logo" select="gn-ogcapir-util:getCollectionLogo(.)"/>
-                <xsl:with-param name="url" select="concat($requestUrl, '/', uuid)"/>
+                <xsl:with-param name="url" select="concat($requestUrl, '/', source/uuid)"/>
               </xsl:call-template>
             </xsl:for-each>
           </div>

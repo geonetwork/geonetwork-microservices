@@ -16,11 +16,15 @@
 
   <xsl:template match="/">
     <xsl:variable name="collection"
-                  select="model/collection/source"
+                  select="model/collection"
                   as="node()?"/>
 
     <xsl:variable name="label"
-                  select="gn-ogcapir-util:getCollectionName($collection, $language)"
+                  select="gn-ogcapir-util:getCollectionName($collection)"
+                  as="xs:string"/>
+
+    <xsl:variable name="description"
+                  select="gn-ogcapir-util:getCollectionDescription($collection)"
                   as="xs:string"/>
 
     <xsl:variable name="properties"
@@ -32,7 +36,7 @@
                   as="node()*"/>
 
     <xsl:variable name="title"
-                    select="if (empty($properties[1])) then name else $properties[1]"/>
+                    select="if (empty($properties[1])) then source/name else $properties[1]"/>
     <xsl:variable name="subTitle"
                     select="if (empty($properties[2])) then '' else $properties[2]"/>
     <html>
@@ -58,6 +62,12 @@
                         select="model/results/total/total"/>
 
           <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
+            <xsl:if test="string($description)">
+              <div class="w-2/3">
+                <h2><xsl:value-of select="$description" /></h2>
+              </div>
+            </xsl:if>
+
             <div class="w-2/3">
               <xsl:choose>
                 <xsl:when test="model/results">

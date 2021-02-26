@@ -19,20 +19,20 @@
     <xsl:message><xsl:copy-of select="model" /></xsl:message>
 
     <xsl:variable name="collections"
-                  select="model/collections/collection/source"
+                  select="model/collections/collection"
                   as="node()*"/>
 
     <xsl:variable name="mainCollection"
-                  select="$collections[type = 'portal']"
+                  select="$collections[source/type = 'portal']"
                   as="node()?"/>
     <xsl:variable name="mainCollectionName"
-                  select="gn-ogcapir-util:getCollectionName($mainCollection, $language)"/>
+                  select="gn-ogcapir-util:getCollectionName($mainCollection)"/>
 
     <xsl:variable name="portals"
-                  select="$collections[type = 'subportal']"
+                  select="$collections[source/type = 'subportal']"
                   as="node()*"/>
     <xsl:variable name="harvesters"
-                  select="$collections[type = 'harvester']"
+                  select="$collections[source/type = 'harvester']"
                   as="node()*"/>
     <xsl:variable name="outputFormats"
                   select="/model/outputFormats/outputFormat/name"

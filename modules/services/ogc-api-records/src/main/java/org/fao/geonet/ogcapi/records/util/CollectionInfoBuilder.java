@@ -9,7 +9,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.index.JsonUtils;
@@ -152,8 +154,10 @@ public class CollectionInfoBuilder {
   private CollectionInfo buildFromServiceRecordInfo(IndexRecord serviceRecord, String language) {
     CollectionInfo collectionInfo = new CollectionInfo();
 
-    collectionInfo.setTitle(serviceRecord.getResourceTitle().get(language));
-    collectionInfo.setDescription(serviceRecord.getResourceAbstract().get(language));
+    collectionInfo.setTitle(
+        getTranslationForRecordProperty(serviceRecord.getResourceTitle(), language));
+    collectionInfo.setDescription(
+        getTranslationForRecordProperty(serviceRecord.getResourceAbstract(), language));
 
     Extent extent = new Extent();
     extent.crs(CrsEnum.HTTP_WWW_OPENGIS_NET_DEF_CRS_OGC_1_3_CRS84);
@@ -207,5 +211,12 @@ public class CollectionInfoBuilder {
     }
 
     return coordinatesList;
+  }
+
+
+  private String getTranslationForRecordProperty(Map<String, String> translations,
+      String language) {
+    return StringUtils.isNotEmpty(translations.get("lang" + language))
+        ? translations.get("lang" + language) : translations.get("default");
   }
 }
