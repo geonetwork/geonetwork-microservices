@@ -460,11 +460,13 @@ public class ItemApiController {
 
 
   private List<String> setDefaultRssSortBy(List<String> sortby, HttpServletRequest request) {
-    if ("rss".equals(request.getParameter("f"))
+    boolean isRss = "rss".equals(request.getParameter("f"))
+        || (request.getHeader("Accept") != null
+            && request.getHeader("Accept").contains(MediaType.APPLICATION_RSS_XML_VALUE));
+    if (isRss
         && (sortby == null || sortby.size() == 0)) {
       sortby = new ArrayList<>();
-      sortby.add(String.format("%s:%s",
-          IndexRecordFieldNames.dateStamp, "desc"));
+      sortby.add("-" + IndexRecordFieldNames.dateStamp);
     }
     return sortby;
   }
