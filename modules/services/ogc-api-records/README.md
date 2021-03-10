@@ -164,6 +164,7 @@ docker run -it -p8080:8080 \
   -v "`pwd`/ogcapiconfig:/ogcapiconfig/" \
   -e "SPRING_PROFILES_ACTIVE=standalone" \
   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
+  -e "JAVA_OPTS=-Dfile.encoding=UTF-8" \
   gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
 ```
 
