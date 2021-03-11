@@ -49,7 +49,7 @@ public class IndexRecord extends IndexDocument {
   @JsonProperty(IndexRecordFieldNames.resourceAbstract)
   Map<String, String> resourceAbstract = new HashMap<>();
   @JsonProperty(IndexRecordFieldNames.resourceCredit)
-  Map<String, String> resourceCredit = new HashMap<>();
+  List<HashMap<String, String>> resourceCredit = new ArrayList<>();
   @JsonProperty(IndexRecordFieldNames.tag)
   ArrayList<HashMap<String, String>> tag = new ArrayList<>();
   private Integer internalId;
