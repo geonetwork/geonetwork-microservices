@@ -27,7 +27,7 @@ mvn process-resources
 # Build module in Intellij works fine.
 # cd modules/library/common-view; mvn compile
 # Other workaround:
-#cd modules/services/ogc-api-records/service/src/main/resources/xslt
+#cd modules/services/ogc-api-records/src/main/resources/xslt
 #ln -s ../../../../../../../library/common-view/src/main/resources/xslt/core core
 
 ```
@@ -157,7 +157,7 @@ Build docker image from source:
 ```shell script
 ./mvnw clean install -Drelax
 mkdir ogcapiconfig
-cp modules/services/ogc-api-records/service/src/main/resources/bootstrap.yml ogcapiconfig/.
+cp modules/services/ogc-api-records/src/main/resources/bootstrap.yml ogcapiconfig/.
 cp modules/library/common-search/src/main/resources/application.yml ogcapiconfig/.
 # Adjust database and Elasticsearch connection info.
 docker run -it -p8080:8080 \
@@ -181,7 +181,7 @@ docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING
 Use the `war` profile to build the WAR:
 
 ```shell script
-cd modules/services/ogc-api-records/service
+cd modules/services/ogc-api-records
 mvn package -Pwar,-docker
 
 mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.location=./service/src/main/resources/
