@@ -23,7 +23,7 @@
     <xsl:param name="collection" as="element(collection)"/>
 
     <xsl:value-of select="if ($collection/type = ('harvester', 'portal'))
-                          then concat($geonetworkUrl, '/', $logoFolder, '/', $collection/uuid, '.png')
-                          else concat($geonetworkUrl, '/', $harvestingFolder, '/', $collection/logo)"/>
+                          then concat($geonetworkUrl, $logoFolder, '/', $collection/uuid, '.png')
+                          else concat($geonetworkUrl, $harvestingFolder, '/', $collection/logo)"/>
   </xsl:function>
 </xsl:stylesheet>
