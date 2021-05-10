@@ -204,7 +204,9 @@ public class DcatConverter {
                                     "http://inspire.ec.europa.eu/metadata-codelist/DegreeOfConformity/"
                                         + inspireDegreeOfConformity.get(c.getPass()),
                                     null))
-                                .description(c.getExplanation()).build()
+                                //RDFParseException: unexpected literal
+                                //.description(c.getExplanation())
+                            .build()
                         )
                         .build()).build()
             ).collect(Collectors.toList())
