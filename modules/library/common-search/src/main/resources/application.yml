@@ -87,7 +87,7 @@ gn:
         operations:
           - item
       -
-        name : turtle
+        name : dcat_turtle
         mimeType : text/turtle
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations :

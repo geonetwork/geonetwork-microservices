@@ -267,7 +267,7 @@ public class ItemApiController {
     try {
       String formatParameter = request.getParameter("f");
       boolean isTurtle =
-          (formatParameter != null && "turtle".equals(formatParameter))
+          (formatParameter != null && "dcat_turtle".equals(formatParameter))
               || GnMediaType.TEXT_TURTLE_VALUE.equals(acceptHeader);
       boolean isDcat =
           (formatParameter != null && "dcat".equals(formatParameter))
