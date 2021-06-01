@@ -5,6 +5,10 @@ server:
 #  servlet:
 #    context-path: /ogcapi
   instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
 spring:
   application.name: ogc-records-service
   main.banner-mode: off
