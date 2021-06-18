@@ -21,12 +21,24 @@
   <name>GeoNetwork data-viz parent</name>
   <description>Parent pom for geonetwork data-viz micro services</description>
 
+  <properties>
+  </properties>
+
   <dependencies>
     <!-- note: base spring-cloud client libraries inherited from parent pom -->
   </dependencies>
-  
+
   <modules>
     <module>data-indexer</module>
   </modules>
+  <build>
+    <pluginManagement>
+      <plugins>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+    </plugins>
+  </build>
 
 </project>

@@ -4,6 +4,11 @@ server:
 spring:
   application.name: dataviz-indexing-service
   main.banner-mode: off
+  webflux.base-path: /
+  jackson:
+    default-property-inclusion: non-empty
+    serialization:
+      indent-output: true
   cloud:
     loadbalancer.ribbon.enabled: false # ribbon is in maintenance mode and should be replaced by spring-cloud-loadbalancer
     config:
