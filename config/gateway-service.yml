@@ -56,6 +56,14 @@ spring:
         - Path=/api/records/{segment}
         filters:
         - SetPath=/{segment}
+      # dataviz indexer routes 
+      - id: dataviz-indexer
+        uri: lb://dataviz-indexing-service
+        # route dataviz/index/** requests to data-indexer's root path /** 
+        predicates:
+        - Path=/dataviz/index/{segment}
+        filters:
+        - SetPath=/{segment}
 logging:
   level:
     root: WARN

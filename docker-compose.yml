@@ -201,3 +201,14 @@ services:
       RABBITMQ_HOST: rabbitmq
     networks:
       - gn-cloud-network
+  data-indexer:
+    image: gn-cloud-dataviz-indexer:${TAG}
+    depends_on:
+      - config
+      - rabbitmq
+      - elasticsearch
+    environment:
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      RABBITMQ_HOST: rabbitmq
+    networks:
+      - gn-cloud-network

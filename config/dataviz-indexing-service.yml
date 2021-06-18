@@ -1,0 +1,18 @@
+spring:
+  elasticsearch.rest.uris: http://elasticsearch:9200
+management:
+  health.ldap.enabled: false
+  metrics:
+    tags:
+      host: localhost
+      application: GeoNetwork
+  endpoints:
+    web.exposure.include: info, health, metrics, prometheus
+
+---
+# Use this profile when running from the host instead of inside the docker composition, either
+# from the IDE or through mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/
+spring:
+  profiles: local
+  elasticsearch.rest.uris: http://localhost:9200
+server.port: 10000
