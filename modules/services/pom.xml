@@ -65,6 +65,7 @@
     <module>searching</module>
     <module>gateway</module>
     <module>ogc-api-records</module>
+    <module>dataviz</module>
   </modules>
 
 </project>
