@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.dataviz.jackson.databind;
+package org.fao.geonet.jackson.databind.geojson;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -35,3 +35,26 @@ eureka:
       defaultZone: ${eureka.server.url:http://localhost:8761/eureka}
     healthcheck:
       enabled: true
+
+dataviz:
+  indexer:
+    producers:
+      # these are all default values (i.e. same as not setting them at all),
+      # for the sake of documenation (IDE autocompletion enabled)
+      shp:
+        default-charset: UTF-8
+      wfs: 
+        lenient: true
+        #prefer-post:
+        #timeout: 30000
+        try-gzip: true
+        http-connection-pooling: true
+        http-connection-pool-size: 6
+        
+    
+logging:
+  level:
+    root: WARN
+    org.fao.geonet.dataviz: info
+    org.fao.geonet.dataviz.producer.geotools: debug
+    

@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.dataviz.indexing.functions;
+package org.fao.geonet.dataviz.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

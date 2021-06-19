@@ -4,14 +4,16 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.dataviz.indexing.functions;
+package org.fao.geonet.dataviz.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Geometry;
 
 @Data
+@Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class GeometryProperty extends SimpleProperty<Geometry> {

@@ -6,33 +6,29 @@
 
 package org.fao.geonet.dataviz.indexing;
 
-import static java.util.Collections.singletonList;
 import java.net.URI;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import org.fao.geonet.dataviz.indexing.functions.GeodataRecord;
-import org.fao.geonet.dataviz.indexing.functions.GeometryProperty;
-import org.fao.geonet.dataviz.indexing.functions.SimpleProperty;
-import org.fao.geonet.dataviz.indexing.geo.DatasetReader;
-import org.locationtech.jts.geom.CoordinateSequenceFactory;
-import org.locationtech.jts.geom.CoordinateXY;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
+import org.fao.geonet.dataviz.model.AuthCredentials;
+import org.fao.geonet.dataviz.model.AuthCredentials.AuthType;
+import org.fao.geonet.dataviz.model.DataQuery;
+import org.fao.geonet.dataviz.model.GeodataRecord;
+import org.fao.geonet.dataviz.processor.Processors;
+import org.fao.geonet.dataviz.producer.Producers;
+import org.fao.geonet.dataviz.sink.Consumers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @SpringBootApplication
-@ComponentScan
 public class DatavizIndexingApp {
 
-  private @Autowired List<DatasetReader> dataReaders;
+  private @Autowired Producers producers;
+  private @Autowired Processors processors;
+  private @Autowired Consumers consumers;
 
   /**
    * Application launcher.
@@ -47,8 +43,22 @@ public class DatavizIndexingApp {
   }
 
   @Bean
-  public Supplier<String> ping() {
-    return () -> "pong";
+  public Supplier<DataQuery> sampleQuery() {
+    return () -> new DataQuery()
+        .setUri(URI.create("http://ows.example.com/wfs?request=GetCapabilities"))
+        .setLayerName("topp:states").setEncoding(StandardCharsets.UTF_8)
+        .setAuth(new AuthCredentials().setUserName("user").setPassword("secret")
+            .setType(AuthType.basic));
+  }
+
+  @Bean
+  public Function<Flux<URI>, Flux<GeodataRecord>> indexAll() {
+    return readAll().andThen(toWgs84());
+  }
+
+  @Bean
+  public Function<Flux<DataQuery>, Flux<GeodataRecord>> index() {
+    return read().andThen(toWgs84());
   }
 
   /**
@@ -62,38 +72,18 @@ public class DatavizIndexingApp {
    *         {@link GeodataRecord}
    */
   @Bean
-  public Function<Flux<URI>, Flux<GeodataRecord>> read() {
-    return uris -> uris.flatMap(uri -> Flux.just(//
-        sample(uri.toString()), //
-        sample(uri.toString()), //
-        sample(uri.toString())//
-    ));
-  }
-
-  private GeodataRecord sample(String name) {
-    CoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
-    Geometry g = new GeometryFactory(sf).createPoint(new CoordinateXY(-180, 90));
-    GeometryProperty gprop = new GeometryProperty("geom", g, "EPSG:2958");
-    return new GeodataRecord().setGeometry(gprop)
-        .setProperties(singletonList(new SimpleProperty<>("uri", name)));
+  public Function<Flux<URI>, Flux<GeodataRecord>> readAll() {
+    return uris -> uris.flatMap(uri -> producers.read(new DataQuery().setUri(uri)));
   }
 
   @Bean
-  public Function<Flux<URI>, Flux<GeodataRecord>> index() {
-    return read().andThen(toWgs84());
+  public Function<Flux<DataQuery>, Flux<GeodataRecord>> read() {
+    return queries -> queries.flatMap(query -> producers.read(query));
   }
 
   @Bean
   public Function<Flux<GeodataRecord>, Flux<GeodataRecord>> toWgs84() {
-    return records -> records.map(rec -> {
-      GeometryProperty g = rec.getGeometry();
-      return rec
-          .withGeometry(g == null ? null : g.withName(g.getName() + "_tx").withSrs("EPSG:4326"));
-    });
-  }
-
-  private Mono<DatasetReader> findReader(URI uri) {
-    return Flux.fromIterable(this.dataReaders).filter(reader -> reader.canHandle(uri)).single();
+    return processors.reproject("EPSG:4326");
   }
 
 }

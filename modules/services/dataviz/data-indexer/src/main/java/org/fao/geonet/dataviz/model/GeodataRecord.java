@@ -4,7 +4,7 @@
  * available at the root application directory.
  */
 
-package org.fao.geonet.dataviz.indexing.functions;
+package org.fao.geonet.dataviz.model;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class GeodataRecord {
 
+  String id;
+  
   GeometryProperty geometry;
 
   List<SimpleProperty<?>> properties;
