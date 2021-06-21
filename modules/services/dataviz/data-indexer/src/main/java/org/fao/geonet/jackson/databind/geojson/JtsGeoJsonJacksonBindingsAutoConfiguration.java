@@ -31,4 +31,8 @@ public class JtsGeoJsonJacksonBindingsAutoConfiguration {
   public @Bean JtsGeoJsonModule jtsGeoJsonModule() {
     return new JtsGeoJsonModule();
   }
+
+  public @Bean GeoRecordToGeoJsonFeatureModule geoRecordToGeoJsonFeatureModule() {
+    return new GeoRecordToGeoJsonFeatureModule();
+  }
 }

@@ -9,6 +9,7 @@ package org.fao.geonet.jackson.databind.geojson;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.CoordinateSequenceFactory;
 import org.locationtech.jts.geom.CoordinateSequenceFilter;
@@ -77,6 +79,7 @@ import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
  * </code>
  * </pre>
  */
+@Slf4j
 public class JtsGeoJsonModule extends SimpleModule {
   private static final long serialVersionUID = 1L;
 
@@ -110,8 +113,9 @@ public class JtsGeoJsonModule extends SimpleModule {
       WritableTypeId typeIdDef = typeSer.writeTypePrefix(gen,
           typeSer.typeId(value, JsonToken.START_OBJECT));
 
-      serializeContent(value, gen, null);
-
+      if (value != null) {
+        serializeContent(value, gen);
+      }
       typeSer.writeTypeSuffix(gen, typeIdDef);
     }
 
@@ -122,40 +126,51 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     public void serialize(Geometry geometry, JsonGenerator generator) throws IOException {
-      serialize(geometry, generator, (String) null);
-    }
-
-    public void serialize(Geometry geometry, JsonGenerator generator, String customNameProperty)
-        throws IOException {
       if (geometry == null) {
         generator.writeNull();
         return;
       }
       generator.writeStartObject();
-      serializeContent(geometry, generator, customNameProperty);
+      serializeContent(geometry, generator);
       generator.writeEndObject();
     }
 
-    private void serializeContent(Geometry geometry, JsonGenerator generator,
-        String customNameProperty) throws IOException {
+    private void serializeContent(Geometry geometry, JsonGenerator generator) throws IOException {
       generator.writeStringField("type", geometry.getGeometryType());
+
+      writeCustomFieldsFromUserData(geometry.getUserData(), generator);
+
       writeDimensions(geometry, generator);
-      if (customNameProperty != null) {
-        generator.writeStringField("name", customNameProperty);
-      }
+
       if (geometry instanceof GeometryCollection && !(geometry instanceof MultiPoint
           || geometry instanceof MultiLineString || geometry instanceof MultiPolygon)) {
 
         generator.writeFieldName("geometries");
         generator.writeStartArray();
         for (int i = 0; i < geometry.getNumGeometries(); i++) {
-          serialize(geometry.getGeometryN(i), generator, customNameProperty);
+          serialize(geometry.getGeometryN(i), generator);
         }
         generator.writeEndArray();
         return;
       }
       generator.writeFieldName("coordinates");
       writeGeometry(geometry, generator);
+    }
+
+    private void writeCustomFieldsFromUserData(Object userData, JsonGenerator generator) {
+      if (!(userData instanceof Map)) {
+        return;
+      }
+      Map<?, ?> customProps = (Map<?, ?>) userData;
+      customProps.forEach((key, val) -> {
+        if (key instanceof String && ((String) key).startsWith("@")) {
+          try {
+            generator.writeObjectField((String) key, val);
+          } catch (IOException e) {
+            log.warn("Error encoding geometry custom property {}, property ignored", key, e);
+          }
+        }
+      });
     }
 
     /**

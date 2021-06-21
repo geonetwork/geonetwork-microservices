@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 public class GeodataRecord {
 
   String id;
-  
+
   GeometryProperty geometry;
 
   List<SimpleProperty<?>> properties;
