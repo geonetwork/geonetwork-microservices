@@ -8,7 +8,9 @@ package org.fao.geonet.jackson.databind.geojson;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,9 +29,11 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -308,24 +312,55 @@ public class JtsGeoJsonModule extends SimpleModule {
 
     private Geometry readGeometry(ObjectNode geometryNode, int dimensions, boolean hasM) {
       final String type = geometryNode.findValue("type").asText();
+      Geometry geom;
       switch (type) {
       case Geometry.TYPENAME_POINT:
-        return readPoint(geometryNode, dimensions, hasM);
+        geom = readPoint(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_MULTIPOINT:
-        return readMultiPoint(geometryNode, dimensions, hasM);
+        geom = readMultiPoint(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_LINESTRING:
-        return readLineString(geometryNode, dimensions, hasM);
+        geom = readLineString(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_MULTILINESTRING:
-        return readMultiLineString(geometryNode, dimensions, hasM);
+        geom = readMultiLineString(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_POLYGON:
-        return readPolygon(geometryNode, dimensions, hasM);
+        geom = readPolygon(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_MULTIPOLYGON:
-        return readMultiPolygon(geometryNode, dimensions, hasM);
+        geom = readMultiPolygon(geometryNode, dimensions, hasM);
+        break;
       case Geometry.TYPENAME_GEOMETRYCOLLECTION:
-        return readGeometryCollection(geometryNode, dimensions, hasM);
+        geom = readGeometryCollection(geometryNode, dimensions, hasM);
+        break;
       default:
         throw new IllegalArgumentException("Unknown geometry node: " + geometryNode.toString());
       }
+
+      Map<String, Object> userData = readUserDataMap(geometryNode);
+      geom.setUserData(userData);
+      return geom;
+    }
+
+    private Map<String, Object> readUserDataMap(ObjectNode geomNode) {
+      Map<String, Object> userData = null;
+      Iterator<String> fieldNames = geomNode.fieldNames();
+      while (fieldNames.hasNext()) {
+        String fieldName = fieldNames.next();
+        if (fieldName.startsWith("@")) {
+          JsonNode valueNode = geomNode.findValue(fieldName);
+          if (valueNode instanceof ValueNode) {
+            String value = ((ValueNode) valueNode).textValue();
+            if (userData == null) {
+              userData = new HashMap<>();
+            }
+            userData.put(fieldName, value);
+          }
+        }
+      }
+      return userData;
     }
 
     private int getDimensions(ObjectNode geometryNode) {
@@ -344,9 +379,24 @@ public class JtsGeoJsonModule extends SimpleModule {
       return false;
     }
 
+    private ArrayNode getCoordinatesNode(ObjectNode geometryNode) {
+      JsonNode coordinatesNode = geometryNode.findValue("coordinates");
+      ArrayNode coordinates;
+      if (coordinatesNode == null || coordinatesNode.isNull()) {
+        coordinates = new ArrayNode((JsonNodeFactory) null);
+      } else if (coordinatesNode.isArray()) {
+        coordinates = (ArrayNode) coordinatesNode;
+      } else {
+        throw new IllegalArgumentException(
+            "Invalid 'coordinates' field type, expected ArrayNode, got "
+                + coordinatesNode.getNodeType());
+      }
+      return coordinates;
+    }
+
     private MultiLineString readMultiLineString(ObjectNode geometryNode, int dimensions,
         boolean hasM) {
-      ArrayNode coordinates = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinates = getCoordinatesNode(geometryNode);
       if (coordinates.isEmpty()) {
         return geometryFactory.createMultiLineString();
       }
@@ -360,7 +410,7 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     private MultiPolygon readMultiPolygon(ObjectNode geometryNode, int dimensions, boolean hasM) {
-      ArrayNode coordinates = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinates = getCoordinatesNode(geometryNode);
       if (coordinates.isEmpty()) {
         return geometryFactory.createMultiPolygon();
       }
@@ -385,7 +435,7 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     private Polygon readPolygon(ObjectNode geometryNode, int dimensions, boolean hasM) {
-      ArrayNode coordinates = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinates = getCoordinatesNode(geometryNode);
       return readPolygon(coordinates, dimensions, hasM);
     }
 
@@ -415,7 +465,7 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     private LineString readLineString(ObjectNode geometryNode, int dimensions, boolean hasM) {
-      ArrayNode coordinates = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinates = getCoordinatesNode(geometryNode);
       if (coordinates.isEmpty()) {
         return geometryFactory.createLineString();
       }
@@ -424,7 +474,7 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     private MultiPoint readMultiPoint(ObjectNode geometryNode, int dimensions, boolean hasM) {
-      ArrayNode coordinates = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinates = getCoordinatesNode(geometryNode);
       if (null == coordinates || coordinates.isEmpty()) {
         return geometryFactory.createMultiPoint();
       }
@@ -448,7 +498,7 @@ public class JtsGeoJsonModule extends SimpleModule {
     }
 
     private Point readPoint(ObjectNode geometryNode, int dimensions, boolean hasM) {
-      ArrayNode coordinateArray = (ArrayNode) geometryNode.findValue("coordinates");
+      ArrayNode coordinateArray = getCoordinatesNode(geometryNode);
       if (null == coordinateArray || coordinateArray.isEmpty()) {
         return geometryFactory.createPoint();
       }

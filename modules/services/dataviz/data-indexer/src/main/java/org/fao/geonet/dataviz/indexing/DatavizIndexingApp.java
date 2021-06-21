@@ -8,6 +8,7 @@ package org.fao.geonet.dataviz.indexing;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.fao.geonet.dataviz.model.AuthCredentials;
@@ -53,12 +54,14 @@ public class DatavizIndexingApp {
 
   @Bean
   public Function<Flux<URI>, Flux<GeodataRecord>> indexAll() {
-    return readAll().andThen(toWgs84());
+    //Consumer<GeodataRecord> c;
+    Function<Flux<URI>, Flux<GeodataRecord>> source = readAll().andThen(toWgs84());
+    return source;
   }
 
   @Bean
-  public Function<Flux<DataQuery>, Flux<GeodataRecord>> index() {
-    return read().andThen(toWgs84());
+  public Consumer<Flux<GeodataRecord>> index() {
+    return records -> consumers.index(records);
   }
 
   /**

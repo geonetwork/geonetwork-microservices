@@ -9,6 +9,7 @@ package org.fao.geonet.dataviz.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Geometry;
 
@@ -16,6 +17,7 @@ import org.locationtech.jts.geom.Geometry;
 @Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class GeometryProperty extends SimpleProperty<Geometry> {
 
   private String srs;

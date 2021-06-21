@@ -27,9 +27,26 @@ public class FeatureToRecord implements Function<SimpleFeature, GeodataRecord> {
   public GeodataRecord apply(SimpleFeature f) {
     log.trace("Mapping feature {} to GeodataRecord", f.getID());
     GeodataRecord record = new GeodataRecord();
+    String typeName = f.getFeatureType().getTypeName();
+    record.setTypeName(typeName);
+    record.setId(stripTypeNameFromFeatureId(typeName, f.getID()));
     record.setGeometry(getGeometryProperty(f));
     record.setProperties(getSimpleProperties(f));
     return record;
+  }
+
+  /**
+   * Removes the feature type name from the feature id and returns it.
+   * <p>
+   * GeoTools has an abstraction leak on its data access API by which it prepends
+   * the FeatureType name to the Feature ids. We don't need that.
+   */
+  private String stripTypeNameFromFeatureId(String typeName, String fid) {
+    if (fid.startsWith(typeName) && fid.length() > typeName.length() + 1
+        && fid.charAt(typeName.length()) == '.') {
+      fid = fid.substring(typeName.length() + 1);
+    }
+    return fid;
   }
 
   private List<SimpleProperty<?>> getSimpleProperties(SimpleFeature f) {

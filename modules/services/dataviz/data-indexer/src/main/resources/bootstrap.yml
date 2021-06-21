@@ -5,6 +5,8 @@ spring:
   application.name: dataviz-indexing-service
   main.banner-mode: off
   webflux.base-path: /
+  codec:
+    max-in-memory-size: 1GB
   jackson:
     default-property-inclusion: non-empty
     serialization:

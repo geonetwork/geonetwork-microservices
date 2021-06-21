@@ -51,11 +51,40 @@ Or the equivalent application launch configuration from the IDE (for example, ru
 as a regular Java application with the `-Dspring.profiles.active=local` JVM argument).
 
 
-## API
+## Usage
 
 > In the following API example calls, use `http://localhost:9900/dataviz/index` as the base URL if running the
 docker composition (as proxied by the gateway service), or `http://localhost:10000` if running locally 
 (e.g. from `mvn spring-boot:run` or the IDE).
+
+## Sample requests
+
+Function composition: read a shapefile from an HTTP URL, and reproject it to WGS84
+
+```
+curl -i -H "Content-Type: text/plain" localhost:10000/readAll,toWgs84 -d  https://raw.githubusercontent.com/geoserver/geoserver/main/data/release/data/sf/roads.shp
+HTTP/1.1 200 OK
+user-agent: curl/7.68.0
+Content-Type: application/json
+Content-Length: 455095
+
+[ {
+  "type" : "Feature",
+  "@id" : "1",
+  "geometry" : {
+    "type" : "MultiLineString",
+    "@name" : "the_geom",
+    "@srs" : "EPSG:4326",
+    "coordinates" : [ [ [ -103.76318962743072, 44.37493141111295 ], [ -103.7632921483645, 44.37517396282682 ], [ -103.76405089795956, 44.37670748824779 ], [ -103.76379179094388, 44.377545125729156 ], [ -103.76276983127362, 44.37836461516183 ], [ -103.76197421493964, 44.37890071027333 ], [ -103.76193273622258, 44.37908700228332 ], [ -103.76202254127257, 44.37918667850246 ], [ -103.76206646568123, 44.37929141388107 ], [ -103.76222445702847, 44.3794191843382 ], [ -103.763226713461, 44.38013689675946 ], [ -103.76391017741982, 44.38118653776573 ], [ -103.76401290698996, 44.381418109267294 ], [ -103.76485223827957, 44.38228801602651 ], [ -103.76499558832916, 44.38281097185956 ], [ -103.76504627360814, 44.38296518526334 ], [ -103.76583595572829, 44.38405424487977 ], [ -103.76579753422489, 44.384498627125744 ], [ -103.7657526826934, 44.38448870752633 ] ] ]
+  },
+  "properties" : {
+    "cat" : 5,
+    "label" : "unimproved road"
+  }
+}, {
+  "type" : "Feature",
+...
+```
 
 ### Get a sample DataQuery
 

@@ -20,6 +20,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class GeodataRecord {
 
+  String typeName;
+  
   String id;
 
   GeometryProperty geometry;
