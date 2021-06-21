@@ -6,6 +6,68 @@ This is not a metadata harvester, but a data indexing service aiming at providin
 an API to data visualization client applications in the form of streaming
 data-points.
 
+The implementation is based on a functional programming style (see [Spring Cloud Function](https://docs.spring.io/spring-cloud-function/docs/current/reference/html/spring-cloud-function.html)).
+
+As such, the overall functionality is decomposed using high level constructs and `Supplier<>`, `Function<>`, and `Consumer<>` abstractions,
+allowing the implementation of data producer, data transformation, and destination targets as individual and composable components, agnostic of
+the execution environment and deployment platforms.
+
+This means that these data streaming processing functions could be deployed as a standalone HTTP service, as cloud native functions in a
+FASS (Function As a Service) provider, used as a regular Java library, etc. 
+
+The origin and destination of the streams of data to compose the processing pipeline are also dependant on the execution environment rather
+than hard coded, meaning data may come from files, HTTP POST request bodies, a cloud message broker such as an AMQP (Advanced Message Queuing Protocol)
+or Kafka streams, and so on.
+
+The following functions are currently exposed as reactive HTTP endpoints:
+
+* `readAll(URI):Flux<GeodataRecord>`: Reads all datasets from a URI (WFS, Shapefile, GeoPackage) and returns a reactive stream of data records
+* `read(DataQuery):Flux<GeodataRecord>`: Takes a query (allows to finer grained filtering than just dataset URI) and returns a reactive stream of data records
+* `toWgs84(Flux<GeodataRecord>):Flux<GeodataRecord>`: Processes a stream of data records, reprojecting their geometries to WGS84
+* `index(Flux<GeodataRecord>):void` Consumer a stream of data records and sends them to an indexing service
+
+## Quick start:
+
+From the root of the maven project:
+
+```
+docker compose up -d
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+* Read a Shapefile from a remote location:
+
+```
+curl -i -H "Content-Type: text/plain" localhost:10000/readAll -d  https://raw.githubusercontent.com/geoserver/geoserver/main/data/release/data/sf/roads.shp
+```
+
+* Read a Shapefile from a remote location, and transform it to WGS84:
+
+```
+curl -i -H "Content-Type: text/plain" localhost:10000/readAll,toWgs84 -d  https://raw.githubusercontent.com/geoserver/geoserver/main/data/release/data/sf/roads.shp
+```
+> Note the endpoint `/readAll,toWgs84` means call the `readAll` function and pipe its output through `toWgs84`
+
+* Read a Shapefile from a remote location, transform it to WGS84, and index all its records:
+
+```
+curl -i -H "Content-Type: text/plain" localhost:10000/readAll,toWgs84,index -d  https://wms.ign.gob.ar/geoserver/ows?service=wfs
+```
+
+* Index all FeatureTypes in a remote WFS service:
+
+```
+curl -i -H "Content-Type: text/plain" localhost:10000/readAll,toWgs84,index -d  https://raw.githubusercontent.com/geoserver/geoserver/main/data/release/data/sf/roads.shp
+```
+
+* Index a specific FeatureType from a remote WFS service:
+
+```
+curl -i -H "Content-Type: application/json" localhost:10000/read,toWgs84,index -d '{
+  "uri" : "https://wms.ign.gob.ar/geoserver/ows?service=wfs",
+  "layerName" : "ign:area_protegida"
+}'
+```
 
 ## Build
 

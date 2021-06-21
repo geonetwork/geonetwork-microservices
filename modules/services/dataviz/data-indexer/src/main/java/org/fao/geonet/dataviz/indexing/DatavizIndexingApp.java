@@ -54,7 +54,7 @@ public class DatavizIndexingApp {
 
   @Bean
   public Function<Flux<URI>, Flux<GeodataRecord>> indexAll() {
-    //Consumer<GeodataRecord> c;
+    // Consumer<GeodataRecord> c;
     Function<Flux<URI>, Flux<GeodataRecord>> source = readAll().andThen(toWgs84());
     return source;
   }
