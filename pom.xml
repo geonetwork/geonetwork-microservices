@@ -31,7 +31,7 @@
     <geonetwork.version>4.0.0-0</geonetwork.version>
     <jetty.version>9.4.27.v20200227</jetty.version>
 
-    <elasticsearch.version>7.9.0</elasticsearch.version>
+    <elasticsearch.version>7.11.2</elasticsearch.version>
     <micrometer.version>1.5.5</micrometer.version>
     <camel.version>3.5.0</camel.version>
     <swagger.version>2.1.2</swagger.version>
