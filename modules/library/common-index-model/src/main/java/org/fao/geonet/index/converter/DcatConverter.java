@@ -249,10 +249,10 @@ public class DcatConverter {
       datasetBuilder.temporal(
           record.getResourceTemporalExtentDateRange().stream().map(range -> {
             DctPeriodOfTimeBuilder periodOfTime = DctPeriodOfTime.builder();
-            if(StringUtils.isNotEmpty(range.getGte())) {
+            if (StringUtils.isNotEmpty(range.getGte())) {
               periodOfTime.startDate(toDate(range.getGte()));
             }
-            if(StringUtils.isNotEmpty(range.getLte())) {
+            if (StringUtils.isNotEmpty(range.getLte())) {
               periodOfTime.endDate(toDate(range.getLte()));
             }
             return DctTemporal.builder()
