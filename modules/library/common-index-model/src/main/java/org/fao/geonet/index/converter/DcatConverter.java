@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
 import org.fao.geonet.index.model.dcat2.CatalogRecord.CatalogRecordBuilder;
 import org.fao.geonet.index.model.dcat2.Dataset;
@@ -38,6 +39,7 @@ import org.fao.geonet.index.model.dcat2.DcatDistributionContainer;
 import org.fao.geonet.index.model.dcat2.DcatDocument;
 import org.fao.geonet.index.model.dcat2.DctLocation;
 import org.fao.geonet.index.model.dcat2.DctPeriodOfTime;
+import org.fao.geonet.index.model.dcat2.DctPeriodOfTime.DctPeriodOfTimeBuilder;
 import org.fao.geonet.index.model.dcat2.DctSpatial;
 import org.fao.geonet.index.model.dcat2.DctTemporal;
 import org.fao.geonet.index.model.dcat2.FoafDocument;
@@ -245,12 +247,18 @@ public class DcatConverter {
           Collectors.toList()));
 
       datasetBuilder.temporal(
-          record.getResourceTemporalExtentDateRange().stream().map(range -> DctTemporal.builder()
-              .periodOfTime(DctPeriodOfTime.builder()
-                  .startDate(toDate(range.getGte()))
-                  .endDate(toDate(range.getLte())).build()
-              )
-              .build()).collect(Collectors.toList()));
+          record.getResourceTemporalExtentDateRange().stream().map(range -> {
+            DctPeriodOfTimeBuilder periodOfTime = DctPeriodOfTime.builder();
+            if (StringUtils.isNotEmpty(range.getGte())) {
+              periodOfTime.startDate(toDate(range.getGte()));
+            }
+            if (StringUtils.isNotEmpty(range.getLte())) {
+              periodOfTime.endDate(toDate(range.getLte()));
+            }
+            return DctTemporal.builder()
+                .periodOfTime(periodOfTime.build())
+                .build();
+          }).collect(Collectors.toList()));
 
       record.getLinks().stream().forEach(link -> {
         DcatDistributionBuilder dcatDistributionBuilder = DcatDistribution.builder()
