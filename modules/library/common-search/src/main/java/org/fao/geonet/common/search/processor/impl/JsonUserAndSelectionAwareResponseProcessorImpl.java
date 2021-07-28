@@ -40,7 +40,7 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
   @Override
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
     JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
     parser.nextToken();  //Go to the first token

@@ -36,7 +36,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
     XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
     XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
     generator.writeStartDocument("UTF-8", "1.0");
@@ -64,7 +64,8 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     // TODO: Get Collection info
     // And build it from metadata record if set
     String title = "GeoNetwork opensource";
-    String link = "http://localhost:8080/geonetwork";
+    // historically built from settings (protocol + server + port) and context (getBaseUrl)
+    String link = String.format("protocol_server_port/%s", baseUrl);
     String description = "Search for datasets, services and maps...";
 
     // The name of the channel.

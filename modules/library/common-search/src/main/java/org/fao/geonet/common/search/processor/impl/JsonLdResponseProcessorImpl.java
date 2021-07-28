@@ -27,7 +27,7 @@ public class JsonLdResponseProcessorImpl
   @Override
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
     ObjectMapper objectMapper = JsonUtils.getObjectMapper();
     JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);

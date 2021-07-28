@@ -53,7 +53,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
     Processor p = new Processor(false);
     Serializer s = p.newSerializer();
