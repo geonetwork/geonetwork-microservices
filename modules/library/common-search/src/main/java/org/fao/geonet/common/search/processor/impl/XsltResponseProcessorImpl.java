@@ -11,13 +11,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLStreamWriter;
 import lombok.Getter;
-import lombok.Setter;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
+import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
@@ -35,8 +36,17 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
   MetadataRepository metadataRepository;
 
   @Getter
-  @Setter
   private String transformation = "copy";
+
+  static final Map<String, String>
+          ACCEPT_FORMATTERS =
+          Map.of(
+                  GnMediaType.APPLICATION_GN_XML_VALUE, "copy",
+                  "gn", "copy",
+                  GnMediaType.APPLICATION_DCAT2_XML_VALUE, "dcat",
+                  "dcat", "dcat"
+          );
+
 
   /**
    * Process the search response and return RSS feed.
@@ -96,5 +106,11 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
     generator.writeEndDocument();
     generator.flush();
     generator.close();
+  }
+
+  /**  affraid XsltResponseProcessorImpl is NOT reentrant.*/
+  @Override
+  public void setTransformation(String acceptHeader) {
+    transformation = ACCEPT_FORMATTERS.get(acceptHeader);
   }
 }

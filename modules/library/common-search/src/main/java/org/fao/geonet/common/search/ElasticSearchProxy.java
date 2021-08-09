@@ -40,7 +40,6 @@ import org.fao.geonet.common.search.domain.Profile;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
-import org.fao.geonet.common.search.processor.impl.XsltResponseProcessorImpl;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,14 +65,6 @@ public class ElasticSearchProxy {
 
   private HashMap<String, SearchResponseProcessor> responseProcessors;
 
-  static final Map<String, String>
-      ACCEPT_FORMATTERS =
-      Map.of(
-          GnMediaType.APPLICATION_GN_XML_VALUE, "copy",
-          "gn", "copy",
-          GnMediaType.APPLICATION_DCAT2_XML_VALUE, "dcat",
-          "dcat", "dcat"
-      );
 
   public ElasticSearchProxy() {
   }
@@ -763,11 +754,7 @@ public class ElasticSearchProxy {
           responseProcessors.keySet().stream().collect(Collectors.joining(", "))));
     }
 
-    if (responseProcessor instanceof XsltResponseProcessorImpl) {
-      ((XsltResponseProcessorImpl) responseProcessor)
-          .setTransformation(ACCEPT_FORMATTERS.get(acceptHeader)
-      );
-    }
+    responseProcessor.setTransformation(acceptHeader);
 
     responseProcessor.processResponse(
         httpSession,
