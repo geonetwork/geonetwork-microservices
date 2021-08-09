@@ -20,7 +20,6 @@ import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
@@ -30,7 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component("XsltResponseProcessorImpl")
-public class XsltResponseProcessorImpl implements SearchResponseProcessor {
+public class XsltResponseProcessorImpl extends AbstractResponseProcessor {
 
   @Autowired
   MetadataRepository metadataRepository;
@@ -63,8 +62,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
     generator.writeStartDocument("UTF-8", "1.0");
     {
-      JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
-      parser.nextToken();
+      JsonParser parser = parserForStream(streamFromServer);
 
       List<Integer> ids = new ArrayList<>();
       new ResponseParser().matchHits(parser, generator, doc -> {

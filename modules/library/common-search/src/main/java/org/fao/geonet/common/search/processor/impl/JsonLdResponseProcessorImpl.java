@@ -30,9 +30,8 @@ public class JsonLdResponseProcessorImpl
       UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
     ObjectMapper objectMapper = JsonUtils.getObjectMapper();
-    JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
+    JsonParser parser = parserForStream(streamFromServer);
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
-    parser.nextToken();  //Go to the first token
 
     // TODO: Check to enable it
     //final Set<String> selections = (addPermissions ?

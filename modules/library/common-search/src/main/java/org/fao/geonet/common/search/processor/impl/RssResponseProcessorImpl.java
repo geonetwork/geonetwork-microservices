@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component("RssResponseProcessorImpl")
-public class RssResponseProcessorImpl implements SearchResponseProcessor {
+public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
   @Value("${gn.baseurl}")
   String baseUrl;
@@ -46,8 +46,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     generator.writeStartElement("channel");
     writeChannelProperties(generator);
 
-    JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
-    parser.nextToken();
+    JsonParser parser = parserForStream(streamFromServer);
 
     new ResponseParser().matchHits(parser, generator, doc -> {
       writeItem(generator, streamToClient, doc);
