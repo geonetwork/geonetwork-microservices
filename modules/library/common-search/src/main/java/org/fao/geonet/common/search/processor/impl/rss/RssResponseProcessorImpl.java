@@ -3,7 +3,7 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.common.search.processor.impl;
+package org.fao.geonet.common.search.processor.impl.rss;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,6 +20,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.SearchResponseProcessor;
+import org.fao.geonet.common.search.processor.impl.AbstractResponseProcessor;
+import org.fao.geonet.common.search.processor.impl.ResponseParser;
 import org.fao.geonet.index.converter.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Value;

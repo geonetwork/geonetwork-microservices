@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -27,7 +28,8 @@ public class RssResponseProcessorImplTest {
 			DifferenceEvaluators.Default,
 			DifferenceEvaluators.ignorePrologDifferencesExceptDoctype());
 
-	@SpyBean RssResponseProcessorImpl toTest;
+	@SpyBean
+	RssResponseProcessorImpl toTest;
 
 	@Test
 	public void channelLinkPointToGnServer() throws Exception {
