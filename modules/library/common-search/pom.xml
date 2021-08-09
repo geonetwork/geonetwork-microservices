@@ -63,4 +63,28 @@
       <artifactId>spring-security-oauth2-core</artifactId>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>search_without_sql</id>
+      <activation>
+        <property>
+          <name>search_without_sql</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/XsltResponseProcessorImpl.java</exclude>
+                <exclude>**/XmlResponseProcessorImpl.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
