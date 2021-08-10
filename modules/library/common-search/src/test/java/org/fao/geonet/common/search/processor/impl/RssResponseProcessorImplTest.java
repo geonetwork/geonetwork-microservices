@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.fao.geonet.common.search.processor.impl.rss.RssConfiguration;
 import org.fao.geonet.common.search.processor.impl.rss.RssConfigurationWithoutSql;
 import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
+import org.fao.geonet.index.converter.RssConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -67,6 +68,11 @@ public class RssResponseProcessorImplTest {
 		@Bean
 		public RssConfiguration rssConfiguration() {
 			return new RssConfigurationWithoutSql();
+		}
+
+		@Bean
+		public RssConverter rssConverter() {
+			return new RssConverter();
 		}
 	}
 }

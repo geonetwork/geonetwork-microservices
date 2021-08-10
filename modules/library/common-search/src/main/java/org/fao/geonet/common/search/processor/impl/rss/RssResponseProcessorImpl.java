@@ -32,6 +32,9 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
   private String link;
   private String title;
 
+  @Autowired
+  private RssConverter rssConverter;
+
   /** configuration when no sql datasource nor configuration service or
    *  with sql datasource or configuration service.
    */
@@ -104,7 +107,7 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
   private void writeItem(XMLStreamWriter generator,
       OutputStream stream, ObjectNode doc) throws XMLStreamException {
 
-    Item item = RssConverter.convert(doc);
+    Item item = rssConverter.convert(doc);
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(Item.class);
       OutputStreamWriter osw = new OutputStreamWriter(stream);

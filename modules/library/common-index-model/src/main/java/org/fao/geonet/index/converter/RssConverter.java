@@ -46,7 +46,7 @@ public class RssConverter {
    *
    * <p>Validation: https://validator.w3.org/feed/check.cgi
    */
-  public static Item convert(ObjectNode doc) {
+  public Item convert(ObjectNode doc) {
     try {
       IndexRecord record = new ObjectMapper()
           .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
@@ -113,7 +113,7 @@ public class RssConverter {
     return null;
   }
 
-  private static String buildDescription(IndexRecord record) {
+  private String buildDescription(IndexRecord record) {
     return record.getResourceAbstract().get(defaultText);
   }
 
