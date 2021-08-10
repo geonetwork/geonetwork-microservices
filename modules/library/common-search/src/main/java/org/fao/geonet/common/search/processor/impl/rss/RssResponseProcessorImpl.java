@@ -19,19 +19,25 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.AbstractResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.ResponseParser;
 import org.fao.geonet.index.converter.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("RssResponseProcessorImpl")
 public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
-  @Value("${gn.baseurl}")
-  String baseUrl;
+  private String link;
+
+  /** configuration when no sql datasource nor configuration service or
+   *  with sql datasource or configuration service.
+   */
+  @Autowired
+  public RssResponseProcessorImpl(RssConfiguration rssConfiguration) {
+    link = rssConfiguration.getLegacyUrl();
+  }
 
   /**
    * Process the search response and return RSS feed.
@@ -65,8 +71,6 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
     // TODO: Get Collection info
     // And build it from metadata record if set
     String title = "GeoNetwork opensource";
-    // historically built from settings (protocol + server + port) and context (getBaseUrl)
-    String link = String.format("protocol_server_port/%s", baseUrl);
     String description = "Search for datasets, services and maps...";
 
     // The name of the channel.

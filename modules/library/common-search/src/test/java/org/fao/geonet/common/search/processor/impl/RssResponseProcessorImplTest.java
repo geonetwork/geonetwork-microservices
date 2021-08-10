@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.fao.geonet.common.search.processor.impl.rss.RssConfiguration;
+import org.fao.geonet.common.search.processor.impl.rss.RssConfigurationWithoutSql;
 import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,9 +57,14 @@ public class RssResponseProcessorImplTest {
 		public static PropertySourcesPlaceholderConfigurer properties() throws Exception {
 			PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
 			Properties properties = new Properties();
-			properties.setProperty("gn.baseurl", "geonetwork");
+			properties.setProperty("gn.legacy.url", "http://host:8277/geonetwork");
 			pspc.setProperties(properties);
 			return pspc;
+		}
+
+		@Bean
+		public RssConfiguration rssConfiguration() {
+			return new RssConfigurationWithoutSql();
 		}
 	}
 }
