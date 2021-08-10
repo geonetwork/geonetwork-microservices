@@ -33,8 +33,6 @@ public class RssConverter {
 
   public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
   private static String BASE_URL;
-  @Value("${gn.baseurl}")
-  String baseUrl;
 
   /**
    * Convert JSON index document _source node to RSS Item.
