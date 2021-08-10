@@ -52,6 +52,24 @@ public class RssResponseProcessorImplTest {
 		assertFalse(diff.hasDifferences());
 	}
 
+	@Test
+	public void nominalOneItem() throws Exception {
+		InputStream is = this.getClass().getResourceAsStream("es_flow.json");
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		toTest.processResponse(null, is, os,	null, null, null);
+
+		InputStream expected = this.getClass().getResourceAsStream("one_item_feed.xml");
+		String actual = os.toString(UTF_8);
+		Diff diff = DiffBuilder
+						.compare(Input.fromStream(expected))
+						.withTest(actual)
+						.withDifferenceEvaluator(EVALUATOR)
+						.ignoreWhitespace()
+						.build();
+		assertFalse(diff.hasDifferences());
+	}
+
 	@TestConfiguration
 	static class RssResponseProcessorImplTestConf {
 		@Bean
@@ -61,6 +79,7 @@ public class RssResponseProcessorImplTest {
 			properties.setProperty("gn.legacy.url", "http://host:8277/geonetwork");
 			properties.setProperty("gn.site.name", "the geonetwork");
 			properties.setProperty("gn.site.organization", "momorg");
+			properties.setProperty("gn.baseurl", "?????");
 			pspc.setProperties(properties);
 			return pspc;
 		}
