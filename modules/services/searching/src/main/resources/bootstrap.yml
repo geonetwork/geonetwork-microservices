@@ -63,5 +63,10 @@ eureka:
     registerWithEureka: false
     fetch-registry: false
 gn:
-  index.url: http://localhost:9200
+  baseurl: http://localhost:9901
+  legacy.url: http://localhost:8080/geonetwork
+  index:
+    url: http://localhost:9200
+    username:
+    password:
 
