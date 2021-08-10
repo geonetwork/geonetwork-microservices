@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
   private String link;
+  private String title;
 
   /** configuration when no sql datasource nor configuration service or
    *  with sql datasource or configuration service.
@@ -37,6 +38,9 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
   @Autowired
   public RssResponseProcessorImpl(RssConfiguration rssConfiguration) {
     link = rssConfiguration.getLegacyUrl();
+    title = String.format("%s %s",
+      rssConfiguration.getSiteName(),
+      rssConfiguration.getSiteOrganization());
   }
 
   /**
@@ -70,7 +74,6 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
   private void writeChannelProperties(XMLStreamWriter generator) throws XMLStreamException {
     // TODO: Get Collection info
     // And build it from metadata record if set
-    String title = "GeoNetwork opensource";
     String description = "Search for datasets, services and maps...";
 
     // The name of the channel.

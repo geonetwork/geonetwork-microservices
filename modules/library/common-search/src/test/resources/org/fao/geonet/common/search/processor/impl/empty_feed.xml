@@ -1,6 +1,6 @@
 <rss version="2.0">
     <channel>
-        <title>GeoNetwork opensource</title>
+        <title>the geonetwork momorg</title>
         <link>http://host:8277/geonetwork</link>
         <description>Search for datasets, services and maps...</description>
     </channel>

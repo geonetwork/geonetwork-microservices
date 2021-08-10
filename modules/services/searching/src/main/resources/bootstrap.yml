@@ -92,6 +92,9 @@ eureka:
 gn:
   baseurl: http://localhost:9901
   legacy.url: http://localhost:8080/geonetwork
+  site:
+    name: GeoNetwork
+    organization: opensource
   index:
     url: http://localhost:9200
     records: gn-records

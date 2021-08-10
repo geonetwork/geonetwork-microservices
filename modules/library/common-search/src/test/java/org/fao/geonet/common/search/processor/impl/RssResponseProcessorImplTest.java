@@ -58,6 +58,8 @@ public class RssResponseProcessorImplTest {
 			PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
 			Properties properties = new Properties();
 			properties.setProperty("gn.legacy.url", "http://host:8277/geonetwork");
+			properties.setProperty("gn.site.name", "the geonetwork");
+			properties.setProperty("gn.site.organization", "momorg");
 			pspc.setProperties(properties);
 			return pspc;
 		}
