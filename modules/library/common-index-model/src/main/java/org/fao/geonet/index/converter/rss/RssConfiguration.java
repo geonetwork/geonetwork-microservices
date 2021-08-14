@@ -1,4 +1,4 @@
-package org.fao.geonet.common.search.processor.impl.rss;
+package org.fao.geonet.index.converter.rss;
 
 public interface RssConfiguration {
 
