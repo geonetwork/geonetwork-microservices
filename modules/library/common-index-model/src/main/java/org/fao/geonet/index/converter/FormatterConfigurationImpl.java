@@ -15,9 +15,11 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   @Value("${gn.baseurl}")
   private String baseUrl;
 
+  /** historically built from settings system/site/name. */
   @Value("${gn.site.name:GeoNetwork}")
   String siteName;
 
+  /** historically built from settings system/site/organization. */
   @Value("${gn.site.organization:opensource}")
   String siteOrg;
 
@@ -30,13 +32,10 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   }
 
   @Override
-  public String getSiteName() {
-    return siteName;
-  }
-
-  @Override
-  public String getSiteOrganization() {
-    return siteOrg;
+  public String getSourceSiteTitle() {
+    return String.format("%s %s",
+            siteName,
+            siteOrg);
   }
 
   @Override

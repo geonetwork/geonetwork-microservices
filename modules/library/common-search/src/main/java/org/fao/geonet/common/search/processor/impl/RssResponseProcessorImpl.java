@@ -28,23 +28,11 @@ import org.springframework.stereotype.Component;
 @Component("RssResponseProcessorImpl")
 public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
-  private String title;
-
   @Autowired
   private RssConverter rssConverter;
 
-  private FormatterConfiguration formatterConfiguration;
-
-  /** configuration when no sql datasource nor configuration service or
-   *  with sql datasource or configuration service.
-   */
   @Autowired
-  public RssResponseProcessorImpl(FormatterConfiguration formatterConfiguration) {
-    this.formatterConfiguration = formatterConfiguration;
-    title = String.format("%s %s",
-      formatterConfiguration.getSiteName(),
-      formatterConfiguration.getSiteOrganization());
-  }
+  private FormatterConfiguration formatterConfiguration;
 
   /**
    * Process the search response and return RSS feed.
@@ -85,7 +73,7 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
     // as your RSS file, the title of your channel should be
     // the same as the title of your website.
     generator.writeStartElement("title");
-    generator.writeCharacters(title);
+    generator.writeCharacters(formatterConfiguration.getSourceSiteTitle());
     generator.writeEndElement();
 
     // The URL to the HTML website corresponding to the channel.
