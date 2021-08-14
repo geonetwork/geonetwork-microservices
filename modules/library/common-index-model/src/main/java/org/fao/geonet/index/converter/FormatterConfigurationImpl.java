@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class FormatterConfigurationImpl implements FormatterConfiguration {
 
+  @Value("${gn.linkToLegacyGN4:false}")
+  Boolean linkToLegacyGN4;
+
   @Value("${gn.legacy.url}")
   String legacyUrl;
 
@@ -19,8 +22,11 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   String siteOrg;
 
   @Override
-  public String getLegacyUrl() {
-    return legacyUrl;
+  public String getSourceHomePage() {
+    if (linkToLegacyGN4) {
+      return legacyUrl;
+    }
+    return baseUrl;
   }
 
   @Override
@@ -35,9 +41,19 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
 
   @Override
   public String buildLandingPageLink(String metadataId) {
+    if (linkToLegacyGN4) {
+      return String.format("%s/srv/metadata/%s",
+              legacyUrl,
+              metadataId);
+    }
     return String.format("%s/collections/%s/items/%s",
-      baseUrl,
-      "main",
-      metadataId);
+            baseUrl,
+            "main",
+            metadataId);
+  }
+
+  @Override
+  public void setLinkToLegacyGN4(Boolean linkToLegacyGN4) {
+    this.linkToLegacyGN4 = linkToLegacyGN4;
   }
 }

@@ -19,8 +19,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.impl.AbstractResponseProcessor;
-import org.fao.geonet.common.search.processor.impl.ResponseParser;
 import org.fao.geonet.index.converter.FormatterConfiguration;
 import org.fao.geonet.index.converter.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
@@ -30,18 +28,19 @@ import org.springframework.stereotype.Component;
 @Component("RssResponseProcessorImpl")
 public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
-  private String link;
   private String title;
 
   @Autowired
   private RssConverter rssConverter;
+
+  private FormatterConfiguration formatterConfiguration;
 
   /** configuration when no sql datasource nor configuration service or
    *  with sql datasource or configuration service.
    */
   @Autowired
   public RssResponseProcessorImpl(FormatterConfiguration formatterConfiguration) {
-    link = formatterConfiguration.getLegacyUrl();
+    this.formatterConfiguration = formatterConfiguration;
     title = String.format("%s %s",
       formatterConfiguration.getSiteName(),
       formatterConfiguration.getSiteOrganization());
@@ -91,7 +90,7 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
     // The URL to the HTML website corresponding to the channel.
     generator.writeStartElement("link");
-    generator.writeCharacters(link);
+    generator.writeCharacters(formatterConfiguration.getSourceHomePage());
     generator.writeEndElement();
 
     // Phrase or sentence describing the channel.
