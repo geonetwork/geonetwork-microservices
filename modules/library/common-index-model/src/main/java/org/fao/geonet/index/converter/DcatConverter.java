@@ -89,7 +89,7 @@ public class DcatConverter {
       "", "notEvaluated"
   );
 
-  @Value("${gn.language.default}")
+  @Value("${gn.language.default:en}")
   private String defaultLanguage;
 
   private ObjectMapper mapper = new ObjectMapper();

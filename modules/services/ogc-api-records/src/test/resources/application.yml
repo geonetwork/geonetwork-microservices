@@ -14,7 +14,7 @@ eureka:
 gn:
   baseurl: http://localhost:9901
   legacy.url: http://localhost:8080/geonetwork
-  language.default: eng
+  language.default: en
 
   search:
     # Full text on all fields
