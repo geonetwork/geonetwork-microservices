@@ -98,6 +98,9 @@ public class ItemApiControllerTest {
     }
 
     private String dcatForDiff(String dcat) {
-        return dcat.replaceAll("node([0-9a-zA-Z]+)(?:;| )", "node?????? ");
+        return dcat
+                .replaceAll("node([0-9a-zA-Z]+)(?:;| )", "node?????? ")
+                // seems there is trouble with ci and time zone
+                .replaceAll("2021.+;", "2021?????????");
     }
 }
