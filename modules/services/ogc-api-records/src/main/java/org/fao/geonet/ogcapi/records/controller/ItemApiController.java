@@ -104,6 +104,8 @@ public class ItemApiController {
   SearchConfiguration searchConfiguration;
   @Autowired
   MediaTypeUtil mediaTypeUtil;
+  @Autowired
+  DcatConverter dcatConverter;
 
   /**
    * Describe a collection item.
@@ -290,7 +292,7 @@ public class ItemApiController {
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-        CatalogRecord catalogRecord = DcatConverter.convert(record);
+        CatalogRecord catalogRecord = dcatConverter.convert(record);
         StringWriter sw = new StringWriter();
         marshaller.marshal(catalogRecord, sw);
         String dcatXml = sw.toString();

@@ -62,10 +62,12 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.fao.geonet.index.model.gn.ResourceIdentifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Index document to DCAT mapping.
  */
+@Component
 public class DcatConverter {
 
   public static Map<String, String> resourceTypeMapping = Map.ofEntries(
@@ -84,17 +86,16 @@ public class DcatConverter {
       "", "notEvaluated"
   );
 
-  private static String DEFAULT_LANGUAGE;
-
-  private static ObjectMapper mapper = new ObjectMapper();
-
   @Value("${gn.language.default}")
-  String defaultLanguage;
+  private String defaultLanguage;
+
+  private ObjectMapper mapper = new ObjectMapper();
+
 
   /**
    * Convert an index document into a DCAT object.
    */
-  public static CatalogRecord convert(JsonNode doc) {
+  public CatalogRecord convert(JsonNode doc) {
     CatalogRecord catalogRecord = null;
     Dataset dcatDataset = null;
     try {
@@ -113,7 +114,7 @@ public class DcatConverter {
           : null;
 
       String language = record.getMainLanguage() == null
-          ? DEFAULT_LANGUAGE : record.getMainLanguage();
+          ? defaultLanguage : record.getMainLanguage();
       String languageUpperCase = language.toUpperCase();
       // TODO: Need language mapper
       String iso2letterLanguage = language.substring(0, 2);
@@ -314,11 +315,6 @@ public class DcatConverter {
     return Date.from(
         Instant.from(
             DateTimeFormatter.ISO_DATE_TIME.parse(date)));
-  }
-
-  @Value("${gn.language.default}")
-  public void setNameStatic(String defaultLanguage) {
-    DcatConverter.DEFAULT_LANGUAGE = defaultLanguage;
   }
 
   private static <E> List<E> listOfNullable(E e) {
