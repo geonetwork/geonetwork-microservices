@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.impl.AbstractResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.ResponseParser;
-import org.fao.geonet.index.converter.rss.RssConfiguration;
+import org.fao.geonet.index.converter.rss.FormatterConfiguration;
 import org.fao.geonet.index.converter.rss.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +40,11 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
    *  with sql datasource or configuration service.
    */
   @Autowired
-  public RssResponseProcessorImpl(RssConfiguration rssConfiguration) {
-    link = rssConfiguration.getLegacyUrl();
+  public RssResponseProcessorImpl(FormatterConfiguration formatterConfiguration) {
+    link = formatterConfiguration.getLegacyUrl();
     title = String.format("%s %s",
-      rssConfiguration.getSiteName(),
-      rssConfiguration.getSiteOrganization());
+      formatterConfiguration.getSiteName(),
+      formatterConfiguration.getSiteOrganization());
   }
 
   /**

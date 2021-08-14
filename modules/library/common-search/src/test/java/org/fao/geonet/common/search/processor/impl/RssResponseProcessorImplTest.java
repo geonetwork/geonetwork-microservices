@@ -8,8 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.fao.geonet.index.converter.rss.RssConfiguration;
-import org.fao.geonet.index.converter.rss.RssConfigurationWithoutSql;
+import org.fao.geonet.index.converter.rss.FormatterConfiguration;
+import org.fao.geonet.index.converter.rss.FormatterConfigurationImpl;
 import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
 import org.fao.geonet.index.converter.rss.RssConverter;
 import org.junit.Test;
@@ -85,8 +85,8 @@ public class RssResponseProcessorImplTest {
 		}
 
 		@Bean
-		public RssConfiguration rssConfiguration() {
-			return new RssConfigurationWithoutSql();
+		public FormatterConfiguration rssConfiguration() {
+			return new FormatterConfigurationImpl();
 		}
 
 		@Bean

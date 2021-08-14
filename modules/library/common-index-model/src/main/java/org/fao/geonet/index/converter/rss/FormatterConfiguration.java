@@ -1,6 +1,6 @@
 package org.fao.geonet.index.converter.rss;
 
-public interface RssConfiguration {
+public interface FormatterConfiguration {
 
   /** link historically built from settings (protocol + server + port) and context (getBaseUrl). */
   String getLegacyUrl();

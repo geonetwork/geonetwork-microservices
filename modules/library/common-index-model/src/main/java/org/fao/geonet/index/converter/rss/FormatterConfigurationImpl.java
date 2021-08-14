@@ -1,11 +1,10 @@
 package org.fao.geonet.index.converter.rss;
 
-import org.fao.geonet.index.model.gn.IndexRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RssConfigurationWithoutSql implements RssConfiguration {
+public class FormatterConfigurationImpl implements FormatterConfiguration {
 
   @Value("${gn.legacy.url}")
   String legacyUrl;

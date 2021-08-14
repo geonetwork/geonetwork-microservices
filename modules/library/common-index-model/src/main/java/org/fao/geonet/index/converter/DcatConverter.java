@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.fao.geonet.index.converter.rss.RssConfiguration;
+import org.fao.geonet.index.converter.rss.FormatterConfiguration;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;
@@ -72,7 +72,7 @@ import org.springframework.stereotype.Component;
 public class DcatConverter {
 
   @Autowired
-  RssConfiguration rssConfiguration;
+  FormatterConfiguration formatterConfiguration;
 
   private static final Map<String, String> RESSOURCE_TYPE_MAPPING = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
@@ -108,7 +108,7 @@ public class DcatConverter {
           .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
 
       String recordIdentifier = record.getMetadataIdentifier();
-      String recordUri = rssConfiguration.buildLandingPageLink(
+      String recordUri = formatterConfiguration.buildLandingPageLink(
               record.getMetadataIdentifier());
       Optional<ResourceIdentifier> resourceIdentifier =
           record.getResourceIdentifier().stream().filter(Objects::nonNull).findFirst();
@@ -143,7 +143,7 @@ public class DcatConverter {
           .description(listOfNullable(record.getResourceAbstract().get(defaultText)))
           .landingPage(listOfNullable(DcatDocument.builder()
               .foafDocument(FoafDocument.builder()
-                  .about(rssConfiguration.buildLandingPageLink(
+                  .about(formatterConfiguration.buildLandingPageLink(
                           record.getMetadataIdentifier()))
                   .title(record.getResourceTitle().get(defaultText))
                   .build()).build()))

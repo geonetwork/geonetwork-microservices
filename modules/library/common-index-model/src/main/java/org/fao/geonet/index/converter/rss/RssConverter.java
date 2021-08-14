@@ -34,7 +34,7 @@ public class RssConverter {
   public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
 
   @Autowired
-  RssConfiguration rssConfiguration;
+  FormatterConfiguration formatterConfiguration;
 
   /**
    * Convert JSON index document _source node to RSS Item.
@@ -59,7 +59,7 @@ public class RssConverter {
       item.setGuid(guid);
       item.setTitle(record.getResourceTitle().get(defaultText));
       item.setDescription(buildDescription(record));
-      item.setLink(rssConfiguration.buildLandingPageLink(record.getMetadataIdentifier()));
+      item.setLink(formatterConfiguration.buildLandingPageLink(record.getMetadataIdentifier()));
 
       Optional<Overview> overview = record.getOverview().stream().findFirst();
       if (overview.isPresent()) {
