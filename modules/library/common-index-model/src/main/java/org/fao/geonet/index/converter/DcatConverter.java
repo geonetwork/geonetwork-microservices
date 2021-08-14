@@ -70,7 +70,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DcatConverter {
 
-  public static Map<String, String> resourceTypeMapping = Map.ofEntries(
+  private static final Map<String, String> RESSOURCE_TYPE_MAPPING = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
       new AbstractMap.SimpleEntry<>("series", "Dataset"),
       new AbstractMap.SimpleEntry<>("service", "DataService"),
@@ -80,7 +80,7 @@ public class DcatConverter {
       new AbstractMap.SimpleEntry<>("tile", "Dataset")
   );
 
-  static Map<String, String> inspireDegreeOfConformity = Map.of(
+  private static final Map<String, String> INSPIRE_DEGREE_OF_CONFORMITY = Map.of(
       "true", "conformant",
       "false", "notConformant",
       "", "notEvaluated"
@@ -149,7 +149,7 @@ public class DcatConverter {
               ).collect(Collectors.toList())
           )
           .type(record.getResourceType().stream().map(t ->
-              new RdfResource(null, "dcat:" + resourceTypeMapping.get(t), null))
+              new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
               .collect(Collectors.toList()))
           // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
           .modified(toDate(record.getChangeDate()))
@@ -206,7 +206,7 @@ public class DcatConverter {
                             ProvGenerated.builder()
                                 .type(new RdfResource(
                                     "http://inspire.ec.europa.eu/metadata-codelist/DegreeOfConformity/"
-                                        + inspireDegreeOfConformity.get(c.getPass()),
+                                        + INSPIRE_DEGREE_OF_CONFORMITY.get(c.getPass()),
                                     null))
                             //RDFParseException: unexpected literal
                             //.description(c.getExplanation())
