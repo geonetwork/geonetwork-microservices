@@ -11,4 +11,6 @@ public interface RssConfiguration {
   /** historically built from settings system/site/organization. */
   String getSiteOrganization();
 
+  String buildLandingPageLink(String metadataId);
+
 }

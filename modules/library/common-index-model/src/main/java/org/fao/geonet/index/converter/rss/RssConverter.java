@@ -24,7 +24,7 @@ import org.fao.geonet.index.model.gn.ResourceDate;
 import org.fao.geonet.index.model.rss.Enclosure;
 import org.fao.geonet.index.model.rss.Guid;
 import org.fao.geonet.index.model.rss.Item;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,8 +33,8 @@ public class RssConverter {
 
   public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
 
-  @Value("${gn.baseurl}")
-  private String baseUrl;
+  @Autowired
+  RssConfiguration rssConfiguration;
 
   /**
    * Convert JSON index document _source node to RSS Item.
@@ -59,7 +59,7 @@ public class RssConverter {
       item.setGuid(guid);
       item.setTitle(record.getResourceTitle().get(defaultText));
       item.setDescription(buildDescription(record));
-      item.setLink(buildLandingPageLink(record));
+      item.setLink(rssConfiguration.buildLandingPageLink(record.getMetadataIdentifier()));
 
       Optional<Overview> overview = record.getOverview().stream().findFirst();
       if (overview.isPresent()) {
@@ -117,13 +117,4 @@ public class RssConverter {
     return record.getResourceAbstract().get(defaultText);
   }
 
-  /**
-   * Build link to items landing page.
-   */
-  public String buildLandingPageLink(IndexRecord record) {
-    return String.format("%s/collections/%s/items/%s",
-        baseUrl,
-        "main",
-        record.getMetadataIdentifier());
-  }
 }
