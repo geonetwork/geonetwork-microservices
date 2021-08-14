@@ -32,7 +32,9 @@ import org.springframework.stereotype.Component;
 public class RssConverter {
 
   public static DateTimeFormatter rssDateFormat = DateTimeFormatter.RFC_1123_DATE_TIME;
-  private static String BASE_URL;
+
+  @Value("${gn.baseurl}")
+  private String baseUrl;
 
   /**
    * Convert JSON index document _source node to RSS Item.
@@ -118,15 +120,10 @@ public class RssConverter {
   /**
    * Build link to items landing page.
    */
-  public static String buildLandingPageLink(IndexRecord record) {
+  public String buildLandingPageLink(IndexRecord record) {
     return String.format("%s/collections/%s/items/%s",
-        BASE_URL,
+        baseUrl,
         "main",
         record.getMetadataIdentifier());
-  }
-
-  @Value("${gn.baseurl}")
-  public void setNameStatic(String baseurl) {
-    RssConverter.BASE_URL = baseurl;
   }
 }

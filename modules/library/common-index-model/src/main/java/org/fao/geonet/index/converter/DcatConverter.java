@@ -61,6 +61,7 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.fao.geonet.index.model.gn.ResourceIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -69,6 +70,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DcatConverter {
+
+  @Autowired
+  RssConverter rssConverter;
 
   private static final Map<String, String> RESSOURCE_TYPE_MAPPING = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
@@ -104,7 +108,7 @@ public class DcatConverter {
           .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
 
       String recordIdentifier = record.getMetadataIdentifier();
-      String recordUri = RssConverter.buildLandingPageLink(record);
+      String recordUri = rssConverter.buildLandingPageLink(record);
       Optional<ResourceIdentifier> resourceIdentifier =
           record.getResourceIdentifier().stream().filter(Objects::nonNull).findFirst();
 
@@ -138,7 +142,7 @@ public class DcatConverter {
           .description(listOfNullable(record.getResourceAbstract().get(defaultText)))
           .landingPage(listOfNullable(DcatDocument.builder()
               .foafDocument(FoafDocument.builder()
-                  .about(RssConverter.buildLandingPageLink(record))
+                  .about(rssConverter.buildLandingPageLink(record))
                   .title(record.getResourceTitle().get(defaultText))
                   .build()).build()))
           .provenance(
