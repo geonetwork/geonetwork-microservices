@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.fao.geonet.index.converter.rss.RssConverter;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;

@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.common.search.processor.impl.AbstractResponseProcessor;
 import org.fao.geonet.common.search.processor.impl.ResponseParser;
-import org.fao.geonet.index.converter.RssConverter;
+import org.fao.geonet.index.converter.rss.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -11,7 +11,7 @@ import java.util.Properties;
 import org.fao.geonet.common.search.processor.impl.rss.RssConfiguration;
 import org.fao.geonet.common.search.processor.impl.rss.RssConfigurationWithoutSql;
 import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
-import org.fao.geonet.index.converter.RssConverter;
+import org.fao.geonet.index.converter.rss.RssConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.TestConfiguration;
