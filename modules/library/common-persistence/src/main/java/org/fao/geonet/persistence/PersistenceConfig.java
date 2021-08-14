@@ -11,6 +11,7 @@ import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     basePackages = "org.fao.geonet.repository",
     entityManagerFactoryRef = "gnEntityManager",
     repositoryBaseClass = GeonetRepositoryImpl.class)
+@Profile("!withoutSql")
 public class PersistenceConfig {
 
   @Autowired
