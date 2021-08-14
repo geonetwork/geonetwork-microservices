@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
-import org.fao.geonet.index.model.dcat2.CatalogRecord.CatalogRecordBuilder;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;
 import org.fao.geonet.index.model.dcat2.DcatActivity;
@@ -132,9 +132,9 @@ public class DcatConverter {
           .identifier(record.getResourceIdentifier().stream()
               .map(c -> c.getCode()).collect(
               Collectors.toList()))
-          .title(List.of(record.getResourceTitle().get(defaultText)))
-          .description(List.of(record.getResourceAbstract().get(defaultText)))
-          .landingPage(List.of(DcatDocument.builder()
+          .title(listOfNullable(record.getResourceTitle().get(defaultText)))
+          .description(listOfNullable(record.getResourceAbstract().get(defaultText)))
+          .landingPage(listOfNullable(DcatDocument.builder()
               .foafDocument(FoafDocument.builder()
                   .about(RssConverter.buildLandingPageLink(record))
                   .title(record.getResourceTitle().get(defaultText))
@@ -262,8 +262,8 @@ public class DcatConverter {
 
       record.getLinks().stream().forEach(link -> {
         DcatDistributionBuilder dcatDistributionBuilder = DcatDistribution.builder()
-            .title(List.of(link.getName()))
-            .description(List.of(link.getDescription()))
+            .title(listOfNullable(link.getName()))
+            .description(listOfNullable(link.getDescription()))
             // TODO <dcat:accessService rdf:parseType="Resource">...
             // TODO: representation technique = gmd:MD_SpatialRepresentationTypeCode?
             .representationTechnique(Subject.builder()
@@ -273,7 +273,7 @@ public class DcatConverter {
         // TODO: depending on function/protocol build page/accessUrl/downloadUrl
         dcatDistributionBuilder.accessUrl(link.getUrl());
 
-        datasetBuilder.distribution(List.of(DcatDistributionContainer.builder()
+        datasetBuilder.distribution(listOfNullable(DcatDistributionContainer.builder()
             .distribution(dcatDistributionBuilder.build()).build()));
       });
 
@@ -291,13 +291,13 @@ public class DcatConverter {
 
 
       catalogRecord = CatalogRecord.builder()
-          .identifier(List.of(record.getMetadataIdentifier()))
+          .identifier(listOfNullable(record.getMetadataIdentifier()))
           .created(toDate(record.getCreateDate()))
           .modified(toDate(record.getChangeDate()))
-          .language(List.of(new RdfResource(null,
+          .language(listOfNullable(new RdfResource(null,
               "http://publications.europa.eu/resource/authority/language/"
                   + record.getMainLanguage().toUpperCase())))
-          .primaryTopic(List.of(new ResourceContainer(dcatDataset, null))).build();
+          .primaryTopic(listOfNullable(new ResourceContainer(dcatDataset, null))).build();
 
     } catch (JsonMappingException e) {
       e.printStackTrace();
@@ -318,6 +318,13 @@ public class DcatConverter {
   @Value("${gn.language.default}")
   public void setNameStatic(String defaultLanguage) {
     DcatConverter.DEFAULT_LANGUAGE = defaultLanguage;
+  }
+
+  private static <E> List<E> listOfNullable(E e) {
+    if (e == null) {
+      return Collections.emptyList();
+    }
+    return Collections.singletonList(e);
   }
 
 }
