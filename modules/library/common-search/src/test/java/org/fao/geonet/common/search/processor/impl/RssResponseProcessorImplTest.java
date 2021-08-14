@@ -8,10 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.fao.geonet.index.converter.rss.FormatterConfiguration;
-import org.fao.geonet.index.converter.rss.FormatterConfigurationImpl;
-import org.fao.geonet.common.search.processor.impl.rss.RssResponseProcessorImpl;
-import org.fao.geonet.index.converter.rss.RssConverter;
+import org.fao.geonet.index.converter.FormatterConfiguration;
+import org.fao.geonet.index.converter.FormatterConfigurationImpl;
+import org.fao.geonet.index.converter.RssConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.TestConfiguration;

@@ -3,7 +3,7 @@
  * GPL 2.0 license, available at the root application directory.
  */
 
-package org.fao.geonet.index.converter.rss;
+package org.fao.geonet.index.converter;
 
 import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
 

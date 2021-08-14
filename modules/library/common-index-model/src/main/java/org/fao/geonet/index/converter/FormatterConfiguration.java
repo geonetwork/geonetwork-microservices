@@ -1,4 +1,4 @@
-package org.fao.geonet.index.converter.rss;
+package org.fao.geonet.index.converter;
 
 public interface FormatterConfiguration {
 
