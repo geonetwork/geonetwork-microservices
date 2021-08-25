@@ -11,9 +11,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.dataviz.model.AuthCredentials;
 import org.fao.geonet.dataviz.model.AuthCredentials.AuthType;
 import org.fao.geonet.dataviz.model.DataQuery;
+import org.fao.geonet.dataviz.model.DataSource;
 import org.fao.geonet.dataviz.model.GeodataRecord;
 import org.fao.geonet.dataviz.processor.Processors;
 import org.fao.geonet.dataviz.producer.Producers;
@@ -23,7 +26,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
+@Slf4j
 @SpringBootApplication
 public class DatavizIndexingApp {
 
@@ -45,11 +50,13 @@ public class DatavizIndexingApp {
 
   @Bean
   public Supplier<DataQuery> sampleQuery() {
-    return () -> new DataQuery()
+
+    DataSource source = new DataSource()
         .setUri(URI.create("http://ows.example.com/wfs?request=GetCapabilities"))
-        .setLayerName("topp:states").setEncoding(StandardCharsets.UTF_8)
-        .setAuth(new AuthCredentials().setUserName("user").setPassword("secret")
-            .setType(AuthType.basic));
+        .setEncoding(StandardCharsets.UTF_8).setAuth(new AuthCredentials().setUserName("user")
+            .setPassword("secret").setType(AuthType.basic));
+
+    return () -> new DataQuery().setSource(source).setLayerName("topp:states");
   }
 
   @Bean
@@ -61,7 +68,10 @@ public class DatavizIndexingApp {
 
   @Bean
   public Consumer<Flux<GeodataRecord>> index() {
-    return records -> consumers.index(records);
+    return records -> {
+      log.info("index()");
+      consumers.index(records.publishOn(Schedulers.parallel()));
+    };
   }
 
   /**
@@ -76,17 +86,37 @@ public class DatavizIndexingApp {
    */
   @Bean
   public Function<Flux<URI>, Flux<GeodataRecord>> readAll() {
-    return uris -> uris.flatMap(uri -> producers.read(new DataQuery().setUri(uri)));
+    return uris -> uris.flatMap(uri -> toFlux(producers.read(DataQuery.fromUri(uri))));
   }
 
   @Bean
   public Function<Flux<DataQuery>, Flux<GeodataRecord>> read() {
-    return queries -> queries.flatMap(query -> producers.read(query));
+    return queries -> queries.flatMap(query -> {
+      log.info("read() {}", query);
+      return toFlux(producers.read(query));
+    });
   }
 
   @Bean
   public Function<Flux<GeodataRecord>, Flux<GeodataRecord>> toWgs84() {
-    return processors.reproject("EPSG:4326");
+    return flux -> toFlux(() -> {
+      log.info("toWgs84()");
+      Stream<GeodataRecord> in = flux.toStream();
+      Stream<GeodataRecord> o = processors.toWgs84().apply(in);
+      return o;
+    });
   }
 
+  /**
+   * Adapts a {@link Stream} to a {@link Flux}, note that
+   * {@link Flux#fromStream(Stream)} already makes sure {@link Stream#close()} is
+   * called when the stream is fully consumed.
+   */
+  private <T> Flux<T> toFlux(Supplier<Stream<? extends T>> stream) {
+    return Flux.fromStream(stream)//
+        // subscribe on Schedulers.boundedElastic() to avoid
+        // "java.lang.IllegalStateException: Iterating over a toIterable() / toStream()
+        // is blocking, which is not supported in thread reactor-http-epoll-XXX"
+        .subscribeOn(Schedulers.boundedElastic());
+  }
 }

@@ -30,6 +30,7 @@
     <module>common-view</module>
     <module>common-persistence</module>
     <module>common-standards</module>
+    <module>data-functions</module>
   </modules>
 
 </project>

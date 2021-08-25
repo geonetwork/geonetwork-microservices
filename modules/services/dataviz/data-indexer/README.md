@@ -64,8 +64,16 @@ curl -i -H "Content-Type: text/plain" localhost:10000/readAll,toWgs84,index -d  
 
 ```
 curl -i -H "Content-Type: application/json" localhost:10000/read,toWgs84,index -d '{
-  "uri" : "https://wms.ign.gob.ar/geoserver/ows?service=wfs",
-  "layerName" : "ign:area_protegida"
+   "layerName" : "ign:area_protegida",
+   "source" : {
+      "auth" : {
+         "type" : "basic",
+         "userName" : "user"
+         "password" : "secret",
+      },
+      "encoding" : "UTF-8",
+      "uri" : "https://wms.ign.gob.ar/geoserver/ows?service=wfs"
+   }
 }'
 ```
 
@@ -168,14 +176,16 @@ Content-Type: application/json
 Content-Length: 212
 
 {
-  "uri" : "http://ows.example.com/wfs?request=GetCapabilities",
-  "layerName" : "topp:states",
-  "encoding" : "UTF-8",
-  "auth" : {
-    "type" : "basic",
-    "userName" : "user",
-    "password" : "secret"
-  }
+   "layerName" : "topp:states",
+   "source" : {
+      "auth" : {
+         "password" : "secret",
+         "type" : "basic",
+         "userName" : "user"
+      },
+      "encoding" : "UTF-8",
+      "uri" : "http://ows.example.com/wfs?request=GetCapabilities"
+   }
 }
 ```
 
@@ -185,6 +195,8 @@ Content-Length: 212
 curl -H "Content-Type: application/json" localhost:9900/dataviz/index/read -d '{
   "uri" : "file:/tmp/datadir/data/shapefiles/states.shp",
   "layerName" : "states",
-  "encoding" : "UTF-8"
+   "source" : {
+      "encoding" : "UTF-8"
+   }
 }'
 ```

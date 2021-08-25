@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    (c) 2020 Open Source Geospatial Foundation - all rights reserved
+    (c) 2021 Open Source Geospatial Foundation - all rights reserved
     This code is licensed under the GPL 2.0 license,
     available at the root application directory.
 
@@ -20,12 +20,28 @@
   <url>http://geonetwork-opensource.org</url>
 
   <properties>
-    <gt.version>25-SNAPSHOT</gt.version>
+    <gt.version>25.2</gt.version>
     <!-- override GT 25.1 JTS version (1.16.1) -->
     <jts.version>1.18.1</jts.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-data-functions-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-data-functions-geotools</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-data-functions-jackson</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  
     <!-- Spring cloud/boot infrastructure dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -91,7 +107,6 @@
         <artifactId>gt-geojsondatastore</artifactId>
       <version>${gt.version}</version>
     </dependency>
-    
 
     <dependency>
       <groupId>org.projectlombok</groupId>

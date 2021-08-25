@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) 2021 Open Source Geospatial Foundation - all rights reserved
+    This code is licensed under the GPL 2.0 license,
+    available at the root application directory.
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>gn-cloud-data-functions</artifactId>
+    <groupId>org.geonetwork-opensource.cloud</groupId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>gn-cloud-data-functions-geotools</artifactId>
+  <name>GeoTools based data processing functions</name>
+  <url>http://geonetwork-opensource.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.geonetwork-opensource.cloud</groupId>
+      <artifactId>gn-cloud-data-functions-core</artifactId>
+    </dependency>
+    <dependency>
+      <!-- TODO: REMOVE, used by WfsFormat to parse the query params, use something else instead of adding this dependency just for that? -->
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+    <!-- Depdendencies for GeoTools URI based data streamer -->
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-hsql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geopkg</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-wfs-ng</artifactId>
+    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>org.geotools</groupId> -->
+<!--       <artifactId>gt-geojson</artifactId> -->
+<!--       <version>${gt.version}</version> -->
+<!--     </dependency> -->
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geojsondatastore</artifactId>
+    </dependency>
+  </dependencies>
+</project>

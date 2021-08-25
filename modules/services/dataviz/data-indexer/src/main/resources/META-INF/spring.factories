@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.fao.geonet.jackson.databind.geojson.JtsGeoJsonJacksonBindingsAutoConfiguration,\
 org.fao.geonet.dataviz.producer.ProducersAutoConfiguration,\
 org.fao.geonet.dataviz.processor.ProcessorsAutoConfiguration,\
 org.fao.geonet.dataviz.sink.ConsumersAutoConfiguration
