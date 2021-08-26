@@ -37,7 +37,7 @@
     <swagger.version>2.1.2</swagger.version>
     <joda-time.version>2.10.6</joda-time.version>
     <jackson.version>2.11.4</jackson.version>
-    <jts.version>1.16.1</jts.version>
+    <jts.version>1.18.1</jts.version>
     <rdf4j.version>3.5.0</rdf4j.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
