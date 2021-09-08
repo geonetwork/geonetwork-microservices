@@ -77,6 +77,43 @@ public class RssResponseProcessorImplTest {
 		assertFalse(diff.hasDifferences());
 	}
 
+  @Test
+  public void nominalOneItemSxt() throws Exception {
+    formatterConfiguration.setLinkToLegacyGN4(false);
+
+    InputStream is = this.getClass().getResourceAsStream("es_flow_sxt.json");
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+    toTest.processResponse(null, is, os,	null, null, null);
+
+    /* the previous call should throw an exception, when trying to deserialize via Jackson:
+    com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot deserialize instance of `java.util.ArrayList<java.lang.Object>` out of VALUE_STRING token
+     at [Source: (String)"{"docType":"metadata","document":"","metadataIdentifier":"af124329-2883-4cf6-936f-950ff94a69d9","standardNameObject":{"default":"ISO 19115:2003/19139 - SEXTANT","langfre":"ISO 19115:2003/19139 - SEXTANT"},"standardVersionObject":{"default":"1.0","langfre":"1.0"},"indexingDate":"2021-09-06T14:04:23Z","dateStamp":"2020-06-04T00:37:17.000Z","mainLanguage":"fre","cl_characterSet":[{"key":"utf8","default":"Utf8","langfre":"Utf8","link":"http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD"[truncated 12092 chars]; line: 1, column: 12344] (through reference chain: org.fao.geonet.index.model.gn.IndexRecord["groupPublished"])
+      at com.fasterxml.jackson.databind.exc.MismatchedInputException.from(MismatchedInputException.java:59)
+      at com.fasterxml.jackson.databind.DeserializationContext.reportInputMismatch(DeserializationContext.java:1468)
+      at com.fasterxml.jackson.databind.DeserializationContext.handleUnexpectedToken(DeserializationContext.java:1242)
+      at com.fasterxml.jackson.databind.DeserializationContext.handleUnexpectedToken(DeserializationContext.java:1148)
+      at com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer.handleNonArray(StringCollectionDeserializer.java:274)
+      at com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer.deserialize(StringCollectionDeserializer.java:183)
+      at com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer.deserialize(StringCollectionDeserializer.java:173)
+      at com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer.deserialize(StringCollectionDeserializer.java:21)
+      at com.fasterxml.jackson.databind.deser.impl.MethodProperty.deserializeAndSet(MethodProperty.java:129)
+      at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:293)
+      at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:156)
+      at com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:4526)
+      at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:3468)
+      at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:3436)
+      at org.fao.geonet.index.converter.RssConverter.convert(RssConverter.java:52)
+
+    Here is what we have in RssConverter:52:
+
+	      IndexRecord record = new ObjectMapper()
+          .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
+
+    Somehow the document coming from ES cannot be mapped into an IndexRecord type.
+     */
+  }
+
 	@Test
 	public void nominalOneItemToGn4() throws Exception {
 		formatterConfiguration.setLinkToLegacyGN4(true);
