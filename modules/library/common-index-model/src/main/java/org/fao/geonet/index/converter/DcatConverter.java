@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
 import org.fao.geonet.index.model.dcat2.Dataset;
@@ -158,7 +160,11 @@ public class DcatConverter {
               .collect(Collectors.toList()))
           // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
           .modified(toDate(record.getChangeDate()))
-          .theme(record.getCodelists().get(topic).stream().map(t -> Subject.builder()
+          .theme(
+              Optional.ofNullable(record.getCodelists().get(topic))
+                  .map(Collection::stream)
+                  .orElseGet(Stream::empty)
+              .map(t -> Subject.builder()
               .skosConcept(SkosConcept.builder()
                   // TODO: rdf:resource="{$TopicCategoryCodelistUri}/{$TopicCategory}"
                   .prefLabel(t.getProperties().get(defaultText))
