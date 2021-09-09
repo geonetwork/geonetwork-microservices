@@ -8,6 +8,7 @@ package org.fao.geonet.index.converter;
 import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.OffsetDateTime;
@@ -46,11 +47,19 @@ public class RssConverter {
    *
    * <p>Validation: https://validator.w3.org/feed/check.cgi
    */
-  public Item convert(ObjectNode doc) {
+  public Item convert(ObjectNode doc) throws JsonProcessingException {
     try {
-      IndexRecord record = new ObjectMapper()
-          .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
 
+      ObjectMapper objectMapper = new ObjectMapper();
+      /*
+       * Allow single values to be wrapped in list properties where appropriate (for
+       * example, groupPublished is a List<String>, but the JSON may come as {...,
+       * "groupPublished" : "all"
+       */
+      objectMapper = objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY,
+          Boolean.TRUE);
+      IndexRecord record = objectMapper.readValue(doc.get(IndexRecordFieldNames.source).toString(),
+          IndexRecord.class);
       // https://www.rssboard.org/rss-specification#hrelementsOfLtitemgt
       Item item = new Item();
       Guid guid = new Guid();
@@ -108,9 +117,8 @@ public class RssConverter {
 
       return item;
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
+      throw e;
     }
-    return null;
   }
 
   private String buildDescription(IndexRecord record) {

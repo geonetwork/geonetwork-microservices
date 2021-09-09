@@ -18,6 +18,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.converter.FormatterConfiguration;
 import org.fao.geonet.index.converter.RssConverter;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("RssResponseProcessorImpl")
+@Slf4j(topic = "org.fao.geonet.searching")
 public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
   @Autowired
@@ -95,8 +97,10 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
   private void writeItem(XMLStreamWriter generator,
       OutputStream stream, ObjectNode doc) throws XMLStreamException {
 
-    Item item = rssConverter.convert(doc);
+
     try {
+      Item item = rssConverter.convert(doc);
+
       JAXBContext jaxbContext = JAXBContext.newInstance(Item.class);
       OutputStreamWriter osw = new OutputStreamWriter(stream);
       Marshaller marshaller = jaxbContext.createMarshaller();
@@ -104,7 +108,9 @@ public class RssResponseProcessorImpl extends AbstractResponseProcessor {
       marshaller.marshal(item, osw);
       osw.flush();
     } catch (JAXBException | IOException e) {
-      e.printStackTrace();
+      String msg = String.format("Unable to parse document \"%s\"...:",
+          doc.toString().substring(0, 90));
+      log.error(msg, e);
     }
   }
 }
