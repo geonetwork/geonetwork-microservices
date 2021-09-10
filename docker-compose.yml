@@ -85,9 +85,9 @@ services:
   database:
     image: mdillon/postgis
     environment:
-      POSTGRES_USER: "${MDDB_DBNAME}"
-      POSTGRES_PASSWORD: "${MDDB_USERNAME}"
-      POSTGRES_DB: "${MDDB_PASSWORD}"
+      POSTGRES_USER: "${MDDB_USERNAME}"
+      POSTGRES_PASSWORD: "${MDDB_PASSWORD}"
+      POSTGRES_DB: "${MDDB_DBNAME}"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
