@@ -12,7 +12,6 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component("XmlResponseProcessorImpl")
-public class XmlResponseProcessorImpl implements SearchResponseProcessor {
+public class XmlResponseProcessorImpl extends AbstractResponseProcessor {
 
   @Autowired
   MetadataRepository metadataRepository;
@@ -33,7 +32,7 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
     Processor p = new Processor(false);
     Serializer s = p.newSerializer();
@@ -45,8 +44,7 @@ public class XmlResponseProcessorImpl implements SearchResponseProcessor {
 
     generator.writeStartDocument("UTF-8", "1.0");
     {
-      JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
-      parser.nextToken();
+      JsonParser parser = parserForStream(streamFromServer);
 
       List<Integer> ids = new ArrayList<>();
       ResponseParser responseParser = new ResponseParser();

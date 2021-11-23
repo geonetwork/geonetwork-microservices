@@ -31,13 +31,16 @@
       <groupId>org.geonetwork-opensource.cloud</groupId>
       <artifactId>gn-cloud-common-error</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.geonetwork-opensource.cloud</groupId>
-      <artifactId>gn-cloud-common-persistence</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.geonetwork-opensource.cloud</groupId>
       <artifactId>gn-cloud-common-search</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geonetwork-opensource.cloud</groupId>
+          <artifactId>gn-cloud-common-persistence</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -169,6 +172,29 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>search_with_sql</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!search_without_sql</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.geonetwork-opensource.cloud</groupId>
+          <artifactId>gn-cloud-common-persistence</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>search_without_sql</id>
+      <activation>
+        <property>
+          <name>search_without_sql</name>
+        </property>
+      </activation>
     </profile>
   </profiles>
 </project>

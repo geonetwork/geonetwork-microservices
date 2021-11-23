@@ -18,5 +18,8 @@ public interface SearchResponseProcessor {
    */
   void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception;
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception;
+
+  default void setTransformation(String acceptHeader) {
+  }
 }

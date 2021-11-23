@@ -11,15 +11,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLStreamWriter;
 import lombok.Getter;
-import lombok.Setter;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
+import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
@@ -29,21 +29,30 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component("XsltResponseProcessorImpl")
-public class XsltResponseProcessorImpl implements SearchResponseProcessor {
+public class XsltResponseProcessorImpl extends AbstractResponseProcessor {
 
   @Autowired
   MetadataRepository metadataRepository;
 
   @Getter
-  @Setter
   private String transformation = "copy";
+
+  static final Map<String, String>
+          ACCEPT_FORMATTERS =
+          Map.of(
+                  GnMediaType.APPLICATION_GN_XML_VALUE, "copy",
+                  "gn", "copy",
+                  GnMediaType.APPLICATION_DCAT2_XML_VALUE, "dcat",
+                  "dcat", "dcat"
+          );
+
 
   /**
    * Process the search response and return RSS feed.
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
     Processor p = new Processor(false);
     Serializer s = p.newSerializer();
@@ -53,8 +62,7 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
 
     generator.writeStartDocument("UTF-8", "1.0");
     {
-      JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
-      parser.nextToken();
+      JsonParser parser = parserForStream(streamFromServer);
 
       List<Integer> ids = new ArrayList<>();
       new ResponseParser().matchHits(parser, generator, doc -> {
@@ -96,5 +104,11 @@ public class XsltResponseProcessorImpl implements SearchResponseProcessor {
     generator.writeEndDocument();
     generator.flush();
     generator.close();
+  }
+
+  /**  affraid XsltResponseProcessorImpl is NOT reentrant.*/
+  @Override
+  public void setTransformation(String acceptHeader) {
+    transformation = ACCEPT_FORMATTERS.get(acceptHeader);
   }
 }

@@ -24,13 +24,12 @@ import org.fao.geonet.common.search.domain.Profile;
 import org.fao.geonet.common.search.domain.ReservedGroup;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.stereotype.Component;
 
 
 @Component("JsonUserAndSelectionAwareResponseProcessorImpl")
-public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchResponseProcessor {
+public class JsonUserAndSelectionAwareResponseProcessorImpl extends AbstractResponseProcessor {
 
   /**
    * Process the search response to add information about the user,
@@ -40,10 +39,9 @@ public class JsonUserAndSelectionAwareResponseProcessorImpl implements SearchRes
   @Override
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
-    JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
+    JsonParser parser = parserForStream(streamFromServer);
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
-    parser.nextToken();  //Go to the first token
 
     // TODO: Check to enable it
     //final Set<String> selections = (addPermissions ?

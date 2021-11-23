@@ -63,5 +63,41 @@ eureka:
     registerWithEureka: false
     fetch-registry: false
 gn:
-  index.url: http://localhost:9200
+  baseurl: http://localhost:9901
+  legacy.url: http://localhost:8080/geonetwork
+  index:
+    url: http://localhost:9200
+    username:
+    password:
+
+---
+# Use this profile when running Elasticsearch index.
+# Turn off security, config, discover and sql datasource.
+# note that common-search and searching have to be built with "-Dsearch_without_sql"
+spring:
+  profiles: standalone_without_sql
+  rabbitmq.host: localhost
+  cloud:
+    config:
+      discovery:
+        enabled: false
+      enabled: false
+management:
+  health.ldap.enabled: false
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    fetch-registry: false
+gn:
+  baseurl: http://localhost:9901
+  legacy.url: http://localhost:8080/geonetwork
+  site:
+    name: GeoNetwork
+    organization: opensource
+  index:
+    url: http://localhost:9200
+    records: gn-records
+    username:
+    password:
 

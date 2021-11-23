@@ -1,0 +1,7 @@
+<rss version="2.0">
+    <channel>
+        <title>the geonetwork momorg</title>
+        <link>http://gn5:8277/geonetwork</link>
+        <description>Search for datasets, services and maps...</description>
+    </channel>
+</rss>

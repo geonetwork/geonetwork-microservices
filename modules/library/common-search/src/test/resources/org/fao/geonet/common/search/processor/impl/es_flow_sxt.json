@@ -1,0 +1,414 @@
+{
+  "took": 3,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 1,
+      "relation": "eq"
+    },
+    "max_score": 0.8266786,
+    "hits": [
+      {
+        "_index": "gn-records",
+        "_type": "_doc",
+        "_id": "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74",
+        "_score": 0.8266786,
+        "_source": {
+          "docType" : "metadata",
+          "document" : "",
+          "metadataIdentifier" : "af124329-2883-4cf6-936f-950ff94a69d9",
+          "standardNameObject" : {
+            "default" : "ISO 19115:2003/19139 - SEXTANT",
+            "langfre" : "ISO 19115:2003/19139 - SEXTANT"
+          },
+          "standardVersionObject" : {
+            "default" : "1.0",
+            "langfre" : "1.0"
+          },
+          "indexingDate" : "2021-09-06T14:04:23Z",
+          "dateStamp" : "2020-06-04T00:37:17.000Z",
+          "mainLanguage" : "fre",
+          "cl_characterSet" : [ {
+            "key" : "utf8",
+            "default" : "Utf8",
+            "langfre" : "Utf8",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_CharacterSetCode"
+          } ],
+          "resourceType" : [ "dataset" ],
+          "Org" : [ "Ifremer - Laboratoire Environnement Ressources de Normandie", "Ifremer - Laboratoire Environnement Ressources de Normandie" ],
+          "pointOfContactOrg" : [ "Ifremer - Laboratoire Environnement Ressources de Normandie", "Ifremer - Laboratoire Environnement Ressources de Normandie" ],
+          "contact" : [ {
+            "organisation" : "Ifremer - Laboratoire Environnement Ressources de Normandie",
+            "role" : "pointOfContact",
+            "email" : "claude.etourneau@ifremer.fr",
+            "website" : "",
+            "logo" : "",
+            "individual" : "",
+            "position" : "",
+            "phone" : "",
+            "address" : ""
+          }, {
+            "organisation" : "Ifremer - Laboratoire Environnement Ressources de Normandie",
+            "role" : "pointOfContact",
+            "email" : "sarah.baulac@ifremer.fr",
+            "website" : "",
+            "logo" : "",
+            "individual" : "",
+            "position" : "",
+            "phone" : "",
+            "address" : ""
+          } ],
+          "cl_hierarchyLevel" : [ {
+            "key" : "dataset",
+            "default" : "Jeu de données",
+            "langfre" : "Jeu de données",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode"
+          } ],
+          "cl_cellGeometry" : [ {
+            "key" : "area",
+            "default" : "Surface",
+            "langfre" : "Surface",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_CellGeometryCode"
+          } ],
+          "cl_presentationForm" : [ {
+            "key" : "mapDigital",
+            "default" : "Carte numérique",
+            "langfre" : "Carte numérique",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_PresentationFormCode"
+          } ],
+          "cl_status" : [ {
+            "key" : "onGoing",
+            "default" : "Mise à jour continue",
+            "langfre" : "Mise à jour continue",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ProgressCode"
+          } ],
+          "cl_maintenanceAndUpdateFrequency" : [ {
+            "key" : "asNeeded",
+            "default" : "Lorsque nécessaire",
+            "langfre" : "Lorsque nécessaire",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_MaintenanceFrequencyCode"
+          } ],
+          "cl_type" : [ {
+            "key" : "theme",
+            "default" : "Thème",
+            "langfre" : "Thème",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+          }, {
+            "key" : "place",
+            "default" : "Localisation",
+            "langfre" : "Localisation",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+          } ],
+          "cl_accessConstraints" : [ {
+            "key" : "otherRestrictions",
+            "default" : "Autres restrictions",
+            "langfre" : "Autres restrictions",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode"
+          } ],
+          "cl_spatialRepresentationType" : [ {
+            "key" : "grid",
+            "default" : "Raster",
+            "langfre" : "Raster",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_SpatialRepresentationTypeCode"
+          } ],
+          "resourceTitleObject" : {
+            "default" : "Baie des Veys - Scénario de densité d’élevage : redistribution spatiale des densités des huîtres : -30 % sur Grandcamp, +30 % sur Géfosse",
+            "langfre" : "Baie des Veys - Scénario de densité d’élevage : redistribution spatiale des densités des huîtres : -30 % sur Grandcamp, +30 % sur Géfosse"
+          },
+          "publicationDateForResource" : [ "2012-01-01T18:00:00.000Z" ],
+          "publicationYearForResource" : "2012",
+          "publicationMonthForResource" : "2012-01",
+          "resourceDate" : [ {
+            "type" : "publication",
+            "date" : "2012-01-01T18:00:00.000Z"
+          } ],
+          "resourceTemporalDateRange" : [ {
+            "gte" : "2012-01-01T18:00:00.000Z",
+            "lte" : "2012-01-01T18:00:00.000Z"
+          } ],
+          "resourceIdentifier" : [ {
+            "code" : "Fr-330-715-368-00305-ifr_LERN_OGIVE_BDV_SIMU_HUITR_SPAT_R",
+            "codeSpace" : "",
+            "link" : ""
+          } ],
+          "resourceEdition" : "",
+          "resourceAbstractObject" : {
+            "default" : "Cartographies de l’écart à la référence pour la chlorophylle-a et la croissance des huitres pour le scénario \"Densités d’élevage : redistribution spatiale des huîtres : -30 % sur Grandcamp, +30 % sur Géfosse\". \nLa simulation de référence correspond à la simulation en conditions réelles pour l’année 2002, année dite « moyenne » en termes de conditions hydro-climatiques.\nLa modélisation est basée sur une configuration couplée de modèles hydrodynamique, biogéochimique et écophysiologique. Les résultats sont présentés sous forme de pourcentage d’écart à la simulation de référence. L’écart est calculé sur la moyenne annuelle pour la chlorophylle et sur la masse de chair sèche atteinte à l’issue d’un an de simulation pour la croissance. L’effet est assez important et illustre bien la compétition trophique lié à la charge.",
+            "langfre" : "Cartographies de l’écart à la référence pour la chlorophylle-a et la croissance des huitres pour le scénario \"Densités d’élevage : redistribution spatiale des huîtres : -30 % sur Grandcamp, +30 % sur Géfosse\". \nLa simulation de référence correspond à la simulation en conditions réelles pour l’année 2002, année dite « moyenne » en termes de conditions hydro-climatiques.\nLa modélisation est basée sur une configuration couplée de modèles hydrodynamique, biogéochimique et écophysiologique. Les résultats sont présentés sous forme de pourcentage d’écart à la simulation de référence. L’écart est calculé sur la moyenne annuelle pour la chlorophylle et sur la masse de chair sèche atteinte à l’issue d’un an de simulation pour la croissance. L’effet est assez important et illustre bien la compétition trophique lié à la charge."
+          },
+          "cl_resourceCharacterSet" : [ {
+            "key" : "utf8",
+            "default" : "Utf8",
+            "langfre" : "Utf8",
+            "link" : "http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_CharacterSetCode"
+          } ],
+          "OrgForResource" : [ "Ifremer - Laboratoire Environnement Ressources de Normandie" ],
+          "pointOfContactOrgForResource" : "Ifremer - Laboratoire Environnement Ressources de Normandie",
+          "contactForResource" : [ {
+            "organisation" : "Ifremer - Laboratoire Environnement Ressources de Normandie",
+            "role" : "pointOfContact",
+            "email" : "aline.gangnery@ifremer.fr",
+            "website" : "",
+            "logo" : "",
+            "individual" : "",
+            "position" : "",
+            "phone" : "",
+            "address" : ""
+          } ],
+          "resourceCreditObject" : [ {
+            "default" : "Ifremer",
+            "langfre" : "Ifremer"
+          } ],
+          "hasOverview" : "true",
+          "overview" : [ {
+            "url" : "http://www.ifremer.fr:80/geonetwork/srv/fr/resources.get?uuid=af124329-2883-4cf6-936f-950ff94a69d9&fname=red_huitres_spat.png"
+          } ],
+          "resourceLanguage" : [ "fre" ],
+          "inspireTheme_syn" : [ "Caractéristiques géographiques océanographiques" ],
+          "inspireTheme" : [ "oceanographic geographical features" ],
+          "inspireThemeFirst_syn" : "Caractéristiques géographiques océanographiques",
+          "inspireThemeFirst" : "oceanographic geographical features",
+          "inspireAnnexForFirstTheme" : "iii",
+          "inspireAnnex" : [ "iii" ],
+          "inspireThemeUri" : [ "http://inspire.ec.europa.eu/theme/of" ],
+          "inspireThemeNumber" : "1",
+          "hasInspireTheme" : "true",
+          "tag" : [ {
+            "default" : "/Milieu biologique/Habitats",
+            "langfre" : "/Milieu biologique/Habitats"
+          }, {
+            "default" : "Ogive",
+            "langfre" : "Ogive"
+          }, {
+            "default" : "Simulation",
+            "langfre" : "Simulation"
+          }, {
+            "default" : "Scénario",
+            "langfre" : "Scénario"
+          }, {
+            "default" : "Chlorophylle-a",
+            "langfre" : "Chlorophylle-a"
+          }, {
+            "default" : "Croissance",
+            "langfre" : "Croissance"
+          }, {
+            "default" : "densité élevage",
+            "langfre" : "densité élevage"
+          }, {
+            "default" : "Basse-Normandie",
+            "langfre" : "Basse-Normandie"
+          }, {
+            "default" : "Calvados",
+            "langfre" : "Calvados"
+          }, {
+            "default" : "Baie des Veys",
+            "langfre" : "Baie des Veys"
+          }, {
+            "default" : "Caractéristiques géographiques océanographiques",
+            "langfre" : "Caractéristiques géographiques océanographiques"
+          } ],
+          "isOpenData" : "false",
+          "keywordType-theme" : [ {
+            "default" : "/Milieu biologique/Habitats",
+            "langfre" : "/Milieu biologique/Habitats"
+          }, {
+            "default" : "Ogive",
+            "langfre" : "Ogive"
+          }, {
+            "default" : "Simulation",
+            "langfre" : "Simulation"
+          }, {
+            "default" : "Scénario",
+            "langfre" : "Scénario"
+          }, {
+            "default" : "Chlorophylle-a",
+            "langfre" : "Chlorophylle-a"
+          }, {
+            "default" : "Croissance",
+            "langfre" : "Croissance"
+          }, {
+            "default" : "densité élevage",
+            "langfre" : "densité élevage"
+          }, {
+            "default" : "Caractéristiques géographiques océanographiques",
+            "langfre" : "Caractéristiques géographiques océanographiques"
+          } ],
+          "keywordType-place" : [ {
+            "default" : "Basse-Normandie",
+            "langfre" : "Basse-Normandie"
+          }, {
+            "default" : "Calvados",
+            "langfre" : "Calvados"
+          }, {
+            "default" : "Baie des Veys",
+            "langfre" : "Baie des Veys"
+          } ],
+          "th_sextant-themeNumber" : "1",
+          "th_sextant-theme" : [ {
+            "default" : "/Milieu biologique/Habitats",
+            "langfre" : "/Milieu biologique/Habitats"
+          } ],
+          "indexingErrorMsg" : [ "Warning / Keyword /Milieu biologique/Habitats not found in geonetwork.thesaurus.local.theme.sextant-theme.", "Warning / Keyword Caractéristiques géographiques océanographiques not found in geonetwork.thesaurus.external.theme.httpinspireeceuropaeutheme-theme.", "Warning / Field resourceTemporalDateRange / Lower and upper bounds empty. Date range not indexed." ],
+          "indexingError" : [ "true", "true" ],
+          "th_httpinspireeceuropaeutheme-themeNumber" : "1",
+          "th_httpinspireeceuropaeutheme-theme" : [ {
+            "default" : "Caractéristiques géographiques océanographiques",
+            "langfre" : "Caractéristiques géographiques océanographiques"
+          } ],
+          "allKeywords" : {
+            "geonetworkthesaurusexternalthemehttpinspireeceuropaeuthemetheme" : {
+              "id" : "geonetwork.thesaurus.external.theme.httpinspireeceuropaeutheme-theme",
+              "title" : "GEMET - INSPIRE themes, version 1.0",
+              "theme" : "theme",
+              "link" : "",
+              "keywords" : [ {
+                "default" : "Caractéristiques géographiques océanographiques",
+                "langfre" : "Caractéristiques géographiques océanographiques"
+              } ]
+            },
+            "geonetworkthesauruslocalthemesextanttheme" : {
+              "id" : "geonetwork.thesaurus.local.theme.sextant-theme",
+              "title" : "Thèmes Sextant",
+              "theme" : "theme",
+              "link" : "",
+              "keywords" : [ {
+                "default" : "/Milieu biologique/Habitats",
+                "langfre" : "/Milieu biologique/Habitats"
+              } ]
+            },
+            "otherKeywords-theme" : {
+              "keywords" : [ {
+                "default" : "Ogive",
+                "langfre" : "Ogive"
+              }, {
+                "default" : "Simulation",
+                "langfre" : "Simulation"
+              }, {
+                "default" : "Scénario",
+                "langfre" : "Scénario"
+              }, {
+                "default" : "Chlorophylle-a",
+                "langfre" : "Chlorophylle-a"
+              }, {
+                "default" : "Croissance",
+                "langfre" : "Croissance"
+              }, {
+                "default" : "densité élevage",
+                "langfre" : "densité élevage"
+              } ]
+            },
+            "otherKeywords-place" : {
+              "keywords" : [ {
+                "default" : "Basse-Normandie",
+                "langfre" : "Basse-Normandie"
+              }, {
+                "default" : "Calvados",
+                "langfre" : "Calvados"
+              }, {
+                "default" : "Baie des Veys",
+                "langfre" : "Baie des Veys"
+              } ]
+            }
+          },
+          "cl_topic" : [ {
+            "key" : "oceans",
+            "default" : "Océans",
+            "langfre" : "Océans"
+          } ],
+          "resolutionScaleDenominator" : [ "25000" ],
+          "MD_LegalConstraintsOtherConstraintsObject" : [ {
+            "default" : "Citation obligatoire de la mention suivante : « Source : Ifremer, Projet OGIVE »",
+            "langfre" : "Citation obligatoire de la mention suivante : « Source : Ifremer, Projet OGIVE »"
+          } ],
+          "MD_ConstraintsUseLimitationObject" : [ {
+            "default" : "Aucune",
+            "langfre" : "Aucune"
+          } ],
+          "licenseObject" : {
+            "default" : "Citation obligatoire de la mention suivante : « Source : Ifremer, Projet OGIVE »",
+            "langfre" : "Citation obligatoire de la mention suivante : « Source : Ifremer, Projet OGIVE »"
+          },
+          "geom" : {
+            "type" : "Polygon",
+            "coordinates" : [ [ [ -1.32638, 49.33193 ], [ -1.002581, 49.33193 ], [ -1.002581, 49.53867 ], [ -1.32638, 49.53867 ], [ -1.32638, 49.33193 ] ] ]
+          },
+          "location" : "49.4353,-1.1644804999999998",
+          "coordinateSystem" : [ "WGS 84 (EPSG:4326)" ],
+          "crsDetails" : [ {
+            "code" : "WGS 84 (EPSG:4326)",
+            "codeSpace" : "EPSG",
+            "name" : "WGS 84 (EPSG:4326)",
+            "url" : ""
+          } ],
+          "specificationConformance" : [ {
+            "title" : "Inspire spécifications",
+            "date" : "2012-01-16",
+            "explanation" : "Non évaluée",
+            "pass" : "false"
+          } ],
+          "OrgForDistribution" : "Ifremer - Centre de Brest",
+          "distributorOrgForDistribution" : "Ifremer - Centre de Brest",
+          "contactForDistribution" : [ {
+            "organisation" : "Ifremer - Centre de Brest",
+            "role" : "distributor",
+            "email" : "sextant@ifremer.fr",
+            "website" : "",
+            "logo" : "",
+            "individual" : "Administrateur du serveur Sextant",
+            "position" : "Dépositaire mandaté pour les données numériques",
+            "phone" : "",
+            "address" : ""
+          } ],
+          "linkUrl" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
+          "linkProtocol" : "WWW:LINK",
+          "linkUrlProtocolWWWLINK" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
+          "link" : [ {
+            "protocol" : "WWW:LINK",
+            "url" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
+            "name" : "Site web du LERN - projet OGIVE",
+            "description" : "Page internet du projet OGIVE",
+            "function" : "",
+            "applicationProfile" : "",
+            "group" : 0
+          } ],
+          "recordGroup" : "af124329-2883-4cf6-936f-950ff94a69d9",
+          "isPublishedToAll" : "true",
+          "recordOwner" : "Test ADMIN",
+          "uuid" : "af124329-2883-4cf6-936f-950ff94a69d9",
+          "harvesterUuid" : "972998ef-29cc-49a6-ae99-6fb7bc7bc83f",
+          "displayOrder" : "0",
+          "popularity" : "0",
+          "userinfo" : "testadmin|ADMIN|Test|Administrator",
+          "record" : "record",
+          "draft" : "n",
+          "changeDate" : "2020-06-04T00:37:17Z",
+          "id" : "1688",
+          "createDate" : "2020-06-04T00:37:17Z",
+          "owner" : "100",
+          "groupOwner" : "2",
+          "logo" : "/images/logos/972998ef-29cc-49a6-ae99-6fb7bc7bc83f.png",
+          "hasxlinks" : "false",
+          "groupPublished" : "all",
+          "op0" : "1",
+          "featureOfRecord" : "record",
+          "op1" : "1",
+          "extra" : "null",
+          "documentStandard" : "iso19139",
+          "op5" : "1",
+          "valid" : "-1",
+          "isTemplate" : "n",
+          "feedbackCount" : "0",
+          "rating" : "0",
+          "isHarvested" : "true",
+          "sourceCatalogue" : "972998ef-29cc-49a6-ae99-6fb7bc7bc83f"
+        }
+      }
+    ]
+  }
+}

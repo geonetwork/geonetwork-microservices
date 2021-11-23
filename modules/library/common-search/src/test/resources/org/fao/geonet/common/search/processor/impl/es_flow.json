@@ -1,0 +1,344 @@
+{
+  "took": 3,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 1,
+      "relation": "eq"
+    },
+    "max_score": 0.8266786,
+    "hits": [
+      {
+        "_index": "gn-records",
+        "_type": "_doc",
+        "_id": "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74",
+        "_score": 0.8266786,
+        "_source": {
+          "docType": "metadata",
+          "document": "",
+          "metadataIdentifier": "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74",
+          "standardNameObject": {
+            "default": "ISO 19115-3",
+            "langeng": "ISO 19115-3"
+          },
+          "indexingDate": "2021-08-10T19:39:42Z",
+          "dateStamp": "2021-08-10T19:39:25.504Z",
+          "mainLanguage": "eng",
+          "otherLanguage": [
+            "fre",
+            "ger",
+            "chi",
+            "spa",
+            "ara",
+            "rus"
+          ],
+          "otherLanguageId": [
+            "FR",
+            "DE",
+            "ZH",
+            "ES",
+            "AR",
+            "RU"
+          ],
+          "cl_characterSet": [
+            {
+              "key": "utf8",
+              "default": "UTF8",
+              "langeng": "UTF8",
+              "langfre": "Utf8",
+              "langger": "utf8",
+              "langchi": "utf8",
+              "langspa": "utf8",
+              "langara": "utf8",
+              "langrus": "utf8",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_CharacterSetCode"
+            }
+          ],
+          "resourceType": [
+            "dataset"
+          ],
+          "contact": [
+            {
+              "organisation": "",
+              "role": "pointOfContact",
+              "email": "",
+              "website": "",
+              "logo": "",
+              "individual": "",
+              "position": "",
+              "phone": "",
+              "address": ""
+            }
+          ],
+          "cl_function": [
+            {
+              "key": "completeMetadata",
+              "default": "Complete Metadata",
+              "langeng": "Complete Metadata",
+              "langfre": "Métadonnées intégrales",
+              "langger": "completeMetadata",
+              "langchi": "completeMetadata",
+              "langspa": "completeMetadata",
+              "langara": "completeMetadata",
+              "langrus": "completeMetadata",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_OnLineFunctionCode"
+            }
+          ],
+          "cl_spatialRepresentationType": [
+            {
+              "key": "vector",
+              "default": "Vector",
+              "langeng": "Vector",
+              "langfre": "Vecteur",
+              "langger": "vector",
+              "langchi": "vector",
+              "langspa": "vector",
+              "langara": "vector",
+              "langrus": "vector",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_SpatialRepresentationTypeCode"
+            }
+          ],
+          "cl_maintenanceAndUpdateFrequency": [
+            {
+              "key": "asNeeded",
+              "default": "As needed",
+              "langeng": "As needed",
+              "langfre": "Lorsque nécessaire",
+              "langger": "asNeeded",
+              "langchi": "asNeeded",
+              "langspa": "asNeeded",
+              "langara": "asNeeded",
+              "langrus": "asNeeded",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_MaintenanceFrequencyCode"
+            }
+          ],
+          "cl_type": [
+            {
+              "key": "theme",
+              "default": "Theme",
+              "langeng": "Theme",
+              "langfre": "Thème",
+              "langger": "theme",
+              "langchi": "theme",
+              "langspa": "theme",
+              "langara": "theme",
+              "langrus": "theme",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_KeywordTypeCode"
+            },
+            {
+              "key": "place",
+              "default": "Place",
+              "langeng": "Place",
+              "langfre": "Localisation",
+              "langger": "place",
+              "langchi": "place",
+              "langspa": "place",
+              "langara": "place",
+              "langrus": "place",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_KeywordTypeCode"
+            }
+          ],
+          "cl_accessConstraints": [
+            {
+              "key": "copyright",
+              "default": "Copyright",
+              "langeng": "Copyright",
+              "langfre": "Droit d’auteur / Droit moral (copyright)",
+              "langger": "copyright",
+              "langchi": "copyright",
+              "langspa": "copyright",
+              "langara": "copyright",
+              "langrus": "copyright",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_RestrictionCode"
+            }
+          ],
+          "cl_level": [
+            {
+              "key": "dataset",
+              "default": "Dataset",
+              "langeng": "Dataset",
+              "langfre": "Jeu de données",
+              "langger": "dataset",
+              "langchi": "dataset",
+              "langspa": "dataset",
+              "langara": "dataset",
+              "langrus": "dataset",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_ScopeCode"
+            }
+          ],
+          "resourceTitleObject": {
+            "default": "multilingual",
+            "langeng": "multilingual",
+            "langfre": "multilingue",
+            "langrus": "многоязычное"
+          },
+          "resourceEdition": "",
+          "cl_resourceCharacterSet": [
+            {
+              "key": "utf8",
+              "default": "UTF8",
+              "langeng": "UTF8",
+              "langfre": "Utf8",
+              "langger": "utf8",
+              "langchi": "utf8",
+              "langspa": "utf8",
+              "langara": "utf8",
+              "langrus": "utf8",
+              "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_CharacterSetCode"
+            }
+          ],
+          "contactForResource": [
+            {
+              "organisation": "",
+              "role": "originator",
+              "email": "",
+              "website": "",
+              "logo": "",
+              "individual": "",
+              "position": "",
+              "phone": "",
+              "address": ""
+            }
+          ],
+          "hasOverview": "false",
+          "resourceLanguage": [
+            "eng"
+          ],
+          "inspireThemeNumber": "0",
+          "hasInspireTheme": "false",
+          "tag": [
+            {
+              "default": "World",
+              "langeng": "World"
+            }
+          ],
+          "isOpenData": "false",
+          "keywordType-theme": [],
+          "keywordType-place": [
+            {
+              "default": "World",
+              "langeng": "World"
+            }
+          ],
+          "allKeywords": {
+            "otherKeywords-theme": {
+              "keywords": []
+            },
+            "otherKeywords-place": {
+              "keywords": [
+                {
+                  "default": "World",
+                  "langeng": "World"
+                }
+              ]
+            }
+          },
+          "cl_topic": [
+            {
+              "key": "boundaries",
+              "default": "Boundaries",
+              "langeng": "Boundaries",
+              "langfre": "Limites politiques et administratives",
+              "langger": "boundaries",
+              "langchi": "boundaries",
+              "langspa": "boundaries",
+              "langara": "boundaries",
+              "langrus": "boundaries"
+            }
+          ],
+          "spatialRepresentationType": "vector",
+          "geom": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -180.0,
+                  -90.0
+                ],
+                [
+                  180.0,
+                  -90.0
+                ],
+                [
+                  180.0,
+                  90.0
+                ],
+                [
+                  -180.0,
+                  90.0
+                ],
+                [
+                  -180.0,
+                  -90.0
+                ]
+              ]
+            ]
+          },
+          "location": "0,0",
+          "coordinateSystem": [
+            "WGS 1984"
+          ],
+          "crsDetails": [
+            {
+              "code": "WGS 1984",
+              "codeSpace": "",
+              "name": "",
+              "url": ""
+            }
+          ],
+          "featureTypes": [],
+          "recordGroup": "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74",
+          "isPublishedToAll": "true",
+          "recordOwner": "Test ADMIN",
+          "uuid": "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74",
+          "displayOrder": "0",
+          "popularity": "0",
+          "userinfo": "testadmin|ADMIN|Test|Administrator",
+          "record": "record",
+          "draft": "n",
+          "changeDate": "2021-08-10T19:39:28.446Z",
+          "id": "105",
+          "createDate": "2021-08-10T19:39:14.399Z",
+          "owner": "100",
+          "groupOwner": "2",
+          "logo": "/images/logos/6b113436-e774-4df1-aee4-455ac206c984.png",
+          "hasxlinks": "false",
+          "groupPublished": [
+            "sample",
+            "all",
+            "intranet"
+          ],
+          "op0": [
+            "2",
+            "1",
+            "0"
+          ],
+          "featureOfRecord": "record",
+          "op1": [
+            "1",
+            "0"
+          ],
+          "extra": "null",
+          "documentStandard": "iso19115-3.2018",
+          "op3": "2",
+          "op5": [
+            "1",
+            "0"
+          ],
+          "valid": "-1",
+          "isTemplate": "n",
+          "feedbackCount": "0",
+          "rating": "0",
+          "isHarvested": "false",
+          "sourceCatalogue": "6b113436-e774-4df1-aee4-455ac206c984"
+        }
+      }
+    ]
+  }
+}

@@ -18,25 +18,30 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.UserInfo;
-import org.fao.geonet.common.search.processor.SearchResponseProcessor;
+import org.fao.geonet.index.converter.FormatterConfiguration;
 import org.fao.geonet.index.converter.RssConverter;
 import org.fao.geonet.index.model.rss.Item;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("RssResponseProcessorImpl")
-public class RssResponseProcessorImpl implements SearchResponseProcessor {
+@Slf4j(topic = "org.fao.geonet.searching")
+public class RssResponseProcessorImpl extends AbstractResponseProcessor {
 
-  @Value("${gn.baseurl}")
-  String baseUrl;
+  @Autowired
+  private RssConverter rssConverter;
+
+  @Autowired
+  private FormatterConfiguration formatterConfiguration;
 
   /**
    * Process the search response and return RSS feed.
    */
   public void processResponse(HttpSession httpSession,
       InputStream streamFromServer, OutputStream streamToClient,
-      UserInfo userInfo, String bucket, boolean addPermissions) throws Exception {
+      UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
     XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
     XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
     generator.writeStartDocument("UTF-8", "1.0");
@@ -46,8 +51,7 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     generator.writeStartElement("channel");
     writeChannelProperties(generator);
 
-    JsonParser parser = ResponseParser.jsonFactory.createParser(streamFromServer);
-    parser.nextToken();
+    JsonParser parser = parserForStream(streamFromServer);
 
     new ResponseParser().matchHits(parser, generator, doc -> {
       writeItem(generator, streamToClient, doc);
@@ -63,8 +67,6 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   private void writeChannelProperties(XMLStreamWriter generator) throws XMLStreamException {
     // TODO: Get Collection info
     // And build it from metadata record if set
-    String title = "GeoNetwork opensource";
-    String link = "http://localhost:8080/geonetwork";
     String description = "Search for datasets, services and maps...";
 
     // The name of the channel.
@@ -73,12 +75,12 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
     // as your RSS file, the title of your channel should be
     // the same as the title of your website.
     generator.writeStartElement("title");
-    generator.writeCharacters(title);
+    generator.writeCharacters(formatterConfiguration.getSourceSiteTitle());
     generator.writeEndElement();
 
     // The URL to the HTML website corresponding to the channel.
     generator.writeStartElement("link");
-    generator.writeCharacters(link);
+    generator.writeCharacters(formatterConfiguration.getSourceHomePage());
     generator.writeEndElement();
 
     // Phrase or sentence describing the channel.
@@ -95,8 +97,10 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
   private void writeItem(XMLStreamWriter generator,
       OutputStream stream, ObjectNode doc) throws XMLStreamException {
 
-    Item item = RssConverter.convert(doc);
+
     try {
+      Item item = rssConverter.convert(doc);
+
       JAXBContext jaxbContext = JAXBContext.newInstance(Item.class);
       OutputStreamWriter osw = new OutputStreamWriter(stream);
       Marshaller marshaller = jaxbContext.createMarshaller();
@@ -104,7 +108,9 @@ public class RssResponseProcessorImpl implements SearchResponseProcessor {
       marshaller.marshal(item, osw);
       osw.flush();
     } catch (JAXBException | IOException e) {
-      e.printStackTrace();
+      String msg = String.format("Unable to parse document \"%s\"...:",
+          doc.toString().substring(0, 90));
+      log.error(msg, e);
     }
   }
 }

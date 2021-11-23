@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
-import org.fao.geonet.index.model.dcat2.CatalogRecord.CatalogRecordBuilder;
 import org.fao.geonet.index.model.dcat2.Dataset;
 import org.fao.geonet.index.model.dcat2.Dataset.DatasetBuilder;
 import org.fao.geonet.index.model.dcat2.DcatActivity;
@@ -60,14 +60,20 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.Codelists;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.fao.geonet.index.model.gn.ResourceIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Index document to DCAT mapping.
  */
+@Component
 public class DcatConverter {
 
-  public static Map<String, String> resourceTypeMapping = Map.ofEntries(
+  @Autowired
+  FormatterConfiguration formatterConfiguration;
+
+  private static final Map<String, String> RESSOURCE_TYPE_MAPPING = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
       new AbstractMap.SimpleEntry<>("series", "Dataset"),
       new AbstractMap.SimpleEntry<>("service", "DataService"),
@@ -77,23 +83,22 @@ public class DcatConverter {
       new AbstractMap.SimpleEntry<>("tile", "Dataset")
   );
 
-  static Map<String, String> inspireDegreeOfConformity = Map.of(
+  private static final Map<String, String> INSPIRE_DEGREE_OF_CONFORMITY = Map.of(
       "true", "conformant",
       "false", "notConformant",
       "", "notEvaluated"
   );
 
-  private static String DEFAULT_LANGUAGE;
+  @Value("${gn.language.default:en}")
+  private String defaultLanguage;
 
-  private static ObjectMapper mapper = new ObjectMapper();
+  private ObjectMapper mapper = new ObjectMapper();
 
-  @Value("${gn.language.default}")
-  String defaultLanguage;
 
   /**
    * Convert an index document into a DCAT object.
    */
-  public static CatalogRecord convert(JsonNode doc) {
+  public CatalogRecord convert(JsonNode doc) {
     CatalogRecord catalogRecord = null;
     Dataset dcatDataset = null;
     try {
@@ -102,7 +107,8 @@ public class DcatConverter {
           .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
 
       String recordIdentifier = record.getMetadataIdentifier();
-      String recordUri = RssConverter.buildLandingPageLink(record);
+      String recordUri = formatterConfiguration.buildLandingPageLink(
+              record.getMetadataIdentifier());
       Optional<ResourceIdentifier> resourceIdentifier =
           record.getResourceIdentifier().stream().filter(Objects::nonNull).findFirst();
 
@@ -112,7 +118,7 @@ public class DcatConverter {
           : null;
 
       String language = record.getMainLanguage() == null
-          ? DEFAULT_LANGUAGE : record.getMainLanguage();
+          ? defaultLanguage : record.getMainLanguage();
       String languageUpperCase = language.toUpperCase();
       // TODO: Need language mapper
       String iso2letterLanguage = language.substring(0, 2);
@@ -132,11 +138,12 @@ public class DcatConverter {
           .identifier(record.getResourceIdentifier().stream()
               .map(c -> c.getCode()).collect(
               Collectors.toList()))
-          .title(List.of(record.getResourceTitle().get(defaultText)))
-          .description(List.of(record.getResourceAbstract().get(defaultText)))
-          .landingPage(List.of(DcatDocument.builder()
+          .title(listOfNullable(record.getResourceTitle().get(defaultText)))
+          .description(listOfNullable(record.getResourceAbstract().get(defaultText)))
+          .landingPage(listOfNullable(DcatDocument.builder()
               .foafDocument(FoafDocument.builder()
-                  .about(RssConverter.buildLandingPageLink(record))
+                  .about(formatterConfiguration.buildLandingPageLink(
+                          record.getMetadataIdentifier()))
                   .title(record.getResourceTitle().get(defaultText))
                   .build()).build()))
           .provenance(
@@ -147,7 +154,7 @@ public class DcatConverter {
               ).collect(Collectors.toList())
           )
           .type(record.getResourceType().stream().map(t ->
-              new RdfResource(null, "dcat:" + resourceTypeMapping.get(t), null))
+              new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
               .collect(Collectors.toList()))
           // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
           .modified(toDate(record.getChangeDate()))
@@ -204,7 +211,7 @@ public class DcatConverter {
                             ProvGenerated.builder()
                                 .type(new RdfResource(
                                     "http://inspire.ec.europa.eu/metadata-codelist/DegreeOfConformity/"
-                                        + inspireDegreeOfConformity.get(c.getPass()),
+                                        + INSPIRE_DEGREE_OF_CONFORMITY.get(c.getPass()),
                                     null))
                             //RDFParseException: unexpected literal
                             //.description(c.getExplanation())
@@ -262,8 +269,8 @@ public class DcatConverter {
 
       record.getLinks().stream().forEach(link -> {
         DcatDistributionBuilder dcatDistributionBuilder = DcatDistribution.builder()
-            .title(List.of(link.getName()))
-            .description(List.of(link.getDescription()))
+            .title(listOfNullable(link.getName()))
+            .description(listOfNullable(link.getDescription()))
             // TODO <dcat:accessService rdf:parseType="Resource">...
             // TODO: representation technique = gmd:MD_SpatialRepresentationTypeCode?
             .representationTechnique(Subject.builder()
@@ -273,7 +280,7 @@ public class DcatConverter {
         // TODO: depending on function/protocol build page/accessUrl/downloadUrl
         dcatDistributionBuilder.accessUrl(link.getUrl());
 
-        datasetBuilder.distribution(List.of(DcatDistributionContainer.builder()
+        datasetBuilder.distribution(listOfNullable(DcatDistributionContainer.builder()
             .distribution(dcatDistributionBuilder.build()).build()));
       });
 
@@ -291,13 +298,13 @@ public class DcatConverter {
 
 
       catalogRecord = CatalogRecord.builder()
-          .identifier(List.of(record.getMetadataIdentifier()))
+          .identifier(listOfNullable(record.getMetadataIdentifier()))
           .created(toDate(record.getCreateDate()))
           .modified(toDate(record.getChangeDate()))
-          .language(List.of(new RdfResource(null,
+          .language(listOfNullable(new RdfResource(null,
               "http://publications.europa.eu/resource/authority/language/"
                   + record.getMainLanguage().toUpperCase())))
-          .primaryTopic(List.of(new ResourceContainer(dcatDataset, null))).build();
+          .primaryTopic(listOfNullable(new ResourceContainer(dcatDataset, null))).build();
 
     } catch (JsonMappingException e) {
       e.printStackTrace();
@@ -315,9 +322,11 @@ public class DcatConverter {
             DateTimeFormatter.ISO_DATE_TIME.parse(date)));
   }
 
-  @Value("${gn.language.default}")
-  public void setNameStatic(String defaultLanguage) {
-    DcatConverter.DEFAULT_LANGUAGE = defaultLanguage;
+  private static <E> List<E> listOfNullable(E e) {
+    if (e == null) {
+      return Collections.emptyList();
+    }
+    return Collections.singletonList(e);
   }
 
 }

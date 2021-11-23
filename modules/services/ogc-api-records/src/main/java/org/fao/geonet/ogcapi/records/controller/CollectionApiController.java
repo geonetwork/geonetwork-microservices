@@ -29,6 +29,7 @@ import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -61,6 +62,7 @@ public class CollectionApiController {
   ViewUtility viewUtility;
 
   @Autowired
+  @Qualifier("xsltViewResolver")
   ViewResolver viewResolver;
 
   @Autowired
