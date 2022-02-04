@@ -188,3 +188,10 @@ mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.locatio
 ```
 
 
+## Known issues
+
+If the HTML page of an item return the following error 
+```
+org.xml.sax.SAXParseException; lineNumber: 28; columnNumber: 50; Invalid byte 2 of 3-byte UTF-8 sequence.
+```
+add `-Dfile.encoding=UTF-8`.
