@@ -23,6 +23,11 @@
   <name>GeoNetwork microservices</name>
   <url>http://geonetwork-opensource.org</url>
   <inceptionYear>2020</inceptionYear>
+  <scm>
+    <connection>scm:git:https://github.com/geonetwork/geonetwork-microservices.git</connection>
+    <developerConnection>scm:git:https://github.com/geonetwork/geonetwork-microservices.git</developerConnection>
+    <url>https://github.com/geonetwork/geonetwork-microservices</url>
+  </scm>
 
   <properties>
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
