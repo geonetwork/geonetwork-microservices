@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.geonetwork-opensource.cloud</groupId>
   <artifactId>gn-cloud-microservices</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>-0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoNetwork microservices</name>
   <url>http://geonetwork-opensource.org</url>
