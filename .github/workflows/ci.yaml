@@ -25,7 +25,7 @@ jobs:
     - name: "Generate the docker images"
       if: github.event_name == 'release' && github.event.action == 'created'
       run: |
-        ./mvnw  install --no-transfer-progress -B -Dspring-boot.build-image.imageName=docker.io/geonetwork/\${project.artifactId}:latest
+        ./mvnw  install --no-transfer-progress -B -Pdocker -Dspring-boot.build-image.imageName=docker.io/geonetwork/\${project.artifactId}:latest
 
     - name: "Get the version name"
       if: github.event_name == 'release' && github.event.action == 'created'
