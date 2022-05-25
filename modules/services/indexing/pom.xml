@@ -16,7 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-indexing</artifactId>
   <name>GeoNetwork indexing app</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

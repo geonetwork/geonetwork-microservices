@@ -9,7 +9,7 @@
 
   <artifactId>gn-cloud-common-index-model</artifactId>
   <name>GeoNetwork common index model</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

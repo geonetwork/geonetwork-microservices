@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-configuring</artifactId>
   <name>GeoNetwork configuration service</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <properties>
   </properties>

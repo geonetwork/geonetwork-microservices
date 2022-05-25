@@ -8,5 +8,5 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-standard-iso19139</artifactId>
   <name>GeoNetwork standard / ISO 19139</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 </project>

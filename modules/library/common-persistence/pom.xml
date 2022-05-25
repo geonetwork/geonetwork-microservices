@@ -9,7 +9,7 @@
 
   <artifactId>gn-cloud-common-persistence</artifactId>
   <name>GeoNetwork common error</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

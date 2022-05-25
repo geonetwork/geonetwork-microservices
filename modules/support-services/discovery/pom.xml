@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-discovery</artifactId>
   <name>GeoNetwork discovery service</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <properties>
     <start-class>org.geoserver.cloud.discovery.DiscoveryApplication</start-class>

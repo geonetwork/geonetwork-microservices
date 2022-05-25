@@ -16,7 +16,7 @@
 
   <artifactId>gn-cloud-authorizing</artifactId>
   <name>GeoNetwork authorizing app</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

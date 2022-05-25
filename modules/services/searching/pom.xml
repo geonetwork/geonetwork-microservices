@@ -16,7 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-searching</artifactId>
   <name>GeoNetwork search app</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
   <packaging>jar</packaging>
 
   <dependencies>

@@ -9,7 +9,7 @@
 
   <artifactId>gn-cloud-common-search</artifactId>
   <name>GeoNetwork common search</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

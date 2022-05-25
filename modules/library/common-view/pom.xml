@@ -9,7 +9,7 @@
 
   <artifactId>gn-cloud-common-view</artifactId>
   <name>GeoNetwork common view</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

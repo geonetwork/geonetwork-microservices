@@ -20,7 +20,7 @@
   <version>0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoNetwork microservices</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
   <inceptionYear>2020</inceptionYear>
   <scm>
     <connection>scm:git:https://github.com/geonetwork/geonetwork-microservices.git</connection>
