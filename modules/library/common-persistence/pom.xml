@@ -3,13 +3,13 @@
   <parent>
     <artifactId>gn-cloud-lib</artifactId>
     <groupId>org.geonetwork-opensource.cloud</groupId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>gn-cloud-common-persistence</artifactId>
   <name>GeoNetwork common error</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
 
   <dependencies>
     <dependency>

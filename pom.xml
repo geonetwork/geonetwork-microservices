@@ -17,10 +17,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.geonetwork-opensource.cloud</groupId>
   <artifactId>gn-cloud-microservices</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoNetwork microservices</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
   <inceptionYear>2020</inceptionYear>
   <scm>
     <connection>scm:git:https://github.com/geonetwork/geonetwork-microservices.git</connection>

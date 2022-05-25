@@ -11,12 +11,12 @@
   <parent>
     <groupId>org.geonetwork-opensource.cloud</groupId>
     <artifactId>gn-cloud-services</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-searching</artifactId>
   <name>GeoNetwork search app</name>
-  <url>http://geonetwork-opensource.org</url>
+  <url>https://geonetwork-opensource.org</url>
   <packaging>jar</packaging>
 
   <dependencies>
