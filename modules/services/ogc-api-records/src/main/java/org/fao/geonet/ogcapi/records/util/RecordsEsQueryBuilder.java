@@ -39,9 +39,10 @@ public class RecordsEsQueryBuilder {
       "resourceType", "resourceDate",
       "id", "metadataIdentifier", "schema",
       "link", "allKeywords",
-      "contactForResource",
+      "contact", "contactForResource",
       "cl_status",
-      "edit");
+      "edit", "tag", "changeDate",
+      "createDate", "mainLanguage", "geom", "formats");
 
   private static final String SORT_BY_SEPARATOR = ",";
 
