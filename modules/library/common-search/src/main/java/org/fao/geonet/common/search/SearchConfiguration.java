@@ -30,6 +30,8 @@ public class SearchConfiguration {
 
   String queryBase;
 
+  Boolean trackTotalHits;
+
   List<String> sortables = new ArrayList<>();
 
   List<String> sources = new ArrayList<>();

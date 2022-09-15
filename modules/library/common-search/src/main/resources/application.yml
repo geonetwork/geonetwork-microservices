@@ -4,6 +4,7 @@ gn:
     # 'queryBase': '${any}',
     # Full text but more boost on title match
     queryBase: 'any:(${any}) resourceTitleObject.default:(${any})^2'
+    trackTotalHits: true
     scoreConfig: >
       {
         "boost": "5",
@@ -85,12 +86,14 @@ gn:
         mimeType: application/rdf+xml
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
+          - items
           - item
       -
         name : dcat_turtle
         mimeType : text/turtle
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations :
+          - items
           - item
 #      -
 #        name : iso19139

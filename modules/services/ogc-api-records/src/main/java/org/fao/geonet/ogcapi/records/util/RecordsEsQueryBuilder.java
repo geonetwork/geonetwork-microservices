@@ -137,7 +137,7 @@ public class RecordsEsQueryBuilder {
     }
     boolQuery.filter(QueryBuilders.queryStringQuery(filterQueryString));
     sourceBuilder.query(boolQuery);
-
+    sourceBuilder.trackTotalHits(configuration.getTrackTotalHits());
     log.debug("OGC API query: {}", sourceBuilder.toString());
 
     return sourceBuilder.toString();

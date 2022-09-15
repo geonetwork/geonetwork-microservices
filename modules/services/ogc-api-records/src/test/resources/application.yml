@@ -21,6 +21,7 @@ gn:
     # 'queryBase': '${any}',
     # Full text but more boost on title match
     queryBase: 'any:(${any}) resourceTitleObject.default:(${any})^2'
+    trackTotalHits: true
     scoreConfig: >
       {
         "boost": "5",
