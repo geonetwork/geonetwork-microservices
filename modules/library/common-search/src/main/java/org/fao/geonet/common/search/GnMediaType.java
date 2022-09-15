@@ -40,6 +40,10 @@ public class GnMediaType extends MimeType {
   public static final String APPLICATION_JSON_LD_VALUE = "application/ld+json";
   public static final MediaType APPLICATION_JSON_LD;
 
+  public static final String APPLICATION_GEOJSON_VALUE = "application/geo+json";
+  public static final MediaType APPLICATION_GEOJSON;
+
+
   static {
     TEXT_TURTLE = new MediaType("text", "turtle");
 
@@ -50,5 +54,6 @@ public class GnMediaType extends MimeType {
     APPLICATION_ISO19115_3_XML = new MediaType("application", "iso19115-3+xml");
     APPLICATION_GN_XML = new MediaType("application", "gn+xml");
     APPLICATION_JSON_LD = new MediaType("application", "ld+json");
+    APPLICATION_GEOJSON = new MediaType("application", "geo+json");
   }
 }

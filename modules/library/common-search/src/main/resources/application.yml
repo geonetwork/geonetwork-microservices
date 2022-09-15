@@ -107,8 +107,13 @@ gn:
         name : rss
         mimeType : application/rss+xml
         responseProcessor: RssResponseProcessorImpl
+      -
+        name : geojson
+        mimeType : application/geo+json
+        responseProcessor: GeoJSONResponseProcessorImpl
         operations:
           - items
+          - item
     defaultMimeType: text/html
     sources:
       - "resourceTitleObject"
