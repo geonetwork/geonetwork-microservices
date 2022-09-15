@@ -3,7 +3,8 @@ gn:
     # Full text on all fields
     # 'queryBase': '${any}',
     # Full text but more boost on title match
-    queryBase: 'any:(${any}) resourceTitleObject.default:(${any})^2'
+    queryFilter: '+isTemplate:n AND -indexingError:true'
+    queryBase: '(any.\*:(${any}) OR resourceTitleObject.\*:(${any})^2)'
     trackTotalHits: true
     scoreConfig: >
       {
@@ -84,7 +85,7 @@ gn:
       -
         name: dcat
         mimeType: application/rdf+xml
-        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        responseProcessor: DcatCatalogResponseProcessorImpl
         operations:
           - items
           - item
@@ -93,7 +94,6 @@ gn:
         mimeType : text/turtle
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations :
-          - items
           - item
 #      -
 #        name : iso19139

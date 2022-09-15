@@ -13,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,10 +21,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
@@ -199,6 +200,8 @@ public class ItemApiController {
           MediaType.APPLICATION_JSON_VALUE,
           GnMediaType.APPLICATION_JSON_LD_VALUE,
           MediaType.APPLICATION_RSS_XML_VALUE,
+          GnMediaType.APPLICATION_RDF_XML_VALUE,
+          GnMediaType.APPLICATION_DCAT2_XML_VALUE,
           MediaType.TEXT_HTML_VALUE
       })
   @ResponseStatus(HttpStatus.OK)
@@ -239,18 +242,28 @@ public class ItemApiController {
 
     List<MediaType> allowedMediaTypes =
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
-            Arrays.asList(GnMediaType.APPLICATION_JSON_LD, MediaType.APPLICATION_RSS_XML));
+            Arrays.asList(
+                GnMediaType.APPLICATION_JSON_LD,
+                MediaType.APPLICATION_RSS_XML,
+                GnMediaType.APPLICATION_RDF_XML,
+                GnMediaType.APPLICATION_DCAT2_XML));
     MediaType mediaType =
         mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     if (mediaType.equals(MediaType.APPLICATION_XML)
         || mediaType.equals(MediaType.APPLICATION_JSON)
         || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
+        || mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
+        || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
         || mediaType.equals(MediaType.APPLICATION_RSS_XML)) {
+
+      boolean allSourceFields =
+          mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
+          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
 
       return collectionsCollectionIdItemsGetInternal(
           collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby,
-          request, response);
+          request, response, allSourceFields);
 
     } else {
       return collectionsCollectionIdItemsGetAsHtml(collectionId, bbox, datetime, limit,
@@ -486,7 +499,7 @@ public class ItemApiController {
       List<String> q,
       List<String> externalids,
       List<String> sortby,
-      HttpServletRequest request) {
+      HttpServletRequest request, boolean allSourceFields) {
 
     Source source = collectionService.retrieveSourceForCollection(collectionId);
 
@@ -496,7 +509,9 @@ public class ItemApiController {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = recordsEsQueryBuilder
-        .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby);
+        .buildQuery(q, externalids, bbox,
+            startindex, limit, collectionFilter, sortby,
+            allSourceFields ? Set.of("*") : null);
     try {
       return proxy.searchAndGetResult(request.getSession(), request, query, null);
     } catch (Exception ex) {
@@ -517,12 +532,13 @@ public class ItemApiController {
       List<String> externalids,
       List<String> sortby,
       HttpServletRequest request,
-      HttpServletResponse response) {
+      HttpServletResponse response,
+      boolean allSourceFields) {
 
     sortby = setDefaultRssSortBy(sortby, request);
 
     String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
-        externalids, sortby, request);
+        externalids, sortby, request, allSourceFields);
 
     try {
       streamResult(response, queryResponse, getResponseContentType(request));
@@ -561,7 +577,7 @@ public class ItemApiController {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source);
     String query = recordsEsQueryBuilder
-        .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby);
+        .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby, null);
     EsSearchResults results = new EsSearchResults();
     try {
       results = proxy

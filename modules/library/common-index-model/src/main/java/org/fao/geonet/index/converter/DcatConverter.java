@@ -110,7 +110,7 @@ public class DcatConverter {
 
       String recordIdentifier = record.getMetadataIdentifier();
       String recordUri = formatterConfiguration.buildLandingPageLink(
-              record.getMetadataIdentifier());
+          record.getMetadataIdentifier());
       Optional<ResourceIdentifier> resourceIdentifier =
           record.getResourceIdentifier().stream().filter(Objects::nonNull).findFirst();
 
@@ -122,8 +122,6 @@ public class DcatConverter {
       String language = record.getMainLanguage() == null
           ? defaultLanguage : record.getMainLanguage();
       String languageUpperCase = language.toUpperCase();
-      // TODO: Need language mapper
-      String iso2letterLanguage = language.substring(0, 2);
 
       List<String> resourceLanguage = record.getResourceLanguage();
 
@@ -135,17 +133,16 @@ public class DcatConverter {
       // TODO: Add multilingual support
       // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
 
-
       DatasetBuilder datasetBuilder = Dataset.builder()
           .identifier(record.getResourceIdentifier().stream()
               .map(c -> c.getCode()).collect(
-              Collectors.toList()))
+                  Collectors.toList()))
           .title(listOfNullable(record.getResourceTitle().get(defaultText)))
           .description(listOfNullable(record.getResourceAbstract().get(defaultText)))
           .landingPage(listOfNullable(DcatDocument.builder()
               .foafDocument(FoafDocument.builder()
                   .about(formatterConfiguration.buildLandingPageLink(
-                          record.getMetadataIdentifier()))
+                      record.getMetadataIdentifier()))
                   .title(record.getResourceTitle().get(defaultText))
                   .build()).build()))
           .provenance(
@@ -156,7 +153,7 @@ public class DcatConverter {
               ).collect(Collectors.toList())
           )
           .type(record.getResourceType().stream().map(t ->
-              new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
+                  new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
               .collect(Collectors.toList()))
           // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
           .modified(toDate(record.getChangeDate()))
@@ -164,11 +161,11 @@ public class DcatConverter {
               Optional.ofNullable(record.getCodelists().get(topic))
                   .map(Collection::stream)
                   .orElseGet(Stream::empty)
-              .map(t -> Subject.builder()
-              .skosConcept(SkosConcept.builder()
-                  // TODO: rdf:resource="{$TopicCategoryCodelistUri}/{$TopicCategory}"
-                  .prefLabel(t.getProperties().get(defaultText))
-                  .build()).build()).collect(Collectors.toList()))
+                  .map(t -> Subject.builder()
+                      .skosConcept(SkosConcept.builder()
+                          // TODO: rdf:resource="{$TopicCategoryCodelistUri}/{$TopicCategory}"
+                          .prefLabel(t.getProperties().get(defaultText))
+                          .build()).build()).collect(Collectors.toList()))
           .theme(record.getTag().stream().map(t -> Subject.builder()
               // TODO: <skos:ConceptScheme rdf:about="{$OriginatingControlledVocabularyURI}">
               // TODO: skos:inScheme
@@ -219,9 +216,9 @@ public class DcatConverter {
                                     "http://inspire.ec.europa.eu/metadata-codelist/DegreeOfConformity/"
                                         + INSPIRE_DEGREE_OF_CONFORMITY.get(c.getPass()),
                                     null))
-                            //RDFParseException: unexpected literal
-                            //.description(c.getExplanation())
-                            .build()
+                                //RDFParseException: unexpected literal
+                                //.description(c.getExplanation())
+                                .build()
                         )
                         .build()).build()
             ).collect(Collectors.toList())
@@ -245,13 +242,19 @@ public class DcatConverter {
       ArrayList<Codelist> updateFrequencyList = record.getCodelists()
           .get(Codelists.maintenanceAndUpdateFrequency);
       if (updateFrequencyList != null && updateFrequencyList.size() > 0) {
+
+        String frequencyKey = ACCRUAL_PERIODICITY_TO_ISO
+            .get(updateFrequencyList.get(0)
+                .getProperties().get(CommonField.key));
+
         datasetBuilder.accrualPeriodicity(
             new RdfResource(
                 null,
                 ACCRUAL_PERIODICITY_URI_PREFIX
-                    + ACCRUAL_PERIODICITY_TO_ISO
-                    .get(updateFrequencyList.get(0)
-                        .getProperties().get(CommonField.key)), null));
+                    + (frequencyKey == null
+                    ? updateFrequencyList.get(0)
+                    .getProperties().get(CommonField.key) : frequencyKey),
+                null));
       }
 
       // <dct:spatial rdf:parseType="Resource">
@@ -299,9 +302,7 @@ public class DcatConverter {
                       .hasEmail(contact.getEmail()).build()).build()
           ).collect(Collectors.toList()));
 
-
       dcatDataset = datasetBuilder.build();
-
 
       catalogRecord = CatalogRecord.builder()
           .identifier(listOfNullable(record.getMetadataIdentifier()))
@@ -309,7 +310,7 @@ public class DcatConverter {
           .modified(toDate(record.getChangeDate()))
           .language(listOfNullable(new RdfResource(null,
               "http://publications.europa.eu/resource/authority/language/"
-                  + record.getMainLanguage().toUpperCase())))
+                  + language.toUpperCase())))
           .primaryTopic(listOfNullable(new ResourceContainer(dcatDataset, null))).build();
 
     } catch (JsonMappingException e) {
@@ -318,14 +319,18 @@ public class DcatConverter {
       e.printStackTrace();
     }
 
-
     return catalogRecord;
   }
 
   private static Date toDate(String date) {
-    return Date.from(
-        Instant.from(
-            DateTimeFormatter.ISO_DATE_TIME.parse(date)));
+    try {
+      return Date.from(
+          Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(
+              date.length() == 10 ? date + "T00:00:00" : date)));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   private static <E> List<E> listOfNullable(E e) {
