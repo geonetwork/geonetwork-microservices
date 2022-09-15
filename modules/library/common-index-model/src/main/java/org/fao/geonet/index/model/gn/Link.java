@@ -18,4 +18,5 @@ public class Link {
   private String function;
   private String applicationProfile;
   private String group;
+  private String mimeType;
 }
