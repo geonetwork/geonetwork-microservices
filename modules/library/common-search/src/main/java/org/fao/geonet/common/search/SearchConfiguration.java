@@ -28,6 +28,8 @@ public class SearchConfiguration {
 
   String defaultMimeType;
 
+  String queryFilter;
+
   String queryBase;
 
   Boolean trackTotalHits;

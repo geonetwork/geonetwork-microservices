@@ -45,7 +45,6 @@ public class RecordsEsQueryBuilder {
 
   private static final String SORT_BY_SEPARATOR = ",";
 
-  private static String defaultTypeFilter = "+isTemplate:n";
   private static String defaultSpatialOperation = "intersects";
 
   /**
@@ -66,7 +65,7 @@ public class RecordsEsQueryBuilder {
             + "\"_source\": {\"includes\": [%s]}}",
         0, 1, uuid,
         collectionFilter == null ? "" : collectionFilter,
-        defaultTypeFilter,
+        configuration.getQueryFilter(),
         includes == null ? "\"*\""
             : includes.stream().collect(
                 Collectors.joining("\", \"", "\"", "\""))
@@ -81,7 +80,9 @@ public class RecordsEsQueryBuilder {
       List<String> externalids,
       List<BigDecimal> bbox,
       Integer startIndex, Integer limit,
-      String collectionFilter, List<String> sortBy) {
+      String collectionFilter,
+      List<String> sortBy,
+      Set<String> sourceFields) {
     SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
     sourceBuilder.from(startIndex).size(limit);
 
@@ -97,7 +98,11 @@ public class RecordsEsQueryBuilder {
     }
 
     Set<String> sources = new HashSet(defaultSources);
-    sources.addAll(configuration.getSources());
+    if (sourceFields != null) {
+      sources.addAll(sourceFields);
+    } else {
+      sources.addAll(configuration.getSources());
+    }
     sourceBuilder.fetchSource(sources.toArray(new String[]{}), null);
 
     BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -131,7 +136,7 @@ public class RecordsEsQueryBuilder {
       }
     }
 
-    String filterQueryString = defaultTypeFilter;
+    String filterQueryString = configuration.getQueryFilter();
     if (StringUtils.isNotEmpty(collectionFilter)) {
       filterQueryString += " " + collectionFilter;
     }

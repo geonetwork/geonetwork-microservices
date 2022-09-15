@@ -745,8 +745,14 @@ public class ElasticSearchProxy {
 
     // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
+
+    boolean isDcatOnItem =
+        request.getRequestURI().matches(".*/collections/.*/items/.*")
+        && "dcat".equals(acceptHeader);
+
     SearchResponseProcessor responseProcessor =
-        responseProcessors.get(acceptHeader);
+        responseProcessors.get(isDcatOnItem ? "json" : acceptHeader);
+
     if (responseProcessor == null) {
       throw new UnsupportedOperationException(String.format(
           "No response processor configured for '%s'. Use one of %s.",
