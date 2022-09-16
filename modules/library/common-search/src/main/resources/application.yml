@@ -109,10 +109,12 @@ gn:
         name : rss
         mimeType : application/rss+xml
         responseProcessor: RssResponseProcessorImpl
+        operations:
+          - items
       -
         name : geojson
         mimeType : application/geo+json
-        responseProcessor: GeoJSONResponseProcessorImpl
+        responseProcessor: GeoJsonResponseProcessorImpl
         operations:
           - items
           - item
