@@ -41,7 +41,7 @@ public class GeoJsonResponseProcessorImpl
 
     generator.writeStringField("type", "FeatureCollection");
     generator.writeArrayFieldStart("features");
-      {
+    {
       responseParser.matchHits(parser, generator, doc -> {
 
         // Remove fields with privileges info
@@ -65,7 +65,7 @@ public class GeoJsonResponseProcessorImpl
           }
         }
       }, false);
-      }
+    }
     generator.writeEndArray();
     //    generator.writeNumberField("took", 0);
     generator.writeNumberField("size", responseParser.total);
