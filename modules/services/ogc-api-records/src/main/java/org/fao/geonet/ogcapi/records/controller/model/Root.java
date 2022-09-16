@@ -17,10 +17,52 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JacksonXmlRootElement(localName = "Root")
 @XmlRootElement(name = "Root")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Root   {
+public class Root {
+  @JsonProperty("title")
+  @JacksonXmlProperty(localName = "title")
+  private String title;
+
+  /**
+   * Get title.
+   */
+  @ApiModelProperty(example = "The OpenAPI documentation", value = "")
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public Root title(String title) {
+    this.title = title;
+    return this;
+  }
+
+  @JsonProperty("description")
+  @JacksonXmlProperty(localName = "description")
+  private String description;
+
+  /**
+   * Get description.
+   */
+  @ApiModelProperty(example = "The OpenAPI documentation", value = "")
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Root description(String description) {
+    this.description = description;
+    return this;
+  }
+
   @JsonProperty("links")
   @JacksonXmlProperty(localName = "links")
-  
+
   private List<Link> links = new ArrayList<>();
 
   public Root links(List<Link> links) {
@@ -67,15 +109,15 @@ public class Root   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Root {\n");
-    
+
     sb.append("    links: ").append(toIndentedString(links)).append("\n");
     sb.append("}");
     return sb.toString();
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

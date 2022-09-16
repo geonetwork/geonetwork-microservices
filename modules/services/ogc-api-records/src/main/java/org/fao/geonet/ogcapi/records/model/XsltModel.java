@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.common.search.domain.es.EsSearchResults;
 import org.fao.geonet.domain.Source;
+import org.fao.geonet.ogcapi.records.controller.model.Conformance;
 
 @Data
 @NoArgsConstructor
@@ -52,6 +53,8 @@ public class XsltModel {
   @XmlElement(name = "outputFormat")
   List<Format> outputFormats;
 
+  @XmlElement(name = "conformance")
+  Conformance conformance;
 
   String seoJsonLdSnippet;
 

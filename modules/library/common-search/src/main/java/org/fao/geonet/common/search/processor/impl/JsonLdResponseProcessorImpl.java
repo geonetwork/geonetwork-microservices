@@ -64,7 +64,7 @@ public class JsonLdResponseProcessorImpl
           for (ReservedOperation o : ReservedOperation.values()) {
             sourceNode.remove(IndexRecordFieldNames.opPrefix + o.getId());
           }
-
+;
           IndexRecord record = objectMapper.readValue(
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);

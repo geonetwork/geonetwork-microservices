@@ -42,6 +42,7 @@ gn:
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
           - root
+          - conformance
           - collections
           - collection
           - items
@@ -62,6 +63,7 @@ gn:
         responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
         operations:
           - root
+          - conformance
           - collections
           - collection
           - items
