@@ -17,10 +17,8 @@ gn:
   language.default: en
 
   search:
-    # Full text on all fields
-    # 'queryBase': '${any}',
-    # Full text but more boost on title match
-    queryBase: 'any:(${any}) resourceTitleObject.default:(${any})^2'
+    queryFilter: '+isTemplate:n AND -indexingError:true'
+    queryBase: '(any.\*:(${any}) OR resourceTitleObject.\*:(${any})^2)'
     trackTotalHits: true
     scoreConfig: >
       {

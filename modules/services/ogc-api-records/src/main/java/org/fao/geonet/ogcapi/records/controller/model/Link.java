@@ -24,6 +24,10 @@ public class Link   {
   @JacksonXmlProperty(localName = "rel")
   private String rel;
 
+  @JsonProperty("title")
+  @JacksonXmlProperty(localName = "title")
+  private String title;
+
   @JsonProperty("type")
   @JacksonXmlProperty(localName = "type")
   private String type;
@@ -68,6 +72,23 @@ public class Link   {
 
   public Link type(String type) {
     this.type = type;
+    return this;
+  }
+
+  /**
+   * Get title.
+   */
+  @ApiModelProperty(example = "The OpenAPI documentation", value = "")
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public Link title(String title) {
+    this.title = title;
     return this;
   }
 

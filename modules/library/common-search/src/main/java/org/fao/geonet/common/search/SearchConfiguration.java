@@ -20,6 +20,7 @@ public class SearchConfiguration {
 
   public enum Operations {
     root,
+    conformance,
     collections,
     collection,
     items,
