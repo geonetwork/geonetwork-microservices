@@ -20,7 +20,6 @@ import org.fao.geonet.index.model.geojson.Record;
 import org.fao.geonet.index.model.geojson.Record.RecordBuilder;
 import org.fao.geonet.index.model.gn.Contact;
 import org.fao.geonet.index.model.gn.IndexRecord;
-
 import org.fao.geonet.index.model.gn.ResourceDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Component;
  * Index document to GeoJSON mapping.
  */
 @Component
-public class GeoJSONConverter {
+public class GeoJsonConverter {
 
   @Autowired
   FormatterConfiguration formatterConfiguration;
@@ -38,8 +37,6 @@ public class GeoJSONConverter {
    * Convert an index document into a DCAT object.
    */
   public Record convert(IndexRecord record) {
-    Record geojsonRecord;
-
     RecordBuilder recordBuilder = Record.builder()
         .id(record.getMetadataIdentifier())
         .type("Feature")
@@ -47,7 +44,6 @@ public class GeoJSONConverter {
 
     List<Link> recordLinks = new ArrayList<>();
 
-    // geometry
     if (!record.getGeometries().isEmpty()) {
       try {
         ObjectMapper objectMapper = JsonUtils.getObjectMapper();
@@ -62,7 +58,6 @@ public class GeoJSONConverter {
 
     }
 
-    // links
     record.getLinks().stream().forEach(link -> {
 
       LinkBuilder linkBuilder = Link.builder()
@@ -77,7 +72,7 @@ public class GeoJSONConverter {
 
     recordBuilder.links(recordLinks);
 
-    geojsonRecord = recordBuilder.build();
+    Record geojsonRecord = recordBuilder.build();
 
     // record updated
     if (record.getChangeDate() != null) {
@@ -99,7 +94,7 @@ public class GeoJSONConverter {
     geojsonRecord.getProperties().put("language", record.getMainLanguage());
 
     // resource dates
-    for (ResourceDate resourceDate: record.getResourceDate()) {
+    for (ResourceDate resourceDate : record.getResourceDate()) {
       if (resourceDate.getType().equals("revision")) {
         geojsonRecord.getProperties().put("revision", resourceDate.getDate());
       } else if (resourceDate.getType().equals("created")) {
@@ -124,13 +119,15 @@ public class GeoJSONConverter {
     // providers
     List<String> providers = new ArrayList<>();
     for (Contact contact : record.getContact()) {
-      providers.add(String.format("%s, %s, %s", contact.getIndividual(), contact.getEmail(), contact.getOrganisation()));
+      providers.add(String.format("%s, %s, %s", contact.getIndividual(), contact.getEmail(),
+          contact.getOrganisation()));
     }
 
     geojsonRecord.getProperties().put("providers", providers);
 
     // type
-    geojsonRecord.getProperties().put("type", record.getResourceType().stream().collect(Collectors.joining()));
+    geojsonRecord.getProperties()
+        .put("type", record.getResourceType().stream().collect(Collectors.joining()));
 
     // TODO: license, rights, themes, externalIds
 

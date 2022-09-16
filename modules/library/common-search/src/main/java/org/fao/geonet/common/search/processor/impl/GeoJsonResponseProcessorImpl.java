@@ -4,29 +4,28 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.InputStream;
+import java.io.OutputStream;
+import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.JsonUtils;
-import org.fao.geonet.index.converter.GeoJSONConverter;
+import org.fao.geonet.index.converter.GeoJsonConverter;
 import org.fao.geonet.index.model.geojson.Record;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpSession;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 
 @Slf4j(topic = "org.fao.geonet.searching")
-@Component("GeoJSONResponseProcessorImpl")
-public class GeoJSONResponseProcessorImpl
+@Component("GeoJsonResponseProcessorImpl")
+public class GeoJsonResponseProcessorImpl
     extends JsonUserAndSelectionAwareResponseProcessorImpl {
 
   @Autowired
-  GeoJSONConverter geoJSONConverter;
+  GeoJsonConverter geoJsonConverter;
 
   @Override
   public void processResponse(HttpSession httpSession,
@@ -42,7 +41,7 @@ public class GeoJSONResponseProcessorImpl
 
     generator.writeStringField("type", "FeatureCollection");
     generator.writeArrayFieldStart("features");
-    {
+      {
       responseParser.matchHits(parser, generator, doc -> {
 
         // Remove fields with privileges info
@@ -57,7 +56,7 @@ public class GeoJSONResponseProcessorImpl
               doc.get(IndexRecordFieldNames.source).toPrettyString(),
               IndexRecord.class);
           try {
-            Record geojsonRecord = geoJSONConverter.convert(record);
+            Record geojsonRecord = geoJsonConverter.convert(record);
             generator.writeRawValue(objectMapper.writeValueAsString(geojsonRecord));
           } catch (Exception ex) {
             log.error(String.format(
@@ -66,7 +65,7 @@ public class GeoJSONResponseProcessorImpl
           }
         }
       }, false);
-    }
+      }
     generator.writeEndArray();
     //    generator.writeNumberField("took", 0);
     generator.writeNumberField("size", responseParser.total);
