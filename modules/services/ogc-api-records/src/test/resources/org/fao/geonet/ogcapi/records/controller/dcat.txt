@@ -13,35 +13,44 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
-_:node1fd31gs03x6 a dcat:CatalogRecord;
+<http://localhost:9901/collections/main/items/6b21e3a6-5a53-433f-aba9-3f93ac2bdd74>
+  a dcat:CatalogRecord, foaf:Document;
   dct:identifier "6b21e3a6-5a53-433f-aba9-3f93ac2bdd74";
-  dct:created "2021-08-10T21:39:14.399+02:00";
-  dct:modified "2021-08-10T21:39:28.446+02:00";
+  dct:created "2021?????????
+  dct:modified "2021?????????
   dct:language <http://publications.europa.eu/resource/authority/language/ENG>;
-  foaf:primaryTopic _:node1fd31gs03x7 .
+  foaf:primaryTopic <http://localhost:9901/collections/main/items/6b21e3a6-5a53-433f-aba9-3f93ac2bdd74#resource>;
+  dct:title "multilingual" .
 
-_:node1fd31gs03x7 a dcat:Dataset;
+<http://publications.europa.eu/resource/authority/language/ENG> a skos:Concept, dct:LinguisticSystem;
+  skos:prefLabel "eng" .
+
+<http://localhost:9901/collections/main/items/6b21e3a6-5a53-433f-aba9-3f93ac2bdd74#resource>
+  a dcat:Dataset;
   dct:title "multilingual";
-  dct:modified "2021-08-10T21:39:28.446+02:00";
+  dct:modified "2021?????????
   dct:language <http://publications.europa.eu/resource/authority/language/ENG>;
-  dcat:contactPoint _:node1fd31gs03x8;
-  dcat:theme _:node1fd31gs03x9;
-  dct:type <dcat:Dataset>;
+  dcat:contactPoint _:node??????
+  dcat:theme _:node??????
+  dct:type _:node??????
   dcat:landingPage <http://localhost:9901/collections/main/items/6b21e3a6-5a53-433f-aba9-3f93ac2bdd74>;
-  dct:spatial _:node1fd31gs03x10;
+  dct:spatial _:node??????
   dct:accrualPeriodicity <http://publications.europa.eu/resource/authority/frequency/asNeeded> .
 
-_:node1fd31gs03x8 a vcard:Kind;
+_:node?????? a vcard:Kind;
   vcard:title "";
   vcard:role "originator";
   vcard:hasEmail "" .
 
-_:node1fd31gs03x9 a skos:Concept;
+_:node?????? a skos:Concept;
   skos:prefLabel "World" .
 
-<http://localhost:9901/collections/main/items/6b21e3a6-5a53-433f-aba9-3f93ac2bdd74>
-  a foaf:Document;
-  dct:title "multilingual" .
+_:node?????? a skos:Concept;
+  skos:prefLabel "Dataset" .
 
-_:node1fd31gs03x10 a dct:location;
+_:node?????? a dct:Location;
   locn:geometry "{\"type\":\"Polygon\",\"coordinates\":[[[-180.0,-90.0],[180.0,-90.0],[180.0,90.0],[-180.0,90.0],[-180.0,-90.0]]]}" .
+
+<http://publications.europa.eu/resource/authority/frequency/asNeeded> a skos:Concept,
+    dct:Frequency;
+  skos:prefLabel "asNeeded" .
