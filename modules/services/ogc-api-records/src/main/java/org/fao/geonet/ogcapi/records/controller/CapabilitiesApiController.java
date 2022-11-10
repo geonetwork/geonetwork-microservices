@@ -191,7 +191,6 @@ public class CapabilitiesApiController {
       @ApiIgnore Model model) throws Exception {
 
     Locale locale = LocaleContextHolder.getLocale();
-    String language = locale.getISO3Language();
 
     MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
@@ -259,11 +258,13 @@ public class CapabilitiesApiController {
       List<Source> sources = sourceRepository.findAll();
       sources.forEach(s -> {
         content.addCollectionsItem(
-            CollectionInfoBuilder.buildFromSource(s, language, baseUrl, mediaType));
+            CollectionInfoBuilder.buildFromSource(
+                s, language, baseUrl, configuration.getFormat(mediaType), configuration));
       });
 
       // TODO: Accept format parameter.
-      List<Link> linkList = LinksItemsBuilder.build(mediaType, baseUrl, language);
+      List<Link> linkList = LinksItemsBuilder.build(
+          configuration.getFormat(mediaType), baseUrl, language, configuration);
       linkList.forEach(l -> content.addLinksItem(l));
 
       return ResponseEntity.ok(content);

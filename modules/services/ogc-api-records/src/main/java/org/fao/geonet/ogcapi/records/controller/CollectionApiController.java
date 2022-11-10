@@ -129,7 +129,8 @@ public class CollectionApiController {
             .toString().replace(collectionId, "");
 
         CollectionInfo collectionInfo = CollectionInfoBuilder
-            .buildFromSource(source, language, baseUrl, mediaType);
+            .buildFromSource(source, language, baseUrl,
+                configuration.getFormat(mediaType), configuration);
 
         return ResponseEntity.ok(collectionInfo);
 
