@@ -8,6 +8,7 @@ package org.fao.geonet.index.model.dcat2;
 import static org.fao.geonet.index.model.dcat2.Namespaces.DCAT_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.PROV_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.RDF_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,6 +33,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class Base {
+
+  @XmlAttribute(namespace = RDF_URI)
+  String about;
 
   @XmlElement(namespace = DCT_URI)
   List<String> title = new ArrayList();

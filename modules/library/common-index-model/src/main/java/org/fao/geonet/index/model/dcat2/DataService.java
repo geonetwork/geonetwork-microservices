@@ -31,5 +31,9 @@ public class DataService extends Resource {
   @XmlElement(name = "endpointURL", namespace = DCAT_URI)
   List<RdfResource> endpointUrl;
 
-  // TODO: dcat:servesDataset
+  /**
+   * A collection of data that this data service can distribute.
+   */
+  @XmlElement(name = "servesDataset", namespace = DCAT_URI)
+  List<RdfResource> servesDataset;
 }
