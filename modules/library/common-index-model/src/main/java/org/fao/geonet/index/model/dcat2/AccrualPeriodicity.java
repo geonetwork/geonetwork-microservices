@@ -5,7 +5,7 @@
 
 package org.fao.geonet.index.model.dcat2;
 
-import static org.fao.geonet.index.model.dcat2.Namespaces.DCT_URI;
+import static org.fao.geonet.index.model.dcat2.Namespaces.SKOS_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,17 +14,14 @@ import javax.xml.bind.annotation.XmlElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
-public class DctTemporal {
+public class AccrualPeriodicity {
 
-  @XmlElement(namespace = DCT_URI, name = "PeriodOfTime")
-  DctPeriodOfTime periodOfTime;
+  @XmlElement(name = "Concept", namespace = SKOS_URI)
+  SkosConcept skosConcept;
 }

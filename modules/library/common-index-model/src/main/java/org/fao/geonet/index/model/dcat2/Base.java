@@ -83,7 +83,7 @@ public abstract class Base {
 
   // Can be a LinguisticSystem
   @XmlElement(namespace = DCT_URI)
-  List<RdfResource> language = new ArrayList<>();
+  List<Language> language = new ArrayList<>();
 
   @XmlElement(namespace = PROV_URI)
   List<DcatQualifiedAttribution> qualifiedAttribution = new ArrayList();

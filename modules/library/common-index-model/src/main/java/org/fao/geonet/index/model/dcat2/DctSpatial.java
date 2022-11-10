@@ -25,6 +25,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DctSpatial {
 
-  @XmlElement(namespace = DCT_URI)
+  @XmlElement(namespace = DCT_URI, name = "Location")
   DctLocation location;
 }

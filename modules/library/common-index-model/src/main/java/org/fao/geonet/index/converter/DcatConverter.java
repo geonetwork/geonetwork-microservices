@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
+import org.fao.geonet.index.model.dcat2.AccrualPeriodicity;
 import org.fao.geonet.index.model.dcat2.CatalogRecord;
 import org.fao.geonet.index.model.dcat2.DataService;
 import org.fao.geonet.index.model.dcat2.DataService.DataServiceBuilder;
@@ -47,6 +48,7 @@ import org.fao.geonet.index.model.dcat2.DctPeriodOfTime.DctPeriodOfTimeBuilder;
 import org.fao.geonet.index.model.dcat2.DctSpatial;
 import org.fao.geonet.index.model.dcat2.DctTemporal;
 import org.fao.geonet.index.model.dcat2.FoafDocument;
+import org.fao.geonet.index.model.dcat2.Language;
 import org.fao.geonet.index.model.dcat2.ProvActivity;
 import org.fao.geonet.index.model.dcat2.ProvGenerated;
 import org.fao.geonet.index.model.dcat2.ProvHadPlan;
@@ -74,9 +76,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class DcatConverter {
 
-  @Autowired
-  FormatterConfiguration formatterConfiguration;
-
   private static final Map<String, String> RESSOURCE_TYPE_MAPPING = Map.ofEntries(
       new AbstractMap.SimpleEntry<>("dataset", "Dataset"),
       new AbstractMap.SimpleEntry<>("series", "Dataset"),
@@ -86,18 +85,35 @@ public class DcatConverter {
       new AbstractMap.SimpleEntry<>("featureType", "Dataset"),
       new AbstractMap.SimpleEntry<>("tile", "Dataset")
   );
-
   private static final Map<String, String> INSPIRE_DEGREE_OF_CONFORMITY = Map.of(
       "true", "conformant",
       "false", "notConformant",
       "", "notEvaluated"
   );
-
+  @Autowired
+  FormatterConfiguration formatterConfiguration;
   @Value("${gn.language.default:en}")
   private String defaultLanguage;
 
-  private ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = new ObjectMapper();
 
+  private static Date toDate(String date) {
+    try {
+      return Date.from(
+          Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(
+              date.length() == 10 ? date + "T00:00:00" : date)));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  private static <E> List<E> listOfNullable(E e) {
+    if (e == null) {
+      return Collections.emptyList();
+    }
+    return Collections.singletonList(e);
+  }
 
   /**
    * Convert an index document into a DCAT object.
@@ -133,24 +149,29 @@ public class DcatConverter {
           || resourceType.contains("series")
           || resourceType.contains("service");
       boolean isService = resourceType.contains("service");
-      
+
       // TODO: Add multilingual support
       // TODO .resource("https://creativecommons.org/publicdomain/zero/1.0/deed")
 
       if (isService) {
-        dcatService = getDataService(record,  recordUri + "#service", resourceIdentifierUri);
+        dcatService = getDataService(record, recordUri + "#service", resourceIdentifierUri);
       } else {
         dcatDataset = getDataset(record, recordUri + "#resource", resourceIdentifierUri);
       }
-      
+
       catalogRecord = CatalogRecord.builder()
           .about(recordUri)
           .identifier(listOfNullable(record.getMetadataIdentifier()))
           .created(toDate(record.getCreateDate()))
           .modified(toDate(record.getChangeDate()))
-          .language(listOfNullable(new RdfResource(null,
-              "http://publications.europa.eu/resource/authority/language/"
-                  + language.toUpperCase())))
+          .language(listOfNullable(
+              new Language(
+                  new SkosConcept(
+                      "http://publications.europa.eu/resource/authority/language/"
+                          + language.toUpperCase(),
+                      null,
+                      "http://purl.org/dc/terms/LinguisticSystem",
+                      language))))
           .primaryTopic(listOfNullable(new ResourceContainer(
               dcatDataset,
               dcatService))).build();
@@ -186,7 +207,7 @@ public class DcatConverter {
             ).collect(Collectors.toList())
         )
         .type(record.getResourceType().stream().map(t ->
-                new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
+                new Subject(new SkosConcept(null, null, RESSOURCE_TYPE_MAPPING.get(t))))
             .collect(Collectors.toList()))
         // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
         .modified(toDate(record.getChangeDate()))
@@ -266,11 +287,13 @@ public class DcatConverter {
     // datasetBuilder.source()
 
     if (record.getResourceLanguage() != null) {
-      // TODO: Where to put resource language ?
       datasetBuilder.language(record.getResourceLanguage().stream().map(l ->
-          new RdfResource(null,
+          new Language(new SkosConcept(
               "http://publications.europa.eu/resource/authority/language/"
-                  + l.toUpperCase(), null)).collect(Collectors.toList()));
+                  + l.toUpperCase(),
+              null,
+              "http://purl.org/dc/terms/LinguisticSystem",
+              l))).collect(Collectors.toList()));
     }
 
     ArrayList<Codelist> updateFrequencyList = record.getCodelists()
@@ -282,13 +305,14 @@ public class DcatConverter {
               .getProperties().get(CommonField.key));
 
       datasetBuilder.accrualPeriodicity(
-          new RdfResource(
-              null,
+          new AccrualPeriodicity(new SkosConcept(
               ACCRUAL_PERIODICITY_URI_PREFIX
                   + (frequencyKey == null
                   ? updateFrequencyList.get(0)
                   .getProperties().get(CommonField.key) : frequencyKey),
-              null));
+              null,
+              "http://purl.org/dc/terms/Frequency",
+              frequencyKey)));
     }
 
     // <dct:spatial rdf:parseType="Resource">
@@ -321,7 +345,7 @@ public class DcatConverter {
                   .prefLabel(link.getProtocol()).build()).build());
 
       // TODO: depending on function/protocol build page/accessUrl/downloadUrl
-      dcatDistributionBuilder.accessUrl(link.getUrl());
+      dcatDistributionBuilder.accessUrl(new RdfResource(null, link.getUrl()));
 
       datasetBuilder.distribution(listOfNullable(DcatDistributionContainer.builder()
           .distribution(dcatDistributionBuilder.build()).build()));
@@ -339,7 +363,6 @@ public class DcatConverter {
     return datasetBuilder.build();
   }
 
-
   private DataService getDataService(IndexRecord record, String uri, String resourceIdentifierUri) {
     DataServiceBuilder dataServiceBuilder = DataService.builder()
         .about(uri)
@@ -355,7 +378,7 @@ public class DcatConverter {
                 .title(record.getResourceTitle().get(defaultText))
                 .build()).build()))
         .type(record.getResourceType().stream().map(t ->
-                new RdfResource(null, "dcat:" + RESSOURCE_TYPE_MAPPING.get(t), null))
+                new Subject(new SkosConcept(null, null, RESSOURCE_TYPE_MAPPING.get(t))))
             .collect(Collectors.toList()))
         // INSPIRE <dct:type rdf:resource="{$ResourceTypeCodelistUri}/{$ResourceType}"/>
         .modified(toDate(record.getChangeDate()))
@@ -429,11 +452,13 @@ public class DcatConverter {
     }
 
     if (record.getResourceLanguage() != null) {
-      // TODO: Where to put resource language ?
       dataServiceBuilder.language(record.getResourceLanguage().stream().map(l ->
-          new RdfResource(null,
+          new Language(new SkosConcept(
               "http://publications.europa.eu/resource/authority/language/"
-                  + l.toUpperCase(), null)).collect(Collectors.toList()));
+                  + l.toUpperCase(),
+              null,
+              "http://purl.org/dc/terms/LinguisticSystem",
+              l))).collect(Collectors.toList()));
     }
 
     ArrayList<Codelist> updateFrequencyList = record.getCodelists()
@@ -471,8 +496,8 @@ public class DcatConverter {
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .filter(l -> "dataset".equals(l.getType()))
-              .map(l -> new RdfResource(l.getUrl(), "dcat:Dataset"))
-              .collect(Collectors.toList()));
+            .map(l -> new RdfResource(l.getUrl(), "dcat:Dataset"))
+            .collect(Collectors.toList()));
 
     dataServiceBuilder.contactPoint(
         record.getContactForResource().stream().map(contact ->
@@ -484,24 +509,6 @@ public class DcatConverter {
         ).collect(Collectors.toList()));
 
     return dataServiceBuilder.build();
-  }
-
-  private static Date toDate(String date) {
-    try {
-      return Date.from(
-          Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(
-              date.length() == 10 ? date + "T00:00:00" : date)));
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-  private static <E> List<E> listOfNullable(E e) {
-    if (e == null) {
-      return Collections.emptyList();
-    }
-    return Collections.singletonList(e);
   }
 
 }

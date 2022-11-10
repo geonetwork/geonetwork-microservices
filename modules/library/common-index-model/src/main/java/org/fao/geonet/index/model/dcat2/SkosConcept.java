@@ -5,6 +5,7 @@
 
 package org.fao.geonet.index.model.dcat2;
 
+import static org.fao.geonet.index.model.dcat2.Namespaces.RDF_URI;
 import static org.fao.geonet.index.model.dcat2.Namespaces.SKOS_URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,9 +31,22 @@ public class SkosConcept extends RdfResource {
 
   // TODO: skos:inScheme
 
+  @XmlElement(namespace = RDF_URI, name = "type")
+  RdfResource conceptType;
+
   @Builder
   public SkosConcept(String about, String resource, String prefLabel) {
     super(about, resource, null);
     this.prefLabel = prefLabel;
+  }
+
+  /**
+   * Build a concept with a specific type eg. LinguisticSystem.
+   */
+  @Builder
+  public SkosConcept(String about, String resource, String type, String prefLabel) {
+    super(about, resource, null);
+    this.prefLabel = prefLabel;
+    this.conceptType = new RdfResource(null, type);
   }
 }
