@@ -1,10 +1,15 @@
 package org.fao.geonet.ogcapi.records.util;
 
 
+import static org.fao.geonet.ogcapi.records.util.LinksItemsBuilder.getHref;
+
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import org.fao.geonet.common.search.SearchConfiguration;
+import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
@@ -12,7 +17,6 @@ import org.fao.geonet.ogcapi.records.controller.model.Extent;
 import org.fao.geonet.ogcapi.records.controller.model.Extent.CrsEnum;
 import org.fao.geonet.ogcapi.records.controller.model.Extent.TrsEnum;
 import org.fao.geonet.ogcapi.records.controller.model.Link;
-import org.springframework.http.MediaType;
 
 public class CollectionInfoBuilder {
 
@@ -20,7 +24,7 @@ public class CollectionInfoBuilder {
    * Build Collection info from source table.
    */
   public static CollectionInfo buildFromSource(Source source, String language,
-      String baseUrl, MediaType mediaType) {
+      String baseUrl, Optional<Format> format, SearchConfiguration configuration) {
     String name;
 
     if (source.getType() == SourceType.portal) {
@@ -56,11 +60,12 @@ public class CollectionInfoBuilder {
     URI collectionUri = URI.create(baseUrl).resolve(name);
     Link currentDoc = new Link();
     currentDoc.setRel("self");
-    currentDoc.setHref(collectionUri.toString());
-    currentDoc.setType(mediaType.toString());
+    currentDoc.setHref(getHref(collectionUri.toString(), format));
+    currentDoc.setType(format.get().getMimeType());
     currentDoc.setHreflang(language);
 
-    List<Link> linkList = LinksItemsBuilder.build(mediaType, collectionUri.toString(), language);
+    List<Link> linkList = LinksItemsBuilder.build(
+        format, collectionUri.toString(), language, configuration);
     linkList.forEach(l -> collectionInfo.addLinksItem(l));
 
     return collectionInfo;

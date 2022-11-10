@@ -7,11 +7,12 @@ package org.fao.geonet.common.search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 
 @Data
 @Configuration
@@ -49,6 +50,16 @@ public class SearchConfiguration {
         .filter(f -> f.getOperations() != null)
         .filter(f -> f.getOperations().contains(operation))
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Get format corresponding to a mediaType.
+   * @return
+   */
+  public Optional<Format> getFormat(MediaType mediaType) {
+    return formats.stream().filter(format ->
+      format.getMimeType().equals(mediaType.toString())
+    ).findFirst();
   }
 
   @Data
