@@ -5,30 +5,36 @@
 
 package util;
 
+import static org.mockito.BDDMockito.given;
+
 import java.util.Arrays;
+import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 class RecordsEsQueryBuilderTest {
+    @MockBean
+    SearchConfiguration configuration;
 
-  //  @MockBean
-  //  SearchConfiguration configuration;
-  //
-  //  @BeforeEach
-  //  public void setUp() {
-  //    String[] fields = {"resourceTitleObject"};
-  //    this.configuration = Mockito.mock(SearchConfiguration.class);
-  //    given(this.configuration.getSources()).willReturn(Arrays.asList(fields));
-  //  }
+    @BeforeEach
+    public void setUp() {
+      String[] fields = {"resourceTitleObject"};
+      this.configuration = Mockito.mock(SearchConfiguration.class);
+      given(this.configuration.getSources()).willReturn(Arrays.asList(fields));
+      given(this.configuration.getQueryFilter()).willReturn("+isTemplate:n");
+    }
 
   @Test
   void buildQuerySingleRecord() {
-    RecordsEsQueryBuilder queryBuilder = new RecordsEsQueryBuilder();
+    RecordsEsQueryBuilder queryBuilder = new RecordsEsQueryBuilder(configuration);
     String query = queryBuilder.buildQuerySingleRecord("abc", null, null);
 
     Assert.assertEquals(

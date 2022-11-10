@@ -48,6 +48,10 @@ public class RecordsEsQueryBuilder {
 
   private static String defaultSpatialOperation = "intersects";
 
+  public RecordsEsQueryBuilder(SearchConfiguration configuration) {
+    this.configuration = configuration;
+  }
+
   /**
    * Creates a ElasticSearch query for a single record.
    *
