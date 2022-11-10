@@ -47,7 +47,7 @@ public class DcatDistribution {
    */
   @NonNull
   @XmlElement(name = "accessURL", namespace = DCAT_URI)
-  String accessUrl;
+  RdfResource accessUrl;
 
   /**
    * The URL of the downloadable file in a given format. E.g. CSV file or RDF file. The format is

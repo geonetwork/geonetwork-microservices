@@ -109,7 +109,7 @@ public class Dataset extends Resource {
    * <p>eg. http://publications.europa.eu/resource/authority/frequency/IRREG</p>
    */
   @XmlElement(namespace = DCT_URI)
-  RdfResource accrualPeriodicity;
+  AccrualPeriodicity accrualPeriodicity;
 
   /**
    * A statement of any changes in ownership and custody of a resource since its creation that are
