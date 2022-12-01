@@ -59,21 +59,22 @@ public class DcatCatalogResponseProcessorImpl extends AbstractResponseProcessor 
       UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
     XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
     XMLStreamWriter generator = xmlOutputFactory.createXMLStreamWriter(streamToClient);
-    generator.writeStartDocument("UTF-8", "1.0");
-    generator.writeStartElement(RDF_PREFIX, "RDF", RDF_URI);
-    generator.writeNamespace(RDF_PREFIX, RDF_URI);
-    generator.writeCharacters("");
-    generator.flush();
+    try {
+      generator.writeStartDocument("UTF-8", "1.0");
+      generator.writeStartElement(RDF_PREFIX, "RDF", RDF_URI);
+      generator.writeNamespace(RDF_PREFIX, RDF_URI);
+      generator.writeCharacters("");
+      generator.flush();
 
-    JsonParser parser = parserForStream(streamFromServer);
-    new ResponseParser().matchHits(parser, generator, doc -> {
-      writeItem(generator, streamToClient, doc);
-    }, false);
+      JsonParser parser = parserForStream(streamFromServer);
+      new ResponseParser().matchHits(parser, generator, doc -> writeItem(generator, streamToClient, doc), false);
 
-    generator.writeEndElement();
-    generator.writeEndDocument();
-    generator.flush();
-    generator.close();
+      generator.writeEndElement();
+      generator.writeEndDocument();
+      generator.flush();
+    } finally {
+      generator.close();
+    }
   }
 
 

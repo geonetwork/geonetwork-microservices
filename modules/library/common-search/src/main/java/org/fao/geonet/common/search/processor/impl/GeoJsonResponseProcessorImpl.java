@@ -36,41 +36,43 @@ public class GeoJsonResponseProcessorImpl
     JsonParser parser = parserForStream(streamFromServer);
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
 
-    ResponseParser responseParser = new ResponseParser();
-    generator.writeStartObject();
+    try {
+      ResponseParser responseParser = new ResponseParser();
+      generator.writeStartObject();
 
-    generator.writeStringField("type", "FeatureCollection");
-    generator.writeArrayFieldStart("features");
-    {
-      responseParser.matchHits(parser, generator, doc -> {
+      generator.writeStringField("type", "FeatureCollection");
+      generator.writeArrayFieldStart("features");
+      {
+        responseParser.matchHits(parser, generator, doc -> {
 
-        // Remove fields with privileges info
-        if (doc.has(IndexRecordFieldNames.source)) {
-          ObjectNode sourceNode = (ObjectNode) doc.get(IndexRecordFieldNames.source);
+          // Remove fields with privileges info
+          if (doc.has(IndexRecordFieldNames.source)) {
+            ObjectNode sourceNode = (ObjectNode) doc.get(IndexRecordFieldNames.source);
 
-          for (ReservedOperation o : ReservedOperation.values()) {
-            sourceNode.remove(IndexRecordFieldNames.opPrefix + o.getId());
+            for (ReservedOperation o : ReservedOperation.values()) {
+              sourceNode.remove(IndexRecordFieldNames.opPrefix + o.getId());
+            }
+
+            IndexRecord indexRecord = objectMapper.readValue(
+                doc.get(IndexRecordFieldNames.source).toPrettyString(),
+                IndexRecord.class);
+            try {
+              Record geojsonRecord = geoJsonConverter.convert(indexRecord);
+              generator.writeRawValue(objectMapper.writeValueAsString(geojsonRecord));
+            } catch (Exception ex) {
+              log.error(String.format(
+                  "GeoJSON conversion returned null result for uuid %s. Check http://localhost:9901/collections/main/items/%s?f=geojson",
+                  doc.get("_id").asText(), doc.get("_id").asText()));
+            }
           }
-
-          IndexRecord record = objectMapper.readValue(
-              doc.get(IndexRecordFieldNames.source).toPrettyString(),
-              IndexRecord.class);
-          try {
-            Record geojsonRecord = geoJsonConverter.convert(record);
-            generator.writeRawValue(objectMapper.writeValueAsString(geojsonRecord));
-          } catch (Exception ex) {
-            log.error(String.format(
-                "GeoJSON conversion returned null result for uuid %s. Check http://localhost:9901/collections/main/items/%s?f=geojson",
-                doc.get("_id").asText(), doc.get("_id").asText()));
-          }
-        }
-      }, false);
+        }, false);
+      }
+      generator.writeEndArray();
+      generator.writeNumberField("size", responseParser.total);
+      generator.writeEndObject();
+      generator.flush();
+    } finally {
+      generator.close();
     }
-    generator.writeEndArray();
-    //    generator.writeNumberField("took", 0);
-    generator.writeNumberField("size", responseParser.total);
-    generator.writeEndObject();
-    generator.flush();
-    generator.close();
   }
 }
