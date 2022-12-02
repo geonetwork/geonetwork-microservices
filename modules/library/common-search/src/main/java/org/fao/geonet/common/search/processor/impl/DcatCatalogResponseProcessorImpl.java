@@ -67,7 +67,8 @@ public class DcatCatalogResponseProcessorImpl extends AbstractResponseProcessor 
       generator.flush();
 
       JsonParser parser = parserForStream(streamFromServer);
-      new ResponseParser().matchHits(parser, generator, doc -> writeItem(generator, streamToClient, doc), false);
+      new ResponseParser().matchHits(parser, generator,
+          doc -> writeItem(generator, streamToClient, doc), false);
 
       generator.writeEndElement();
       generator.writeEndDocument();
