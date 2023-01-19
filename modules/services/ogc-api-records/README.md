@@ -1,37 +1,77 @@
 # OGC API Record service
 
-## Build
+## Prerequisite
+Java >= 11
+Maven >= 3.6.3
 
+## Build
 ```
 mvn clean compile
 ```
-
-
-## Start
-
+## Run
+### with spring-boot runner
+#### run the service as part of the microservice architecture
 Start the service using:
 ```
 mvn spring-boot:run
 ```
 
-or with custom port and profile:
+#### run the service as a standalone spring-boot app
+> **_NOTE:_**  we need to have at least 2 running components
+> - GeoNetwork database [check db configuration](https://github.com/geonetwork/geonetwork-microservices/blob/main/modules/services/ogc-api-records/src/main/resources/bootstrap.yml#L50)
+> - Elasticsearch index [check index configuration](https://github.com/geonetwork/geonetwork-microservices/blob/main/modules/services/ogc-api-records/src/main/resources/bootstrap.yml#L75)
+```
+mvn spring-boot:run -Dspring-boot.run.profiles=standalone
+```
+
+### run with custom port and profile
 ```
 SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=standalone
 ```
 
-Run the following to update XSLT files while running the application:
-```
-mvn process-resources
+### Start as standalone service with a JAR
+```shell script
+mvn package
+SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api-records.jar 
 
-# TODO: Check how to update shared XSLT from other module with CLI? 
-# Build module in Intellij works fine.
-# cd modules/library/common-view; mvn compile
-# Other workaround:
-#cd modules/services/ogc-api-records/src/main/resources/xslt
-#ln -s ../../../../../../../library/common-view/src/main/resources/xslt/core core
-
+# With custom configuration
+SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.location=./config/ -jar target/gn-ogc-api-records.jar
 ```
 
+### Start as standalone service with a WAR
+Use the `war` profile to build the WAR:
+
+```shell script
+cd modules/services/ogc-api-records
+mvn package -Pwar,-docker
+
+mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.location=./service/src/main/resources/
+```
+
+### Start as standalone service with docker
+Build docker image from source:
+
+```shell script
+./mvnw clean install -Drelax
+mkdir ogcapiconfig
+cp modules/services/ogc-api-records/src/main/resources/bootstrap.yml ogcapiconfig/.
+cp modules/library/common-search/src/main/resources/application.yml ogcapiconfig/.
+# Adjust database and Elasticsearch connection info.
+docker run -it -p8080:8080 \
+  -v "`pwd`/ogcapiconfig:/ogcapiconfig/" \
+  -e "SPRING_PROFILES_ACTIVE=standalone" \
+  -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
+  -e "JAVA_OPTS=-Dfile.encoding=UTF-8" \
+  gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
+```
+
+or use a published release (create your configuration first like above):
+
+```shell script
+docker pull geonetwork/gn-cloud-ogc-api-records-service:0.1.0
+
+docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING_PROFILES_ACTIVE=standalone"   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" geonetwork/gn-cloud-ogc-api-records-service:0.1.0
+```
 
 ## Test the service
 
@@ -135,61 +175,22 @@ curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
 curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
         -H "Accept: application/rdf+xml" 
 ```
-
 API also `f` URL parameter to set the output format eg. http://localhost:9901/collections?f=xml
 
-
-## Start as standalone service
-
-```shell script
-mvn package
-SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api-records.jar 
-
-# With custom configuration
-SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.location=./config/ -jar target/gn-ogc-api-records.jar
+## Customize your XSL
+Run the following to update XSLT files while running the application:
 ```
+mvn process-resources
 
-
-## Start as standalone service with docker
-
-Build docker image from source:
-
-```shell script
-./mvnw clean install -Drelax
-mkdir ogcapiconfig
-cp modules/services/ogc-api-records/src/main/resources/bootstrap.yml ogcapiconfig/.
-cp modules/library/common-search/src/main/resources/application.yml ogcapiconfig/.
-# Adjust database and Elasticsearch connection info.
-docker run -it -p8080:8080 \
-  -v "`pwd`/ogcapiconfig:/ogcapiconfig/" \
-  -e "SPRING_PROFILES_ACTIVE=standalone" \
-  -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
-  -e "JAVA_OPTS=-Dfile.encoding=UTF-8" \
-  gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
+# TODO: Check how to update shared XSLT from other module with CLI? 
+# Build module in Intellij works fine.
+# cd modules/library/common-view; mvn compile
+# Other workaround:
+#cd modules/services/ogc-api-records/src/main/resources/xslt
+#ln -s ../../../../../../../library/common-view/src/main/resources/xslt/core core
 ```
-
-or use a published release (create your configuration first like above):
-
-```shell script
-docker pull geonetwork/gn-cloud-ogc-api-records-service:0.1.0
-
-docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING_PROFILES_ACTIVE=standalone"   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" geonetwork/gn-cloud-ogc-api-records-service:0.1.0
-```
-
-## Start as standalone service with a WAR
-
-Use the `war` profile to build the WAR:
-
-```shell script
-cd modules/services/ogc-api-records
-mvn package -Pwar,-docker
-
-mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.location=./service/src/main/resources/
-```
-
 
 ## Known issues
-
 If the HTML page of an item return the following error 
 ```
 org.xml.sax.SAXParseException; lineNumber: 28; columnNumber: 50; Invalid byte 2 of 3-byte UTF-8 sequence.
