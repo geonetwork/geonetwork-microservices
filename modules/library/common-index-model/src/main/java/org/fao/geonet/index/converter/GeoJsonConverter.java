@@ -20,6 +20,7 @@ import org.fao.geonet.index.model.geojson.Record;
 import org.fao.geonet.index.model.geojson.Record.RecordBuilder;
 import org.fao.geonet.index.model.gn.Contact;
 import org.fao.geonet.index.model.gn.IndexRecord;
+import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.fao.geonet.index.model.gn.ResourceDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -61,9 +62,9 @@ public class GeoJsonConverter {
     record.getLinks().stream().forEach(link -> {
 
       LinkBuilder linkBuilder = Link.builder()
-          .href(link.getUrl())
+          .href(link.getUrl().get(CommonField.defaultText))
           .rel("item")
-          .title(link.getName())
+          .title(link.getName().get(CommonField.defaultText))
           .type(link.getProtocol());
 
       recordLinks.add(linkBuilder.build());

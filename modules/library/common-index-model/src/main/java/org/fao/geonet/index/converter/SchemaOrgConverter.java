@@ -203,7 +203,7 @@ public class SchemaOrgConverter {
         ObjectNode distribution =
             createThing(null, Types.DataDownload, root);
         // Actual bytes of the media object, for example the image file or video file.
-        distribution.put("contentUrl", l.getUrl());
+        distribution.put("contentUrl", l.getUrl().get(CommonField.defaultText));
         addOptional(distribution, "name", l.getName());
         addOptional(distribution, "abstract", l.getDescription());
         addOptional(distribution, "encodingFormat", l.getProtocol());

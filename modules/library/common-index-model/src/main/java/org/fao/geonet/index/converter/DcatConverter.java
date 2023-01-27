@@ -336,8 +336,8 @@ public class DcatConverter {
 
     record.getLinks().stream().forEach(link -> {
       DcatDistributionBuilder dcatDistributionBuilder = DcatDistribution.builder()
-          .title(listOfNullable(link.getName()))
-          .description(listOfNullable(link.getDescription()))
+          .title(listOfNullable(link.getName().get(CommonField.defaultText)))
+          .description(listOfNullable(link.getDescription().get(CommonField.defaultText)))
           // TODO <dcat:accessService rdf:parseType="Resource">...
           // TODO: representation technique = gmd:MD_SpatialRepresentationTypeCode?
           .representationTechnique(Subject.builder()
@@ -345,7 +345,8 @@ public class DcatConverter {
                   .prefLabel(link.getProtocol()).build()).build());
 
       // TODO: depending on function/protocol build page/accessUrl/downloadUrl
-      dcatDistributionBuilder.accessUrl(new RdfResource(null, link.getUrl()));
+      dcatDistributionBuilder.accessUrl(new RdfResource(null,
+          link.getUrl().get(CommonField.defaultText)));
 
       datasetBuilder.distribution(listOfNullable(DcatDistributionContainer.builder()
           .distribution(dcatDistributionBuilder.build()).build()));
@@ -355,7 +356,7 @@ public class DcatConverter {
         record.getContactForResource().stream().map(contact ->
             DcatContactPoint.builder()
                 .contact(VcardContact.builder()
-                    .title(contact.getOrganisation())
+                    .title(contact.getOrganisation().get(CommonField.defaultText))
                     .role(contact.getRole())
                     .hasEmail(contact.getEmail()).build()).build()
         ).collect(Collectors.toList()));
@@ -503,7 +504,7 @@ public class DcatConverter {
         record.getContactForResource().stream().map(contact ->
             DcatContactPoint.builder()
                 .contact(VcardContact.builder()
-                    .title(contact.getOrganisation())
+                    .title(contact.getOrganisation().get(CommonField.defaultText))
                     .role(contact.getRole())
                     .hasEmail(contact.getEmail()).build()).build()
         ).collect(Collectors.toList()));

@@ -5,7 +5,12 @@
 
 package org.fao.geonet.index.model.gn;
 
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.organisationName;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -14,7 +19,9 @@ public class Contact {
 
   private String role;
   private String individual;
-  private String organisation;
+
+  @JsonProperty(organisationName)
+  private Map<String, String> organisation = new HashMap<>();
   private String email;
   private String logo;
   private String phone;

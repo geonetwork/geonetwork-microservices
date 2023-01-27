@@ -26,6 +26,7 @@ public class IndexRecordFieldNames {
   public static final String resourceDate = "resourceDate";
   public static final String org = "Org";
   public static final String orgForResource = "OrgForResource";
+  public static final String organisationName = "organisationObject";
   public static final String recordLink = "recordLink";
   public static final String link = "link";
   public static final String coordinateSystem = "coordinateSystem";
@@ -60,5 +61,11 @@ public class IndexRecordFieldNames {
     public static final String defaultText = "default";
     public static final String key = "key";
     public static final String link = "link";
+  }
+
+  public class LinkField {
+    public static final String url = "urlObject";
+    public static final String name = "nameObject";
+    public static final String description = "descriptionObject";
   }
 }
