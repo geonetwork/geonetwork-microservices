@@ -17,7 +17,7 @@
     "Org" : "European Environment Agency",
     "pointOfContactOrg" : "European Environment Agency",
     "contact" : [ {
-      "organisation" : "European Environment Agency",
+      "organisationObject" : {"default": "European Environment Agency"},
       "role" : "pointOfContact",
       "email" : "sdi@eea.europa.eu",
       "website" : "",
@@ -327,9 +327,9 @@
     "linkUrlProtocolWWWLINK10httplink" : "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
     "link" : [ {
       "protocol" : "WWW:LINK-1.0-http--link",
-      "url" : "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
-      "name" : "",
-      "description" : "",
+      "urlObject" : {"default": "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view"},
+      "nameObject" : {"default": ""},
+      "descriptionObject" : {"default": ""},
       "applicationProfile" : "",
       "group" : 0
     } ],

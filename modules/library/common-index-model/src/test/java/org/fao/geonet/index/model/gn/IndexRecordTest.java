@@ -56,7 +56,7 @@ public class IndexRecordTest {
 
       List<Link> links = record.getLinks();
       Assert.assertEquals(1, links.size());
-      Assert.assertEquals("https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view", links.get(0).getUrl());
+      Assert.assertEquals("https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view", links.get(0).getUrl().get("default"));
 
       List<Coordinate> locations = record.getLocations();
       Assert.assertEquals(47.10185, locations.get(0).getX(), .0001);
