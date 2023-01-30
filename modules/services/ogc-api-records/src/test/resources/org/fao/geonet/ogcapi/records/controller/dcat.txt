@@ -38,7 +38,7 @@
   dct:accrualPeriodicity <http://publications.europa.eu/resource/authority/frequency/asNeeded> .
 
 _:node?????? a vcard:Kind;
-  vcard:title "";
+  vcard:title "Org name";
   vcard:role "originator";
   vcard:hasEmail "" .
 

@@ -65,7 +65,7 @@
           ],
           "contact": [
             {
-              "organisation": "",
+              "organisationObject": {"default": ""},
               "role": "pointOfContact",
               "email": "",
               "website": "",
@@ -195,7 +195,7 @@
           ],
           "contactForResource": [
             {
-              "organisation": "",
+              "organisationObject": {"default": "Org name"},
               "role": "originator",
               "email": "",
               "website": "",
