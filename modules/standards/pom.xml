@@ -4,7 +4,7 @@
   <parent>
     <artifactId>gn-cloud-parent</artifactId>
     <groupId>org.geonetwork-opensource.cloud</groupId>
-    <version>4.2.2</version>
+    <version>4.2.3-SNAPSHOT</version>
   </parent>
   <artifactId>gn-cloud-standards</artifactId>
   <packaging>pom</packaging>
