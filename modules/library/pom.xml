@@ -13,7 +13,7 @@
   <parent>
     <artifactId>gn-cloud-parent</artifactId>
     <groupId>org.geonetwork-opensource.cloud</groupId>
-    <version>0.3-SNAPSHOT</version>
+    <version>4.2.2</version>
   </parent>
   <artifactId>gn-cloud-lib</artifactId>
   <packaging>pom</packaging>
