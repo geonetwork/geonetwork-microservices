@@ -9,7 +9,6 @@ GeoNetwork microservices is GeoNetwork ready to use in the cloud through dockeri
 * [Indexing](modules/services/indexing/README.md)
 * [OGC API Records](modules/services/ogc-api-records/README.md)
 
-
 ## Services architecture
 
 ![Overall architecture](doc/img/gnmicroservices.svg)
@@ -17,16 +16,20 @@ GeoNetwork microservices is GeoNetwork ready to use in the cloud through dockeri
 ## Build & run
 
 ### Requirements
-
 Those components are created with the following requirements:
 * Java 11 JDK
-* Maven
-* Docker
+* Maven 3.6.3
+* Docker (optional)
 * [core-geonetwork:4.0.0](https://github.com/geonetwork/core-geonetwork/releases/tag/4.0.0), might need a local build, it's not available on any published maven repository?
 
 ### Building
-
 To build the services:
+> **_NOTE:_**  It will build all the services.
+> - authorizing
+> - gateway
+> - indexing
+> - ogc-api-records
+> - searching
 
 ```shell script
 ./mvnw clean install
@@ -38,11 +41,13 @@ For a quicker build, you can skip `checkstyle`, tests and docker image build wit
 ./mvnw clean install -Drelax -P-docker
 ```
 
-### Running
-
+### Running with docker
 The simple build command above created the docker images.
 
 Now run the docker composition as follows, the first time it might need to download some additional images for the rabbitmq event broker and the postgresql config database:
+
+> **_NOTE:_**  This will run the whole docker composition:
+> the microservice architecture + all services.
 
 ```shell script
 docker-compose up -d
@@ -89,32 +94,31 @@ curl 127.0.0.1:9900/search \
     -d '{"from": 0, "size": 0, "query": {"query_string": {"query": "+isTemplate:n"}}}' | jq -r '.hits.total.value'
 ```
 
-
-
 ### Development/debug
 
 Developments are made on https://github.com/geonetwork/geonetwork-microservices
 
-To run one service directly without docker, use the `local` profile.
+To run one service directly without docker, use the `standalone` profile.
 
 ```shell script
-mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing/
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/services/indexing/
 ```
-
+You can also run the service from the service root folder also eg `modules/services/ogc-api-records` and refer to the [documentation](https://github.com/geonetwork/geonetwork-microservices/tree/main/modules/services/ogc-api-records#run-the-service-as-a-standalone-spring-boot-app) of the service 
 
 To run all services independently, start the event bus rabbitmq + support services, then start apps in order:
 ```shell script
 docker-compose up -d rabbitmq discovery config
 
-mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/discovery
-mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/support-services/configuring
-mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/indexing
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/support-services/discovery
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/support-services/configuring
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/services/indexing
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/services/ogc-api-records
 ...
 ```
 
 To work on a microservice, start the docker containers and then run the service separetely:
 ```shell script
-SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=dev,local -f modules/services/searching
+SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=dev,standalone -f modules/services/searching
 ```
 
 
