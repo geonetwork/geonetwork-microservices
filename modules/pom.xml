@@ -13,7 +13,7 @@
   <parent>
     <artifactId>gn-cloud-microservices</artifactId>
     <groupId>org.geonetwork-opensource.cloud</groupId>
-    <version>4.2.3-SNAPSHOT</version>
+    <version>4.2.3-0</version>
   </parent>
   <artifactId>gn-cloud-parent</artifactId>
   <packaging>pom</packaging>
