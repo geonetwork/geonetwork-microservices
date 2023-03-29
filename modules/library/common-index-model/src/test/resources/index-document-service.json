@@ -1,0 +1,1369 @@
+{
+  "_index": "gn-records",
+  "_type": "_doc",
+  "_id": "72499232-965c-45f9-9fc0-e92879d70a2f",
+  "_version": 3,
+  "_seq_no": 4303,
+  "_primary_term": 1,
+  "found": true,
+  "_source": {
+    "docType": "metadata",
+    "document": "",
+    "metadataIdentifier": "72499232-965c-45f9-9fc0-e92879d70a2f",
+    "standardNameObject": {
+      "default": "ISO 19115-3",
+      "langfre": "ISO 19115-3"
+    },
+    "standardVersionObject": {
+      "default": "2005/Amd.1:2008",
+      "lang": "2005/Amd.1:2008"
+    },
+    "indexingDate": "2023-01-16T09:42:55.353Z",
+    "dateStamp": "2022-03-28T09:57:14.409Z",
+    "mainLanguage": "fre",
+    "cl_characterSet": [
+      {
+        "key": "utf8",
+        "default": "Utf8",
+        "langfre": "Utf8",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_CharacterSetCode"
+      }
+    ],
+    "resourceType": [
+      "service"
+    ],
+    "resourceTypeNameObject": {
+      "default": "Service",
+      "langfre": "Service"
+    },
+    "OrgObject": {
+      "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+      "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+    },
+    "pointOfContactOrg_tree": [
+      "SPW",
+      "SPW - Secrétariat général",
+      "SPW - Secrétariat général - SPW Digital",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées"
+    ],
+    "pointOfContactOrgObject": {
+      "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+      "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+    },
+    "contact": [
+      {
+        "organisationObject": {
+          "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+          "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+        },
+        "role": "pointOfContact",
+        "email": "helpdesk.carto@spw.wallonie.be",
+        "website": "",
+        "logo": "",
+        "individual": "",
+        "position": "",
+        "phone": "",
+        "address": ""
+      }
+    ],
+    "cl_resourceScope": [
+      {
+        "key": "service",
+        "default": "Service",
+        "langfre": "Service",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_ScopeCode"
+      }
+    ],
+    "cl_function": [
+      {
+        "key": "completeMetadata",
+        "default": "Métadonnées intégrales",
+        "langfre": "Métadonnées intégrales",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_OnLineFunctionCode"
+      },
+      {
+        "key": "information",
+        "default": "Information",
+        "langfre": "Information",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_OnLineFunctionCode"
+      },
+      {
+        "key": "browsing",
+        "default": "Consultation",
+        "langfre": "Consultation",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_OnLineFunctionCode"
+      }
+    ],
+    "cl_referenceSystemType": [
+      {
+        "key": "projected",
+        "default": "Projeté",
+        "langfre": "Projeté",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_ReferenceSystemTypeCode"
+      },
+      {
+        "key": "geodeticGeographic2D",
+        "default": "2D géographique géodésique",
+        "langfre": "2D géographique géodésique",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_ReferenceSystemTypeCode"
+      }
+    ],
+    "cl_type": [
+      {
+        "key": "theme",
+        "default": "Thème",
+        "langfre": "Thème",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_KeywordTypeCode"
+      }
+    ],
+    "cl_accessConstraints": [
+      {
+        "key": "license",
+        "default": "Licence",
+        "langfre": "Licence",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#MD_RestrictionCode"
+      }
+    ],
+    "cl_couplingType": [
+      {
+        "key": "tight",
+        "default": "Reserré",
+        "langfre": "Reserré",
+        "link": "http://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#SV_CouplingType"
+      }
+    ],
+    "resourceTitleObject": {
+      "default": "Zones de distribution en eau (ZDE) - Service de visualisation REST",
+      "langfre": "Zones de distribution en eau (ZDE) - Service de visualisation REST"
+    },
+    "creationDateForResource": [
+      "2018-03-31T22:00:00.000Z"
+    ],
+    "creationYearForResource": "2018",
+    "creationMonthForResource": "2018-03",
+    "publicationDateForResource": [
+      "2018-04-07T22:00:00.000Z"
+    ],
+    "publicationYearForResource": "2018",
+    "publicationMonthForResource": "2018-04",
+    "revisionDateForResource": [
+      "2022-02-17T23:00:00.000Z"
+    ],
+    "revisionYearForResource": "2022",
+    "revisionMonthForResource": "2022-02",
+    "resourceDate": [
+      {
+        "type": "creation",
+        "date": "2018-03-31T22:00:00.000Z"
+      },
+      {
+        "type": "publication",
+        "date": "2018-04-07T22:00:00.000Z"
+      },
+      {
+        "type": "revision",
+        "date": "2022-02-17T23:00:00.000Z"
+      }
+    ],
+    "resourceTemporalDateRange": [
+      {
+        "gte": "2018-03-31T22:00:00.000Z",
+        "lte": "2018-03-31T22:00:00.000Z"
+      },
+      {
+        "gte": "2018-04-07T22:00:00.000Z",
+        "lte": "2018-04-07T22:00:00.000Z"
+      },
+      {
+        "gte": "2022-02-17T23:00:00.000Z",
+        "lte": "2022-02-17T23:00:00.000Z"
+      }
+    ],
+    "resourceIdentifier": [
+      {
+        "code": "72499232-965c-45f9-9fc0-e92879d70a2f",
+        "codeSpace": "http://geodata.wallonie.be/id/",
+        "link": ""
+      }
+    ],
+    "mw-gp-globalIdentifier": "http://geodata.wallonie.be/id/72499232-965c-45f9-9fc0-e92879d70a2f",
+    "resourceAbstractObject": {
+      "default": "Ce service de visualisation REST permet de consulter la couche de données \"Zones de distribution en eau\".",
+      "langfre": "Ce service de visualisation REST permet de consulter la couche de données \"Zones de distribution en eau\"."
+    },
+    "infrasig_ReportingINSPIRE": "false",
+    "resourceHookAbstractObject": {
+      "default": "Ce service de visualisation REST permet de consulter la couche de données \"Zones de distribution en eau\".",
+      "langfre": "Ce service de visualisation REST permet de consulter la couche de données \"Zones de distribution en eau\"."
+    },
+    "OrgForResourceObject": [
+      {
+        "default": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+        "langfre": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+      },
+      {
+        "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+        "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+      },
+      {
+        "default": "Service public de Wallonie (SPW)",
+        "langfre": "Service public de Wallonie (SPW)"
+      }
+    ],
+    "pointOfContactOrgForResource_tree": [
+      "SPW",
+      "SPW - Secrétariat général",
+      "SPW - Secrétariat général - SPW Digital",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées"
+    ],
+    "pointOfContactOrgForResourceObject": {
+      "default": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+      "langfre": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+    },
+    "contactForResource": [
+      {
+        "organisationObject": {
+          "default": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+          "langfre": "Helpdesk carto du SPW (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+        },
+        "role": "pointOfContact",
+        "email": "helpdesk.carto@spw.wallonie.be",
+        "website": "",
+        "logo": "",
+        "individual": "",
+        "position": "",
+        "phone": "",
+        "address": ""
+      },
+      {
+        "organisationObject": {
+          "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+          "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+        },
+        "role": "custodian",
+        "email": "helpdesk.carto@spw.wallonie.be",
+        "website": "",
+        "logo": "",
+        "individual": "",
+        "position": "",
+        "phone": "",
+        "address": ""
+      },
+      {
+        "organisationObject": {
+          "default": "Service public de Wallonie (SPW)",
+          "langfre": "Service public de Wallonie (SPW)"
+        },
+        "role": "owner",
+        "email": "",
+        "website": "https://geoportail.wallonie.be",
+        "logo": "",
+        "individual": "",
+        "position": "",
+        "phone": "",
+        "address": ""
+      }
+    ],
+    "custodianOrgForResource_tree": [
+      "SPW",
+      "SPW - Secrétariat général",
+      "SPW - Secrétariat général - SPW Digital",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique",
+      "SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées"
+    ],
+    "custodianOrgForResourceObject": {
+      "default": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)",
+      "langfre": "Direction de l'Intégration des géodonnées (SPW - Secrétariat général - SPW Digital - Département de la Géomatique - Direction de l'Intégration des géodonnées)"
+    },
+    "ownerOrgForResource_tree": "SPW",
+    "ownerOrgForResourceObject": {
+      "default": "Service public de Wallonie (SPW)",
+      "langfre": "Service public de Wallonie (SPW)"
+    },
+    "hasOverview": "true",
+    "inspireThemeNumber": "0",
+    "hasInspireTheme": "false",
+    "tag": [
+      {
+        "default": "ZDE",
+        "langfre": "ZDE"
+      },
+      {
+        "default": "Directive européenne 98/83/EC",
+        "langfre": "Directive européenne 98/83/EC"
+      },
+      {
+        "default": "consommation humaine",
+        "langfre": "consommation humaine"
+      },
+      {
+        "default": "SWDE",
+        "langfre": "SWDE"
+      },
+      {
+        "default": "eau du robinet",
+        "langfre": "eau du robinet"
+      },
+      {
+        "default": "zone de distribution",
+        "langfre": "zone de distribution"
+      },
+      {
+        "default": "Code de l'Eau",
+        "langfre": "Code de l'Eau"
+      },
+      {
+        "default": "Drinking Water Directive",
+        "langfre": "Drinking Water Directive"
+      },
+      {
+        "default": "ressources",
+        "langfre": "ressources",
+        "key": "http://www.eionet.europa.eu/gemet/theme/31"
+      },
+      {
+        "default": "alimentation, eau potable",
+        "langfre": "alimentation, eau potable",
+        "key": "http://www.eionet.europa.eu/gemet/theme/13"
+      },
+      {
+        "default": "eau",
+        "langfre": "eau",
+        "key": "http://www.eionet.europa.eu/gemet/theme/40"
+      },
+      {
+        "default": "réseau de distribution d'eau",
+        "langfre": "réseau de distribution d'eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9165"
+      },
+      {
+        "default": "société de distribution d'eau",
+        "langfre": "société de distribution d'eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9257"
+      },
+      {
+        "default": "eau courante",
+        "langfre": "eau courante",
+        "key": "http://www.eionet.europa.eu/gemet/concept/3316"
+      },
+      {
+        "default": "distribution",
+        "langfre": "distribution",
+        "key": "http://www.eionet.europa.eu/gemet/concept/2264"
+      },
+      {
+        "default": "eau potable",
+        "langfre": "eau potable",
+        "key": "http://www.eionet.europa.eu/gemet/concept/2339"
+      },
+      {
+        "default": "traitement de l'eau potable",
+        "langfre": "traitement de l'eau potable",
+        "key": "http://www.eionet.europa.eu/gemet/concept/2344"
+      },
+      {
+        "default": "approvisionnement en eau potable",
+        "langfre": "approvisionnement en eau potable",
+        "key": "http://www.eionet.europa.eu/gemet/concept/2343"
+      },
+      {
+        "default": "législation en matière de ressources en eau",
+        "langfre": "législation en matière de ressources en eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/4758"
+      },
+      {
+        "default": "gestion de la qualité de l'eau",
+        "langfre": "gestion de la qualité de l'eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9216"
+      },
+      {
+        "default": "directive relative à la qualité de l'eau",
+        "langfre": "directive relative à la qualité de l'eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9215"
+      },
+      {
+        "default": "eau propre à la consommation",
+        "langfre": "eau propre à la consommation",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9178"
+      },
+      {
+        "default": "qualité de l'eau",
+        "langfre": "qualité de l'eau",
+        "key": "http://www.eionet.europa.eu/gemet/concept/9214"
+      },
+      {
+        "default": "eau de surface",
+        "langfre": "eau de surface",
+        "key": "http://www.eionet.europa.eu/gemet/concept/8229"
+      },
+      {
+        "default": "Reporting INSPIRENO",
+        "langfre": "Reporting INSPIRENO",
+        "key": "https://metawal.wallonie.be/thesaurus/infrasig#ReportingINSPIRENO"
+      },
+      {
+        "default": "Voies navigables",
+        "langfre": "Voies navigables",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030",
+        "key": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030"
+      },
+      {
+        "default": "Eau",
+        "langfre": "Eau",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020",
+        "key": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020"
+      },
+      {
+        "default": "Région wallonne",
+        "langfre": "Région wallonne"
+      }
+    ],
+    "tagNumber": "28",
+    "isOpenData": "false",
+    "keywordType-theme": [
+      {
+        "default": "ZDE",
+        "langfre": "ZDE"
+      },
+      {
+        "default": "Directive européenne 98/83/EC",
+        "langfre": "Directive européenne 98/83/EC"
+      },
+      {
+        "default": "consommation humaine",
+        "langfre": "consommation humaine"
+      },
+      {
+        "default": "SWDE",
+        "langfre": "SWDE"
+      },
+      {
+        "default": "eau du robinet",
+        "langfre": "eau du robinet"
+      },
+      {
+        "default": "zone de distribution",
+        "langfre": "zone de distribution"
+      },
+      {
+        "default": "Code de l'Eau",
+        "langfre": "Code de l'Eau"
+      },
+      {
+        "default": "Drinking Water Directive",
+        "langfre": "Drinking Water Directive"
+      },
+      {
+        "default": "ressources",
+        "langfre": "ressources",
+        "link": "http://www.eionet.europa.eu/gemet/theme/31"
+      },
+      {
+        "default": "alimentation, eau potable",
+        "langfre": "alimentation, eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/theme/13"
+      },
+      {
+        "default": "eau",
+        "langfre": "eau",
+        "link": "http://www.eionet.europa.eu/gemet/theme/40"
+      },
+      {
+        "default": "réseau de distribution d'eau",
+        "langfre": "réseau de distribution d'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9165"
+      },
+      {
+        "default": "société de distribution d'eau",
+        "langfre": "société de distribution d'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9257"
+      },
+      {
+        "default": "eau courante",
+        "langfre": "eau courante",
+        "link": "http://www.eionet.europa.eu/gemet/concept/3316"
+      },
+      {
+        "default": "distribution",
+        "langfre": "distribution",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2264"
+      },
+      {
+        "default": "eau potable",
+        "langfre": "eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2339"
+      },
+      {
+        "default": "traitement de l'eau potable",
+        "langfre": "traitement de l'eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2344"
+      },
+      {
+        "default": "approvisionnement en eau potable",
+        "langfre": "approvisionnement en eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2343"
+      },
+      {
+        "default": "législation en matière de ressources en eau",
+        "langfre": "législation en matière de ressources en eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/4758"
+      },
+      {
+        "default": "gestion de la qualité de l'eau",
+        "langfre": "gestion de la qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9216"
+      },
+      {
+        "default": "directive relative à la qualité de l'eau",
+        "langfre": "directive relative à la qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9215"
+      },
+      {
+        "default": "eau propre à la consommation",
+        "langfre": "eau propre à la consommation",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9178"
+      },
+      {
+        "default": "qualité de l'eau",
+        "langfre": "qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9214"
+      },
+      {
+        "default": "eau de surface",
+        "langfre": "eau de surface",
+        "link": "http://www.eionet.europa.eu/gemet/concept/8229"
+      },
+      {
+        "default": "Reporting INSPIRENO",
+        "langfre": "Reporting INSPIRENO",
+        "link": "https://metawal.wallonie.be/thesaurus/infrasig#ReportingINSPIRENO"
+      },
+      {
+        "default": "Voies navigables",
+        "langfre": "Voies navigables",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030"
+      },
+      {
+        "default": "Eau",
+        "langfre": "Eau",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020"
+      }
+    ],
+    "keywordType-place": [
+      {
+        "default": "Région wallonne",
+        "langfre": "Région wallonne"
+      }
+    ],
+    "th_otherKeywords-themeNumber": "8",
+    "th_otherKeywords-theme": [
+      {
+        "default": "ZDE",
+        "langfre": "ZDE"
+      },
+      {
+        "default": "Directive européenne 98/83/EC",
+        "langfre": "Directive européenne 98/83/EC"
+      },
+      {
+        "default": "consommation humaine",
+        "langfre": "consommation humaine"
+      },
+      {
+        "default": "SWDE",
+        "langfre": "SWDE"
+      },
+      {
+        "default": "eau du robinet",
+        "langfre": "eau du robinet"
+      },
+      {
+        "default": "zone de distribution",
+        "langfre": "zone de distribution"
+      },
+      {
+        "default": "Code de l'Eau",
+        "langfre": "Code de l'Eau"
+      },
+      {
+        "default": "Drinking Water Directive",
+        "langfre": "Drinking Water Directive"
+      }
+    ],
+    "th_gemet-themeNumber": "3",
+    "th_gemet-theme": [
+      {
+        "default": "ressources",
+        "langfre": "ressources",
+        "link": "http://www.eionet.europa.eu/gemet/theme/31"
+      },
+      {
+        "default": "alimentation, eau potable",
+        "langfre": "alimentation, eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/theme/13"
+      },
+      {
+        "default": "eau",
+        "langfre": "eau",
+        "link": "http://www.eionet.europa.eu/gemet/theme/40"
+      }
+    ],
+    "th_gemetNumber": "13",
+    "th_gemet": [
+      {
+        "default": "réseau de distribution d'eau",
+        "langfre": "réseau de distribution d'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9165"
+      },
+      {
+        "default": "société de distribution d'eau",
+        "langfre": "société de distribution d'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9257"
+      },
+      {
+        "default": "eau courante",
+        "langfre": "eau courante",
+        "link": "http://www.eionet.europa.eu/gemet/concept/3316"
+      },
+      {
+        "default": "distribution",
+        "langfre": "distribution",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2264"
+      },
+      {
+        "default": "eau potable",
+        "langfre": "eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2339"
+      },
+      {
+        "default": "traitement de l'eau potable",
+        "langfre": "traitement de l'eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2344"
+      },
+      {
+        "default": "approvisionnement en eau potable",
+        "langfre": "approvisionnement en eau potable",
+        "link": "http://www.eionet.europa.eu/gemet/concept/2343"
+      },
+      {
+        "default": "législation en matière de ressources en eau",
+        "langfre": "législation en matière de ressources en eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/4758"
+      },
+      {
+        "default": "gestion de la qualité de l'eau",
+        "langfre": "gestion de la qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9216"
+      },
+      {
+        "default": "directive relative à la qualité de l'eau",
+        "langfre": "directive relative à la qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9215"
+      },
+      {
+        "default": "eau propre à la consommation",
+        "langfre": "eau propre à la consommation",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9178"
+      },
+      {
+        "default": "qualité de l'eau",
+        "langfre": "qualité de l'eau",
+        "link": "http://www.eionet.europa.eu/gemet/concept/9214"
+      },
+      {
+        "default": "eau de surface",
+        "langfre": "eau de surface",
+        "link": "http://www.eionet.europa.eu/gemet/concept/8229"
+      }
+    ],
+    "th_infraSIGNumber": "1",
+    "th_infraSIG": [
+      {
+        "default": "Reporting INSPIRENO",
+        "langfre": "Reporting INSPIRENO",
+        "link": "https://metawal.wallonie.be/thesaurus/infrasig#ReportingINSPIRENO"
+      }
+    ],
+    "th_Themes_geoportail_wallon_hierarchyNumber": "2",
+    "th_Themes_geoportail_wallon_hierarchy": [
+      {
+        "default": "Voies navigables",
+        "langfre": "Voies navigables",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030"
+      },
+      {
+        "default": "Eau",
+        "langfre": "Eau",
+        "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020"
+      }
+    ],
+    "allKeywords": {
+      "th_otherKeywords-theme": {
+        "title": "otherKeywords-theme",
+        "theme": "theme",
+        "keywords": [
+          {
+            "default": "ZDE",
+            "langfre": "ZDE"
+          },
+          {
+            "default": "Directive européenne 98/83/EC",
+            "langfre": "Directive européenne 98/83/EC"
+          },
+          {
+            "default": "consommation humaine",
+            "langfre": "consommation humaine"
+          },
+          {
+            "default": "SWDE",
+            "langfre": "SWDE"
+          },
+          {
+            "default": "eau du robinet",
+            "langfre": "eau du robinet"
+          },
+          {
+            "default": "zone de distribution",
+            "langfre": "zone de distribution"
+          },
+          {
+            "default": "Code de l'Eau",
+            "langfre": "Code de l'Eau"
+          },
+          {
+            "default": "Drinking Water Directive",
+            "langfre": "Drinking Water Directive"
+          }
+        ]
+      },
+      "th_gemet-theme": {
+        "id": "geonetwork.thesaurus.external.theme.gemet-theme",
+        "title": "GEMET themes",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.gemet-theme",
+        "keywords": [
+          {
+            "default": "ressources",
+            "langfre": "ressources",
+            "link": "http://www.eionet.europa.eu/gemet/theme/31"
+          },
+          {
+            "default": "alimentation, eau potable",
+            "langfre": "alimentation, eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/theme/13"
+          },
+          {
+            "default": "eau",
+            "langfre": "eau",
+            "link": "http://www.eionet.europa.eu/gemet/theme/40"
+          }
+        ]
+      },
+      "th_gemet": {
+        "id": "geonetwork.thesaurus.external.theme.gemet",
+        "title": "GEMET",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.gemet",
+        "keywords": [
+          {
+            "default": "réseau de distribution d'eau",
+            "langfre": "réseau de distribution d'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9165"
+          },
+          {
+            "default": "société de distribution d'eau",
+            "langfre": "société de distribution d'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9257"
+          },
+          {
+            "default": "eau courante",
+            "langfre": "eau courante",
+            "link": "http://www.eionet.europa.eu/gemet/concept/3316"
+          },
+          {
+            "default": "distribution",
+            "langfre": "distribution",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2264"
+          },
+          {
+            "default": "eau potable",
+            "langfre": "eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2339"
+          },
+          {
+            "default": "traitement de l'eau potable",
+            "langfre": "traitement de l'eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2344"
+          },
+          {
+            "default": "approvisionnement en eau potable",
+            "langfre": "approvisionnement en eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2343"
+          },
+          {
+            "default": "législation en matière de ressources en eau",
+            "langfre": "législation en matière de ressources en eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/4758"
+          },
+          {
+            "default": "gestion de la qualité de l'eau",
+            "langfre": "gestion de la qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9216"
+          },
+          {
+            "default": "directive relative à la qualité de l'eau",
+            "langfre": "directive relative à la qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9215"
+          },
+          {
+            "default": "eau propre à la consommation",
+            "langfre": "eau propre à la consommation",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9178"
+          },
+          {
+            "default": "qualité de l'eau",
+            "langfre": "qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9214"
+          },
+          {
+            "default": "eau de surface",
+            "langfre": "eau de surface",
+            "link": "http://www.eionet.europa.eu/gemet/concept/8229"
+          }
+        ]
+      },
+      "th_infraSIG": {
+        "id": "geonetwork.thesaurus.external.theme.infraSIG",
+        "title": "Mots-clés InfraSIG",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.infraSIG",
+        "keywords": [
+          {
+            "default": "Reporting INSPIRENO",
+            "langfre": "Reporting INSPIRENO",
+            "link": "https://metawal.wallonie.be/thesaurus/infrasig#ReportingINSPIRENO"
+          }
+        ]
+      },
+      "th_Themes_geoportail_wallon_hierarchy": {
+        "id": "geonetwork.thesaurus.external.theme.Themes_geoportail_wallon_hierarchy",
+        "title": "Thèmes du géoportail wallon",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.Themes_geoportail_wallon_hierarchy",
+        "keywords": [
+          {
+            "default": "Voies navigables",
+            "langfre": "Voies navigables",
+            "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030"
+          },
+          {
+            "default": "Eau",
+            "langfre": "Eau",
+            "link": "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020"
+          }
+        ]
+      }
+    },
+    "th_gemet-theme_tree": {
+      "default": [
+        "alimentation, eau potable",
+        "eau",
+        "ressources"
+      ],
+      "key": [
+        "http://www.eionet.europa.eu/gemet/theme/13",
+        "http://www.eionet.europa.eu/gemet/theme/31",
+        "http://www.eionet.europa.eu/gemet/theme/40"
+      ]
+    },
+    "th_gemet_tree": {
+      "default": [
+        "droit (corpus de lois)",
+        "droit (corpus de lois)^directive",
+        "droit (corpus de lois)^directive^directive relative à la qualité de l'eau",
+        "droit (corpus de lois)^législation en matière d'environnement",
+        "droit (corpus de lois)^législation en matière d'environnement^législation en matière de ressources en eau",
+        "environnement bâti",
+        "environnement bâti^bâtiment",
+        "environnement bâti^bâtiment^site industriel",
+        "environnement bâti^bâtiment^site industriel^établissement industriel (bâtiment)",
+        "environnement bâti^bâtiment^site industriel^établissement industriel (bâtiment)^société de distribution d'eau",
+        "environnement bâti^infrastructure",
+        "environnement bâti^infrastructure^réseau de distribution d'eau",
+        "hydrosphère",
+        "hydrosphère^eaux (géographie)",
+        "hydrosphère^eaux (géographie)^eau de surface",
+        "hydrosphère^eaux (géographie)^eau de surface^eau douce",
+        "hydrosphère^eaux (géographie)^eau de surface^eau douce^eau courante",
+        "management environnemental",
+        "management environnemental^gestion de l'eau",
+        "management environnemental^gestion de l'eau^gestion de la qualité de l'eau",
+        "matériau",
+        "matériau^matériaux naturels",
+        "matériau^matériaux naturels^eau (substance)",
+        "matériau^matériaux naturels^eau (substance)^eau potable",
+        "matériau^matériaux naturels^eau (substance)^eau propre à la consommation",
+        "processus industriel",
+        "processus industriel^traitement de l'eau",
+        "processus industriel^traitement de l'eau^traitement de l'eau potable",
+        "processus physique",
+        "processus physique^distribution",
+        "secteur des services",
+        "secteur des services^service public",
+        "secteur des services^service public^alimentation en eau",
+        "secteur des services^service public^alimentation en eau^approvisionnement en eau potable",
+        "évaluation environnementale",
+        "évaluation environnementale^qualité de l'environnement",
+        "évaluation environnementale^qualité de l'environnement^qualité de l'eau"
+      ],
+      "key": [
+        "http://www.eionet.europa.eu/gemet/concept/1063",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/1029",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/1029^http://www.eionet.europa.eu/gemet/concept/4267",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/1029^http://www.eionet.europa.eu/gemet/concept/4267^http://www.eionet.europa.eu/gemet/concept/4254",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/1029^http://www.eionet.europa.eu/gemet/concept/4267^http://www.eionet.europa.eu/gemet/concept/4254^http://www.eionet.europa.eu/gemet/concept/9257",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/4321",
+        "http://www.eionet.europa.eu/gemet/concept/1063^http://www.eionet.europa.eu/gemet/concept/4321^http://www.eionet.europa.eu/gemet/concept/9165",
+        "http://www.eionet.europa.eu/gemet/concept/11499",
+        "http://www.eionet.europa.eu/gemet/concept/11499^http://www.eionet.europa.eu/gemet/concept/2212",
+        "http://www.eionet.europa.eu/gemet/concept/11499^http://www.eionet.europa.eu/gemet/concept/2212^http://www.eionet.europa.eu/gemet/concept/9215",
+        "http://www.eionet.europa.eu/gemet/concept/11499^http://www.eionet.europa.eu/gemet/concept/2862",
+        "http://www.eionet.europa.eu/gemet/concept/11499^http://www.eionet.europa.eu/gemet/concept/2862^http://www.eionet.europa.eu/gemet/concept/4758",
+        "http://www.eionet.europa.eu/gemet/concept/2774",
+        "http://www.eionet.europa.eu/gemet/concept/2774^http://www.eionet.europa.eu/gemet/concept/2912",
+        "http://www.eionet.europa.eu/gemet/concept/2774^http://www.eionet.europa.eu/gemet/concept/2912^http://www.eionet.europa.eu/gemet/concept/9214",
+        "http://www.eionet.europa.eu/gemet/concept/2877",
+        "http://www.eionet.europa.eu/gemet/concept/2877^http://www.eionet.europa.eu/gemet/concept/9195",
+        "http://www.eionet.europa.eu/gemet/concept/2877^http://www.eionet.europa.eu/gemet/concept/9195^http://www.eionet.europa.eu/gemet/concept/9216",
+        "http://www.eionet.europa.eu/gemet/concept/4124",
+        "http://www.eionet.europa.eu/gemet/concept/4124^http://www.eionet.europa.eu/gemet/concept/9232",
+        "http://www.eionet.europa.eu/gemet/concept/4124^http://www.eionet.europa.eu/gemet/concept/9232^http://www.eionet.europa.eu/gemet/concept/8229",
+        "http://www.eionet.europa.eu/gemet/concept/4124^http://www.eionet.europa.eu/gemet/concept/9232^http://www.eionet.europa.eu/gemet/concept/8229^http://www.eionet.europa.eu/gemet/concept/3485",
+        "http://www.eionet.europa.eu/gemet/concept/4124^http://www.eionet.europa.eu/gemet/concept/9232^http://www.eionet.europa.eu/gemet/concept/8229^http://www.eionet.europa.eu/gemet/concept/3485^http://www.eionet.europa.eu/gemet/concept/3316",
+        "http://www.eionet.europa.eu/gemet/concept/4257",
+        "http://www.eionet.europa.eu/gemet/concept/4257^http://www.eionet.europa.eu/gemet/concept/9246",
+        "http://www.eionet.europa.eu/gemet/concept/4257^http://www.eionet.europa.eu/gemet/concept/9246^http://www.eionet.europa.eu/gemet/concept/2344",
+        "http://www.eionet.europa.eu/gemet/concept/5086",
+        "http://www.eionet.europa.eu/gemet/concept/5086^http://www.eionet.europa.eu/gemet/concept/5510",
+        "http://www.eionet.europa.eu/gemet/concept/5086^http://www.eionet.europa.eu/gemet/concept/5510^http://www.eionet.europa.eu/gemet/concept/9242",
+        "http://www.eionet.europa.eu/gemet/concept/5086^http://www.eionet.europa.eu/gemet/concept/5510^http://www.eionet.europa.eu/gemet/concept/9242^http://www.eionet.europa.eu/gemet/concept/2339",
+        "http://www.eionet.europa.eu/gemet/concept/5086^http://www.eionet.europa.eu/gemet/concept/5510^http://www.eionet.europa.eu/gemet/concept/9242^http://www.eionet.europa.eu/gemet/concept/9178",
+        "http://www.eionet.europa.eu/gemet/concept/6228",
+        "http://www.eionet.europa.eu/gemet/concept/6228^http://www.eionet.europa.eu/gemet/concept/2264",
+        "http://www.eionet.europa.eu/gemet/concept/7621",
+        "http://www.eionet.europa.eu/gemet/concept/7621^http://www.eionet.europa.eu/gemet/concept/6817",
+        "http://www.eionet.europa.eu/gemet/concept/7621^http://www.eionet.europa.eu/gemet/concept/6817^http://www.eionet.europa.eu/gemet/concept/9244",
+        "http://www.eionet.europa.eu/gemet/concept/7621^http://www.eionet.europa.eu/gemet/concept/6817^http://www.eionet.europa.eu/gemet/concept/9244^http://www.eionet.europa.eu/gemet/concept/2343"
+      ]
+    },
+    "th_infraSIG_tree": {
+      "default": [
+        "Reporting INSPIRENO"
+      ],
+      "key": [
+        "https://metawal.wallonie.be/thesaurus/infrasig#ReportingINSPIRENO"
+      ]
+    },
+    "th_Themes_geoportail_wallon_hierarchy_tree": {
+      "default": [
+        "Mobilité",
+        "Mobilité^Voies navigables",
+        "Nature et environnement",
+        "Nature et environnement^Eau"
+      ],
+      "key": [
+        "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#ThemesGeoportailWallon/10",
+        "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#ThemesGeoportailWallon/10^https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/1020",
+        "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#ThemesGeoportailWallon/30",
+        "https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#ThemesGeoportailWallon/30^https://metawal.wallonie.be/thesaurus/theme-geoportail-wallon#SubThemesGeoportailWallon/3030"
+      ]
+    },
+    "mw-gp-keywords": {
+      "th_otherKeywords-theme": {
+        "title": "otherKeywords-theme",
+        "theme": "theme",
+        "keywords": [
+          {
+            "default": "ZDE",
+            "langfre": "ZDE"
+          },
+          {
+            "default": "Directive européenne 98/83/EC",
+            "langfre": "Directive européenne 98/83/EC"
+          },
+          {
+            "default": "consommation humaine",
+            "langfre": "consommation humaine"
+          },
+          {
+            "default": "SWDE",
+            "langfre": "SWDE"
+          },
+          {
+            "default": "eau du robinet",
+            "langfre": "eau du robinet"
+          },
+          {
+            "default": "zone de distribution",
+            "langfre": "zone de distribution"
+          },
+          {
+            "default": "Code de l'Eau",
+            "langfre": "Code de l'Eau"
+          },
+          {
+            "default": "Drinking Water Directive",
+            "langfre": "Drinking Water Directive"
+          }
+        ]
+      },
+      "th_gemet-theme": {
+        "id": "geonetwork.thesaurus.external.theme.gemet-theme",
+        "title": "GEMET themes",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.gemet-theme",
+        "keywords": [
+          {
+            "default": "ressources",
+            "langfre": "ressources",
+            "link": "http://www.eionet.europa.eu/gemet/theme/31"
+          },
+          {
+            "default": "alimentation, eau potable",
+            "langfre": "alimentation, eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/theme/13"
+          },
+          {
+            "default": "eau",
+            "langfre": "eau",
+            "link": "http://www.eionet.europa.eu/gemet/theme/40"
+          }
+        ]
+      },
+      "th_gemet": {
+        "id": "geonetwork.thesaurus.external.theme.gemet",
+        "title": "GEMET",
+        "theme": "theme",
+        "link": "https://metawal.wallonie.be/geonetwork/srv/api/registries/vocabularies/external.theme.gemet",
+        "keywords": [
+          {
+            "default": "réseau de distribution d'eau",
+            "langfre": "réseau de distribution d'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9165"
+          },
+          {
+            "default": "société de distribution d'eau",
+            "langfre": "société de distribution d'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9257"
+          },
+          {
+            "default": "eau courante",
+            "langfre": "eau courante",
+            "link": "http://www.eionet.europa.eu/gemet/concept/3316"
+          },
+          {
+            "default": "distribution",
+            "langfre": "distribution",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2264"
+          },
+          {
+            "default": "eau potable",
+            "langfre": "eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2339"
+          },
+          {
+            "default": "traitement de l'eau potable",
+            "langfre": "traitement de l'eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2344"
+          },
+          {
+            "default": "approvisionnement en eau potable",
+            "langfre": "approvisionnement en eau potable",
+            "link": "http://www.eionet.europa.eu/gemet/concept/2343"
+          },
+          {
+            "default": "législation en matière de ressources en eau",
+            "langfre": "législation en matière de ressources en eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/4758"
+          },
+          {
+            "default": "gestion de la qualité de l'eau",
+            "langfre": "gestion de la qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9216"
+          },
+          {
+            "default": "directive relative à la qualité de l'eau",
+            "langfre": "directive relative à la qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9215"
+          },
+          {
+            "default": "eau propre à la consommation",
+            "langfre": "eau propre à la consommation",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9178"
+          },
+          {
+            "default": "qualité de l'eau",
+            "langfre": "qualité de l'eau",
+            "link": "http://www.eionet.europa.eu/gemet/concept/9214"
+          },
+          {
+            "default": "eau de surface",
+            "langfre": "eau de surface",
+            "link": "http://www.eionet.europa.eu/gemet/concept/8229"
+          }
+        ]
+      }
+    },
+    "MD_LegalConstraintsOtherConstraintsObject": [
+      {
+        "default": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf",
+        "langfre": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf"
+      }
+    ],
+    "mw-gp-constraintsObject": {
+      "default": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf",
+      "langfre": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf"
+    },
+    "MD_LegalConstraintsaccessConstraints": "license",
+    "MD_LegalConstraintsuseConstraints": "license",
+    "licenseObject": {
+      "default": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf",
+      "langfre": "Les conditions d'utilisation du service sont régies par les Conditions d’accès et d’utilisation des services web géographiques de visualisation du Service public de Wallonie consultables à l'adresse https://geoportail.wallonie.be/files/documents/ConditionsSPW/LicServicesSPW.pdf"
+    },
+    "geom": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            2.75,
+            49.45
+          ],
+          [
+            6.5,
+            49.45
+          ],
+          [
+            6.5,
+            50.85
+          ],
+          [
+            2.75,
+            50.85
+          ],
+          [
+            2.75,
+            49.45
+          ]
+        ]
+      ]
+    },
+    "location": "50.150000000000006,4.625",
+    "serviceType": "view",
+    "inspireServiceType": "view",
+    "coordinateSystem": [
+      "EPSG:31370",
+      "EPSG:4326",
+      "EPSG:3857"
+    ],
+    "crsDetails": [
+      {
+        "code": "EPSG:31370",
+        "codeSpace": "",
+        "name": "Belge 1972 / Belgian Lambert 72 (EPSG:31370)",
+        "url": "http://www.opengis.net/def/crs/EPSG/0/31370"
+      },
+      {
+        "code": "EPSG:4326",
+        "codeSpace": "",
+        "name": "WGS 84 (EPSG:4326)",
+        "url": "http://www.opengis.net/def/crs/EPSG/0/4326"
+      },
+      {
+        "code": "EPSG:3857",
+        "codeSpace": "",
+        "name": "WGS 84 / Pseudo-Mercator (EPSG:3857)",
+        "url": "http://www.opengis.net/def/crs/EPSG/0/3857"
+      }
+    ],
+    "featureTypes": [
+
+    ],
+    "link": [
+      {
+        "protocol": "WWW:LINK",
+        "function": "dataQualityReport",
+        "urlObject": {
+          "default": "https://directory.spatineo.com/service/92795",
+          "langfre": "https://directory.spatineo.com/service/92795"
+        },
+        "nameObject": {
+          "default": "Rapport de disponibilité du service ESRI-REST",
+          "langfre": "Rapport de disponibilité du service ESRI-REST"
+        },
+        "descriptionObject": {
+          "default": "Statistiques de disponibilité du service ESRI-REST fournies par Spatineo",
+          "langfre": "Statistiques de disponibilité du service ESRI-REST fournies par Spatineo"
+        },
+        "applicationProfile": ""
+      },
+      {
+        "protocol": "ESRI:REST",
+        "mimeType": "",
+        "urlObject": {
+          "default": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer",
+          "langfre": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer"
+        },
+        "nameObject": {
+          "default": "Service de visualisation REST",
+          "langfre": "Service de visualisation REST"
+        },
+        "descriptionObject": {
+          "default": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\".",
+          "langfre": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\"."
+        },
+        "function": "browsing",
+        "applicationProfile": "",
+        "group": 0
+      }
+    ],
+    "OrgForDistributionObject": {
+      "default": "Service public de Wallonie (SPW)",
+      "langfre": "Service public de Wallonie (SPW)"
+    },
+    "distributorOrgForDistribution_tree": "SPW",
+    "distributorOrgForDistributionObject": {
+      "default": "Service public de Wallonie (SPW)",
+      "langfre": "Service public de Wallonie (SPW)"
+    },
+    "contactForDistribution": [
+      {
+        "organisationObject": {
+          "default": "Service public de Wallonie (SPW)",
+          "langfre": "Service public de Wallonie (SPW)"
+        },
+        "role": "distributor",
+        "email": "helpdesk.carto@spw.wallonie.be",
+        "website": "",
+        "logo": "",
+        "individual": "",
+        "position": "",
+        "phone": "",
+        "address": ""
+      }
+    ],
+    "linkUrl": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer",
+    "linkProtocol": [
+      "ESRI:REST"
+    ],
+    "linkUrlProtocolESRIREST": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer",
+    "mw-gp-allWebServices": [
+      {
+        "protocol": "ESRI:REST",
+        "urlObject": {
+          "default": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer",
+          "langfre": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer"
+        },
+        "nameObject": {
+          "default": "Service de visualisation REST",
+          "langfre": "Service de visualisation REST"
+        },
+        "descriptionObject": {
+          "default": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\".",
+          "langfre": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\"."
+        },
+        "function": "browsing",
+        "applicationProfile": ""
+      }
+    ],
+    "mw-gp-esriWebServices": [
+      {
+        "protocol": "ESRI:REST",
+        "urlObject": {
+          "default": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer",
+          "langfre": "https://geoservices.wallonie.be/arcgis/rest/services/INDUSTRIES_SERVICES/ZDE/MapServer"
+        },
+        "nameObject": {
+          "default": "Service de visualisation REST",
+          "langfre": "Service de visualisation REST"
+        },
+        "descriptionObject": {
+          "default": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\".",
+          "langfre": "Ce service ESR-REST permet de visualiser la couche de données \"Zones de distribution en eau (ZDE)\"."
+        },
+        "function": "browsing",
+        "applicationProfile": ""
+      }
+    ],
+    "recordOperateOn": "ee453149-a2d1-483c-814a-7ff73a7e4431",
+    "recordLink": [
+      {
+        "type": "datasets",
+        "to": "ee453149-a2d1-483c-814a-7ff73a7e4431",
+        "url": "https://metawal.wallonie.be/geonetwork/srv/api/records/ee453149-a2d1-483c-814a-7ff73a7e4431",
+        "title": "",
+        "origin": "remote"
+      }
+    ],
+    "operatesOn": [
+      "ee453149-a2d1-483c-814a-7ff73a7e4431",
+      "https://metawal.wallonie.be/geonetwork/srv/api/records/ee453149-a2d1-483c-814a-7ff73a7e4431"
+    ],
+    "recordGroup": "72499232-965c-45f9-9fc0-e92879d70a2f",
+    "recordOwner": "Metawal Administrator",
+    "uuid": "72499232-965c-45f9-9fc0-e92879d70a2f",
+    "displayOrder": "null",
+    "groupPublishedId": [
+      "25",
+      "1"
+    ],
+    "popularity": "235",
+    "userinfo": "Admin_Metawal|Administrator|Metawal|Administrator",
+    "groupPublished": [
+      "DIG",
+      "all"
+    ],
+    "isPublishedToAll": "true",
+    "record": "record",
+    "draft": "n",
+    "changeDate": "2022-03-28T09:57:14.409Z",
+    "id": "1669",
+    "createDate": "2018-03-30T13:50:51Z",
+    "owner": "14762",
+    "groupOwner": "25",
+    "hasxlinks": "false",
+    "op0": [
+      "25",
+      "1"
+    ],
+    "featureOfRecord": "record",
+    "op1": [
+      "25",
+      "1"
+    ],
+    "extra": "null",
+    "documentStandard": "iso19115-3.2018",
+    "op5": [
+      "25",
+      "1"
+    ],
+    "valid": "-1",
+    "isTemplate": "n",
+    "feedbackCount": "0",
+    "rating": "0",
+    "isHarvested": "false",
+    "userSavedCount": "0",
+    "sourceCatalogue": "f260fcd6-4632-4e43-99a2-58a2ecf57383",
+    "overview": [
+      {
+        "data": "data:image/png;base64, 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",
+        "nameObject": {
+          "default": "rest_img.png",
+          "langfre": "rest_img.png"
+        },
+        "url": "https://metawal.wallonie.be/geonetwork/srv/api/records/72499232-965c-45f9-9fc0-e92879d70a2f/attachments/rest_img.png"
+      }
+    ]
+  }
+}
