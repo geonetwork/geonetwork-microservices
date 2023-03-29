@@ -1,23 +1,54 @@
 package org.fao.geonet.index.model.gn;
 
+import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
+import static org.mockito.BDDMockito.given;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.List;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import org.fao.geonet.domain.MetadataType;
 import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.converter.DcatConverter;
+import org.fao.geonet.index.converter.FormatterConfiguration;
 import org.fao.geonet.index.converter.SchemaOrgConverter;
+import org.fao.geonet.index.model.dcat2.CatalogRecord;
+import org.fao.geonet.index.model.dcat2.DataService;
+import org.fao.geonet.index.model.dcat2.Dataset;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.locationtech.jts.geom.Coordinate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField.defaultText;
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {DcatConverter.class})
 public class IndexRecordTest {
+
+  @MockBean
+  FormatterConfiguration configuration;
+
+
+  @Autowired
+  DcatConverter dcatConverter;
+
+  @BeforeEach
+  public void setUp() {
+    given(this.configuration.buildLandingPageLink("")).willReturn("");
+  }
 
   @Test
   public void testJsonToPojo() throws IOException {
@@ -33,14 +64,16 @@ public class IndexRecordTest {
       Assert.assertEquals(
           "High Resolution Layer: Water and Wetness 2015 (raster 100m), Mar. 2018",
           record.resourceTitle.get(defaultText)
-          );
+      );
 
       Assert.assertEquals(49, record.getOtherProperties().size());
 
       Assert.assertEquals("gmd:MD_Metadata", record.getRoot());
 
       Overview o = record.getOverview().get(0);
-      Assert.assertEquals("https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png", o.getUrl());
+      Assert.assertEquals(
+          "https://sdi.eea.europa.eu/public/catalogue-graphic-overview/8108e203-59db-4672-b9e0-c1863fd6523b.png",
+          o.getUrl());
       Assert.assertEquals("Global overview", o.getLabel().get("default"));
 
       String org = record.getOrg().get(0);
@@ -56,13 +89,16 @@ public class IndexRecordTest {
 
       List<Link> links = record.getLinks();
       Assert.assertEquals(1, links.size());
-      Assert.assertEquals("https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view", links.get(0).getUrl().get("default"));
+      Assert.assertEquals(
+          "https://land.copernicus.eu/pan-european/high-resolution-layers/water-wetness/status-maps/2015/view",
+          links.get(0).getUrl().get("default"));
 
       List<Coordinate> locations = record.getLocations();
       Assert.assertEquals(47.10185, locations.get(0).getX(), .0001);
       Assert.assertEquals(-22.3441, locations.get(0).getY(), .0001);
 
-      Assert.assertEquals("{\"type\":\"Polygon\",\"coordinates\":[[[-31.2684,27.6375],[-13.4198,27.6375],[-13.4198,66.5662],[-31.2684,66.5662],[-31.2684,27.6375]]]}",
+      Assert.assertEquals(
+          "{\"type\":\"Polygon\",\"coordinates\":[[[-31.2684,27.6375],[-13.4198,27.6375],[-13.4198,66.5662],[-31.2684,66.5662],[-31.2684,27.6375]]]}",
           record.getGeometries().get(0));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
@@ -70,6 +106,44 @@ public class IndexRecordTest {
     }
   }
 
+  @Test
+  public void testServiceJsonToDcatXML() throws IOException {
+    ObjectMapper objectMapper = JsonUtils.getObjectMapper();
+    String json = Files.readString(
+        new ClassPathResource("index-document-service.json").getFile().toPath());
+    JsonNode jsonNode = objectMapper.readTree(json);
+
+    try {
+      IndexRecord record = objectMapper.readValue(
+          jsonNode.get(IndexRecordFieldNames.source).toPrettyString(),
+          IndexRecord.class);
+      Assert.assertEquals(
+          "Zones de distribution en eau (ZDE) - Service de visualisation REST",
+          record.resourceTitle.get(defaultText)
+      );
+
+      JAXBContext context = null;
+      context = JAXBContext.newInstance(
+          CatalogRecord.class, Dataset.class, DataService.class);
+      Marshaller marshaller = context.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+      CatalogRecord catalogRecord = dcatConverter.convert(jsonNode);
+      StringWriter sw = new StringWriter();
+      marshaller.marshal(catalogRecord, sw);
+
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      Assert.fail();
+    } catch (PropertyException e) {
+      e.printStackTrace();
+      Assert.fail();
+    } catch (JAXBException e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
 
 
   @Test

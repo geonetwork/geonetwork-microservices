@@ -489,7 +489,7 @@ public class DcatConverter {
         }).collect(Collectors.toList()));
 
     dataServiceBuilder.endpointUrl(
-        record.getLinks().stream().map(l -> l.getUrl())
+        record.getLinks().stream().map(l -> l.getUrl().get(defaultText))
             .collect(Collectors.toList()));
 
     dataServiceBuilder.servesDataset(
