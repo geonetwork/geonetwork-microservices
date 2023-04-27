@@ -20,6 +20,10 @@ import org.fao.geonet.ogcapi.records.controller.model.Link;
 
 public class CollectionInfoBuilder {
 
+  private CollectionInfoBuilder() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
    * Build Collection info from source table.
    */
@@ -66,7 +70,7 @@ public class CollectionInfoBuilder {
 
     List<Link> linkList = LinksItemsBuilder.build(
         format, collectionUri.toString(), language, configuration);
-    linkList.forEach(l -> collectionInfo.addLinksItem(l));
+    linkList.forEach(collectionInfo::addLinksItem);
 
     return collectionInfo;
   }

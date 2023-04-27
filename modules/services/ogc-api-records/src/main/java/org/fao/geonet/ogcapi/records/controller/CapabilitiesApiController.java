@@ -5,11 +5,9 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
-import com.google.common.collect.ImmutableList;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +48,9 @@ import springfox.documentation.annotations.ApiIgnore;
 @Api(tags = "OGC API Records")
 @Controller
 public class CapabilitiesApiController {
+
+  public static final String CONFORMANCE_REL = "conformance";
+  private static final String SOURCE_ATTR = "source";
 
   @Value("${gn.baseurl}")
   String baseUrl;
@@ -97,7 +98,7 @@ public class CapabilitiesApiController {
   public ResponseEntity<Root> getLandingPage(@ApiIgnore HttpServletRequest request,
       @ApiIgnore HttpServletResponse response,
       @ApiIgnore Model model) throws Exception {
-    String baseUrl = request.getRequestURL().toString();
+    String requestBaseUrl = request.getRequestURL().toString();
 
     MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
@@ -113,18 +114,16 @@ public class CapabilitiesApiController {
       }
 
       root.addLinksItem(new Link()
-          .href(baseUrl)
+          .href(requestBaseUrl)
           .rel("self").type(MediaType.APPLICATION_JSON.toString()));
 
-      configuration.getFormats(Operations.root).forEach(f -> {
-        root.addLinksItem(new Link()
-            .href(baseUrl + "collections?f=" + f.getName())
-            .type("Catalogue collections")
-            .rel("self").type(f.getMimeType()));
-      });
+      configuration.getFormats(Operations.root).forEach(f -> root.addLinksItem(new Link()
+          .href(requestBaseUrl + "collections?f=" + f.getName())
+          .type("Catalogue collections")
+          .rel("self").type(f.getMimeType())));
 
-      addOpenApiLinks(root, baseUrl);
-      addConformanceLinks(root, baseUrl);
+      addOpenApiLinks(root, requestBaseUrl);
+      addConformanceLinks(root, requestBaseUrl);
 
       return ResponseEntity.ok(root);
     } else {
@@ -132,7 +131,7 @@ public class CapabilitiesApiController {
       XsltModel modelSource = new XsltModel();
       modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
       modelSource.setCollections(sources);
-      model.addAttribute("source", modelSource.toSource());
+      model.addAttribute(SOURCE_ATTR, modelSource.toSource());
       Locale locale = LocaleContextHolder.getLocale();
       viewUtility.addi18n(model, locale, request);
 
@@ -160,14 +159,14 @@ public class CapabilitiesApiController {
   private void addConformanceLinks(Root root, String baseUrl) {
     String title = "The Conformance classes";
     root.addLinksItem(new Link()
-        .href(baseUrl + "conformance")
+        .href(baseUrl + CONFORMANCE_REL)
         .title(title)
-        .rel("conformance").type(MediaType.TEXT_HTML_VALUE));
+        .rel(CONFORMANCE_REL).type(MediaType.TEXT_HTML_VALUE));
 
     root.addLinksItem(new Link()
-        .href(baseUrl + "conformance?f=json")
+        .href(baseUrl + CONFORMANCE_REL + "?f=json")
         .title(title + " as JSON")
-        .rel("conformance").type(MediaType.APPLICATION_JSON_VALUE));
+        .rel(CONFORMANCE_REL).type(MediaType.APPLICATION_JSON_VALUE));
   }
 
 
@@ -195,7 +194,7 @@ public class CapabilitiesApiController {
     MediaType mediaType = mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request);
 
     Conformance conformance = new Conformance();
-    conformance.setConformsTo(ImmutableList.of(
+    conformance.setConformsTo(List.of(
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/core",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/searchable-catalogue",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/record-collection",
@@ -213,7 +212,7 @@ public class CapabilitiesApiController {
       modelSource.setOutputFormats(configuration.getFormats(Operations.conformance));
       modelSource.setCollections(sources);
       modelSource.setConformance(conformance);
-      model.addAttribute("source", modelSource.toSource());
+      model.addAttribute(SOURCE_ATTR, modelSource.toSource());
       viewUtility.addi18n(model, locale, request);
       View view = viewResolver.resolveViewName("ogcapir/conformance", locale);
       view.render(model.asMap(), request, response);
@@ -252,20 +251,18 @@ public class CapabilitiesApiController {
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
       Content content = new Content();
 
-      String baseUrl = request.getRequestURL()
+      String requestBaseUrl = request.getRequestURL()
           .toString();
 
       List<Source> sources = sourceRepository.findAll();
-      sources.forEach(s -> {
-        content.addCollectionsItem(
-            CollectionInfoBuilder.buildFromSource(
-                s, language, baseUrl, configuration.getFormat(mediaType), configuration));
-      });
+      sources.forEach(s -> content.addCollectionsItem(
+          CollectionInfoBuilder.buildFromSource(
+              s, language, requestBaseUrl, configuration.getFormat(mediaType), configuration)));
 
       // TODO: Accept format parameter.
       List<Link> linkList = LinksItemsBuilder.build(
-          configuration.getFormat(mediaType), baseUrl, language, configuration);
-      linkList.forEach(l -> content.addLinksItem(l));
+          configuration.getFormat(mediaType), requestBaseUrl, language, configuration);
+      linkList.forEach(content::addLinksItem);
 
       return ResponseEntity.ok(content);
     } else {
@@ -273,7 +270,7 @@ public class CapabilitiesApiController {
       XsltModel modelSource = new XsltModel();
       modelSource.setOutputFormats(configuration.getFormats(Operations.collections));
       modelSource.setCollections(sources);
-      model.addAttribute("source", modelSource.toSource());
+      model.addAttribute(SOURCE_ATTR, modelSource.toSource());
       viewUtility.addi18n(model, locale, request);
 
       View view = viewResolver.resolveViewName("ogcapir/collections", locale);

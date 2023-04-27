@@ -19,6 +19,10 @@ import org.xml.sax.SAXException;
 
 public class XmlUtil {
 
+  private XmlUtil() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
    * Retrieves the content of a org.w3c.dom.Node as a string.
    */
@@ -26,8 +30,7 @@ public class XmlUtil {
     StringWriter writer = new StringWriter();
     Transformer transformer = TransformerFactory.newInstance().newTransformer();
     transformer.transform(new DOMSource(node), new StreamResult(writer));
-    String output = writer.toString();
-    return output;
+    return writer.toString();
   }
 
 

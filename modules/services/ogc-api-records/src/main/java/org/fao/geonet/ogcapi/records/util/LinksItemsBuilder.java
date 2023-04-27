@@ -6,10 +6,14 @@ import java.util.Optional;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Format;
 import org.fao.geonet.ogcapi.records.controller.model.Link;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 public class LinksItemsBuilder {
+
+  private LinksItemsBuilder() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
    * Build items.
    */
@@ -27,7 +31,7 @@ public class LinksItemsBuilder {
     links.add(currentDoc);
 
     for (MediaType supportedMediaType : MediaTypeUtil.defaultSupportedMediaTypes) {
-      if (!supportedMediaType.equals(linkFormat.getMimeType())) {
+      if (!supportedMediaType.toString().equals(linkFormat.getMimeType())) {
         Optional<Format> f = configuration.getFormat(supportedMediaType);
         Link alternateDoc = new Link();
         alternateDoc.setRel("alternate");
