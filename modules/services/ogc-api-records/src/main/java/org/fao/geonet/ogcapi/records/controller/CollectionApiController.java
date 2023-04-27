@@ -4,9 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Locale;
@@ -125,11 +123,11 @@ public class CollectionApiController {
 
     if (MediaTypeUtil.defaultSupportedMediaTypes.contains(mediaType)) {
       if (!mediaType.equals(MediaType.TEXT_HTML)) {
-        String baseUrl = request.getRequestURL()
+        String requestBaseUrl = request.getRequestURL()
             .toString().replace(collectionId, "");
 
         CollectionInfo collectionInfo = CollectionInfoBuilder
-            .buildFromSource(source, language, baseUrl,
+            .buildFromSource(source, language, requestBaseUrl,
                 configuration.getFormat(mediaType), configuration);
 
         return ResponseEntity.ok(collectionInfo);
@@ -179,7 +177,6 @@ public class CollectionApiController {
       //    return openSearchDescription;
       try {
         JAXBContext context = JAXBContext.newInstance(OpenSearchDescription.class);
-        StringWriter sw = new StringWriter();
         Marshaller marshaller = context.createMarshaller();
         response.setContentType(GnMediaType.APPLICATION_OPENSEARCH_XML_VALUE);
         response.setHeader(

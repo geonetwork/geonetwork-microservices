@@ -6,7 +6,6 @@
 package org.fao.geonet.ogcapi.records.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -26,19 +25,19 @@ public class MediaTypeUtil {
   SearchConfiguration searchConfiguration;
 
   public static final List<MediaType> defaultSupportedMediaTypes =
-      Arrays.asList(
+      List.of(
           MediaType.APPLICATION_JSON,
           MediaType.APPLICATION_XML,
           MediaType.TEXT_HTML);
 
   public static final List<MediaType> openSearchSupportedMediaTypes =
-      Arrays.asList(
+      List.of(
           MediaType.APPLICATION_RSS_XML,
           MediaType.APPLICATION_ATOM_XML,
           GnMediaType.APPLICATION_OPENSEARCH_XML);
 
   public static final List<MediaType> ldSupportedMediaTypes =
-      Arrays.asList(
+      List.of(
           GnMediaType.APPLICATION_JSON_LD,
           GnMediaType.TEXT_TURTLE,
           GnMediaType.APPLICATION_RDF_XML,
@@ -46,7 +45,7 @@ public class MediaTypeUtil {
 
 
   public static final List<MediaType> xmlMediaTypes =
-      Arrays.asList(MediaType.APPLICATION_XML);
+      List.of(MediaType.APPLICATION_XML);
 
 
   public MediaType calculatePriorityMediaTypeFromRequest(HttpServletRequest request) {

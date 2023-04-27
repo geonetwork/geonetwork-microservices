@@ -102,7 +102,7 @@ public class RecordsEsQueryBuilder {
           }));
     }
 
-    Set<String> sources = new HashSet(defaultSources);
+    Set<String> sources = new HashSet<>(defaultSources);
     if (sourceFields != null) {
       sources.addAll(sourceFields);
     } else {
@@ -116,7 +116,7 @@ public class RecordsEsQueryBuilder {
         QueryBuilders.queryStringQuery(buildFullTextSearchQuery(q));
     boolQuery.must(fullTextQuery);
 
-    if (externalids != null && externalids.size() > 0) {
+    if (externalids != null && !externalids.isEmpty()) {
       boolQuery.must(
           QueryBuilders.termsQuery(
               IndexRecordFieldNames.uuid,
@@ -155,7 +155,7 @@ public class RecordsEsQueryBuilder {
 
   private String buildFullTextSearchQuery(List<String> q) {
     String queryString = "*:*";
-    if (q != null && q.size() > 0) {
+    if (q != null && !q.isEmpty()) {
       String values = q.stream().collect(Collectors.joining(" AND "));
       if (StringUtils.isNotEmpty(configuration.getQueryBase())) {
         queryString = configuration.getQueryBase().replaceAll(
