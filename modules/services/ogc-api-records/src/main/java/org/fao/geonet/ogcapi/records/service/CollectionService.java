@@ -65,16 +65,18 @@ public class CollectionService {
   /**
    * Retrieves the ElasticSearch filter related to a collection.
    */
-  public String retrieveCollectionFilter(Source source) {
+  public String retrieveCollectionFilter(Source source, boolean escape) {
     String collectionFilter = "";
 
     if (source.getType() == SourceType.subportal) {
       collectionFilter = source.getFilter();
     } else if (source.getType() == SourceType.harvester) {
-      collectionFilter = String.format("+harvesterUuid:\\\"%s\\\"", source.getUuid());
+      collectionFilter = String.format("+harvesterUuid:\"%s\"", source.getUuid());
     }
 
-    return collectionFilter;
+    return escape
+        ? collectionFilter.replace("\"", "\\\"")
+        : collectionFilter;
   }
 
   /**
