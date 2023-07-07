@@ -11,7 +11,7 @@
   <parent>
     <artifactId>gn-cloud-lib</artifactId>
     <groupId>org.geonetwork-opensource.cloud</groupId>
-    <version>4.2.5-SNAPSHOT</version>
+    <version>4.2.5-0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-common-security</artifactId>
