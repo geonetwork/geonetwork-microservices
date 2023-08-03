@@ -9,8 +9,14 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   @Value("${gn.linkToLegacyGN4:false}")
   Boolean linkToLegacyGN4;
 
+  @Value("${gn.linkToCustomMetadataUrl:false}")
+  Boolean linkToCustomMetadataUrl;
+
   @Value("${gn.legacy.url}")
   String legacyUrl;
+
+  @Value("${gn.customMetadataUrl:}")
+  String customMetadataUrl;
 
   @Value("${gn.baseurl}")
   private String baseUrl;
@@ -25,6 +31,9 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
 
   @Override
   public String getSourceHomePage() {
+    if (linkToCustomMetadataUrl) {
+      return customMetadataUrl;
+    }
     if (linkToLegacyGN4) {
       return legacyUrl;
     }
@@ -40,6 +49,11 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
 
   @Override
   public String buildLandingPageLink(String metadataId) {
+    if (linkToCustomMetadataUrl) {
+      return String.format("%s/%s",
+          customMetadataUrl,
+          metadataId);
+    }
     if (linkToLegacyGN4) {
       return String.format("%s/srv/metadata/%s",
               legacyUrl,
@@ -54,5 +68,10 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   @Override
   public void setLinkToLegacyGN4(Boolean linkToLegacyGN4) {
     this.linkToLegacyGN4 = linkToLegacyGN4;
+  }
+
+  @Override
+  public void setLinkToCustomUrl(Boolean linkToCustomMetadataUrl) {
+    this.linkToCustomMetadataUrl = linkToCustomMetadataUrl;
   }
 }

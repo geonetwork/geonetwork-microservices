@@ -11,4 +11,6 @@ public interface FormatterConfiguration {
 
   /** for testing purposes. */
   void setLinkToLegacyGN4(Boolean linkToLegacyGN4);
+
+  void setLinkToCustomUrl(Boolean linkToCustomUrl);
 }
