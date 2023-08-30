@@ -27,4 +27,5 @@ public class Link {
   private String applicationProfile;
   private String group;
   private String mimeType;
+  private String nilReason;
 }
