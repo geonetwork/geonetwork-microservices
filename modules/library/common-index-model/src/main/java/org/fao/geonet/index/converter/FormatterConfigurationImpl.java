@@ -9,12 +9,20 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   @Value("${gn.linkToLegacyGN4:false}")
   Boolean linkToLegacyGN4;
 
+  /**
+   * Used to enable customMetadataUrl in rss response.
+   */
   @Value("${gn.linkToCustomMetadataUrl:false}")
   Boolean linkToCustomMetadataUrl;
 
   @Value("${gn.legacy.url}")
   String legacyUrl;
 
+  /**
+   * Used to override link to metadata in rss response. It takes precedence over legacyUrl if both enabled.
+   * By default, the customMetadataUrl will redirect to host url with a trailing slash and followed by the metadata uuid. e.g: http://geonetwork.org/uuid
+   * You can customize it by redirect to another service (always followed by metadata uuid). e.g: http://my-other-service.com/uuid
+   */
   @Value("${gn.customMetadataUrl:}")
   String customMetadataUrl;
 
