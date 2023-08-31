@@ -142,7 +142,7 @@ public class RssResponseProcessorImplTest {
 			properties.setProperty("gn.baseurl", "http://gn5:8277/geonetwork");
 			properties.setProperty("gn.linkToLegacyGN4", "true");
 			properties.setProperty("gn.linkToCustomMetadataUrl", "false");
-      properties.setProperty("gn.customMetadataUrl", "http://gn:8277/custom");
+			properties.setProperty("gn.customMetadataUrl", "http://gn:8277/custom");
 			pspc.setProperties(properties);
 			return pspc;
 		}
