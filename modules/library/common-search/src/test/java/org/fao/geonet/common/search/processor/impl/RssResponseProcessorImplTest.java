@@ -40,6 +40,7 @@ public class RssResponseProcessorImplTest {
 	@Test
 	public void channelLinkPointToGnServer() throws Exception {
 		formatterConfiguration.setLinkToLegacyGN4(false);
+		formatterConfiguration.setLinkToCustomUrl(false);
 
 		InputStream is = new ByteArrayInputStream("{}".getBytes(UTF_8));
 		ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -19,9 +19,13 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
   String legacyUrl;
 
   /**
-   * Used to override link to metadata in rss response. It takes precedence over legacyUrl if both enabled.
-   * By default, the customMetadataUrl will redirect to host url with a trailing slash and followed by the metadata uuid. e.g: http://geonetwork.org/uuid
-   * You can customize it by redirect to another service (always followed by metadata uuid). e.g: http://my-other-service.com/uuid
+   * Used to override link to metadata in rss response BUT not source home page link.
+   * It takes precedence over legacyUrl if both enabled.
+   * By default, it will redirect to host url with a trailing slash
+   * and followed by the metadata uuid.
+   * e.g: http://geonetwork.org/uuid
+   * You can customize it by redirect to another service (always followed by metadata uuid).
+   * e.g: http://my-other-service.com/uuid
    */
   @Value("${gn.customMetadataUrl:}")
   String customMetadataUrl;
@@ -39,9 +43,6 @@ public class FormatterConfigurationImpl implements FormatterConfiguration {
 
   @Override
   public String getSourceHomePage() {
-    if (linkToCustomMetadataUrl) {
-      return customMetadataUrl;
-    }
     if (linkToLegacyGN4) {
       return legacyUrl;
     }
