@@ -1,36 +1,48 @@
 # OGC API Record service
 
 ## Prerequisite
+
 Java >= 11
 Maven >= 3.6.3
 
 ## Build
-```
+
+```console
 mvn clean compile
 ```
+
 ## Run
+
 ### with spring-boot runner
+
 #### run the service as part of the microservice architecture
+
 Start the service using:
-```
+
+```console
 mvn spring-boot:run
 ```
 
 #### run the service as a standalone spring-boot app
+
 > **_NOTE:_**  we need to have at least 2 running components
+>
 > - GeoNetwork database [check db configuration](https://github.com/geonetwork/geonetwork-microservices/blob/main/modules/services/ogc-api-records/src/main/resources/bootstrap.yml#L50)
 > - Elasticsearch index [check index configuration](https://github.com/geonetwork/geonetwork-microservices/blob/main/modules/services/ogc-api-records/src/main/resources/bootstrap.yml#L75)
-```
+
+```console
 mvn spring-boot:run -Dspring-boot.run.profiles=standalone
 ```
 
 ### run with custom port and profile
-```
+
+```console
 SERVER_PORT=9901 mvn spring-boot:run -Dspring-boot.run.profiles=standalone
 ```
 
 ### Start as standalone service with a JAR
-```shell script
+
+```console
 mvn package
 SERVER_PORT=9901 java -Dspring.profiles.active=standalone -jar target/gn-ogc-api-records.jar 
 
@@ -39,6 +51,7 @@ SERVER_PORT=9901 java -Dspring.profiles.active=standalone  -Dspring.config.locat
 ```
 
 ### Start as standalone service with a WAR
+
 Use the `war` profile to build the WAR:
 
 ```shell script
@@ -49,9 +62,10 @@ mvn jetty:run -Pwar -Dspring.profiles.active=standalone  -Dspring.config.locatio
 ```
 
 ### Start as standalone service with docker
+
 Build docker image from source:
 
-```shell script
+```console
 ./mvnw clean install -Drelax
 mkdir ogcapiconfig
 cp modules/services/ogc-api-records/src/main/resources/bootstrap.yml ogcapiconfig/.
@@ -62,12 +76,12 @@ docker run -it -p8080:8080 \
   -e "SPRING_PROFILES_ACTIVE=standalone" \
   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
   -e "JAVA_OPTS=-Dfile.encoding=UTF-8" \
-  gn-cloud-ogc-api-records-service:0.1-SNAPSHOT
+  gn-cloud-ogc-api-records-service:4.2.6-0
 ```
 
 or use a published release (create your configuration first like above):
 
-```shell script
+```console
 docker pull geonetwork/gn-cloud-ogc-api-records-service:0.1.0
 
 docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING_PROFILES_ACTIVE=standalone"   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" geonetwork/gn-cloud-ogc-api-records-service:0.1.0
@@ -75,7 +89,7 @@ docker run -it -p8080:8080   -v "`pwd`/ogcapiconfig:/ogcapiconfig/"   -e "SPRING
 
 ## Test the service
 
-```shell script
+```console
 
 # Collections
 curl 127.0.0.1:9901/collections \
@@ -175,11 +189,14 @@ curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
 curl 127.0.0.1:9901/collections/$firstCollection/items/$uuid \
         -H "Accept: application/rdf+xml" 
 ```
+
 API also `f` URL parameter to set the output format eg. http://localhost:9901/collections?f=xml
 
 ## Customize your XSL
+
 Run the following to update XSLT files while running the application:
-```
+
+```console
 mvn process-resources
 
 # TODO: Check how to update shared XSLT from other module with CLI? 
@@ -191,8 +208,11 @@ mvn process-resources
 ```
 
 ## Known issues
-If the HTML page of an item return the following error 
-```
+
+If the HTML page of an item return the following error
+
+```console
 org.xml.sax.SAXParseException; lineNumber: 28; columnNumber: 50; Invalid byte 2 of 3-byte UTF-8 sequence.
 ```
+
 add `-Dfile.encoding=UTF-8`.
