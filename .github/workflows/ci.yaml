@@ -33,7 +33,7 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Login onto Docker Hub"
-      uses : docker/login-action@v2
+      uses : docker/login-action@v3
       if: github.repository == 'geonetwork/geonetwork-microservices' && github.event_name == 'release' && github.event.action == 'created'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
