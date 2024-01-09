@@ -45,7 +45,7 @@ public class IndexController {
   @PostMapping("/event/{bucket}/{uuid}")
   public void sendEvent(
       @PathVariable("bucket")String bucket, 
-      @PathVariable("uuid") String uuid) throws Exception {
+      @PathVariable("uuid") String uuid) {
     eventStreamService.produceEvent(bucket, uuid);
   }
 }

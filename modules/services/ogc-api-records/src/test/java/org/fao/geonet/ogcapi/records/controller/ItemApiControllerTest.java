@@ -19,6 +19,7 @@ import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.MvcConfigurer;
 import org.fao.geonet.repository.LanguageRepository;
 import org.fao.geonet.repository.MetadataRepository;
+import org.fao.geonet.repository.SettingRepository;
 import org.fao.geonet.repository.SourceRepository;
 import org.fao.geonet.repository.UiSettingsRepository;
 import org.fao.geonet.view.ViewUtility;
@@ -63,6 +64,9 @@ public class ItemApiControllerTest {
 
     @MockBean
     private MetadataRepository mockMetadataRepository;
+
+    @MockBean
+    private SettingRepository mockSettingRepository;
 
     @Autowired
     private MockMvc mockMvc;

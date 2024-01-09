@@ -3,7 +3,7 @@ gn:
     # Full text on all fields
     # 'queryBase': '${any}',
     # Full text but more boost on title match
-    queryFilter: '+isTemplate:n AND -indexingError:true'
+    queryFilter: '+isTemplate:n'
     queryBase: '(any.\*:(${any}) OR resourceTitleObject.\*:(${any})^2)'
     trackTotalHits: true
     scoreConfig: >
