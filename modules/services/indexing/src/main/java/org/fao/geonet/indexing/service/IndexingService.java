@@ -8,6 +8,7 @@ package org.fao.geonet.indexing.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.AcknowledgedResponse;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
@@ -249,10 +250,10 @@ public class IndexingService {
             failureCount
         ));
       }
-    } catch (IOException ioException) {
+    } catch (ElasticsearchException | IOException esException) {
       log.error(String.format(
           "Error while sending records to index. Error is: %s.",
-          ioException.getMessage()
+              esException.getMessage()
       ));
     }
   }
