@@ -6,9 +6,15 @@
 
 package org.fao.geonet.indexing.service;
 
-import static org.elasticsearch.rest.RestStatus.CREATED;
-import static org.elasticsearch.rest.RestStatus.OK;
-
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.AcknowledgedResponse;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.Refresh;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.BulkResponse;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -28,15 +34,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.AbstractMetadata;
 import org.fao.geonet.domain.Metadata;
@@ -63,16 +61,19 @@ public class IndexingService {
   MetadataRepository metadataRepository;
 
   @Autowired
-  RestHighLevelClient client;
+  ElasticsearchClient client;
 
   /**
    * Delete index.
    */
   public void deleteIndex(Exchange e) {
     try {
+      DeleteIndexRequest deleteIndexRequest = DeleteIndexRequest.of(
+          b -> b.index(index)
+      );
       AcknowledgedResponse deleteIndexResponse = client.indices()
-          .delete(new DeleteIndexRequest(index), RequestOptions.DEFAULT);
-      if (deleteIndexResponse.isAcknowledged()) {
+          .delete(deleteIndexRequest);
+      if (deleteIndexResponse.acknowledged()) {
         log.info(String.format(
             "Index %s removed.",
             index));
@@ -202,20 +203,26 @@ public class IndexingService {
 
 
   private BulkRequest buildBulkRequest(IndexRecords indexRecords) {
-    BulkRequest bulkRequest = new BulkRequest(index);
+    BulkRequest.Builder requestBuilder = new BulkRequest.Builder()
+        .index(index)
+        .refresh(Refresh.True);
     ObjectMapper mapper = new ObjectMapper();
 
     indexRecords.getIndexRecord().forEach(r -> {
       try {
-        IndexRequest indexRequest = new IndexRequest();
-        indexRequest.id(r.getId());
-        indexRequest.source(mapper.writeValueAsString(r), XContentType.JSON);
-        bulkRequest.add(indexRequest);
+        String json = mapper.writeValueAsString(r);
+        requestBuilder.operations(op -> op
+            .index(idx -> idx
+                .index(index)
+                .id(r.getId())
+                .document(json)
+            )
+        );
       } catch (JsonProcessingException jsonProcessingException) {
         jsonProcessingException.printStackTrace();
       }
     });
-    return bulkRequest;
+    return requestBuilder.build();
   }
 
   private void sendToIndex(IndexRecords indexRecords,
@@ -223,16 +230,16 @@ public class IndexingService {
     BulkRequest bulkRequest = buildBulkRequest(indexRecords);
     try {
       // TODO: Asynchronous?
-      BulkResponse bulkItemResponses = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+      BulkResponse bulkItemResponses = client.bulk(bulkRequest);
       log.info(String.format(
           "Indexing operation took %d.",
-          bulkItemResponses.getIngestTookInMillis()
+          bulkItemResponses.took()
       ));
-      if (bulkItemResponses.hasFailures()) {
+      if (bulkItemResponses.errors()) {
         AtomicInteger failureCount = new AtomicInteger();
-        Arrays.stream(bulkItemResponses.getItems()).forEach(item -> {
-          if (item.status() != OK
-              && item.status() != CREATED) {
+        bulkItemResponses.items().forEach(item -> {
+          if (item.status() != 200
+              && item.status() != 201) {
             failureCount.getAndIncrement();
             // TODO: Index error document
           }
@@ -243,16 +250,10 @@ public class IndexingService {
             failureCount
         ));
       }
-    } catch (ElasticsearchStatusException indexException) {
-      report.setNumberOfRecordsWithIndexingErrors(indexRecords.getIndexRecord().size());
-      log.error(String.format(
-          "Error while saving records %d in index. Error is: %s.",
-          indexException.getMessage()
-      ));
-    } catch (IOException ioException) {
+    } catch (ElasticsearchException | IOException esException) {
       log.error(String.format(
           "Error while sending records to index. Error is: %s.",
-          ioException.getMessage()
+              esException.getMessage()
       ));
     }
   }
