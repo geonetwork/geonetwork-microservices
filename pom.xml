@@ -27,7 +27,7 @@
   <properties>
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
     <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
-    <spring-security-oauth2-core.version>5.3.2.RELEASE</spring-security-oauth2-core.version>
+    <spring-security-oauth2-core.version>5.8.12</spring-security-oauth2-core.version>
     <geonetwork.version>4.4.3-0</geonetwork.version>
     <jetty.version>9.4.27.v20200227</jetty.version>
 
