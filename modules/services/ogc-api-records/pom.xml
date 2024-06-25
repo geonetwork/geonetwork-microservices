@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.geonetwork-opensource.cloud</groupId>
     <artifactId>gn-cloud-services</artifactId>
-    <version>4.4.3-0</version>
+    <version>4.4.4-0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gn-cloud-ogc-api-records-service</artifactId>
