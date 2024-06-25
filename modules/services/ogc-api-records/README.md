@@ -76,7 +76,7 @@ docker run -it -p8080:8080 \
   -e "SPRING_PROFILES_ACTIVE=standalone" \
   -e "SPRING_CONFIG_LOCATION=/ogcapiconfig/" \
   -e "JAVA_OPTS=-Dfile.encoding=UTF-8" \
-  gn-cloud-ogc-api-records-service:4.2.9-0
+  gn-cloud-ogc-api-records-service:4.2.10-0
 ```
 
 or use a published release (create your configuration first like above):
