@@ -59,6 +59,7 @@
 
           <div class="container mx-auto flex flex-wrap pt-4 pb-12 text-gray-800 md:px-4">
             <div class="w-2/3">
+
               <xsl:choose>
                 <xsl:when test="model/results">
 
@@ -84,7 +85,7 @@
                         </svg>
                       </button>
 
-                      <a href="items"
+                      <a href="{$requestUrl}"
                          class="inline-flex items-center px-4 py-2 rounded-r border border-l-0 border-gray-300 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
                           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -100,8 +101,8 @@
                         <xsl:choose>
                           <xsl:when test="$total = 0">
                             No record found.
-                            <a href="items" class="underline">Search for something else</a> or
-                            <a href=".." class="underline">in another collection?</a>
+                            <a href="{$requestUrl}" class="underline">Search for something else</a> or
+                            <a href="{$requestUrl}/../.." class="underline">in another collection?</a>
                           </xsl:when>
                           <xsl:when test="$total = 1">
                             <xsl:value-of select="$total"/> record
@@ -143,7 +144,7 @@
                                     if($startindex > -1) then concat('startindex=', $startindex + $limit, '&amp;') else '',
                                     if($limit > -1) then concat('limit=', $limit) else ''
                                     )"/>
-                      <a href="items?{$requestParameters}"
+                      <a href="{$requestUrl}?{$requestParameters}"
                          class="inline-flex items-center px-4 py-2 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
                           <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
