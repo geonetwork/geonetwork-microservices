@@ -20,66 +20,90 @@ import org.springframework.util.StringUtils;
 
 /**
  * https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/contact.yaml
+ *
+ * <p>Identification of, and means of communication with, person responsible
+ *   for the resource.
  */
 @XmlRootElement(name = "contact")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OgcApiContact {
 
+  /**A value uniquely identifying a contact.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "identifier")
   @XmlElement(name = "identifier")
   private String identifier;
 
+  /**The name of the responsible person.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "name")
   @XmlElement(name = "name")
   private String name;
 
+  /** The name of the role or position of the responsible person taken
+   from the organization's formal organizational hierarchy or chart.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "position")
   @XmlElement(name = "position")
   private String position;
 
+  /**Organization/affiliation of the contact.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "organization")
   @XmlElement(name = "organization")
   private String organization;
 
+  /**Graphic identifying a contact. The link relation should be `icon`
+   and the media type should be an image media type.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "logo")
   @XmlElement(name = "logo")
   private OgcApiLink logo;
 
+  /**Telephone numbers at which contact can be made.*/
   @JsonInclude(Include.NON_EMPTY)
-  @XmlElementWrapper(name = "")
-  @XmlElement(name = "")
+  @XmlElementWrapper(name = "phones")
+  @XmlElement(name = "phones")
   private List<OgcApiPhone> phones = new ArrayList<>();
 
+  /**Email addresses at which contact can be made.*/
   @JsonInclude(Include.NON_EMPTY)
-  @XmlElementWrapper(name = "")
-  @XmlElement(name = "")
+  @XmlElementWrapper(name = "emails")
+  @XmlElement(name = "emails")
   private List<OgcApiEmail> emails = new ArrayList<>();
 
+  /**Physical location at which contact can be made.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "addresses")
   @XmlElement(name = "addresses")
   private List<OgcApiAddress> addresses = new ArrayList<>();
 
+  /** On-line information about the contact.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "links")
   @XmlElement(name = "links")
   private List<OgcApiLink> links = new ArrayList<>();
 
+  /**
+   * Time period when the contact can be contacted.
+   *
+   * <p>example: "Hours: Mo-Fr 10am-7pm Sa 10am-22pm Su 10am-21pm"
+   * */
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "hoursOfService")
   @XmlElement(name = "hoursOfService")
   private String hoursOfService;
 
+  /** Supplemental instructions on how or when to contact the
+   responsible party.*/
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "contactInstructions")
   @XmlElement(name = "contactInstructions")
   private String contactInstructions;
 
+  /** The set of named duties, job functions and/or permissions
+   associated with this contact.
+   (e.g. developer, administrator, etc.).*/
   @JsonInclude(JsonInclude.Include.NON_NULL)
   @XmlElementWrapper(name = "roles")
   @XmlElement(name = "roles")

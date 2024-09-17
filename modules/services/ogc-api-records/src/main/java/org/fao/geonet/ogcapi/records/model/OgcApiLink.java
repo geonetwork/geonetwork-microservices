@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/linkBase.yaml
+ *
+ * <p>Represents a link.
  */
 @XmlRootElement(name = "link")
 @XmlAccessorType(XmlAccessType.FIELD)

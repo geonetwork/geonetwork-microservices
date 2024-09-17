@@ -17,7 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
- * Email addresses at which contact can be made.
+ * cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/contact.yaml
+ *
+ * <p>Email addresses at which contact can be made.
  */
 @XmlRootElement(name = "email")
 @XmlAccessorType(XmlAccessType.FIELD)

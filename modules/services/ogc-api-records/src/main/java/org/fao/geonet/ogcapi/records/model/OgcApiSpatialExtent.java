@@ -15,7 +15,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
- * The spatial extent of the features in the collection.
+ * cf. https://github.com/opengeospatial/ogcapi-features/blob/master/core/openapi/schemas/extent.yaml
+ *
+ * <p>The spatial extent of the features in the collection.
  */
 public class OgcApiSpatialExtent {
 

@@ -92,55 +92,9 @@ public class CollectionInfoBuilder {
     return result;
   }
 
-  /**
-   * Gets the main GN portal (from GN DB table "sources").
-   * @return Gets the main GN portal (from GN DB table "sources")
-   */
-  public Source getMainPortal() {
-    return sourceRepository.findByType(SourceType.portal, null).get(0);
-  }
 
-  /**
-   * Given a source, get the parsed Elastic Index JSON.
-   *
-   * @param request user request (for security)
-   * @param source which sub-portal to get the linked serviceRecord
-   * @return parsed Elastic Index JSON for the source's linked serviceRecord
-   */
-  public Map<String, Object> getLinkedServiceRecord(HttpServletRequest request,
-      Source source) {
 
-    var mainPortal = getMainPortal();
-    var uuid = source.getServiceRecord();
-    if (StringUtils.isEmpty(uuid) || uuid.trim().equals("-1")) {
-      if (source.getType().equals(SourceType.portal)) {
-        // this is the main portal - we have a 2nd way to get the link (admin->settings->CSW)
-        Setting setting = settingRepository.getOne("system/csw/capabilityRecordUuid");
-        uuid = setting.getStoredValue();
-      }
-    }
-    if (StringUtils.isEmpty(uuid) || uuid.trim().equals("-1")) {
-      return null;
-    }
-    try {
-      var info = recordService.getRecordAsJson(mainPortal.getUuid(),
-          uuid, request, mainPortal,
-          "json")
-          .get("_source");
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object> result = mapper.convertValue(info,
-          new TypeReference<Map<String, Object>>() {
-          });
-      return result;
-    } catch (Exception ex) {
-      // mislinked record?  not published? error processing the record?
-      log.error(String.format(
-          "An error occurred while trying to retrieve the linked ServiceRecord for sub-portal "
-              + "'%s' (link uuid '%s'). Error is: %s",
-          source.getUuid(), uuid, ex.getMessage()));
-    }
-    return null;
-  }
+
 
   /**
    * Build Collection info from source table.
@@ -200,7 +154,7 @@ public class CollectionInfoBuilder {
         format, collectionUri.toString(), language, configuration);
     linkList.forEach(collectionInfo::addLinksItem);
 
-    var linkedServiceRecord = getLinkedServiceRecord(request, source);
+    var linkedServiceRecord = recordService.getLinkedServiceRecord(request, source);
     injectLinkedServiceRecordInfo(collectionInfo, linkedServiceRecord);
 
     return collectionInfo;

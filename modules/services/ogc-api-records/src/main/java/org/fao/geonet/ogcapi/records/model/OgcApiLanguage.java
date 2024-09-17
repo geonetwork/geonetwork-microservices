@@ -11,7 +11,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
- * The language used for textual values in this record.
+ * cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/language.yaml
+ *
+ * <p>The language used for textual values in this record.
  */
 public class OgcApiLanguage {
 

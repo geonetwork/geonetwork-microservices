@@ -15,7 +15,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
- * The temporal extent of the features in the collection.
+ * cf. https://github.com/opengeospatial/ogcapi-features/blob/master/core/openapi/schemas/extent.yaml
+ *
+ * <p>The temporal extent of the features in the collection.
+ *
  */
 public class OgcApiTemporalExtent {
 

@@ -15,6 +15,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/contact.yaml
+ *
+ * <p>Represents the Contact's phone number.
+ */
 @XmlRootElement(name = "phone")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OgcApiPhone {

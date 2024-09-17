@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.ElasticSearchProxy;
@@ -27,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.Map;
 
 
 @Service
@@ -54,8 +54,16 @@ public class RecordService {
   SourceRepository sourceRepository;
 
 
-  public String getLinkedRecord(Source source) {
-    if (source ==null) {
+  /**
+   * For a source (sub-portal), get the ServiceRecord's uuid.
+   * 1. usually, its part of the source object (source#getServiceRecord())
+   * 2. however, if its the full-portal, there is no GUI to edit this.  In this case
+   *    we use the CSW setting (system/csw/capabilityRecordUuid).
+   * @param source which sub-portal?
+   * @return uuid of the linked record or null
+   */
+  public String getLinkedRecordUuid(Source source) {
+    if (source == null) {
       return null;
     }
 
@@ -76,6 +84,7 @@ public class RecordService {
 
   /**
    * Gets the main GN portal (from GN DB table "sources").
+   *
    * @return Gets the main GN portal (from GN DB table "sources")
    */
   public Source getMainPortal() {
@@ -87,28 +96,23 @@ public class RecordService {
    * Given a source, get the parsed Elastic Index JSON.
    *
    * @param request user request (for security)
-   * @param source which sub-portal to get the linked serviceRecord
+   * @param source  which sub-portal to get the linked serviceRecord
    * @return parsed Elastic Index JSON for the source's linked serviceRecord
    */
   public Map<String, Object> getLinkedServiceRecord(HttpServletRequest request,
       Source source) {
 
     var mainPortal = getMainPortal();
-    var uuid = source.getServiceRecord();
-    if (StringUtils.isEmpty(uuid) || uuid.trim().equals("-1")) {
-      if (source.getType().equals(SourceType.portal)) {
-        // this is the main portal - we have a 2nd way to get the link (admin->settings->CSW)
-        Setting setting = settingRepository.getOne("system/csw/capabilityRecordUuid");
-        uuid = setting.getStoredValue();
-      }
-    }
+
+    var uuid = getLinkedRecordUuid(source);
+
     if (StringUtils.isEmpty(uuid) || uuid.trim().equals("-1")) {
       return null;
     }
     try {
       var info = getRecordAsJson(mainPortal.getUuid(),
-              uuid, request, mainPortal,
-              "json")
+          uuid, request, mainPortal,
+          "json")
           .get("_source");
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> result = mapper.convertValue(info,
@@ -129,11 +133,11 @@ public class RecordService {
   /**
    * Get the Elastic Index JSON.
    *
-   * @param collectionId  which collection is the record apart of
-   * @param recordId which uuid to get
-   * @param request incomming user request (for security)
-   * @param source from the GN DB "source" table for this collectionId
-   * @param type what type of record
+   * @param collectionId which collection is the record apart of
+   * @param recordId     which uuid to get
+   * @param request      incomming user request (for security)
+   * @param source       from the GN DB "source" table for this collectionId
+   * @param type         what type of record
    * @return parsed as a JSON object
    * @throws Exception if there was a problem retrieving the record
    */
