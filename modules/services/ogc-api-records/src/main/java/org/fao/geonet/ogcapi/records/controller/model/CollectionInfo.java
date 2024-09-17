@@ -1,5 +1,12 @@
+/**
+ * (c) 2024 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -10,6 +17,10 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.fao.geonet.ogcapi.records.model.OgcApiContact;
+import org.fao.geonet.ogcapi.records.model.OgcApiExtent;
+import org.fao.geonet.ogcapi.records.model.OgcApiLanguage;
+import org.fao.geonet.ogcapi.records.model.OgcApiTheme;
 
 /**
  * CollectionInfo entity.
@@ -17,7 +28,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JacksonXmlRootElement(localName = "CollectionInfo")
 @XmlRootElement(name = "CollectionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CollectionInfo   {
+public class CollectionInfo {
+
+  //required cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
+  @JsonProperty("type")
+  @JacksonXmlProperty(localName = "type")
+  private String type = "catalog";
+
+  //cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
+  // NOTE: spec says this should be "record" or ["record","catalog"].
+  @JsonProperty("itemType")
+  @JacksonXmlProperty(localName = "itemType")
+  private String itemType = "record";
+
+
   @JsonProperty("id")
   @JacksonXmlProperty(localName = "id")
   private String id;
@@ -32,21 +56,209 @@ public class CollectionInfo   {
 
   @JsonProperty("links")
   @JacksonXmlProperty(localName = "links")
-  
+  @JsonInclude(Include.NON_EMPTY)
   private List<Link> links = new ArrayList<>();
 
   @JsonProperty("extent")
   @JacksonXmlProperty(localName = "extent")
-  private Extent extent;
+  private OgcApiExtent extent;
 
   @JsonProperty("crs")
   @JacksonXmlProperty(localName = "crs")
-  
+  @JsonInclude(Include.NON_EMPTY)
   private List<String> crs = null;
+
+  @JsonProperty("contacts")
+  @JacksonXmlProperty(localName = "contacts")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<OgcApiContact> contacts = null;
+
+  /**
+   * The date this record was created in the server. format: date-time
+   */
+  @JsonProperty("created")
+  @JacksonXmlProperty(localName = "created")
+  @JsonInclude(Include.NON_EMPTY)
+  private String created = null;
+
+  /**
+   * The most recent date on which the record was changed. format: date-time
+   */
+  @JsonProperty("updated")
+  @JacksonXmlProperty(localName = "updated")
+  @JsonInclude(Include.NON_EMPTY)
+  private String updated = null;
+
+  /**
+   * The topic or topics of the resource. Typically represented using free-form keywords, tags, key
+   * phrases, or classification codes.
+   */
+  @JsonProperty("keywords")
+  @JacksonXmlProperty(localName = "keywords")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<String> keywords = null;
+
+  /**
+   * The language used for textual values in this record representation.
+   */
+  @JsonProperty("language")
+  @JacksonXmlProperty(localName = "language")
+  @JsonInclude(Include.NON_EMPTY)
+  private OgcApiLanguage language = null;
+
+  /**
+   * This list of languages in which this record is available.
+   */
+  @JsonProperty("languages")
+  @JacksonXmlProperty(localName = "languages")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<OgcApiLanguage> languages = null;
+
+  /**
+   * A knowledge organization system used to classify the resource.
+   **/
+  @JsonProperty("themes")
+  @JsonInclude(Include.NON_EMPTY)
+  @JacksonXmlProperty(localName = "themes")
+  private List<OgcApiTheme> themes = null;
+
+
+  /**
+   * A legal document under which the resource is made available. If the resource is being made
+   * available under a common license then use an SPDX license id (https://spdx.org/licenses/). If
+   * the resource is being made available under multiple common licenses then use an SPDX license
+   * expression v2.3 string (https://spdx.github.io/spdx-spec/v2.3/SPDX-license-expressions/) If the
+   * resource is being made available under one or more licenses that haven't been assigned an SPDX
+   * identifier or one or more custom licenses then use a string value of 'other' and include one or
+   * more links (rel="license") in the `link` section of the record to the file(s) that contains the
+   * text of the license(s). There is also the case of a resource that is private or unpublished and
+   * is thus unlicensed; in this case do not register such a resource in the catalog in the first
+   * place since there is no point in making such a resource discoverable.
+   */
+  @JsonProperty("license")
+  @JacksonXmlProperty(localName = "license")
+  @JsonInclude(Include.NON_EMPTY)
+  private String license = null;
+
+
+  /**
+   * A statement that concerns all rights not addressed by the license such as a copyright
+   * statement.
+   */
+  @JsonProperty("rights")
+  @JacksonXmlProperty(localName = "rights")
+  @JsonInclude(Include.NON_EMPTY)
+  private String rights = null;
+
+
+  /**
+   * Each string in the array SHALL be the name of a sortable.
+   */
+  @JsonProperty("defaultSortOrder")
+  @JacksonXmlProperty(localName = "defaultSortOrder")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<String> defaultSortOrder = null;
+
+
+  public List<String> getDefaultSortOrder() {
+    return defaultSortOrder;
+  }
+
+  public void setDefaultSortOrder(List<String> defaultSortOrder) {
+    this.defaultSortOrder = defaultSortOrder;
+  }
+
+  public String getRights() {
+    return rights;
+  }
+
+  public void setRights(String rights) {
+    this.rights = rights;
+  }
+
+  public String getLicense() {
+    return license;
+  }
+
+  public void setLicense(String license) {
+    this.license = license;
+  }
 
   public CollectionInfo id(String id) {
     this.id = id;
     return this;
+  }
+
+  public List<OgcApiTheme> getThemes() {
+    return themes;
+  }
+
+  public void setThemes(List<OgcApiTheme> themes) {
+    this.themes = themes;
+  }
+
+  public OgcApiLanguage getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(OgcApiLanguage language) {
+    this.language = language;
+  }
+
+  public List<OgcApiLanguage> getLanguages() {
+    return languages;
+  }
+
+  public void setLanguages(List<OgcApiLanguage> languages) {
+    this.languages = languages;
+  }
+
+  public List<String> getKeywords() {
+    return keywords;
+  }
+
+  public void setKeywords(List<String> keywords) {
+    this.keywords = keywords;
+  }
+
+  public String getCreated() {
+    return created;
+  }
+
+  public void setCreated(String created) {
+    this.created = created;
+  }
+
+  public String getUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(String updated) {
+    this.updated = updated;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getItemType() {
+    return itemType;
+  }
+
+  public void setItemType(String itemType) {
+    this.itemType = itemType;
+  }
+
+  public List<OgcApiContact> getContacts() {
+    return contacts;
+  }
+
+  public void setContacts(List<OgcApiContact> contacts) {
+    this.contacts = contacts;
   }
 
   /**
@@ -97,6 +309,7 @@ public class CollectionInfo   {
     this.description = description;
   }
 
+
   public CollectionInfo links(List<Link> links) {
     this.links = links;
     return this;
@@ -119,7 +332,7 @@ public class CollectionInfo   {
     this.links = links;
   }
 
-  public CollectionInfo extent(Extent extent) {
+  public CollectionInfo extent(OgcApiExtent extent) {
     this.extent = extent;
     return this;
   }
@@ -128,11 +341,11 @@ public class CollectionInfo   {
    * Get extent.
    */
   @ApiModelProperty(value = "")
-  public Extent getExtent() {
+  public OgcApiExtent getExtent() {
     return extent;
   }
 
-  public void setExtent(Extent extent) {
+  public void setExtent(OgcApiExtent extent) {
     this.extent = extent;
   }
 
@@ -155,8 +368,8 @@ public class CollectionInfo   {
   /**
    * The coordinate reference systems in which geometries may be retrieved. Coordinate reference
    * systems are identified by a URI. The first coordinate reference system is the coordinate
-   * reference system that is used by default. This is always
-   * \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\", i.e. WGS84 longitude/latitude.
+   * reference system that is used by default. This is always \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\",
+   * i.e. WGS84 longitude/latitude.
    */
   @ApiModelProperty(value = "The coordinate reference systems in which geometries may be retrieved. Coordinate reference systems are identified by a URI. The first coordinate reference system is the coordinate reference system that is used by default. This is always \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\", i.e. WGS84 longitude/latitude.")
   public List<String> getCrs() {
@@ -194,7 +407,7 @@ public class CollectionInfo   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class CollectionInfo {\n");
-    
+
     sb.append("    name: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
@@ -206,8 +419,8 @@ public class CollectionInfo   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

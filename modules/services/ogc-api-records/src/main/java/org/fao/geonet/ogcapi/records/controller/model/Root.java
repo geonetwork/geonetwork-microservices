@@ -1,10 +1,13 @@
 package org.fao.geonet.ogcapi.records.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,6 +21,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Root")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Root {
+
+  @JsonProperty("systemInfo")
+  @JacksonXmlProperty(localName = "systemInfo")
+  @JsonInclude(Include.NON_EMPTY)
+  private CollectionInfo systemInfo;
+
+
   @JsonProperty("title")
   @JacksonXmlProperty(localName = "title")
   private String title;
@@ -87,6 +97,13 @@ public class Root {
     this.links = links;
   }
 
+  public CollectionInfo getSystemInfo() {
+    return systemInfo;
+  }
+
+  public void setSystemInfo(CollectionInfo systemInfo) {
+    this.systemInfo = systemInfo;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

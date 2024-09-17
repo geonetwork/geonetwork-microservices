@@ -16,11 +16,13 @@ import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.controller.model.Conformance;
 import org.fao.geonet.ogcapi.records.controller.model.Content;
 import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
+import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -77,6 +79,12 @@ public class CapabilitiesApiController {
   @Autowired
   MediaTypeUtil mediaTypeUtil;
 
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
+
+  @Autowired
+  RecordService recordService;
+
   /**
    * Landing page end-point.
    *
@@ -111,7 +119,17 @@ public class CapabilitiesApiController {
         String label = source.getLabel("eng");
         root.title(StringUtils.isEmpty(label) ? source.getName() : label);
         root.description("");
+
+        Locale locale = LocaleContextHolder.getLocale();
+
+        var language = locale.getISO3Language();
+
+        CollectionInfo collectionInfo = collectionInfoBuilder
+            .buildFromSource(source, language, requestBaseUrl,
+                configuration.getFormat(mediaType), configuration,request);
+        root.setSystemInfo(collectionInfo);
       }
+
 
       root.addLinksItem(new Link()
           .href(requestBaseUrl)
@@ -256,8 +274,9 @@ public class CapabilitiesApiController {
 
       List<Source> sources = sourceRepository.findAll();
       sources.forEach(s -> content.addCollectionsItem(
-          CollectionInfoBuilder.buildFromSource(
-              s, language, requestBaseUrl, configuration.getFormat(mediaType), configuration)));
+          collectionInfoBuilder.buildFromSource(
+              s, language, requestBaseUrl, configuration.getFormat(mediaType),
+              configuration,request)));
 
       // TODO: Accept format parameter.
       List<Link> linkList = LinksItemsBuilder.build(

@@ -1,3 +1,8 @@
+/**
+ * (c) 2020 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.Api;
@@ -75,6 +80,9 @@ public class CollectionApiController {
   @Autowired
   MediaTypeUtil mediaTypeUtil;
 
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
+
   /**
    * Describe a collection.
    */
@@ -126,9 +134,9 @@ public class CollectionApiController {
         String requestBaseUrl = request.getRequestURL()
             .toString().replace(collectionId, "");
 
-        CollectionInfo collectionInfo = CollectionInfoBuilder
+        CollectionInfo collectionInfo = collectionInfoBuilder
             .buildFromSource(source, language, requestBaseUrl,
-                configuration.getFormat(mediaType), configuration);
+                configuration.getFormat(mediaType), configuration,request);
 
         return ResponseEntity.ok(collectionInfo);
 
