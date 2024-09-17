@@ -5,6 +5,8 @@
 
 package org.fao.geonet.ogcapi.records.model;
 
+import static org.fao.geonet.ogcapi.records.util.JsonUtils.getAsDouble;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
 
 /**
  * cf. https://github.com/opengeospatial/ogcapi-features/blob/master/core/openapi/schemas/extent.yaml
@@ -112,8 +115,8 @@ public class OgcApiSpatialExtent {
 
     for (var myCoord : coords) {
       var coord = (List) myCoord;
-      var x = (Double) coord.get(0);
-      var y = (Double) coord.get(1);
+      var x = getAsDouble(coord.get(0));
+      var y =  getAsDouble(coord.get(1));
       if (x < xmin) {
         xmin = x;
       }
