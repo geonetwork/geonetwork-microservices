@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
+import org.fao.geonet.ogcapi.records.util.JsonUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -128,7 +129,7 @@ public class OgcApiContact {
     }
     if (contactMap.get("organisationObject") != null) {
       result.setOrganization(
-          CollectionInfoBuilder.getLangString(contactMap.get("organisationObject")));
+          JsonUtils.getLangString(contactMap.get("organisationObject")));
     }
     if (StringUtils.hasText((String) contactMap.get("email"))) {
       result.getEmails().add(new OgcApiEmail(contactMap.get("email").toString()));

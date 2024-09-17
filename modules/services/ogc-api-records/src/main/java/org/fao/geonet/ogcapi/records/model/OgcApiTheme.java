@@ -5,8 +5,8 @@
 
 package org.fao.geonet.ogcapi.records.model;
 
-import static org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder.getAsString;
-import static org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder.getLangString;
+import static org.fao.geonet.ogcapi.records.util.JsonUtils.getAsString;
+import static org.fao.geonet.ogcapi.records.util.JsonUtils.getLangString;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
