@@ -19,8 +19,8 @@ import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.controller.model.Conformance;
 import org.fao.geonet.ogcapi.records.controller.model.Content;
-import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
@@ -130,15 +130,17 @@ public class CapabilitiesApiController {
         root.setSystemInfo(collectionInfo);
       }
 
-
-      root.addLinksItem(new Link()
+      root.addLinksItem(new OgcApiLink()
           .href(requestBaseUrl)
-          .rel("self").type(MediaType.APPLICATION_JSON.toString()));
+          .rel("self")
+          .type(MediaType.APPLICATION_JSON.toString()));
 
-      configuration.getFormats(Operations.root).forEach(f -> root.addLinksItem(new Link()
+      configuration.getFormats(Operations.root).forEach(f ->
+          root.addLinksItem(new OgcApiLink()
           .href(requestBaseUrl + "collections?f=" + f.getName())
           .type("Catalogue collections")
-          .rel("self").type(f.getMimeType())));
+          .rel("self")
+          .type(f.getMimeType())));
 
       addOpenApiLinks(root, requestBaseUrl);
       addConformanceLinks(root, requestBaseUrl);
@@ -163,12 +165,12 @@ public class CapabilitiesApiController {
 
   private void addOpenApiLinks(Root root, String baseUrl) {
     String title = "The OpenAPI Documentation";
-    root.addLinksItem(new Link()
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + "openapi")
         .title(title)
         .rel("service-doc").type(MediaType.TEXT_HTML_VALUE));
 
-    root.addLinksItem(new Link()
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + "openapi?f=json")
         .title(title + " as JSON")
         .rel("service-desc").type(MediaType.APPLICATION_JSON_VALUE));
@@ -176,15 +178,19 @@ public class CapabilitiesApiController {
 
   private void addConformanceLinks(Root root, String baseUrl) {
     String title = "The Conformance classes";
-    root.addLinksItem(new Link()
+
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + CONFORMANCE_REL)
         .title(title)
-        .rel(CONFORMANCE_REL).type(MediaType.TEXT_HTML_VALUE));
+        .rel(CONFORMANCE_REL)
+        .type(MediaType.TEXT_HTML_VALUE));
 
-    root.addLinksItem(new Link()
+
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + CONFORMANCE_REL + "?f=json")
         .title(title + " as JSON")
-        .rel(CONFORMANCE_REL).type(MediaType.APPLICATION_JSON_VALUE));
+        .rel(CONFORMANCE_REL)
+        .type(MediaType.APPLICATION_JSON_VALUE));
   }
 
 
@@ -279,7 +285,7 @@ public class CapabilitiesApiController {
               configuration,request)));
 
       // TODO: Accept format parameter.
-      List<Link> linkList = LinksItemsBuilder.build(
+      List<OgcApiLink> linkList = LinksItemsBuilder.build(
           configuration.getFormat(mediaType), requestBaseUrl, language, configuration);
       linkList.forEach(content::addLinksItem);
 

@@ -20,10 +20,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.fao.geonet.ogcapi.records.model.OgcApiContact;
 import org.fao.geonet.ogcapi.records.model.OgcApiExtent;
 import org.fao.geonet.ogcapi.records.model.OgcApiLanguage;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 import org.fao.geonet.ogcapi.records.model.OgcApiTheme;
 
 /**
- * CollectionInfo entity.
+ * cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
+ *
+ * <p>CollectionInfo entity.
  */
 @JacksonXmlRootElement(localName = "CollectionInfo")
 @XmlRootElement(name = "CollectionInfo")
@@ -42,32 +45,40 @@ public class CollectionInfo {
   private String itemType = "record";
 
 
+  /**The identifier of the catalog.*/
   @JsonProperty("id")
   @JacksonXmlProperty(localName = "id")
   private String id;
 
+  /**A human-readable name given to the resource.*/
   @JsonProperty("title")
   @JacksonXmlProperty(localName = "title")
   private String title;
 
+  /**A free-text account of the resource.*/
   @JsonProperty("description")
   @JacksonXmlProperty(localName = "description")
   private String description;
 
+  /**links for this object.*/
   @JsonProperty("links")
   @JacksonXmlProperty(localName = "links")
   @JsonInclude(Include.NON_EMPTY)
-  private List<Link> links = new ArrayList<>();
+  private List<OgcApiLink> links = new ArrayList<>();
 
+  /**The spatiotemporal coverage of this catalog.*/
   @JsonProperty("extent")
   @JacksonXmlProperty(localName = "extent")
   private OgcApiExtent extent;
 
+  /**The list of supported coordinate reference systems.*/
   @JsonProperty("crs")
   @JacksonXmlProperty(localName = "crs")
   @JsonInclude(Include.NON_EMPTY)
   private List<String> crs = null;
 
+  /** A list of contacts qualified by their role(s) in association
+   * to the record or the resource described by the record.     */
   @JsonProperty("contacts")
   @JacksonXmlProperty(localName = "contacts")
   @JsonInclude(Include.NON_EMPTY)
@@ -310,12 +321,12 @@ public class CollectionInfo {
   }
 
 
-  public CollectionInfo links(List<Link> links) {
+  public CollectionInfo links(List<OgcApiLink> links) {
     this.links = links;
     return this;
   }
 
-  public CollectionInfo addLinksItem(Link linksItem) {
+  public CollectionInfo addLinksItem(OgcApiLink linksItem) {
     this.links.add(linksItem);
     return this;
   }
@@ -324,11 +335,11 @@ public class CollectionInfo {
    * Get links.
    */
   @ApiModelProperty(example = "[{\"href\":\"http://data.example.org/collections/buildings/items\",\"rel\":\"item\",\"type\":\"application/geo+json\",\"title\":\"Buildings\"},{\"href\":\"http://example.org/concepts/building.html\",\"rel\":\"describedBy\",\"type\":\"text/html\",\"title\":\"Coverage for buildings\"}]", required = true, value = "")
-  public List<Link> getLinks() {
+  public List<OgcApiLink> getLinks() {
     return links;
   }
 
-  public void setLinks(List<Link> links) {
+  public void setLinks(List<OgcApiLink> links) {
     this.links = links;
   }
 

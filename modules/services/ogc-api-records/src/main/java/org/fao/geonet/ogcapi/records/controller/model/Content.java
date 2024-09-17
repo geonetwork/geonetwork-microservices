@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 
 /**
  * Content entity.
@@ -17,23 +18,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JacksonXmlRootElement(localName = "Content")
 @XmlRootElement(name = "Content")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Content   {
+public class Content {
+
   @JsonProperty("links")
   @JacksonXmlProperty(localName = "links")
-  
-  private List<Link> links = new ArrayList<>();
+
+  private List<OgcApiLink> links = new ArrayList<>();
 
   @JsonProperty("collections")
   @JacksonXmlProperty(localName = "collections")
-  
+
   private List<CollectionInfo> collections = new ArrayList<>();
 
-  public Content links(List<Link> links) {
+  public Content links(List<OgcApiLink> links) {
     this.links = links;
     return this;
   }
 
-  public Content addLinksItem(Link linksItem) {
+  public Content addLinksItem(OgcApiLink linksItem) {
     this.links.add(linksItem);
     return this;
   }
@@ -42,11 +44,11 @@ public class Content   {
    * Get links.
    */
   @ApiModelProperty(example = "[{\"href\":\"http://data.example.org/collections.json\",\"rel\":\"self\",\"type\":\"application/json\",\"title\":\"this document\"},{\"href\":\"http://data.example.org/collections.html\",\"rel\":\"alternate\",\"type\":\"text/html\",\"title\":\"this document as HTML\"},{\"href\":\"http://schemas.example.org/1.0/foobar.xsd\",\"rel\":\"describedBy\",\"type\":\"application/xml\",\"title\":\"XML schema for Acme Corporation data\"}]", required = true, value = "")
-  public List<Link> getLinks() {
+  public List<OgcApiLink> getLinks() {
     return links;
   }
 
-  public void setLinks(List<Link> links) {
+  public void setLinks(List<OgcApiLink> links) {
     this.links = links;
   }
 
@@ -95,7 +97,7 @@ public class Content   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Content {\n");
-    
+
     sb.append("    links: ").append(toIndentedString(links)).append("\n");
     sb.append("    collections: ").append(toIndentedString(collections)).append("\n");
     sb.append("}");
@@ -103,8 +105,8 @@ public class Content   {
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

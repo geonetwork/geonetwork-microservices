@@ -9,8 +9,6 @@ package org.fao.geonet.ogcapi.records.util;
 import static java.util.Arrays.asList;
 import static org.fao.geonet.ogcapi.records.util.LinksItemsBuilder.getHref;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +18,14 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Format;
-import org.fao.geonet.domain.Setting;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
-import org.fao.geonet.ogcapi.records.controller.model.Extent.CrsEnum;
-import org.fao.geonet.ogcapi.records.controller.model.Link;
+import org.fao.geonet.ogcapi.records.controller.model.CrsEnum;
 import org.fao.geonet.ogcapi.records.model.OgcApiContact;
 import org.fao.geonet.ogcapi.records.model.OgcApiExtent;
 import org.fao.geonet.ogcapi.records.model.OgcApiLanguage;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 import org.fao.geonet.ogcapi.records.model.OgcApiSpatialExtent;
 import org.fao.geonet.ogcapi.records.model.OgcApiTemporalExtent;
 import org.fao.geonet.ogcapi.records.model.OgcApiTheme;
@@ -80,7 +77,8 @@ public class CollectionInfoBuilder {
   }
 
   /**
-   *  Simple utility class to get a JSON value as a string.
+   * Simple utility class to get a JSON value as a string.
+   *
    * @param o json object
    * @return null or o.toString()
    */
@@ -93,18 +91,15 @@ public class CollectionInfoBuilder {
   }
 
 
-
-
-
   /**
    * Build Collection info from source table.
    *
-   * @param source    from the GN DB Table "sources"
-   * @param language which language is the request wanting
-   * @param baseUrl  base url for the ogcapi
-   * @param format what format are the results requested in
+   * @param source        from the GN DB Table "sources"
+   * @param language      which language is the request wanting
+   * @param baseUrl       base url for the ogcapi
+   * @param format        what format are the results requested in
    * @param configuration config for searching
-   * @param request user request (for security)
+   * @param request       user request (for security)
    * @return CollectionInfo filled in from GN DB Table "sources" and the Elastic Index JSON
    */
   public CollectionInfo buildFromSource(Source source,
@@ -144,13 +139,13 @@ public class CollectionInfoBuilder {
     // TODO: Accept format parameter.
     baseUrl = baseUrl + (!baseUrl.endsWith("/") ? "/" : "");
     URI collectionUri = URI.create(baseUrl).resolve(name);
-    Link currentDoc = new Link();
+    OgcApiLink currentDoc = new OgcApiLink();
     currentDoc.setRel("self");
     currentDoc.setHref(getHref(collectionUri.toString(), format));
     currentDoc.setType(format.get().getMimeType());
     currentDoc.setHreflang(language);
 
-    List<Link> linkList = LinksItemsBuilder.build(
+    List<OgcApiLink> linkList = LinksItemsBuilder.build(
         format, collectionUri.toString(), language, configuration);
     linkList.forEach(collectionInfo::addLinksItem);
 
@@ -163,8 +158,9 @@ public class CollectionInfoBuilder {
   /**
    * inject the "extra" info from the LinkedServiceRecord into the CollectionInfo.
    *
-   * @param collectionInfo collection metadata we've gathered so far (usually not much)
-   * @param linkedServiceRecord JSON of the linked Service record (GN's DB "source" "serviceRecord")
+   * @param collectionInfo      collection metadata we've gathered so far (usually not much)
+   * @param linkedServiceRecord JSON of the linked Service record (GN's DB "source"
+   *                            "serviceRecord")
    */
   private void injectLinkedServiceRecordInfo(CollectionInfo collectionInfo,
       Map<String, Object> linkedServiceRecord) {

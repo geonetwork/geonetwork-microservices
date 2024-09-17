@@ -7,6 +7,7 @@ package org.fao.geonet.ogcapi.records.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -90,6 +91,11 @@ public class OgcApiLink {
   @XmlElement(name = "href")
   private String href;
 
+
+  public OgcApiLink() {
+
+  }
+
   public OgcApiLink(String href, String type) {
     this.href = href;
     this.type = type;
@@ -158,5 +164,74 @@ public class OgcApiLink {
 
   public void setHref(String href) {
     this.href = href;
+  }
+
+
+  @Override
+  public boolean equals(java.lang.Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    OgcApiLink link = (OgcApiLink) o;
+    return Objects.equals(this.href, link.getHref())
+        && Objects.equals(this.rel, link.getRel())
+        && Objects.equals(this.type, link.getType())
+        && Objects.equals(this.hreflang, link.getHreflang())
+
+        && Objects.equals(this.created, link.getCreated())
+        && Objects.equals(this.updated, link.getUpdated())
+        && Objects.equals(this.length, link.getLength());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(href, rel, type, hreflang);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class Link {\n");
+
+    sb.append("    href: ").append(toIndentedString(href)).append("\n");
+    sb.append("    rel: ").append(toIndentedString(rel)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    hreflang: ").append(toIndentedString(hreflang)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
+   */
+  private String toIndentedString(java.lang.Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
+
+  public OgcApiLink href(String s) {
+    setHref(s);
+    return this;
+  }
+
+  public OgcApiLink title(String s) {
+    setTitle(s);
+    return this;
+  }
+
+  public OgcApiLink rel(String s) {
+    setRel(s);
+    return this;
+  }
+
+  public OgcApiLink type(String s) {
+    setType(s);
+    return this;
   }
 }
