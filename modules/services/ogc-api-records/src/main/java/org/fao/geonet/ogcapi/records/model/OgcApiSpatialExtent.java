@@ -31,10 +31,10 @@ public class OgcApiSpatialExtent {
    * One or more bounding boxes that describe the spatial extent of the dataset. In the Core only a
    * single bounding box is supported.
    *
-   * <p>Extensions may support additional areas. The first bounding box describes the overall 
-   * spatial extent of the data. All subsequent bounding boxes describe more precise bounding 
-   * boxes, e.g.,to identify clusters of data. Clients only interested in the overall spatial 
-   * extent will only need to access the first bounding box in the array.
+   * <p>Extensions may support additional areas. The first bounding box describes the overall
+   * spatial extent of the data. All subsequent bounding boxes describe more precise bounding boxes,
+   * e.g.,to identify clusters of data. Clients only interested in the overall spatial extent will
+   * only need to access the first bounding box in the array.
    *
    * <p>----
    *
@@ -53,17 +53,17 @@ public class OgcApiSpatialExtent {
    * longitude/latitude/ellipsoidal height (http://www.opengis.net/def/crs/OGC/0/CRS84h) unless a
    * different coordinate reference system is specified in `crs`.
    *
-   * <p>For WGS 84 longitude/latitude the values are in most cases the sequence of minimum 
-   * longitude, minimum latitude, maximum longitude and maximum latitude. However, in cases where 
-   * the box spans the antimeridian the first value (west-most box edge) is larger than the third 
+   * <p>For WGS 84 longitude/latitude the values are in most cases the sequence of minimum
+   * longitude, minimum latitude, maximum longitude and maximum latitude. However, in cases where
+   * the box spans the antimeridian the first value (west-most box edge) is larger than the third
    * value (east-most box edge).
    *
    * <p>If the vertical axis is included, the third and the sixth number are the bottom and the
    * top of the 3-dimensional bounding box.
    *
    * <p>If a feature has multiple spatial geometry properties, it is the decision of the server
-   * whether only a single spatial geometry property is used to determine the extent or all
-   * relevant geometries.
+   * whether only a single spatial geometry property is used to determine the extent or all relevant
+   * geometries.
    */
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "bbox")
@@ -75,7 +75,7 @@ public class OgcApiSpatialExtent {
    * coordinate reference system is WGS 84 longitude/latitude/ellipsoidal height for coordinates
    * with height. Extensions may support additional coordinate reference systems and add additional
    * enum values.
-   * 
+   *
    * <p>enum: - 'http://www.opengis.net/def/crs/OGC/1.3/CRS84' - 'http://www.opengis.net/def/crs/OGC/0/CRS84h'
    * default: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
    */
@@ -87,13 +87,12 @@ public class OgcApiSpatialExtent {
   /**
    * Create OgcApiSpatialExtent from the "geom" section of the GN Index record. Typically this is a
    * polygon:
-   * 
+   *
    * <p>"geom":[{"type":"Polygon","coordinates":
-   *    [[[37.0,-3.0],[156.0,-3.0],[156.0,83.0],[37.0,83.0],[37.0,-3.0]]]}]
-   * 
+   * [[[37.0,-3.0],[156.0,-3.0],[156.0,83.0],[37.0,83.0],[37.0,-3.0]]]}]
+   *
    * <p>you should call this method with the {"type":"Polygon",
-   *     "coordinates":[[[37.0,-3.0],[156.0,-3.0],[156.0,83.0],[37.0,83.0],[37.0,-3.0]]]}
-   * object
+   * "coordinates":[[[37.0,-3.0],[156.0,-3.0],[156.0,83.0],[37.0,83.0],[37.0,-3.0]]]} object
    *
    * @param map from the GN Index Record JSON
    * @return parsed OgcApiSpatialExtent
@@ -116,7 +115,7 @@ public class OgcApiSpatialExtent {
     for (var myCoord : coords) {
       var coord = (List) myCoord;
       var x = getAsDouble(coord.get(0));
-      var y =  getAsDouble(coord.get(1));
+      var y = getAsDouble(coord.get(1));
       if (x < xmin) {
         xmin = x;
       }

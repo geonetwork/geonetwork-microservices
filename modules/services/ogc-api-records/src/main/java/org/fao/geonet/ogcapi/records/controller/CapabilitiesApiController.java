@@ -22,7 +22,6 @@ import org.fao.geonet.ogcapi.records.controller.model.Content;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
 import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
-import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
@@ -69,25 +68,17 @@ public class CapabilitiesApiController {
 
   @Autowired
   ConcurrentMapCacheManager cacheManager;
-
+  @Autowired
+  MediaTypeUtil mediaTypeUtil;
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
   @Autowired
   private SourceRepository sourceRepository;
-
   @Autowired
   private SearchConfiguration configuration;
 
-  @Autowired
-  MediaTypeUtil mediaTypeUtil;
-
-  @Autowired
-  CollectionInfoBuilder collectionInfoBuilder;
-
-  @Autowired
-  RecordService recordService;
-
   /**
    * Landing page end-point.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Landing page.",
@@ -126,7 +117,7 @@ public class CapabilitiesApiController {
 
         CollectionInfo collectionInfo = collectionInfoBuilder
             .buildFromSource(source, language, requestBaseUrl,
-                configuration.getFormat(mediaType), configuration,request);
+                configuration.getFormat(mediaType), configuration, request);
         root.setSystemInfo(collectionInfo);
       }
 
@@ -137,10 +128,10 @@ public class CapabilitiesApiController {
 
       configuration.getFormats(Operations.root).forEach(f ->
           root.addLinksItem(new OgcApiLink()
-          .href(requestBaseUrl + "collections?f=" + f.getName())
-          .type("Catalogue collections")
-          .rel("self")
-          .type(f.getMimeType())));
+              .href(requestBaseUrl + "collections?f=" + f.getName())
+              .type("Catalogue collections")
+              .rel("self")
+              .type(f.getMimeType())));
 
       addOpenApiLinks(root, requestBaseUrl);
       addConformanceLinks(root, requestBaseUrl);
@@ -185,7 +176,6 @@ public class CapabilitiesApiController {
         .rel(CONFORMANCE_REL)
         .type(MediaType.TEXT_HTML_VALUE));
 
-
     root.addLinksItem(new OgcApiLink()
         .href(baseUrl + CONFORMANCE_REL + "?f=json")
         .title(title + " as JSON")
@@ -226,7 +216,7 @@ public class CapabilitiesApiController {
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/html",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/json",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/sorting"
-        ));
+    ));
 
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
       return ResponseEntity.ok(conformance);
@@ -248,7 +238,6 @@ public class CapabilitiesApiController {
 
   /**
    * Collections information end-point.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Collections available from this API.",
@@ -282,7 +271,7 @@ public class CapabilitiesApiController {
       sources.forEach(s -> content.addCollectionsItem(
           collectionInfoBuilder.buildFromSource(
               s, language, requestBaseUrl, configuration.getFormat(mediaType),
-              configuration,request)));
+              configuration, request)));
 
       // TODO: Accept format parameter.
       List<OgcApiLink> linkList = LinksItemsBuilder.build(

@@ -26,6 +26,14 @@ public class Root {
 
   /**
    * This is the collection info for the main-portal.
+   *
+   * <p>THIS IS NON-STANDARD (not in the ogcapi spec)!
+   *
+   * <p>The landing page JSON also includes a new property systemInfo which contains a catalog.yaml
+   * object in it.
+   * I'm not sure if this is allowed in the spec, but it allows for more metadata about the
+   * entire GN system ("ogcapi-records" server). This is useful for making a nicer landing page
+   * (cf. pygeoapi's landing page).
    */
   @JsonProperty("systemInfo")
   @JacksonXmlProperty(localName = "systemInfo")

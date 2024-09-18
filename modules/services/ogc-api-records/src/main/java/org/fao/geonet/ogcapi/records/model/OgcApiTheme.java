@@ -18,14 +18,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import org.springframework.util.StringUtils;
 
 /**
- *   cf https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/theme.yaml
+ * cf https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/theme.yaml
  *
- *   <p>This is the ogcapi "theme" object model.
+ * <p>This is the ogcapi "theme" object model.
  *
- *   <p>From ogcapi-records spec:
+ * <p>From ogcapi-records spec:
  *
- *   <p>Themes are concepts associated with the resource(s) that a record describes taken from
- *   one or more formal knowledge organization systems or schemes.
+ * <p>Themes are concepts associated with the resource(s) that a record describes taken from
+ * one or more formal knowledge organization systems or schemes.
  */
 public class OgcApiTheme {
 

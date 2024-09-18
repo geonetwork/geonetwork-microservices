@@ -8,6 +8,7 @@ package org.fao.geonet.ogcapi.records.util;
 import java.util.Map;
 
 public class JsonUtils {
+
   /**
    * todo - be language aware (send in desired language).  Move to utility class.
    *

@@ -17,6 +17,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/linkBase.yaml
  *
+ * <p>also see: https://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/link.yaml
+ *
+ * <p>NOTE:
+ *     These specs aren't really consistent.  The first:
+ *        a) doesn't have a href (this is obviously a mistake).
+ *        b) has a created/updated field (not in the other spec).  Recommend not using this.
+ *
+ *  <p>Note - there is a length field, but its value isn't defined. Recommend not using this.
+ *
  * <p>Represents a link.
  */
 @XmlRootElement(name = "link")
@@ -60,6 +69,8 @@ public class OgcApiLink {
 
   /**
    * undocumented in spec.
+   *
+   * <p>This probably shouldn't be used because its not defined.
    */
   @JsonInclude(Include.NON_DEFAULT)
   @XmlElementWrapper(name = "length")
@@ -68,6 +79,8 @@ public class OgcApiLink {
 
   /**
    * Date of creation of the resource pointed to by the link. format: date-time
+   *
+   * <p>This is only is one of the link specifications.  This probably shouldn't be used.
    */
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "created")
@@ -77,6 +90,8 @@ public class OgcApiLink {
   /**
    * description: Most recent date on which the resource pointed to by the link was changed. format:
    * date-time
+   *
+   * <p>This is only is one of the link specifications.  This probably shouldn't be used.
    */
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "updated")

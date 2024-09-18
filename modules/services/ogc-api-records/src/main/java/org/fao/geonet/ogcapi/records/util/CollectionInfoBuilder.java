@@ -35,21 +35,12 @@ public class CollectionInfoBuilder {
 
   @Autowired
   RecordService recordService;
-
-  @Autowired
-  private SourceRepository sourceRepository;
-
-  @Autowired
-  private SettingRepository settingRepository;
-
   @Autowired
   ElasticIndexJson2CollectionInfo elasticIndexJson2CollectionInfo;
 
   public CollectionInfoBuilder() {
 
   }
-
-
 
 
   /**
@@ -117,7 +108,6 @@ public class CollectionInfoBuilder {
 
     return collectionInfo;
   }
-
 
 
 }

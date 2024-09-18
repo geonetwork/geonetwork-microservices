@@ -15,8 +15,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  * cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/theme.yaml
  *
  * <p>Entity/concept identifiers from this knowledge
- *       system. it is recommended that a resolvable URI be used for
- *       each entity/concept identifier.
+ * system. it is recommended that a resolvable URI be used for each entity/concept identifier.
  */
 public class OgcApiConcept {
 

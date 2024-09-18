@@ -21,6 +21,7 @@ import org.fao.geonet.ogcapi.records.model.OgcApiContact;
 import org.fao.geonet.ogcapi.records.model.OgcApiExtent;
 import org.fao.geonet.ogcapi.records.model.OgcApiLanguage;
 import org.fao.geonet.ogcapi.records.model.OgcApiLink;
+import org.fao.geonet.ogcapi.records.model.OgcApiSchema;
 import org.fao.geonet.ogcapi.records.model.OgcApiTheme;
 
 /**
@@ -33,52 +34,70 @@ import org.fao.geonet.ogcapi.records.model.OgcApiTheme;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionInfo {
 
+  /**
+   * Fixed value of "Catalog".
+   */
   //required cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
   @JsonProperty("type")
   @JacksonXmlProperty(localName = "type")
   private String type = "catalog";
 
-  //cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
+  // cf. https://github.com/opengeospatial/ogcapi-records/blob/master/core/openapi/schemas/catalog.yaml
   // NOTE: spec says this should be "record" or ["record","catalog"].
+  /**Fixed value of "record", "catalog" or both.*/
   @JsonProperty("itemType")
   @JacksonXmlProperty(localName = "itemType")
   private String itemType = "record";
 
 
-  /**The identifier of the catalog.*/
+  /**
+   * The identifier of the catalog.
+   */
   @JsonProperty("id")
   @JacksonXmlProperty(localName = "id")
   private String id;
 
-  /**A human-readable name given to the resource.*/
+  /**
+   * A human-readable name given to the resource.
+   */
   @JsonProperty("title")
   @JacksonXmlProperty(localName = "title")
   private String title;
 
-  /**A free-text account of the resource.*/
+  /**
+   * A free-text account of the resource.
+   */
   @JsonProperty("description")
   @JacksonXmlProperty(localName = "description")
   private String description;
 
-  /**links for this object.*/
+  /**
+   * links for this object.
+   */
   @JsonProperty("links")
   @JacksonXmlProperty(localName = "links")
   @JsonInclude(Include.NON_EMPTY)
   private List<OgcApiLink> links = new ArrayList<>();
 
-  /**The spatiotemporal coverage of this catalog.*/
+  /**
+   * The spatiotemporal coverage of this catalog.
+   */
   @JsonProperty("extent")
   @JacksonXmlProperty(localName = "extent")
   private OgcApiExtent extent;
 
-  /**The list of supported coordinate reference systems.*/
+  /**
+   * The list of supported coordinate reference systems.
+   */
   @JsonProperty("crs")
   @JacksonXmlProperty(localName = "crs")
   @JsonInclude(Include.NON_EMPTY)
   private List<String> crs = null;
 
-  /** A list of contacts qualified by their role(s) in association
-   * to the record or the resource described by the record.     */
+  /**
+   * A list of contacts qualified by their role(s) in association to the record or the resource
+   * described by the record.
+   */
   @JsonProperty("contacts")
   @JacksonXmlProperty(localName = "contacts")
   @JsonInclude(Include.NON_EMPTY)
@@ -170,6 +189,76 @@ public class CollectionInfo {
   @JsonInclude(Include.NON_EMPTY)
   private List<String> defaultSortOrder = null;
 
+
+  //--------------------------------------------------------------------------
+  // these are properties in the written spec, but not in the .yaml definition
+  //--------------------------------------------------------------------------
+
+  /**
+   * The extensions/conformance classes used in this catalog object.
+   */
+  @JsonProperty("conformsTo")
+  @JacksonXmlProperty(localName = "conformsTo")
+  @JsonInclude(Include.NON_EMPTY)
+  private String conformsTo = null;
+
+  /**The list of languages in which records from the collection can be represented.*/
+  @JsonProperty("recordLanguages")
+  @JacksonXmlProperty(localName = "recordLanguages")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<String> recordLanguages = null;
+
+
+  /**
+   * The name of the array property in the catalog used to encode records in-line.
+   * The default value is records.
+   */
+  @JsonProperty("recordsArrayName")
+  @JacksonXmlProperty(localName = "recordsArrayName")
+  @JsonInclude(Include.NON_EMPTY)
+  private String recordsArrayName = null;
+
+  /**A list of schemes related to this catalog.*/
+  @JsonProperty("schemes")
+  @JacksonXmlProperty(localName = "schemes")
+  @JsonInclude(Include.NON_EMPTY)
+  private List<OgcApiSchema> schemes = null;
+
+
+  //--------------------------------------------------------------------------
+
+
+  public String getConformsTo() {
+    return conformsTo;
+  }
+
+  public void setConformsTo(String conformsTo) {
+    this.conformsTo = conformsTo;
+  }
+
+  public List<String> getRecordLanguages() {
+    return recordLanguages;
+  }
+
+  public void setRecordLanguages(List<String> recordLanguages) {
+    this.recordLanguages = recordLanguages;
+  }
+
+  public String getRecordsArrayName() {
+    return recordsArrayName;
+  }
+
+  public void setRecordsArrayName(String recordsArrayName) {
+    this.recordsArrayName = recordsArrayName;
+  }
+
+  public List<OgcApiSchema> getSchemes() {
+    return schemes;
+  }
+
+  public void setSchemes(List<OgcApiSchema> schemes) {
+    this.schemes = schemes;
+  }
 
   public List<String> getDefaultSortOrder() {
     return defaultSortOrder;

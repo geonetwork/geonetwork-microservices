@@ -67,21 +67,16 @@ public class CollectionApiController {
   @Autowired
   @Qualifier("xsltViewResolver")
   ViewResolver viewResolver;
-
-  @Autowired
-  private CollectionService collectionService;
-
   @Autowired
   MessageSource messages;
-
-  @Autowired
-  private SearchConfiguration configuration;
-
   @Autowired
   MediaTypeUtil mediaTypeUtil;
-
   @Autowired
   CollectionInfoBuilder collectionInfoBuilder;
+  @Autowired
+  private CollectionService collectionService;
+  @Autowired
+  private SearchConfiguration configuration;
 
   /**
    * Describe a collection.
@@ -136,7 +131,7 @@ public class CollectionApiController {
 
         CollectionInfo collectionInfo = collectionInfoBuilder
             .buildFromSource(source, language, requestBaseUrl,
-                configuration.getFormat(mediaType), configuration,request);
+                configuration.getFormat(mediaType), configuration, request);
 
         return ResponseEntity.ok(collectionInfo);
 
