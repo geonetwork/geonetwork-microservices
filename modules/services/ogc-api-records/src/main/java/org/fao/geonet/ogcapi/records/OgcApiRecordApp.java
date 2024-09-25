@@ -31,6 +31,10 @@ public class OgcApiRecordApp {
   }
 
 
+  /**
+   * Configure CORS to allow all connections.
+   * @return CORS configuration.
+   */
   @Bean
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {

@@ -109,18 +109,17 @@ public class CollectionInfoBuilder {
     linkList.forEach(collectionInfo::addLinksItem);
 
 
-      var gnbase = geonetworkUrl;
-      if (!gnbase.endsWith("/")) {
-        gnbase += "/";
-      }
-      //assume its a png
-      var url = URI.create(gnbase).resolve("images/logos/"+source.getUuid()+".png");
-      //var imgType = source.getLogo().substring(source.getLogo().lastIndexOf(".")+1).toLowerCase();
-      var link = new OgcApiLink();
-      link.setHref(url.toString());
-      link.setRel("icon");
-      link.setType("image/png");
-      collectionInfo.addLinksItem(link);
+    var gnbase = geonetworkUrl;
+    if (!gnbase.endsWith("/")) {
+      gnbase += "/";
+    }
+    //assume its a png
+    var url = URI.create(gnbase).resolve("images/logos/" + source.getUuid() + ".png");
+    var link = new OgcApiLink();
+    link.setHref(url.toString());
+    link.setRel("icon");
+    link.setType("image/png");
+    collectionInfo.addLinksItem(link);
 
 
     var linkedServiceRecord =
