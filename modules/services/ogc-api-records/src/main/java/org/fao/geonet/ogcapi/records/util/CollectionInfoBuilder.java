@@ -26,17 +26,24 @@ import org.fao.geonet.ogcapi.records.model.OgcApiSpatialExtent;
 import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.repository.SettingRepository;
 import org.fao.geonet.repository.SourceRepository;
+import org.fao.geonet.view.ViewUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class CollectionInfoBuilder {
 
+  @Value("${gn.legacy.url}")
+  String geonetworkUrl;
+
   @Autowired
   RecordService recordService;
   @Autowired
   ElasticIndexJson2CollectionInfo elasticIndexJson2CollectionInfo;
+
 
   public CollectionInfoBuilder() {
 
@@ -100,6 +107,21 @@ public class CollectionInfoBuilder {
     List<OgcApiLink> linkList = LinksItemsBuilder.build(
         format, collectionUri.toString(), language, configuration);
     linkList.forEach(collectionInfo::addLinksItem);
+
+
+      var gnbase = geonetworkUrl;
+      if (!gnbase.endsWith("/")) {
+        gnbase += "/";
+      }
+      //assume its a png
+      var url = URI.create(gnbase).resolve("images/logos/"+source.getUuid()+".png");
+      //var imgType = source.getLogo().substring(source.getLogo().lastIndexOf(".")+1).toLowerCase();
+      var link = new OgcApiLink();
+      link.setHref(url.toString());
+      link.setRel("icon");
+      link.setType("image/png");
+      collectionInfo.addLinksItem(link);
+
 
     var linkedServiceRecord =
         recordService.getLinkedServiceRecord(request, source);

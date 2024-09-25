@@ -118,6 +118,15 @@ public class CapabilitiesApiController {
         CollectionInfo collectionInfo = collectionInfoBuilder
             .buildFromSource(source, language, requestBaseUrl,
                 configuration.getFormat(mediaType), configuration, request);
+        if (collectionInfo != null) {
+          //put title and description in the main obj
+          if (StringUtils.hasText(collectionInfo.getTitle())) {
+            root.setTitle(collectionInfo.getTitle());
+          }
+          if (StringUtils.hasText(collectionInfo.getDescription())) {
+            root.setDescription(collectionInfo.getDescription());
+          }
+        }
         root.setSystemInfo(collectionInfo);
       }
 
