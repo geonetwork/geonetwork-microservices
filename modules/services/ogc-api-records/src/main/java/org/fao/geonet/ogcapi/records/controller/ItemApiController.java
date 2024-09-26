@@ -575,6 +575,7 @@ public class ItemApiController {
     String collectionFilter = collectionService.retrieveCollectionFilter(source, false);
     String query = recordsEsQueryBuilder
         .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby, null);
+
     EsSearchResults results = new EsSearchResults();
     try {
       results = proxy
