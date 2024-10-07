@@ -28,4 +28,7 @@ public class Link {
   private String group;
   private String mimeType;
   private String nilReason;
+
+  private String hash;
+  private String idx;
 }
