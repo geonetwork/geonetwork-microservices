@@ -40,7 +40,7 @@ public class QueryablesService {
       var result = objectMapper.readValue(text, JsonSchema.class);
       return result;
     } catch (IOException e) {
-      e.printStackTrace();
+      log.debug("problem reading in Queryables - is it mal-formed?",e);
     }
 
     return null;

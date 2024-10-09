@@ -206,7 +206,7 @@ public class QueryToElastic {
           .relation(ShapeRelation.getRelationByName("intersects"));
       return geoQuery;
     } catch (IOException e) {
-      e.printStackTrace();
+      log.debug("problem constructing geoQuery - ignoring it!",e);
     }
     return null;
   }
