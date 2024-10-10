@@ -114,7 +114,7 @@ public class ElasticIndexJson2CollectionInfo {
 
   }
 
-  
+
 
   //its a bit unclear what to do here - there's a big difference between MD record,
   // Elastic Index JSON versus what's expected in the ogcapi license field.  We do the simple
