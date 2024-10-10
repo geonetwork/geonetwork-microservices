@@ -33,9 +33,9 @@ public class ElasticIndexJson2CollectionInfo {
   /**
    * inject the "extra" info from the LinkedServiceRecord into the CollectionInfo.
    *
-   * @param collectionInfo collection metadata we've gathered so far (usually not much)
-   * @param linkedServiceRecord   Parsed JSON map of the linked Service record (GN's DB "source"
-   *                       "serviceRecord")
+   * @param collectionInfo      collection metadata we've gathered so far (usually not much)
+   * @param linkedServiceRecord Parsed JSON map of the linked Service record (GN's DB "source"
+   *                            "serviceRecord")
    */
   public void injectLinkedServiceRecordInfo(CollectionInfo collectionInfo,
       Map<String, Object> linkedServiceRecord) {
@@ -64,119 +64,167 @@ public class ElasticIndexJson2CollectionInfo {
       return;
     }
 
-    handleTitle(collectionInfo, indexRecord);
-    handleDescription(collectionInfo, indexRecord);
+    set(getTitle(collectionInfo, indexRecord), collectionInfo, "title");
+    set(getDescription(collectionInfo, indexRecord), collectionInfo, "description");
 
-    handleContacts(collectionInfo, indexRecord);
+    set(getContacts(collectionInfo, indexRecord), collectionInfo, "contacts");
 
-    OgcApiSpatialExtent spatialExtent = handleSpatialExtent(indexRecord);
-    OgcApiTemporalExtent temporalExtent = handleTemporalExtent(indexRecord);
-    handleExtent(collectionInfo, spatialExtent, temporalExtent);
+    OgcApiSpatialExtent spatialExtent = getSpatialExtent(indexRecord);
+    OgcApiTemporalExtent temporalExtent = getTemporalExtent(indexRecord);
+    OgcApiExtent extent = new OgcApiExtent(spatialExtent, temporalExtent);
+    if (spatialExtent != null || temporalExtent != null) {
+      set(collectionInfo, extent, "extent");
+    }
 
-    handleCrs(collectionInfo, indexRecord);
+    set(getCrs(collectionInfo, indexRecord), collectionInfo, "crs");
+    set(getCreateDate(collectionInfo, indexRecord), collectionInfo, "created");
+    set(getChangeDate(collectionInfo, indexRecord), collectionInfo, "updated");
+    set(getTags(collectionInfo, indexRecord), collectionInfo, "keywords");
 
-    handleCreateDate(collectionInfo, indexRecord);
-    handleChangeDate(collectionInfo, indexRecord);
+    set(getLanguage(collectionInfo, indexRecord), collectionInfo, "language");
+    set(getOtherLangs(collectionInfo, indexRecord), collectionInfo, "languages");
 
-    handleTags(collectionInfo, indexRecord);
+    set(getThemes(collectionInfo, indexRecord), collectionInfo, "themes");
 
-    handleLanguage(collectionInfo, indexRecord);
-    handleOtherLangs(collectionInfo, indexRecord);
+    set(getLicenses(collectionInfo, indexRecord), collectionInfo, "license");
+    set(getRights(collectionInfo, indexRecord), collectionInfo, "rights");
+  }
 
-    handleThemes(collectionInfo, indexRecord);
 
-    handleLicenses(collectionInfo, indexRecord);
+  /**
+   * use reflection to set a value. We do this, so we can handle all sorts of different object (i.e.
+   * geojson) and parts of the various ogcapi specifications (not just record).
+   *
+   * @param val          object value
+   * @param mainObject   object to set the property on
+   * @param propertyName name of the property
+   */
+  public void set(Object val, Object mainObject, String propertyName) {
+    if (val == null || mainObject == null || !StringUtils.hasText(propertyName)) {
+      return; //nothing to do
+    }
+    //see if there is a field of that name (should probably cache)
+    try {
+      var field = mainObject.getClass().getDeclaredField(propertyName);
+      field.setAccessible(true);
+      field.set(mainObject, val);
+    } catch (Exception e) {
+      return;
+    }
+
+  }
+
+  
+
+  //its a bit unclear what to do here - there's a big difference between MD record,
+  // Elastic Index JSON versus what's expected in the ogcapi license field.  We do the simple
+  // action
+  private String getRights(CollectionInfo collectionInfo,
+      IndexRecord indexRecord) {
+    var myLiceseList = indexRecord.getMdLegalConstraintsUseLimitationObject();
+    if (myLiceseList != null && !myLiceseList.isEmpty()) {
+      if (myLiceseList.size() > 1) {
+        var license2 = getLangString(myLiceseList.get(1));
+        return license2;
+      }
+    }
+    return null;
   }
 
 
   //its a bit unclear what to do here - there's a big difference between MD record,
   // Elastic Index JSON versus what's expected in the ogcapi license field.  We do the simple
   // action
-  private void handleLicenses(CollectionInfo collectionInfo,
+  private String getLicenses(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
-    var myLicense = indexRecord.getMdLegalConstraintsUseLimitationObject();
-    if (myLicense != null && myLicense instanceof List) {
-      var myLiceseList = (List) myLicense;
+    var myLiceseList = indexRecord.getMdLegalConstraintsUseLimitationObject();
+    if (myLiceseList != null && !myLiceseList.isEmpty()) {
       if (myLiceseList.size() > 0) {
         var license = getLangString(myLiceseList.get(0));
-        collectionInfo.setLicense(license);
+        return license;
       }
-      if (myLiceseList.size() > 1) {
-        var license2 = getLangString(myLiceseList.get(1));
-        collectionInfo.setRights(license2);
-      }
+
     }
+    return null;
   }
 
   //process allKeywords to get themes
-  private void handleThemes(CollectionInfo collectionInfo,
+  private List<OgcApiTheme> getThemes(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var myThemeKeywords = indexRecord.getAllKeywords();
-    collectionInfo.setThemes(OgcApiTheme.parseElasticIndex(myThemeKeywords));
+    return OgcApiTheme.parseElasticIndex(myThemeKeywords);
   }
 
   //process otherLanguage to get the other languages
-  private void handleOtherLangs(CollectionInfo collectionInfo,
+  private ArrayList<OgcApiLanguage> getOtherLangs(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
-    var myOtherLangs = indexRecord.getOtherLanguage();
-    if (myOtherLangs != null) {
-      var langs = myOtherLangs;
-      collectionInfo.setLanguages(new ArrayList<>());
+    var langs = indexRecord.getOtherLanguage();
+    if (langs != null) {
+      var result = new ArrayList<OgcApiLanguage>();
       for (var lang : langs) {
-        collectionInfo.getLanguages().add(new OgcApiLanguage(lang));
+        result.add(new OgcApiLanguage(lang));
       }
+      return result;
     }
+    return null;
   }
 
   //process main language
-  private void handleLanguage(CollectionInfo collectionInfo,
+  private OgcApiLanguage getLanguage(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var myMainLang = indexRecord.getMainLanguage();
     if (myMainLang != null && StringUtils.hasText(myMainLang)) {
-      collectionInfo.setLanguage(new OgcApiLanguage(myMainLang));
+      return new OgcApiLanguage(myMainLang);
     }
+    return null;
   }
 
   //handle the "tags" to create keywords
-  private void handleTags(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+  private ArrayList<String> getTags(CollectionInfo collectionInfo, IndexRecord indexRecord) {
     var myTags = indexRecord.getTag();
     if (myTags != null) {
+      var result = new ArrayList<String>();
       var tags = myTags;
       collectionInfo.setKeywords(new ArrayList<>());
       for (var tag : tags) {
-        collectionInfo.getKeywords().add(getLangString(tag));
+        result.add(getLangString(tag));
       }
+      return result;
     }
+    return null;
   }
 
   //process the change date
-  private void handleChangeDate(CollectionInfo collectionInfo,
+  private String getChangeDate(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var updateDate = indexRecord.getChangeDate();
     if (updateDate != null && StringUtils.hasText(updateDate)) {
-      collectionInfo.setUpdated(updateDate);
+      return updateDate;
     }
+    return null;
   }
 
   //process the creation date
-  private void handleCreateDate(CollectionInfo collectionInfo,
+  private String getCreateDate(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var createDate = indexRecord.getCreateDate();
     if (createDate != null && StringUtils.hasText(createDate)) {
-      collectionInfo.setCreated(createDate);
+      return createDate;
     }
+    return null;
   }
 
   //process CRS
-  private void handleCrs(CollectionInfo collectionInfo, IndexRecord indexRecord) {
-    var myCrss = indexRecord.getCoordinateSystem();
-    if (myCrss != null) {
-      var crss = myCrss;
-      collectionInfo.setCrs(new ArrayList<>());
+  private ArrayList<String> getCrs(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+    var crss = indexRecord.getCoordinateSystem();
+    var result = new ArrayList<String>();
+    if (crss != null) {
       for (var crs : crss) {
-        collectionInfo.getCrs().add(crs);
+        result.add(crs);
       }
+      return result;
     }
+    return null;
   }
 
   //combine spatial and temporal extent
@@ -189,7 +237,7 @@ public class ElasticIndexJson2CollectionInfo {
   }
 
   //process Temporal Extent
-  private OgcApiTemporalExtent handleTemporalExtent(IndexRecord indexRecord) {
+  private OgcApiTemporalExtent getTemporalExtent(IndexRecord indexRecord) {
     OgcApiTemporalExtent temporalExtent = null;
     var myTemporalExtent = indexRecord.getResourceTemporalExtentDateRange();
     if (myTemporalExtent != null || myTemporalExtent.isEmpty()) {
@@ -202,7 +250,7 @@ public class ElasticIndexJson2CollectionInfo {
   }
 
   //process the spatial extent
-  private OgcApiSpatialExtent handleSpatialExtent(IndexRecord indexRecord) {
+  private OgcApiSpatialExtent getSpatialExtent(IndexRecord indexRecord) {
     OgcApiSpatialExtent spatialExtent = null;
     var mySpatialExtent = indexRecord.getGeometries();
     if (mySpatialExtent != null && !mySpatialExtent.isEmpty()) {
@@ -219,33 +267,32 @@ public class ElasticIndexJson2CollectionInfo {
   }
 
   //process contracts
-  private void handleContacts(CollectionInfo collectionInfo,
+  private List<OgcApiContact> getContacts(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var contacts = indexRecord.getContact();
     if (contacts != null && !contacts.isEmpty()) {
-      collectionInfo.setContacts(new ArrayList<>());
+      var result = new ArrayList<OgcApiContact>();
+
       for (var contactInfo : contacts) {
         var contact = OgcApiContact.fromIndexMap(contactInfo);
-        collectionInfo.getContacts().add(contact);
+        result.add(contact);
       }
+      return result;
     }
+    return null;
   }
 
   //override description (abstract) from attached ServiceRecord
-  private void handleDescription(CollectionInfo collectionInfo,
+  private String getDescription(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
     var desc = getLangString(indexRecord.getResourceAbstract());
-    if (desc != null) {
-      collectionInfo.setDescription(desc);
-    }
+    return desc;
   }
 
 
   //override title from attached ServiceRecord
-  private void handleTitle(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+  private String getTitle(CollectionInfo collectionInfo, IndexRecord indexRecord) {
     var title = getLangString(indexRecord.getResourceTitle());
-    if (title != null) {
-      collectionInfo.setTitle(title);
-    }
+    return title;
   }
 }
