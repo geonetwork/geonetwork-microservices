@@ -6,6 +6,7 @@
 package org.fao.geonet.index.model.gn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -46,7 +47,7 @@ public class Theme {
   public String title;
   public String theme;
   public String link;
-  public List<Map<String, String>> keywords;
-  public Map<String,String> multilingualTitle;
+  public List<HashMap<String, String>> keywords;
+  public HashMap<String,String> multilingualTitle;
 
 }

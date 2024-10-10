@@ -73,7 +73,7 @@ public class ElasticIndexJson2CollectionInfo {
     OgcApiTemporalExtent temporalExtent = getTemporalExtent(indexRecord);
     OgcApiExtent extent = new OgcApiExtent(spatialExtent, temporalExtent);
     if (spatialExtent != null || temporalExtent != null) {
-      set(collectionInfo, extent, "extent");
+      set(extent,collectionInfo, "extent");
     }
 
     set(getCrs(collectionInfo, indexRecord), collectionInfo, "crs");
