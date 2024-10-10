@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.fao.geonet.index.model.gn.Contact;
 import org.fao.geonet.ogcapi.records.util.JsonUtils;
 import org.springframework.util.StringUtils;
 
@@ -130,6 +131,63 @@ public class OgcApiContact {
   private List<String> roles = new ArrayList<>();
 
   public OgcApiContact() {
+  }
+
+
+  /**
+   * create from the Elastic Index JSON node for the contact.
+   *
+   * @param contactInfo from parsed Elastic Index for a single contact
+   * @return parsed contact
+   */
+  public static OgcApiContact fromIndexMap(Contact contactInfo) {
+    if (contactInfo == null) {
+      return null;
+    }
+    OgcApiContact result = new OgcApiContact();
+    if (StringUtils.hasText(contactInfo.getRole())) {
+      result.getRoles().add(contactInfo.getRole());
+    }
+    if (contactInfo.getOrganisation() != null && !contactInfo.getOrganisation().isEmpty()) {
+      result.setOrganization(
+          JsonUtils.getLangString(contactInfo.getOrganisation()));
+    }
+    if (StringUtils.hasText(contactInfo.getEmail())) {
+      result.getEmails().add(new OgcApiEmail(contactInfo.getEmail()));
+    }
+
+    if (StringUtils.hasText(contactInfo.getPosition())) {
+      result.setPosition(contactInfo.getPosition());
+    }
+
+    if (StringUtils.hasText(contactInfo.getIndividual())) {
+      result.setName(contactInfo.getIndividual());
+    }
+
+    if (StringUtils.hasText(contactInfo.getPosition())) {
+      result.setPosition(contactInfo.getPosition());
+    }
+
+    if (StringUtils.hasText(contactInfo.getPhone())) {
+      result.getPhones().add(new OgcApiPhone(contactInfo.getPhone()));
+    }
+
+    if (StringUtils.hasText(contactInfo.getAddress())) {
+      result.getAddresses().add(new OgcApiAddress(contactInfo.getAddress()));
+    }
+
+    if (StringUtils.hasText(contactInfo.getLogo())) {
+      var logo = new OgcApiLink(contactInfo.getLogo(), "image/*");
+      logo.setRel("icon");
+      result.setLogo(logo);
+    }
+
+    if (StringUtils.hasText(contactInfo.getWebsite())) {
+      var website = new OgcApiLink(contactInfo.getWebsite(), "text/html");
+      result.getLinks().add(website);
+    }
+
+    return result;
   }
 
   /**

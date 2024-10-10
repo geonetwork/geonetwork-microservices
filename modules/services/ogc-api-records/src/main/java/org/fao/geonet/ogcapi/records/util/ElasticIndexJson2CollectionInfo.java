@@ -2,10 +2,15 @@ package org.fao.geonet.ogcapi.records.util;
 
 import static org.fao.geonet.ogcapi.records.util.JsonUtils.getLangString;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.jackson.map.type.TypeFactory;
+import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.model.OgcApiContact;
 import org.fao.geonet.ogcapi.records.model.OgcApiExtent;
@@ -17,45 +22,70 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 
+/**
+ * Takes an  Elastic Index Json and injects it inside a collectioninfo.
+ */
 @Service
 @Slf4j(topic = "org.fao.geonet.ogcapi.records.util")
 public class ElasticIndexJson2CollectionInfo {
 
+
   /**
    * inject the "extra" info from the LinkedServiceRecord into the CollectionInfo.
    *
-   * @param collectionInfo      collection metadata we've gathered so far (usually not much)
-   * @param linkedServiceRecord JSON of the linked Service record (GN's DB "source"
-   *                            "serviceRecord")
+   * @param collectionInfo collection metadata we've gathered so far (usually not much)
+   * @param linkedServiceRecord   Parsed JSON map of the linked Service record (GN's DB "source"
+   *                       "serviceRecord")
    */
   public void injectLinkedServiceRecordInfo(CollectionInfo collectionInfo,
       Map<String, Object> linkedServiceRecord) {
     if (linkedServiceRecord == null) {
       return;
     }
+    ObjectMapper objectMapper = org.fao.geonet.index.JsonUtils.getObjectMapper();
 
-    handleTitle(collectionInfo, linkedServiceRecord);
-    handleDescription(collectionInfo, linkedServiceRecord);
+    IndexRecord indexRecord = objectMapper.convertValue(
+        linkedServiceRecord,
+        IndexRecord.class);
 
-    handleContacts(collectionInfo, linkedServiceRecord);
+    injectLinkedServiceRecordInfo(collectionInfo, indexRecord);
+  }
 
-    OgcApiSpatialExtent spatialExtent = handleSpatialExtent(linkedServiceRecord);
-    OgcApiTemporalExtent temporalExtent = handleTemporalExtent(linkedServiceRecord);
+  /**
+   * inject the "extra" info from the LinkedServiceRecord into the CollectionInfo.
+   *
+   * @param collectionInfo collection metadata we've gathered so far (usually not much)
+   * @param indexRecord    Parsed JSON of the linked Service record (GN's DB "source"
+   *                       "serviceRecord")
+   */
+  public void injectLinkedServiceRecordInfo(CollectionInfo collectionInfo,
+      IndexRecord indexRecord) {
+    if (indexRecord == null) {
+      return;
+    }
+
+    handleTitle(collectionInfo, indexRecord);
+    handleDescription(collectionInfo, indexRecord);
+
+    handleContacts(collectionInfo, indexRecord);
+
+    OgcApiSpatialExtent spatialExtent = handleSpatialExtent(indexRecord);
+    OgcApiTemporalExtent temporalExtent = handleTemporalExtent(indexRecord);
     handleExtent(collectionInfo, spatialExtent, temporalExtent);
 
-    handleCrs(collectionInfo, linkedServiceRecord);
+    handleCrs(collectionInfo, indexRecord);
 
-    handleCreateDate(collectionInfo, linkedServiceRecord);
-    handleChangeDate(collectionInfo, linkedServiceRecord);
+    handleCreateDate(collectionInfo, indexRecord);
+    handleChangeDate(collectionInfo, indexRecord);
 
-    handleTags(collectionInfo, linkedServiceRecord);
+    handleTags(collectionInfo, indexRecord);
 
-    handleLanguage(collectionInfo, linkedServiceRecord);
-    handleOtherLangs(collectionInfo, linkedServiceRecord);
+    handleLanguage(collectionInfo, indexRecord);
+    handleOtherLangs(collectionInfo, indexRecord);
 
-    handleThemes(collectionInfo, linkedServiceRecord);
+    handleThemes(collectionInfo, indexRecord);
 
-    handleLicenses(collectionInfo, linkedServiceRecord);
+    handleLicenses(collectionInfo, indexRecord);
   }
 
 
@@ -63,8 +93,8 @@ public class ElasticIndexJson2CollectionInfo {
   // Elastic Index JSON versus what's expected in the ogcapi license field.  We do the simple
   // action
   private void handleLicenses(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var myLicense = linkedServiceRecord.get("MD_LegalConstraintsUseLimitationObject");
+      IndexRecord indexRecord) {
+    var myLicense = indexRecord.getMdLegalConstraintsUseLimitationObject();
     if (myLicense != null && myLicense instanceof List) {
       var myLiceseList = (List) myLicense;
       if (myLiceseList.size() > 0) {
@@ -80,38 +110,38 @@ public class ElasticIndexJson2CollectionInfo {
 
   //process allKeywords to get themes
   private void handleThemes(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var myThemeKeywords = linkedServiceRecord.get("allKeywords");
-    collectionInfo.setThemes(OgcApiTheme.parseElasticIndex((Map<String, Object>) myThemeKeywords));
+      IndexRecord indexRecord) {
+    var myThemeKeywords = indexRecord.getAllKeywords();
+    collectionInfo.setThemes(OgcApiTheme.parseElasticIndex(myThemeKeywords));
   }
 
   //process otherLanguage to get the other languages
   private void handleOtherLangs(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var myOtherLangs = linkedServiceRecord.get("otherLanguage");
-    if (myOtherLangs != null && myOtherLangs instanceof List) {
-      var langs = (List) myOtherLangs;
+      IndexRecord indexRecord) {
+    var myOtherLangs = indexRecord.getOtherLanguage();
+    if (myOtherLangs != null) {
+      var langs = myOtherLangs;
       collectionInfo.setLanguages(new ArrayList<>());
       for (var lang : langs) {
-        collectionInfo.getLanguages().add(new OgcApiLanguage(lang.toString()));
+        collectionInfo.getLanguages().add(new OgcApiLanguage(lang));
       }
     }
   }
 
   //process main language
   private void handleLanguage(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var myMainLang = linkedServiceRecord.get("mainLanguage");
-    if (myMainLang != null && StringUtils.hasText(myMainLang.toString())) {
-      collectionInfo.setLanguage(new OgcApiLanguage(myMainLang.toString()));
+      IndexRecord indexRecord) {
+    var myMainLang = indexRecord.getMainLanguage();
+    if (myMainLang != null && StringUtils.hasText(myMainLang)) {
+      collectionInfo.setLanguage(new OgcApiLanguage(myMainLang));
     }
   }
 
   //handle the "tags" to create keywords
-  private void handleTags(CollectionInfo collectionInfo, Map<String, Object> linkedServiceRecord) {
-    var myTags = linkedServiceRecord.get("tag");
-    if (myTags != null && myTags instanceof List) {
-      var tags = (List) myTags;
+  private void handleTags(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+    var myTags = indexRecord.getTag();
+    if (myTags != null) {
+      var tags = myTags;
       collectionInfo.setKeywords(new ArrayList<>());
       for (var tag : tags) {
         collectionInfo.getKeywords().add(getLangString(tag));
@@ -121,30 +151,30 @@ public class ElasticIndexJson2CollectionInfo {
 
   //process the change date
   private void handleChangeDate(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var updateDate = linkedServiceRecord.get("changeDate");
-    if (updateDate != null && StringUtils.hasText(updateDate.toString())) {
-      collectionInfo.setUpdated(updateDate.toString());
+      IndexRecord indexRecord) {
+    var updateDate = indexRecord.getChangeDate();
+    if (updateDate != null && StringUtils.hasText(updateDate)) {
+      collectionInfo.setUpdated(updateDate);
     }
   }
 
   //process the creation date
   private void handleCreateDate(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var createDate = linkedServiceRecord.get("createDate");
-    if (createDate != null && StringUtils.hasText(createDate.toString())) {
-      collectionInfo.setCreated(createDate.toString());
+      IndexRecord indexRecord) {
+    var createDate = indexRecord.getCreateDate();
+    if (createDate != null && StringUtils.hasText(createDate)) {
+      collectionInfo.setCreated(createDate);
     }
   }
 
   //process CRS
-  private void handleCrs(CollectionInfo collectionInfo, Map<String, Object> linkedServiceRecord) {
-    var myCrss = linkedServiceRecord.get("coordinateSystem");
-    if (myCrss != null && myCrss instanceof List) {
-      var crss = (List) myCrss;
+  private void handleCrs(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+    var myCrss = indexRecord.getCoordinateSystem();
+    if (myCrss != null) {
+      var crss = myCrss;
       collectionInfo.setCrs(new ArrayList<>());
       for (var crs : crss) {
-        collectionInfo.getCrs().add(crs.toString());
+        collectionInfo.getCrs().add(crs);
       }
     }
   }
@@ -159,38 +189,43 @@ public class ElasticIndexJson2CollectionInfo {
   }
 
   //process Temporal Extent
-  private OgcApiTemporalExtent handleTemporalExtent(Map<String, Object> linkedServiceRecord) {
+  private OgcApiTemporalExtent handleTemporalExtent(IndexRecord indexRecord) {
     OgcApiTemporalExtent temporalExtent = null;
-    var myTemporalExtent = linkedServiceRecord.get("resourceTemporalDateRange");
-    if (myTemporalExtent != null && myTemporalExtent instanceof List) {
-      myTemporalExtent = ((List) myTemporalExtent).get(0);
-      temporalExtent = OgcApiTemporalExtent.fromGnIndexRecord(
-          (Map<String, Object>) myTemporalExtent);
+    var myTemporalExtent = indexRecord.getResourceTemporalExtentDateRange();
+    if (myTemporalExtent != null || myTemporalExtent.isEmpty()) {
+      myTemporalExtent = indexRecord.getResourceTemporalDateRange();
+    }
+    if (myTemporalExtent != null || myTemporalExtent.isEmpty()) {
+      temporalExtent = OgcApiTemporalExtent.fromGnIndexRecord(myTemporalExtent.get(0));
     }
     return temporalExtent;
   }
 
   //process the spatial extent
-  private OgcApiSpatialExtent handleSpatialExtent(Map<String, Object> linkedServiceRecord) {
+  private OgcApiSpatialExtent handleSpatialExtent(IndexRecord indexRecord) {
     OgcApiSpatialExtent spatialExtent = null;
-    var mySpatialExtent = linkedServiceRecord.get("geom");
-    if (mySpatialExtent != null
-        && mySpatialExtent instanceof List) {
-      mySpatialExtent = ((List) mySpatialExtent).get(0);
-      spatialExtent = OgcApiSpatialExtent.fromGnIndexRecord((Map<String, Object>) mySpatialExtent);
+    var mySpatialExtent = indexRecord.getGeometries();
+    if (mySpatialExtent != null && !mySpatialExtent.isEmpty()) {
+      Map<String, Object> map = null;
+      try {
+        map = new org.codehaus.jackson.map.ObjectMapper().readValue(mySpatialExtent.get(0),
+            TypeFactory.mapType(HashMap.class, String.class, Object.class));
+      } catch (IOException e) {
+        return null;
+      }
+      spatialExtent = OgcApiSpatialExtent.fromGnIndexRecord(map);
     }
     return spatialExtent;
   }
 
   //process contracts
   private void handleContacts(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var contacts = linkedServiceRecord.get("contact");
-    if (contacts != null && linkedServiceRecord.get("contact") instanceof List) {
-      var cs = (List) contacts;
+      IndexRecord indexRecord) {
+    var contacts = indexRecord.getContact();
+    if (contacts != null && !contacts.isEmpty()) {
       collectionInfo.setContacts(new ArrayList<>());
-      for (var contactMap : cs) {
-        var contact = OgcApiContact.fromIndexMap((Map<String, Object>) contactMap);
+      for (var contactInfo : contacts) {
+        var contact = OgcApiContact.fromIndexMap(contactInfo);
         collectionInfo.getContacts().add(contact);
       }
     }
@@ -198,8 +233,8 @@ public class ElasticIndexJson2CollectionInfo {
 
   //override description (abstract) from attached ServiceRecord
   private void handleDescription(CollectionInfo collectionInfo,
-      Map<String, Object> linkedServiceRecord) {
-    var desc = getLangString(linkedServiceRecord.get("resourceAbstractObject"));
+      IndexRecord indexRecord) {
+    var desc = getLangString(indexRecord.getResourceAbstract());
     if (desc != null) {
       collectionInfo.setDescription(desc);
     }
@@ -207,8 +242,8 @@ public class ElasticIndexJson2CollectionInfo {
 
 
   //override title from attached ServiceRecord
-  private void handleTitle(CollectionInfo collectionInfo, Map<String, Object> linkedServiceRecord) {
-    var title = getLangString(linkedServiceRecord.get("resourceTitleObject"));
+  private void handleTitle(CollectionInfo collectionInfo, IndexRecord indexRecord) {
+    var title = getLangString(indexRecord.getResourceTitle());
     if (title != null) {
       collectionInfo.setTitle(title);
     }

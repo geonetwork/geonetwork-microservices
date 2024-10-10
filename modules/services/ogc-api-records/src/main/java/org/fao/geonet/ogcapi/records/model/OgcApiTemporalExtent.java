@@ -10,9 +10,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import org.fao.geonet.index.model.gn.DateRange;
 
 /**
  * cf. https://github.com/opengeospatial/ogcapi-features/blob/master/core/openapi/schemas/extent.yaml
@@ -82,13 +82,13 @@ public class OgcApiTemporalExtent {
    * @param map from the Elastic Index Record
    * @return parsed OgcApiTemporalExtent
    */
-  public static OgcApiTemporalExtent fromGnIndexRecord(Map<String, Object> map) {
+  public static OgcApiTemporalExtent fromGnIndexRecord(DateRange map) {
     if (map == null) {
       return null;
     }
 
-    String start = (String) map.get("gte");
-    String end = (String) map.get("lte");
+    String start = map.getGte();
+    String end = map.getLte();
 
     var result = new OgcApiTemporalExtent();
     result.trs = DefaultTRS;

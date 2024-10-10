@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import org.fao.geonet.index.model.gn.Theme;
 import org.springframework.util.StringUtils;
 
 /**
@@ -61,41 +62,46 @@ public class OgcApiTheme {
    * @param map map from Elastic (JSON) Index document representing "allKeyWords"
    * @return map will be parsed into a corresponding List of OgcApiTheme
    */
-  public static List<OgcApiTheme> parseElasticIndex(Map<String, Object> map) {
+  public static List<OgcApiTheme> parseElasticIndex(Map<String, Theme> map) {
     if (map == null) {
       return null;
     }
     List<OgcApiTheme> result = new ArrayList<>();
-    for (var thSetObject : map.values()) {
-      var thSet = (Map<String, Object>) thSetObject;
-
-      var themeSchema = getAsString(thSet.get("link"));
+    for (var theme : map.values()) {
+      var themeSchema = getAsString(theme.getLink());
       //at least put something here!
-      if (!StringUtils.hasText(themeSchema)) {
-        if (StringUtils.hasText(getAsString(thSet.get("multilingualTitle")))) {
-          themeSchema = getLangString(thSet.get("multilingualTitle").toString());
+      if (!StringUtils.hasText(themeSchema)
+          && theme.getMultilingualTitle() != null
+          && !theme.getMultilingualTitle().isEmpty()) {
+        var multilingualTitle = theme.getMultilingualTitle();
+        var multilingualTitleLink = multilingualTitle.get("link");
+
+        if (StringUtils.hasText(multilingualTitleLink)) {
+          themeSchema = multilingualTitleLink;
+        } else {
+          themeSchema = getLangString(multilingualTitle);
         }
       }
-      if (!StringUtils.hasText(themeSchema) && thSet.get("title") != null) {
-        themeSchema = thSet.get("title").toString();
+      if (!StringUtils.hasText(themeSchema) && theme.getTitle() != null) {
+        themeSchema = theme.getTitle();
       }
-      if (!StringUtils.hasText(themeSchema) && thSet.get("theme") != null) {
-        themeSchema = thSet.get("theme").toString();
+      if (!StringUtils.hasText(themeSchema) && theme.getTheme() != null) {
+        themeSchema = theme.getTheme();
       }
-      if (!StringUtils.hasText(themeSchema) && thSet.get("id") != null) {
-        themeSchema = thSet.get("id").toString();
+      if (!StringUtils.hasText(themeSchema) && theme.getId() != null) {
+        themeSchema = theme.getId();
       }
-      var theme = new OgcApiTheme(themeSchema);
+      var theme2 = new OgcApiTheme(themeSchema);
 
-      List conceptsList = (List) thSet.get("keywords");
+      List conceptsList = theme.getKeywords();
       for (var anConcept : conceptsList) {
         var concept = (Map<String, Object>) anConcept;
         var link = getAsString(concept.get("link"));
         var ogcConcept = new OgcApiConcept(getLangString(anConcept), link);
-        theme.getConcepts().add(ogcConcept);
+        theme2.getConcepts().add(ogcConcept);
       }
-      if (theme.getConcepts().size() != 0) {
-        result.add(theme);
+      if (theme2.getConcepts().size() != 0) {
+        result.add(theme2);
       }
     }
     return result;
