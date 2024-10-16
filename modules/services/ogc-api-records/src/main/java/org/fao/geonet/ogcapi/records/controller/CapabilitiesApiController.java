@@ -16,10 +16,11 @@ import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;
 import org.fao.geonet.domain.SourceType;
+import org.fao.geonet.ogcapi.records.controller.model.CollectionInfo;
 import org.fao.geonet.ogcapi.records.controller.model.Conformance;
 import org.fao.geonet.ogcapi.records.controller.model.Content;
-import org.fao.geonet.ogcapi.records.controller.model.Link;
 import org.fao.geonet.ogcapi.records.controller.model.Root;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.util.CollectionInfoBuilder;
 import org.fao.geonet.ogcapi.records.util.LinksItemsBuilder;
@@ -67,19 +68,17 @@ public class CapabilitiesApiController {
 
   @Autowired
   ConcurrentMapCacheManager cacheManager;
-
+  @Autowired
+  MediaTypeUtil mediaTypeUtil;
+  @Autowired
+  CollectionInfoBuilder collectionInfoBuilder;
   @Autowired
   private SourceRepository sourceRepository;
-
   @Autowired
   private SearchConfiguration configuration;
 
-  @Autowired
-  MediaTypeUtil mediaTypeUtil;
-
   /**
    * Landing page end-point.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Landing page.",
@@ -111,16 +110,37 @@ public class CapabilitiesApiController {
         String label = source.getLabel("eng");
         root.title(StringUtils.isEmpty(label) ? source.getName() : label);
         root.description("");
+
+        Locale locale = LocaleContextHolder.getLocale();
+
+        var language = locale.getISO3Language();
+
+        CollectionInfo collectionInfo = collectionInfoBuilder
+            .buildFromSource(source, language, requestBaseUrl,
+                configuration.getFormat(mediaType), configuration, request);
+        if (collectionInfo != null) {
+          //put title and description in the main obj
+          if (StringUtils.hasText(collectionInfo.getTitle())) {
+            root.setTitle(collectionInfo.getTitle());
+          }
+          if (StringUtils.hasText(collectionInfo.getDescription())) {
+            root.setDescription(collectionInfo.getDescription());
+          }
+        }
+        root.setSystemInfo(collectionInfo);
       }
 
-      root.addLinksItem(new Link()
+      root.addLinksItem(new OgcApiLink()
           .href(requestBaseUrl)
-          .rel("self").type(MediaType.APPLICATION_JSON.toString()));
+          .rel("self")
+          .type(MediaType.APPLICATION_JSON.toString()));
 
-      configuration.getFormats(Operations.root).forEach(f -> root.addLinksItem(new Link()
-          .href(requestBaseUrl + "collections?f=" + f.getName())
-          .type("Catalogue collections")
-          .rel("self").type(f.getMimeType())));
+      configuration.getFormats(Operations.root).forEach(f ->
+          root.addLinksItem(new OgcApiLink()
+              .href(requestBaseUrl + "collections?f=" + f.getName())
+              .type("Catalogue collections")
+              .rel("self")
+              .type(f.getMimeType())));
 
       addOpenApiLinks(root, requestBaseUrl);
       addConformanceLinks(root, requestBaseUrl);
@@ -145,12 +165,12 @@ public class CapabilitiesApiController {
 
   private void addOpenApiLinks(Root root, String baseUrl) {
     String title = "The OpenAPI Documentation";
-    root.addLinksItem(new Link()
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + "openapi")
         .title(title)
         .rel("service-doc").type(MediaType.TEXT_HTML_VALUE));
 
-    root.addLinksItem(new Link()
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + "openapi?f=json")
         .title(title + " as JSON")
         .rel("service-desc").type(MediaType.APPLICATION_JSON_VALUE));
@@ -158,15 +178,18 @@ public class CapabilitiesApiController {
 
   private void addConformanceLinks(Root root, String baseUrl) {
     String title = "The Conformance classes";
-    root.addLinksItem(new Link()
+
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + CONFORMANCE_REL)
         .title(title)
-        .rel(CONFORMANCE_REL).type(MediaType.TEXT_HTML_VALUE));
+        .rel(CONFORMANCE_REL)
+        .type(MediaType.TEXT_HTML_VALUE));
 
-    root.addLinksItem(new Link()
+    root.addLinksItem(new OgcApiLink()
         .href(baseUrl + CONFORMANCE_REL + "?f=json")
         .title(title + " as JSON")
-        .rel(CONFORMANCE_REL).type(MediaType.APPLICATION_JSON_VALUE));
+        .rel(CONFORMANCE_REL)
+        .type(MediaType.APPLICATION_JSON_VALUE));
   }
 
 
@@ -202,7 +225,7 @@ public class CapabilitiesApiController {
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/html",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/json",
         "http://www.opengis.net/spec/ogcapi-records-1/1.0/conf/sorting"
-        ));
+    ));
 
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
       return ResponseEntity.ok(conformance);
@@ -224,7 +247,6 @@ public class CapabilitiesApiController {
 
   /**
    * Collections information end-point.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Collections available from this API.",
@@ -256,11 +278,12 @@ public class CapabilitiesApiController {
 
       List<Source> sources = sourceRepository.findAll();
       sources.forEach(s -> content.addCollectionsItem(
-          CollectionInfoBuilder.buildFromSource(
-              s, language, requestBaseUrl, configuration.getFormat(mediaType), configuration)));
+          collectionInfoBuilder.buildFromSource(
+              s, language, requestBaseUrl, configuration.getFormat(mediaType),
+              configuration, request)));
 
       // TODO: Accept format parameter.
-      List<Link> linkList = LinksItemsBuilder.build(
+      List<OgcApiLink> linkList = LinksItemsBuilder.build(
           configuration.getFormat(mediaType), requestBaseUrl, language, configuration);
       linkList.forEach(content::addLinksItem);
 

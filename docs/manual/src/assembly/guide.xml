@@ -1,0 +1,13 @@
+<assembly>
+  <id>manual</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>target/html</directory>
+      <outputDirectory></outputDirectory>
+      
+    </fileSet>
+  </fileSets>
+</assembly>

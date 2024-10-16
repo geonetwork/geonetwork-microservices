@@ -1,5 +1,7 @@
 package org.fao.geonet.ogcapi.records.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -10,17 +12,44 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.fao.geonet.ogcapi.records.model.OgcApiLink;
 
 /**
  * Root entity.
+ *
+ * <p>Used for the landing page.
  */
 @JacksonXmlRootElement(localName = "Root")
 @XmlRootElement(name = "Root")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Root {
+
+  /**
+   * This is the collection info for the main-portal.
+   *
+   * <p>THIS IS NON-STANDARD (not in the ogcapi spec)!
+   *
+   * <p>The landing page JSON also includes a new property systemInfo which contains a catalog.yaml
+   * object in it.
+   * I'm not sure if this is allowed in the spec, but it allows for more metadata about the
+   * entire GN system ("ogcapi-records" server). This is useful for making a nicer landing page
+   * (cf. pygeoapi's landing page).
+   */
+  @JsonProperty("systemInfo")
+  @JacksonXmlProperty(localName = "systemInfo")
+  @JsonInclude(Include.NON_EMPTY)
+  private CollectionInfo systemInfo;
+
+
   @JsonProperty("title")
   @JacksonXmlProperty(localName = "title")
   private String title;
+  @JsonProperty("description")
+  @JacksonXmlProperty(localName = "description")
+  private String description;
+  @JsonProperty("links")
+  @JacksonXmlProperty(localName = "links")
+  private List<OgcApiLink> links = new ArrayList<>();
 
   /**
    * Get title.
@@ -39,10 +68,6 @@ public class Root {
     return this;
   }
 
-  @JsonProperty("description")
-  @JacksonXmlProperty(localName = "description")
-  private String description;
-
   /**
    * Get description.
    */
@@ -60,17 +85,12 @@ public class Root {
     return this;
   }
 
-  @JsonProperty("links")
-  @JacksonXmlProperty(localName = "links")
-
-  private List<Link> links = new ArrayList<>();
-
-  public Root links(List<Link> links) {
+  public Root links(List<OgcApiLink> links) {
     this.links = links;
     return this;
   }
 
-  public Root addLinksItem(Link linksItem) {
+  public Root addLinksItem(OgcApiLink linksItem) {
     this.links.add(linksItem);
     return this;
   }
@@ -79,14 +99,21 @@ public class Root {
    * Get links.
    */
   @ApiModelProperty(example = "[{\"href\":\"http://data.example.org/\",\"rel\":\"self\",\"type\":\"application/json\",\"title\":\"this document\"},{\"href\":\"http://data.example.org/api\",\"rel\":\"service\",\"type\":\"application/openapi+json;version=3.0\",\"title\":\"the API definition\"},{\"href\":\"http://data.example.org/conformance\",\"rel\":\"conformance\",\"type\":\"application/json\",\"title\":\"OGC conformance classes implemented by this API\"},{\"href\":\"http://data.example.org/collections\",\"title\":\"Metadata about the resource collections\"}]", required = true, value = "")
-  public List<Link> getLinks() {
+  public List<OgcApiLink> getLinks() {
     return links;
   }
 
-  public void setLinks(List<Link> links) {
+  public void setLinks(List<OgcApiLink> links) {
     this.links = links;
   }
 
+  public CollectionInfo getSystemInfo() {
+    return systemInfo;
+  }
+
+  public void setSystemInfo(CollectionInfo systemInfo) {
+    this.systemInfo = systemInfo;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

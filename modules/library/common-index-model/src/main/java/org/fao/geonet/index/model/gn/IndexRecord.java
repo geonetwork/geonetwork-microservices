@@ -52,6 +52,11 @@ public class IndexRecord extends IndexDocument {
   List<HashMap<String, String>> resourceCredit = new ArrayList<>();
   @JsonProperty(IndexRecordFieldNames.tag)
   ArrayList<HashMap<String, String>> tag = new ArrayList<>();
+
+  Map<String, Theme> allKeywords = new HashMap<>();
+
+  @JsonProperty("MD_LegalConstraintsUseLimitationObject")
+  ArrayList<HashMap<String, String>> mdLegalConstraintsUseLimitationObject = new ArrayList<>();
   private Integer internalId;
   private String metadataIdentifier;
   private IndexDocumentType docType;

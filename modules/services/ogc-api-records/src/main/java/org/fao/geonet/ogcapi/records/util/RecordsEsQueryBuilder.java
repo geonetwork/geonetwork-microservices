@@ -14,6 +14,7 @@ import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.geometry.Rectangle;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.GeoShapeQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -141,11 +142,15 @@ public class RecordsEsQueryBuilder {
       }
     }
 
-    String filterQueryString = configuration.getQueryFilter();
+    String filterQueryString = "(" + configuration.getQueryFilter() + ")";
     if (StringUtils.isNotEmpty(collectionFilter)) {
-      filterQueryString += " " + collectionFilter;
+      filterQueryString += " (" + collectionFilter + ")";
     }
-    boolQuery.filter(QueryBuilders.queryStringQuery(filterQueryString));
+
+    var bbQuery = QueryBuilders.queryStringQuery(filterQueryString);
+    bbQuery.defaultOperator(Operator.AND);
+    boolQuery.filter(bbQuery);
+
     sourceBuilder.query(boolQuery);
     sourceBuilder.trackTotalHits(configuration.getTrackTotalHits());
     log.debug("OGC API query: {}", sourceBuilder.toString());

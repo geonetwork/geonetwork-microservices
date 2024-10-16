@@ -54,6 +54,7 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
+import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
 import org.fao.geonet.ogcapi.records.util.XmlUtil;
@@ -111,6 +112,8 @@ public class ItemApiController {
   MediaTypeUtil mediaTypeUtil;
   @Autowired
   DcatConverter dcatConverter;
+  @Autowired
+  RecordService recordService;
 
   /**
    * Describe a collection item.
@@ -167,7 +170,8 @@ public class ItemApiController {
         || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
       try {
         String type = mediaType.equals(MediaType.APPLICATION_JSON) ? "json" : "geojson";
-        JsonNode recordAsJson = getRecordAsJson(collectionId, recordId, request, source, type);
+        JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
+            request, source, type);
 
         streamResult(response,
             recordAsJson.toPrettyString(),
@@ -307,7 +311,7 @@ public class ItemApiController {
               || GnMediaType.APPLICATION_RDF_XML_VALUE.equals(acceptHeader);
       boolean isLinkedData = (isTurtle || isRdfXml || isDcat);
 
-      JsonNode recordAsJson = getRecordAsJson(collectionId, recordId, request, source,
+      JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId, request, source,
           isLinkedData ? "json" : "schema.org");
 
       if (isLinkedData) {
@@ -372,9 +376,11 @@ public class ItemApiController {
 
     try {
       String collectionFilter = collectionService.retrieveCollectionFilter(source, true);
-      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
+      String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId,
+          collectionFilter, null);
 
-      String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+      String queryResponse = proxy.searchAndGetResult(request.getSession(),
+          request, query, null);
 
       Document queryResult = XmlUtil.parseXmlString(queryResponse);
       String total = queryResult.getChildNodes().item(0).getAttributes().getNamedItem("total")
@@ -417,7 +423,8 @@ public class ItemApiController {
     }
 
     try {
-      JsonNode recordAsJson = getRecordAsJson(collectionId, recordId, request, source, "json");
+      JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
+          request, source, "json");
 
       Metadata metadataRecord = metadataRepository.findOneByUuid(recordId);
       if (metadataRecord == null) {
@@ -459,43 +466,6 @@ public class ItemApiController {
           "An error occurred while building HTML representation of collection '%s'. Error is: %s",
           source.getName(), ex.getMessage()));
       throw new RuntimeException(ex);
-    }
-  }
-
-
-  private JsonNode getRecordAsJson(
-      String collectionId,
-      String recordId,
-      HttpServletRequest request,
-      Source source,
-      String type) throws Exception {
-    String collectionFilter = collectionService.retrieveCollectionFilter(source, true);
-    String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
-
-    String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
-
-    ObjectMapper mapper = new ObjectMapper();
-    JsonFactory factory = mapper.getFactory();
-    JsonParser parser = factory.createParser(queryResponse);
-    JsonNode actualObj = mapper.readTree(parser);
-
-    JsonNode totalValue =
-        "json".equals(type)
-            ? actualObj.get("hits").get("total").get("value")
-            : actualObj.get("size");
-
-    if ((totalValue == null) || (totalValue.intValue() == 0)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-          messages.getMessage(EXCEPTION_COLLECTION_ITEM_NOT_FOUND,
-              new String[]{recordId, collectionId},
-              request.getLocale()));
-    }
-
-    if ("json".equals(type)) {
-      return actualObj.get("hits").get("hits").get(0);
-    } else {
-      String elementName = "schema.org".equals(type) ? "dataFeedElement" : "features";
-      return actualObj.get(elementName).get(0);
     }
   }
 
@@ -605,6 +575,7 @@ public class ItemApiController {
     String collectionFilter = collectionService.retrieveCollectionFilter(source, false);
     String query = recordsEsQueryBuilder
         .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby, null);
+
     EsSearchResults results = new EsSearchResults();
     try {
       results = proxy
