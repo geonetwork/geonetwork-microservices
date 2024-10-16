@@ -1,7 +1,6 @@
 package org.fao.geonet.ogcapi.records.util;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +21,8 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
+import org.fao.geonet.ogcapi.records.controller.Query;
+import org.fao.geonet.ogcapi.records.service.QueryToElastic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.stereotype.Component;
@@ -31,11 +32,9 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.ogcapi")
 public class RecordsEsQueryBuilder {
 
-  @Autowired
-  private SearchConfiguration configuration;
-
+  private static final String SORT_BY_SEPARATOR = ",";
   // TODO: Sources depends on output type
-  private static List<String> defaultSources = Arrays.asList(
+  private static final List<String> defaultSources = Arrays.asList(
       "resourceTitleObject", "resourceAbstractObject",
       "resourceType", "resourceDate",
       "id", "metadataIdentifier", "schema",
@@ -43,11 +42,12 @@ public class RecordsEsQueryBuilder {
       "contact", "contactForResource",
       "cl_status",
       "edit", "tag", "changeDate",
-      "createDate", "mainLanguage", "geom", "formats");
-
-  private static final String SORT_BY_SEPARATOR = ",";
-
-  private static String defaultSpatialOperation = "intersects";
+      "createDate", "mainLanguage", "geom", "formats", "resourceTemporalDateRange");
+  private static final String defaultSpatialOperation = "intersects";
+  @Autowired
+  QueryToElastic queryToElastic;
+  @Autowired
+  private SearchConfiguration configuration;
 
   public RecordsEsQueryBuilder(SearchConfiguration configuration) {
     this.configuration = configuration;
@@ -82,18 +82,14 @@ public class RecordsEsQueryBuilder {
    * Creates a ElasticSearch query from Records API parameters.
    */
   public String buildQuery(
-      List<String> q,
-      List<String> externalids,
-      List<BigDecimal> bbox,
-      Integer startIndex, Integer limit,
+      Query query,
       String collectionFilter,
-      List<String> sortBy,
       Set<String> sourceFields) {
     SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-    sourceBuilder.from(startIndex).size(limit);
+    sourceBuilder.from(query.getStartIndex()).size(query.getLimit());
 
-    if (sortBy != null) {
-      sortBy.forEach(s -> Stream.of(s.split(SORT_BY_SEPARATOR))
+    if (query.getSortBy() != null) {
+      query.getSortBy().forEach(s -> Stream.of(s.split(SORT_BY_SEPARATOR))
           .forEach(order -> {
             boolean isDescending = order.startsWith("-");
             sourceBuilder.sort(
@@ -114,23 +110,23 @@ public class RecordsEsQueryBuilder {
     BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
     QueryBuilder fullTextQuery =
-        QueryBuilders.queryStringQuery(buildFullTextSearchQuery(q));
+        QueryBuilders.queryStringQuery(buildFullTextSearchQuery(query.getQ()));
     boolQuery.must(fullTextQuery);
 
-    if (externalids != null && !externalids.isEmpty()) {
+    if (query.getExternalIds() != null && !query.getExternalIds().isEmpty()) {
       boolQuery.must(
           QueryBuilders.termsQuery(
               IndexRecordFieldNames.uuid,
-              externalids));
+              query.getExternalIds()));
     }
 
     GeoShapeQueryBuilder geoQuery;
-    if (bbox != null && bbox.size() == 4) {
+    if (query.getBbox() != null && query.getBbox().size() == 4) {
       Rectangle rectangle = new Rectangle(
-          bbox.get(0).doubleValue(),
-          bbox.get(2).doubleValue(),
-          bbox.get(3).doubleValue(),
-          bbox.get(1).doubleValue());
+          query.getBbox().get(0).doubleValue(),
+          query.getBbox().get(2).doubleValue(),
+          query.getBbox().get(3).doubleValue(),
+          query.getBbox().get(1).doubleValue());
 
       try {
         geoQuery = QueryBuilders
@@ -153,7 +149,10 @@ public class RecordsEsQueryBuilder {
 
     sourceBuilder.query(boolQuery);
     sourceBuilder.trackTotalHits(configuration.getTrackTotalHits());
-    log.debug("OGC API query: {}", sourceBuilder.toString());
+
+    queryToElastic.augmentWithQueryables(sourceBuilder, query);
+
+    log.debug("OGC API query: {}", sourceBuilder);
 
     return sourceBuilder.toString();
   }

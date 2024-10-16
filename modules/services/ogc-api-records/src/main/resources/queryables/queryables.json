@@ -1,0 +1,277 @@
+// NOTE: lines starting with "//" are pre-processed out of this file so comments are fine.
+//
+// NOTE: To see how elastic is configured
+//       go to http://localhost:9200/gn-records This will give you the expanded configuration.
+//
+// NOTE: To see the actual elastic records go to
+//        http://localhost:9200/gn-records/_search?pretty=true&q=*:*
+//
+// NOTE: see core-geonetwork "records.json" for how GN has configured the elastic index
+//       If you modify this, rebuild GN and then go to admin -> tools -> delete and reindex
+//       There are cases where you might want to change "type:KEYWORD" to "type:TEXT"
+//       so you can do full-text searches (KEYWORD is exact match).
+//       You might want to use the "lowercase_normalizer" for keyword elatic properties so
+//       searchs can be case-insensitive.
+//
+//  This is the queryables configuration (and OGCAPI endpoint response).
+//
+// Use this file to configure how elastic-based queries can be configured in an OGCAPI context.
+//
+//  To add a queryable;
+//     1. create a new property (JsonProperty) in the "properties" list.
+//     2. add the "x-gn-elastic" list, with one element for each Elastic column that needs to be queried
+//
+// For the "x-gn-elastic" (GnElasticInfo):
+//
+//   1. add an "elasticPath".  This is the path to the query property in the elastic document.
+//
+//      You can use "${iso3lang}" to query into one of the multi-language fields.  This will
+//      be replaced with the requested language.
+//      NOTE: this might not be in the request or the multi-language field in elastic might not
+//            be filled out.  Typically, you might want to also search in "default" or use "lang*".
+//
+//      You can also use "*" to query multiple fields (cf elastic query documentation).
+//
+//   2. add "elasticColumnType".  This is the type of the column.  You can get this from the
+//      elastic index definition (http://localhost:9200/gn-records).  See ElasticQueryType enum.
+//
+//   3. most of the time you will not have to fill in "elasticQueryType" (multi_match is the
+//      the most likely type).  However, you might need "nested" - although the only one where this
+//      is needed is for "contacts".  See ElasticQueryType enum.
+//
+//   4. most of the time you will not need to fill in "elasticColumnFormat".  This is mostly for
+//      a hint to the GUI that a keyword field is case-insensitive (which is very nice for users
+//      as a search for "GeoCat" will also match "geocat", or "geoCat", etc...
+//
+// Please look at the examples, below.
+//
+//  DEBUGGING:
+//
+//   I've found that getting this to work can be a bit tricky.
+//
+//     1. use http://localhost:9200/gn-records and "records.json" and "index.xsl" in the
+//        schema-specific section of GN.
+//
+//     2. Fill in the new property, as above
+//
+//     3. execute a search request to OGCAPI, adding &<queryable propertyname>=<search text>
+//
+//     4. put a break point at the end of RecordsEsQueryBuilder#buildQuery and look at
+//        sourceBuilder.toString()  This will be a full elastic query.
+//
+//     5. you can save this to a file and then directly execute the request:
+//
+//        curl  'http://localhost:8080/geonetwork/srv/api/search/records/_search' -d  "@json2.json"  | jq .
+//
+//        Hopefully this will help you debug the query.
+//
+{
+  "type": "object",
+  "title": "Queryables for GeoNetwork Collection",
+  "properties": {
+    "id": {
+      "title": "id",
+      "type": "string",
+      "description": "A unique record identifier assigned by the server.",
+      "x-ogc-role": "id",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "uuid",
+          "elasticColumnType": "KEYWORD"
+        }
+      ]
+    },
+    "created": {
+      "title": "created",
+      "type": "string",
+      "description": "The date this record was created in the server.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "createDate",
+          "elasticColumnType": "DATE"
+        }
+      ]
+    },
+    "updated": {
+      "title": "updated",
+      "type": "string",
+      "description": "The most recent date on which the record was changed.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "resourceDate.date",
+          "elasticColumnType": "DATE"
+        }
+      ]
+    },
+    "language": {
+      "title": "language",
+      "type": "string",
+      "description": "The language used for textual values (i.e. titles, descriptions, etc.) of this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "mainLanguage",
+          "elasticColumnType": "KEYWORD"
+        }
+      ]
+    },
+    "languages": {
+      "title": "languages",
+      "type": "string",
+      "description": "The list of other languages in which this record is available.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "otherLanguage",
+          "elasticColumnType": "KEYWORD"
+        }
+      ]
+    },
+    "type": {
+      "title": "type",
+      "type": "string",
+      "description": "The nature or genre of the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "resourceType",
+          "elasticColumnType": "KEYWORD"
+        }
+      ]
+    },
+    "title": {
+      "title": "title",
+      "type": "string",
+      "description": "A human-readable name given to the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "resourceTitleObject.default",
+          "elasticColumnType": "TEXT"
+        },
+        {
+          "elasticPath": "resourceTitleObject.lang${lang3iso}",
+          "elasticColumnType": "TEXT"
+        }
+      ]
+    },
+    "description": {
+      "title": "description",
+      "type": "string",
+      "description": "A free-text description of the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "resourceAbstractObject.default",
+          "elasticColumnType": "TEXT"
+        },
+        {
+          "elasticPath": "resourceAbstractObject.lang${lang3iso}",
+          "elasticColumnType": "TEXT"
+        }
+      ]
+    },
+    "geometry": {
+      "title": "geometry",
+      "type": "string",
+      "description": "A spatial extent associated with the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "geom",
+          "elasticColumnType": "GEO"
+        }
+      ]
+    },
+    "time": {
+      "title": "time",
+      "type": "string",
+      "description": "A temporal extent associated with the resource described by this record. interval-bounded            = date-time \"/\" date-time\ninterval-half-bounded-start = [\"..\"] \"/\" date-time\ninterval-half-bounded-end   = date-time \"/\" [\"..\"]\ninterval                    = interval-closed / interval-half-bounded-start / interval-half-bounded-end\ndatetime                    = date-time / interval",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "resourceTemporalDateRange",
+          "elasticColumnType": "DATERANGE"
+        }
+      ]
+    },
+    "keywords": {
+      "title": "keywords",
+      "type": "string",
+      "description": "A list of free-form keywords or tags associated with the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "tag.default",
+          "elasticColumnType": "KEYWORD",
+          "elasticColumnFormat": "LOWERCASE"
+        },
+        {
+          "elasticPath": "tag.lang${lang3iso}",
+          "elasticColumnType": "KEYWORD",
+          "elasticColumnFormat": "LOWERCASE"
+        }
+      ]
+    },
+    "themes": {
+      "title": "themes",
+      "type": "string",
+      "description": "A knowledge organization system used to classify the resource described by this resource.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "allKeywords.*.keywords.default",
+          "elasticColumnType": "TEXT"
+        },
+        {
+          "elasticPath": "allKeywords.*.keywords.lang${lang3iso}",
+          "elasticColumnType": "TEXT"
+        }
+      ]
+    },
+    "contacts": {
+      "title": "contacts",
+      "type": "string",
+      "description": "A list of contacts qualified by their role(s) in association to the record or the resource described by this record.",
+      "x-gn-elastic": [
+        {
+          "elasticPath": "contact.organisationObject.default",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.organisationObject.lang${lang3iso}",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.address",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.role",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.email",
+          "elasticColumnType": "KEYWORD",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.website",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.individual",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.position",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        },
+        {
+          "elasticPath": "contact.phone",
+          "elasticColumnType": "TEXT",
+          "elasticQueryType": "NESTED"
+        }
+      ]
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

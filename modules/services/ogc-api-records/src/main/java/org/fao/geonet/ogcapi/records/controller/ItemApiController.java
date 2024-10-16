@@ -5,10 +5,7 @@
 
 package org.fao.geonet.ogcapi.records.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,6 +51,7 @@ import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.fao.geonet.ogcapi.records.model.Item;
 import org.fao.geonet.ogcapi.records.model.XsltModel;
 import org.fao.geonet.ogcapi.records.service.CollectionService;
+import org.fao.geonet.ogcapi.records.service.QueryBuilder;
 import org.fao.geonet.ogcapi.records.service.RecordService;
 import org.fao.geonet.ogcapi.records.util.MediaTypeUtil;
 import org.fao.geonet.ogcapi.records.util.RecordsEsQueryBuilder;
@@ -87,6 +85,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class ItemApiController {
 
+
   public static final String EXCEPTION_COLLECTION_NOT_FOUND =
       "ogcapir.exception.collection.notFound";
   public static final String EXCEPTION_COLLECTION_ITEM_NOT_FOUND =
@@ -114,10 +113,11 @@ public class ItemApiController {
   DcatConverter dcatConverter;
   @Autowired
   RecordService recordService;
+  @Autowired
+  QueryBuilder queryBuilder;
 
   /**
    * Describe a collection item.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Describe a collection item.",
@@ -143,7 +143,7 @@ public class ItemApiController {
       @ApiParam(value = "Identifier (name) of a specific collection", required = true)
       @PathVariable("collectionId") String collectionId,
       @ApiParam(value = "Identifier (name) of a specific record", required = true)
-      @PathVariable("recordId")String recordId,
+      @PathVariable("recordId") String recordId,
       @ApiIgnore HttpServletRequest request,
       @ApiIgnore HttpServletResponse response,
       @ApiIgnore Model model) {
@@ -164,7 +164,6 @@ public class ItemApiController {
 
     MediaType mediaType =
         mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
-
 
     if (mediaType.equals(MediaType.APPLICATION_JSON)
         || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
@@ -201,7 +200,6 @@ public class ItemApiController {
 
   /**
    * Describe the collection items.
-   *
    */
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Describe the collection items.",
@@ -248,6 +246,8 @@ public class ItemApiController {
       @ApiParam(value = "")
       @RequestParam(value = "externalids", required = false)
           List<String> externalids,
+      @RequestParam(value = "ids", required = false)
+          List<String> ids,
       @ApiParam(value = "")
       @RequestParam(value = "sortby", required = false)
           List<String> sortby,
@@ -255,6 +255,18 @@ public class ItemApiController {
       @ApiIgnore HttpServletResponse response,
       @ApiIgnore Model model) throws Exception {
 
+    var query = queryBuilder.buildFromRequest(collectionId,
+        bbox,
+        datetime,
+        limit,
+        startindex,
+        type,
+        q,
+        ids,
+        externalids,
+        sortby,
+        request.getParameterMap()
+    );
     List<MediaType> allowedMediaTypes =
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
             Arrays.asList(
@@ -276,15 +288,14 @@ public class ItemApiController {
 
       boolean allSourceFields =
           mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
-          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
+              || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
 
       return collectionsCollectionIdItemsGetInternal(
-          collectionId, bbox, datetime, limit, startindex, type, q, externalids, sortby,
+          query,
           request, response, allSourceFields);
 
     } else {
-      return collectionsCollectionIdItemsGetAsHtml(collectionId, bbox, datetime, limit,
-          startindex, type, q, externalids, sortby, request, response, model);
+      return collectionsCollectionIdItemsGetAsHtml(query, request, response, model);
     }
   }
 
@@ -473,7 +484,7 @@ public class ItemApiController {
   private List<String> setDefaultRssSortBy(List<String> sortby, HttpServletRequest request) {
     boolean isRss = "rss".equals(request.getParameter("f"))
         || (request.getHeader(HttpHeaders.ACCEPT) != null
-            && request.getHeader(HttpHeaders.ACCEPT).contains(MediaType.APPLICATION_RSS_XML_VALUE));
+        && request.getHeader(HttpHeaders.ACCEPT).contains(MediaType.APPLICATION_RSS_XML_VALUE));
     if (isRss
         && (sortby == null || sortby.isEmpty())) {
       sortby = new ArrayList<>();
@@ -484,18 +495,10 @@ public class ItemApiController {
 
 
   private String search(
-      String collectionId,
-      List<BigDecimal> bbox,
-      String datetime,
-      Integer limit,
-      Integer startindex,
-      String type,
-      List<String> q,
-      List<String> externalids,
-      List<String> sortby,
+      Query requestQuery,
       HttpServletRequest request, boolean allSourceFields) {
 
-    Source source = collectionService.retrieveSourceForCollection(collectionId);
+    Source source = collectionService.retrieveSourceForCollection(requestQuery.getCollectionId());
 
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
@@ -503,8 +506,7 @@ public class ItemApiController {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source, false);
     String query = recordsEsQueryBuilder
-        .buildQuery(q, externalids, bbox,
-            startindex, limit, collectionFilter, sortby,
+        .buildQuery(requestQuery, collectionFilter,
             allSourceFields ? Set.of("*") : null);
     try {
       return proxy.searchAndGetResult(request.getSession(), request, query, null);
@@ -519,23 +521,14 @@ public class ItemApiController {
 
 
   private ResponseEntity<Void> collectionsCollectionIdItemsGetInternal(
-      String collectionId,
-      List<BigDecimal> bbox,
-      String datetime,
-      Integer limit,
-      Integer startindex,
-      String type,
-      List<String> q,
-      List<String> externalids,
-      List<String> sortby,
+      Query query,
       HttpServletRequest request,
       HttpServletResponse response,
       boolean allSourceFields) {
 
-    sortby = setDefaultRssSortBy(sortby, request);
+    query.setSortBy(setDefaultRssSortBy(query.getSortBy(), request));
 
-    String queryResponse = search(collectionId, bbox, datetime, limit, startindex, type, q,
-        externalids, sortby, request, allSourceFields);
+    String queryResponse = search(query, request, allSourceFields);
 
     try {
       streamResult(response, queryResponse, getResponseContentType(request));
@@ -551,22 +544,14 @@ public class ItemApiController {
    * Collection items as HTML.
    */
   private ResponseEntity<Void> collectionsCollectionIdItemsGetAsHtml(
-      String collectionId,
-      List<BigDecimal> bbox,
-      String datetime,
-      Integer limit,
-      Integer startindex,
-      String type,
-      List<String> q,
-      List<String> externalids,
-      List<String> sortby,
+      Query requestQuery,
       HttpServletRequest request,
       HttpServletResponse response,
       Model model) throws Exception {
 
     Locale locale = LocaleContextHolder.getLocale();
     String language = locale.getISO3Language();
-    Source source = collectionService.retrieveSourceForCollection(collectionId);
+    Source source = collectionService.retrieveSourceForCollection(requestQuery.getCollectionId());
 
     if (source == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find collection");
@@ -574,7 +559,7 @@ public class ItemApiController {
 
     String collectionFilter = collectionService.retrieveCollectionFilter(source, false);
     String query = recordsEsQueryBuilder
-        .buildQuery(q, externalids, bbox, startindex, limit, collectionFilter, sortby, null);
+        .buildQuery(requestQuery, collectionFilter, null);
 
     EsSearchResults results = new EsSearchResults();
     try {
@@ -588,10 +573,10 @@ public class ItemApiController {
     XsltModel modelSource = new XsltModel();
     Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
     if (request.getParameter("limit") == null) {
-      parameterMap.put("limit", new String[]{limit + ""});
+      parameterMap.put("limit", new String[]{requestQuery.getLimit() + ""});
     }
     if (request.getParameter("startindex") == null) {
-      parameterMap.put("startindex", new String[]{startindex + ""});
+      parameterMap.put("startindex", new String[]{requestQuery.getStartIndex() + ""});
     }
     modelSource.setRequestParameters(parameterMap);
     modelSource.setCollection(source);

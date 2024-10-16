@@ -1,3 +1,8 @@
+/**
+ * (c) 2024 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.controller;
 
 import io.swagger.annotations.Api;
@@ -8,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.ogcapi.records.model.JsonSchema;
+import org.fao.geonet.ogcapi.records.service.QueryToElastic;
 import org.fao.geonet.ogcapi.records.service.QueryablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +39,9 @@ public class QueryableApiController {
   @Autowired
   QueryablesService queryablesService;
 
+  @Autowired
+  QueryToElastic queryToElastic;
+
   /**
    * Describe queryables for a collection.
    */
@@ -57,7 +66,6 @@ public class QueryableApiController {
       @ApiIgnore Model model) throws Exception {
 
     var jsonSchema = queryablesService.buildQueryables(collectionId);
-
     return ResponseEntity.ok(jsonSchema);
   }
 }

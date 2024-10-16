@@ -369,7 +369,7 @@
               </execution>
             </executions>
             <configuration>
-              <configLocation>google_checks.xml</configLocation>
+              <configLocation>gn_checks.xml</configLocation>
               <logViolationsToConsole>true</logViolationsToConsole>
               <maxAllowedViolations>0</maxAllowedViolations>
               <violationSeverity>warning</violationSeverity>
