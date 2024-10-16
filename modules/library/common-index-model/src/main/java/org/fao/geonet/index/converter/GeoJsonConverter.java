@@ -132,7 +132,8 @@ public class GeoJsonConverter {
           .build();
 
       if (StringUtils.isNotEmpty(contact.getRole())) {
-        org.fao.geonet.index.model.geojson.Role.RoleBuilder roleBuilder = Role.builder().name(contact.getRole());
+        org.fao.geonet.index.model.geojson.Role.RoleBuilder roleBuilder = Role.builder()
+            .name(contact.getRole());
 
         geojsonContact.setRoles(List.of(roleBuilder.build()));
       }
@@ -143,7 +144,7 @@ public class GeoJsonConverter {
           geojsonContact.setOrganization(contact.getOrganisation().get("default"));
         }
       } else if (StringUtils.isNotEmpty((contact.getOrganisation().get("default")))) {
-          geojsonContact.setName(contact.getOrganisation().get("default"));
+        geojsonContact.setName(contact.getOrganisation().get("default"));
       }
 
       recordContacts.add(geojsonContact);
