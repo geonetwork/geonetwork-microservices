@@ -246,7 +246,7 @@ public class SchemaOrgConverter {
     if (record.getGeometries().size() > 0) {
       ObjectNode spatialCoverage = root.putObject("spatialCoverage");
       ArrayNode geo = spatialCoverage.putArray("geo");
-      record.getGeometries().forEach(g -> {
+      record.getGeometriesAsJsonString().forEach(g -> {
         GeoJsonReader geoJsonReader = new GeoJsonReader();
         try {
           ObjectNode shape = createThing(null, Types.GeoShape, root);

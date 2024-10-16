@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * Index document to GeoJSON mapping.
  */
 @Component
-public class GeoJsonConverter {
+public class GeoJsonConverter implements IGeoJsonConverter {
 
   @Autowired
   FormatterConfiguration formatterConfiguration;
@@ -50,7 +50,7 @@ public class GeoJsonConverter {
         ObjectMapper objectMapper = JsonUtils.getObjectMapper();
 
         recordBuilder.geometry(objectMapper.readValue(
-            record.getGeometries().get(0),
+            record.getGeometriesAsJsonString().get(0),
             Geometry.class));
       } catch (Exception ex) {
         // TODO: Process the exception
