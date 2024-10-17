@@ -64,7 +64,9 @@ public class ElasticIndexJson2CollectionInfo {
       return;
     }
 
-    set(getId(collectionInfo,indexRecord),collectionInfo,"id");
+    if (collectionInfo.getId() == null) {
+      set(getId(collectionInfo, indexRecord), collectionInfo, "id");
+    }
 
     set(getTitle(collectionInfo, indexRecord), collectionInfo, "title");
     set(getDescription(collectionInfo, indexRecord), collectionInfo, "description");

@@ -60,7 +60,7 @@ public class OgcApiGeoJsonConverter implements IGeoJsonConverter {
 
     result.setId(collectionInfo.getId());
     result.setProperty("title", collectionInfo.getTitle());
-    result.setProperty("description", collectionInfo.getTitle());
+    result.setProperty("description", collectionInfo.getDescription());
     result.setProperty("language", collectionInfo.getLanguage());
     result.setProperty("languages", collectionInfo.getLanguages());
     result.setProperty("created", collectionInfo.getCreated());
