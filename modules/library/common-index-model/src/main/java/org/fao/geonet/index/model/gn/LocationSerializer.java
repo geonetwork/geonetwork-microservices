@@ -20,6 +20,7 @@ public class LocationSerializer extends JsonSerializer<List<Coordinate>> {
       JsonGenerator gen,
       SerializerProvider serializers)
       throws IOException {
+    gen.writeStartObject();
     gen.writeArrayFieldStart(IndexRecordFieldNames.location);
     coordinate.forEach(c -> {
       try {

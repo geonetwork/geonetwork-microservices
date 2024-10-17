@@ -5,6 +5,7 @@
 
 package org.fao.geonet.ogcapi.records;
 
+import org.fao.geonet.index.converter.GeoJsonConverter;
 import org.fao.geonet.ogcapi.records.controller.CapabilitiesApiController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -21,7 +23,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @RefreshScope
 @Import({CapabilitiesApiController.class})
-@ComponentScan({"org.fao.geonet", "org.fao.geonet.domain"})
+@ComponentScan(
+    value = {"org.fao.geonet", "org.fao.geonet.domain"}, excludeFilters =
+    {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = GeoJsonConverter.class)}
+)
 @Configuration
 @EnableCaching
 public class OgcApiRecordApp {
@@ -30,9 +35,9 @@ public class OgcApiRecordApp {
     SpringApplication.run(OgcApiRecordApp.class, args);
   }
 
-
   /**
    * Configure CORS to allow all connections.
+   *
    * @return CORS configuration.
    */
   @Bean

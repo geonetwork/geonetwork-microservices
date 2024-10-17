@@ -9,8 +9,11 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,14 +154,14 @@ public class IndexRecord extends IndexDocument {
   // TODO XML
   @XmlTransient
   @JsonProperty(IndexRecordFieldNames.geom)
-  @JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
-  private List<String> geometries = new ArrayList<>();
+  //@JsonDeserialize(using = NodeTreeAsStringDeserializer.class)
+  private List<Object> geometries = new ArrayList<>();
 
   @JsonProperty(IndexRecordFieldNames.specificationConformance)
   private List<SpecificationConformance> specificationConformance = new ArrayList();
 
   //  @JsonAnyGetter
-  private Map<String, ArrayList<String>> otherProperties = new HashMap<>();
+  private Map<String,  Object> otherProperties = new HashMap<>();
 
   private Map<String, ArrayList<Codelist>> codelists = new HashMap<>();
 
@@ -203,6 +206,28 @@ public class IndexRecord extends IndexDocument {
   }
 
   /**
+   * get the #geometries as a JSON string.
+   */
+  public List<String> getGeometriesAsJsonString() {
+    if (geometries == null || geometries.isEmpty()) {
+      return null;
+    }
+    List<String> result = new ArrayList<>();
+
+    for (var g:geometries) {
+      String s = null;
+      try {
+        s = (new ObjectMapper()).writeValueAsString(g);
+      } catch (JsonProcessingException e) {
+        continue;
+      }
+      result.add(s);
+    }
+    return result;
+
+  }
+
+  /**
    * Collect all other properties in a map.
    */
   @JsonAnySetter
@@ -222,13 +247,18 @@ public class IndexRecord extends IndexDocument {
               new Codelist(c)).collect(Collectors.toList()));
         }
       } else {
-        ArrayList<String> s = otherProperties.get(name);
+        var s = otherProperties.get(name);
         if (s == null) {
-          s = new ArrayList<>(1);
-          s.add(value.toString());
-          otherProperties.put(name, s);
+          otherProperties.put(name, value);
         } else {
-          s.add(value.toString());
+          if (s instanceof List) {
+            ((List) s).add(value.toString());
+          } else {
+            var list = new ArrayList<Object>();
+            list.add(s);
+            list.add(value);
+            otherProperties.put(name, list);
+          }
         }
       }
     }

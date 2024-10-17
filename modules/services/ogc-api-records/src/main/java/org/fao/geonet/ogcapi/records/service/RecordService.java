@@ -161,7 +161,7 @@ public class RecordService {
     JsonNode totalValue =
         "json".equals(type)
             ? actualObj.get("hits").get("total").get("value")
-            : actualObj.get("size");
+            : actualObj.get("numberMatched");
 
     if ((totalValue == null) || (totalValue.intValue() == 0)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND,

@@ -99,7 +99,7 @@ public class IndexRecordTest {
 
       Assert.assertEquals(
           "{\"type\":\"Polygon\",\"coordinates\":[[[-31.2684,27.6375],[-13.4198,27.6375],[-13.4198,66.5662],[-31.2684,66.5662],[-31.2684,27.6375]]]}",
-          record.getGeometries().get(0));
+          record.getGeometriesAsJsonString().get(0));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       Assert.fail();

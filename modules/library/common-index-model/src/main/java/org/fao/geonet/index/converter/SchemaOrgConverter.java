@@ -14,6 +14,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.model.gn.Contact;
 import org.fao.geonet.index.model.gn.IndexRecord;
@@ -35,6 +36,7 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
  *
  * <p>TODO: Add support to translation https://bib.schema.org/workTranslation
  */
+@Slf4j(topic = "org.fao.geonet.ogcapi.records")
 public class SchemaOrgConverter {
 
   public static Map<String, String> dateMapping = Map.ofEntries(
@@ -246,7 +248,7 @@ public class SchemaOrgConverter {
     if (record.getGeometries().size() > 0) {
       ObjectNode spatialCoverage = root.putObject("spatialCoverage");
       ArrayNode geo = spatialCoverage.putArray("geo");
-      record.getGeometries().forEach(g -> {
+      record.getGeometriesAsJsonString().forEach(g -> {
         GeoJsonReader geoJsonReader = new GeoJsonReader();
         try {
           ObjectNode shape = createThing(null, Types.GeoShape, root);
@@ -259,7 +261,7 @@ public class SchemaOrgConverter {
                   envelope.getMaxY(), envelope.getMaxX()));
           geo.add(shape);
         } catch (ParseException e) {
-          e.printStackTrace();
+          log.debug(e.getMessage(),e);
         }
       });
     }
