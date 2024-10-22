@@ -134,7 +134,8 @@ public class ItemApiController {
           GnMediaType.APPLICATION_RDF_XML_VALUE,
           GnMediaType.APPLICATION_DCAT2_XML_VALUE,
           GnMediaType.TEXT_TURTLE_VALUE,
-          GnMediaType.APPLICATION_GEOJSON_VALUE})
+          GnMediaType.APPLICATION_GEOJSON_VALUE,
+          GnMediaType.APPLICATION_ELASTICJSON_VALUE})
   @ResponseStatus(HttpStatus.OK)
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Describe a collection item.")
@@ -216,6 +217,7 @@ public class ItemApiController {
           GnMediaType.APPLICATION_DCAT2_XML_VALUE,
           MediaType.TEXT_HTML_VALUE,
           GnMediaType.APPLICATION_GEOJSON_VALUE,
+          GnMediaType.APPLICATION_ELASTICJSON_VALUE
       })
   @ResponseStatus(HttpStatus.OK)
   @ApiResponses(value = {
@@ -284,11 +286,20 @@ public class ItemApiController {
         || mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
         || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
         || mediaType.equals(MediaType.APPLICATION_RSS_XML)
-        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
+        || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)
+       ) {
 
       boolean allSourceFields =
           mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
               || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
+          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
+          || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
+          || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
+          || mediaType.equals(MediaType.APPLICATION_JSON)
+          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
+          || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON);
+
 
       return collectionsCollectionIdItemsGetInternal(
           query,
