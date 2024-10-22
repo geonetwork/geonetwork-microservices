@@ -287,12 +287,11 @@ public class ItemApiController {
         || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
         || mediaType.equals(MediaType.APPLICATION_RSS_XML)
         || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
-        || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)
-       ) {
+        || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
 
       boolean allSourceFields =
           mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
-              || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
+          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
           || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
           || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
           || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
