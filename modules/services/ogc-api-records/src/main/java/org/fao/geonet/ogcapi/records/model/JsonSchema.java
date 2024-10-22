@@ -1,3 +1,8 @@
+/**
+ * (c) 2024 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package org.fao.geonet.ogcapi.records.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,7 +24,8 @@ public class JsonSchema {
   @JsonInclude(Include.NON_EMPTY)
   @XmlElementWrapper(name = "$schema")
   @XmlElement(name = "$schema")
-  @com.fasterxml.jackson.annotation.JsonProperty("$schema")
+  @com.fasterxml.jackson.annotation.JsonProperty(value = "$schema")
+  @org.codehaus.jackson.annotate.JsonProperty(value = "$schema")
   public String schema = "https://json-schema.org/draft/2020-12/schema";
 
   /**
