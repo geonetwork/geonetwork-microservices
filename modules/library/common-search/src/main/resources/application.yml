@@ -60,7 +60,7 @@ gn:
       -
         name: json
         mimeType: application/json
-        responseProcessor: JsonUserAndSelectionAwareResponseProcessorImpl
+        responseProcessor: GeoJsonResponseProcessorImpl
         operations:
           - root
           - conformance
@@ -111,6 +111,12 @@ gn:
         responseProcessor: RssResponseProcessorImpl
         operations:
           - items
+      - name : elastic-json
+        mimeType : application/elastic+json
+        responseProcessor : JsonUserAndSelectionAwareResponseProcessorImpl
+        operations :
+          - items
+          - item
       -
         name : geojson
         mimeType : application/geo+json
