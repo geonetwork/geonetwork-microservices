@@ -49,6 +49,11 @@ public class OgcApiGeoJsonConverter implements IGeoJsonConverter {
         elasticIndexJsonRecord.getMetadataIdentifier());
 
     result.setProperty("gn-record-xml", metadataRecord.getData());
+
+    if (elasticIndexJsonRecord.getResourceType() != null
+        && !elasticIndexJsonRecord.getResourceType().isEmpty()) {
+      result.setType(elasticIndexJsonRecord.getResourceType().get(0));
+    }
     return result;
   }
 
