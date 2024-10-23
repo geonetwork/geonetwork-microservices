@@ -288,13 +288,12 @@ public class ItemApiController {
 
       boolean allSourceFields =
           mediaType.equals(GnMediaType.APPLICATION_DCAT2_XML)
-
           || mediaType.equals(GnMediaType.APPLICATION_RDF_XML)
           || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
           || mediaType.equals(GnMediaType.APPLICATION_JSON_LD)
           || mediaType.equals(MediaType.APPLICATION_JSON)
           || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
-
+          || mediaType.equals(GnMediaType.APPLICATION_RDF_XML);
 
       return collectionsCollectionIdItemsGetInternal(
           query,
@@ -504,6 +503,7 @@ public class ItemApiController {
       Query requestQuery,
       HttpServletRequest request,
       boolean allSourceFields) {
+      HttpServletRequest request, boolean allSourceFields) {
 
     Source source = collectionService.retrieveSourceForCollection(requestQuery.getCollectionId());
 

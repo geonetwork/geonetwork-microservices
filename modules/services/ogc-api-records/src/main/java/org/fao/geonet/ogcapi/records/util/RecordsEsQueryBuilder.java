@@ -32,6 +32,8 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.ogcapi")
 public class RecordsEsQueryBuilder {
 
+
+  private static final String SORT_BY_SEPARATOR = ",";
   // TODO: Sources depends on output type
   private static final List<String> defaultSources = Arrays.asList(
       "resourceTitleObject", "resourceAbstractObject",
@@ -43,9 +45,6 @@ public class RecordsEsQueryBuilder {
       "edit", "tag", "changeDate",
       "createDate", "mainLanguage", "geom", "formats",
       "resourceTemporalDateRange","resourceTemporalExtentDateRange");
-
-  private static final String SORT_BY_SEPARATOR = ",";
-
 
   private static final String defaultSpatialOperation = "intersects";
   @Autowired
