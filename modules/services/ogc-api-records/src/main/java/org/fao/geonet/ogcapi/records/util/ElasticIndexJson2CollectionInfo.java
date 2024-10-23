@@ -69,6 +69,10 @@ public class ElasticIndexJson2CollectionInfo {
       return;
     }
 
+    if (collectionInfo.getId() == null) {
+      set(getId(collectionInfo, indexRecord), collectionInfo, "id");
+    }
+
     set(getTitle(collectionInfo, indexRecord), collectionInfo, "title");
     set(getDescription(collectionInfo, indexRecord), collectionInfo, "description");
 
@@ -174,6 +178,14 @@ public class ElasticIndexJson2CollectionInfo {
     return null;
   }
 
+  //process id
+  private String getId(CollectionInfo collectionInfo,
+      IndexRecord indexRecord) {
+    var id = indexRecord.getMetadataIdentifier();
+    return id;
+  }
+
+
   //process main language
   private OgcApiLanguage getLanguage(CollectionInfo collectionInfo,
       IndexRecord indexRecord) {
@@ -245,10 +257,10 @@ public class ElasticIndexJson2CollectionInfo {
   private OgcApiTemporalExtent getTemporalExtent(IndexRecord indexRecord) {
     OgcApiTemporalExtent temporalExtent = null;
     var myTemporalExtent = indexRecord.getResourceTemporalExtentDateRange();
-    if (myTemporalExtent != null || myTemporalExtent.isEmpty()) {
+    if (myTemporalExtent == null || myTemporalExtent.isEmpty()) {
       myTemporalExtent = indexRecord.getResourceTemporalDateRange();
     }
-    if (myTemporalExtent != null || myTemporalExtent.isEmpty()) {
+    if (myTemporalExtent != null &&  !myTemporalExtent.isEmpty()) {
       temporalExtent = OgcApiTemporalExtent.fromGnIndexRecord(myTemporalExtent.get(0));
     }
     return temporalExtent;
@@ -259,14 +271,8 @@ public class ElasticIndexJson2CollectionInfo {
     OgcApiSpatialExtent spatialExtent = null;
     var mySpatialExtent = indexRecord.getGeometries();
     if (mySpatialExtent != null && !mySpatialExtent.isEmpty()) {
-      Map<String, Object> map = null;
-      try {
-        map = new org.codehaus.jackson.map.ObjectMapper().readValue(mySpatialExtent.get(0),
-            TypeFactory.mapType(HashMap.class, String.class, Object.class));
-      } catch (IOException e) {
-        return null;
-      }
-      spatialExtent = OgcApiSpatialExtent.fromGnIndexRecord(map);
+      spatialExtent = OgcApiSpatialExtent.fromGnIndexRecord(
+          (Map<String, Object>) mySpatialExtent.get(0));
     }
     return spatialExtent;
   }
