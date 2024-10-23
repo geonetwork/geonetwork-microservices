@@ -157,12 +157,10 @@ public class RecordService {
     try {
       var accepts = type;
       request.setAttribute(ACCEPT_OVERRIDE_ATTRIBUTE,accepts);
-      queryResponse= proxy.searchAndGetResult(request.getSession(), request, query, null);
-    }
-    finally {
+      queryResponse =
+          proxy.searchAndGetResult(request.getSession(), request, query, null);
+    } finally {
       request.setAttribute(ACCEPT_OVERRIDE_ATTRIBUTE,null);
-
-
     }
 
     ObjectMapper mapper = new ObjectMapper();
@@ -170,13 +168,13 @@ public class RecordService {
     JsonParser parser = factory.createParser(queryResponse);
     JsonNode actualObj = mapper.readTree(parser);
 
-    JsonNode totalValue =
-        (APPLICATION_ELASTICJSON.toString().equals(type)
-            || (APPLICATION_ELASTICJSON.getSubtype().equals(type))
-            || (APPLICATION_ELASTICJSON.getSubtype()
-                  .replace("+json","").equals(type)))
-            ? actualObj.get("hits").get("total").get("value")
-            : actualObj.get("numberMatched");
+    JsonNode totalValue;
+    if (actualObj.has("hits")) {
+      totalValue = actualObj.get("hits").get("total").get("value");
+    } else {
+      totalValue = actualObj.get("numberMatched");
+    }
+
 
     if ((totalValue == null) || (totalValue.intValue() == 0)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -185,10 +183,7 @@ public class RecordService {
               request.getLocale()));
     }
 
-    if (APPLICATION_ELASTICJSON.toString().equals(type)
-        || (APPLICATION_ELASTICJSON.getSubtype().equals(type))
-        || (APPLICATION_ELASTICJSON.getSubtype()
-                .replace("+json","").equals(type))) {
+    if (actualObj.has("hits")) {
       return actualObj.get("hits").get("hits").get(0);
     } else {
       String elementName = "schema.org".equals(type) ? "dataFeedElement" : "features";

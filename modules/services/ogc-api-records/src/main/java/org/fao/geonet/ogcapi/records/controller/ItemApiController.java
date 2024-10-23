@@ -171,7 +171,7 @@ public class ItemApiController {
         || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
         || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
       try {
-        String type = null;
+        String type = "gnindex";
         if (mediaType.equals(MediaType.APPLICATION_JSON)) {
           type = "json";
         } else {
@@ -185,7 +185,7 @@ public class ItemApiController {
         }
 
         JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
-          request, source, type);
+            request, source, type);
 
         streamResult(response,
             recordAsJson.toPrettyString(),

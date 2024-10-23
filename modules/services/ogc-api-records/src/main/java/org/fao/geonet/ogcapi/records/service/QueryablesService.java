@@ -32,17 +32,21 @@ public class QueryablesService {
   public static JsonSchema truncatedJsonSchema;
 
   static {
-      fullJsonSchema= readQueryablesJsonSchema();
+    fullJsonSchema = readQueryablesJsonSchema();
 
-      var js = readQueryablesJsonSchema();
-      if (js != null && js.getProperties() !=null) {
-        for (var prop : js.getProperties().values()) {
-          prop.setxGnElasticPath(null);
-        }
+    var js = readQueryablesJsonSchema();
+    if (js != null && js.getProperties() != null) {
+      for (var prop : js.getProperties().values()) {
+        prop.setxGnElasticPath(null);
       }
-    truncatedJsonSchema=js;
+    }
+    truncatedJsonSchema = js;
   }
 
+  /**
+   * helper method to read the "queryables/queryables.json" resource into a JavaSchema.
+   * @return contents of "queryables/queryables.json"
+   */
   public static JsonSchema readQueryablesJsonSchema() {
     InputStream is = QueryablesService.class
         .getClassLoader().getResourceAsStream("queryables/queryables.json");
