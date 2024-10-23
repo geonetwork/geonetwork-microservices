@@ -316,7 +316,7 @@ public class DcatConverter {
     }
 
     // <dct:spatial rdf:parseType="Resource">
-    datasetBuilder.spatial(record.getGeometries().stream().map(g -> DctSpatial.builder()
+    datasetBuilder.spatial(record.getGeometriesAsJsonString().stream().map(g -> DctSpatial.builder()
         .location(DctLocation.builder().geometry(g).build()).build()).collect(
         Collectors.toList()));
 
@@ -470,7 +470,8 @@ public class DcatConverter {
               .getProperties().get(CommonField.key));
     }
 
-    dataServiceBuilder.spatial(record.getGeometries().stream().map(g -> DctSpatial.builder()
+    dataServiceBuilder.spatial(record.getGeometriesAsJsonString().stream()
+        .map(g -> DctSpatial.builder()
         .location(DctLocation.builder().geometry(g).build()).build()).collect(
         Collectors.toList()));
 

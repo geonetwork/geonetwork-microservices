@@ -506,7 +506,8 @@ public class ItemApiController {
 
   private String search(
       Query requestQuery,
-      HttpServletRequest request, boolean allSourceFields) {
+      HttpServletRequest request,
+      boolean allSourceFields) {
 
     Source source = collectionService.retrieveSourceForCollection(requestQuery.getCollectionId());
 
