@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.ReservedOperation;
 import org.fao.geonet.common.search.domain.UserInfo;
 import org.fao.geonet.index.JsonUtils;
-import org.fao.geonet.index.converter.GeoJsonConverter;
-import org.fao.geonet.index.model.geojson.Record;
+import org.fao.geonet.index.converter.IGeoJsonConverter;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GeoJsonResponseProcessorImpl
     extends JsonUserAndSelectionAwareResponseProcessorImpl {
 
   @Autowired
-  GeoJsonConverter geoJsonConverter;
+  IGeoJsonConverter geoJsonConverter;
 
   @Override
   public void processResponse(HttpSession httpSession,
@@ -37,13 +38,14 @@ public class GeoJsonResponseProcessorImpl
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
 
     try {
-      ResponseParser responseParser = new ResponseParser();
+      ResponseParser elasticJsonResponseParser = new ResponseParser();
       generator.writeStartObject();
 
       generator.writeStringField("type", "FeatureCollection");
       generator.writeArrayFieldStart("features");
+      AtomicInteger numbFeatures = new AtomicInteger(0);
       {
-        responseParser.matchHits(parser, generator, doc -> {
+        elasticJsonResponseParser.matchHits(parser, generator, doc -> {
 
           // Remove fields with privileges info
           if (doc.has(IndexRecordFieldNames.source)) {
@@ -57,8 +59,9 @@ public class GeoJsonResponseProcessorImpl
                 doc.get(IndexRecordFieldNames.source).toPrettyString(),
                 IndexRecord.class);
             try {
-              Record geojsonRecord = geoJsonConverter.convert(indexRecord);
+              Object geojsonRecord =   geoJsonConverter.convert(indexRecord);
               generator.writeRawValue(objectMapper.writeValueAsString(geojsonRecord));
+              numbFeatures.incrementAndGet();
             } catch (Exception ex) {
               log.error(String.format(
                   "GeoJSON conversion returned null result for uuid %s. Check http://localhost:9901/collections/main/items/%s?f=geojson",
@@ -68,7 +71,15 @@ public class GeoJsonResponseProcessorImpl
         }, false);
       }
       generator.writeEndArray();
-      generator.writeNumberField("size", responseParser.total);
+      generator.writeNumberField("numberMatched", elasticJsonResponseParser.total);
+      generator.writeNumberField("numberReturned", numbFeatures.intValue());
+
+      generator.writeStringField("timeStamp", Instant.now().toString());
+
+      generator.writeArrayFieldStart("links");
+      //TO DO ADD LINKS
+      generator.writeEndArray();
+
       generator.writeEndObject();
       generator.flush();
     } finally {

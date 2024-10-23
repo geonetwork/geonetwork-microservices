@@ -111,8 +111,8 @@ gn:
         responseProcessor: RssResponseProcessorImpl
         operations:
           - items
-      - name : elastic-json
-        mimeType : application/elastic+json
+      - name : gnindex-json
+        mimeType : application/gnindex+json
         responseProcessor : JsonUserAndSelectionAwareResponseProcessorImpl
         operations :
           - items
