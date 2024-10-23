@@ -65,15 +65,15 @@ public class QueryBuilderTest {
     assertIterableEquals(query.bbox,
         Arrays.asList(new Double(0), new Double(0),
             new Double(100), new Double(100)));
-    assertEquals(query.datetime, "2024-10-22T21:10:03Z");
-    assertEquals(query.limit, new Integer(100));
-    assertEquals(query.startIndex, new Integer(10));
-    assertEquals(query.type, "type");
-    assertEquals(query.q, Arrays.asList("abc", "def"));
-    assertEquals(query.ids, Arrays.asList("id1", "id2"));
-    assertEquals(query.externalIds, Arrays.asList("ex-id1", "ex-id2"));
-    assertEquals(query.sortBy, Arrays.asList("sort-p1", "sort-p2"));
-    assertEquals(query.propValues, new LinkedHashMap<>());
+    assertEquals( "2024-10-22T21:10:03Z",query.datetime);
+    assertEquals( new Integer(100),query.limit);
+    assertEquals(new Integer(10),query.startIndex);
+    assertEquals("type",query.type );
+    assertEquals(Arrays.asList("abc", "def"),query.q);
+    assertEquals( Arrays.asList("id1", "id2"),query.ids);
+    assertEquals(Arrays.asList("ex-id1", "ex-id2"),query.externalIds);
+    assertEquals(Arrays.asList("sort-p1", "sort-p2"),query.sortBy);
+    assertEquals(new LinkedHashMap<>(),query.propValues);
   }
 
   /**

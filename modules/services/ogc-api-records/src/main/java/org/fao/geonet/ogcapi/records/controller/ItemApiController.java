@@ -171,18 +171,7 @@ public class ItemApiController {
         || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
         || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
       try {
-        String type = "gnindex";
-        if (mediaType.equals(MediaType.APPLICATION_JSON)) {
-          type = "json";
-        } else {
-          if (mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
-            type = "geojson";
-          } else {
-            if (mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
-              type = "gnindex";
-            }
-          }
-        }
+        String type = getSimplifiedMediaType(mediaType);
 
         JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
             request, source, type);
@@ -210,6 +199,22 @@ public class ItemApiController {
       return collectionsCollectionIdItemsRecordIdGetAsHtml(collectionId, recordId,
           request, response, model);
     }
+  }
+
+  private String getSimplifiedMediaType(MediaType mediaType) {
+    String type = "gnindex";
+    if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+      type = "json";
+    } else {
+      if (mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+        type = "geojson";
+      } else {
+        if (mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
+          type = "gnindex";
+        }
+      }
+    }
+    return type;
   }
 
 

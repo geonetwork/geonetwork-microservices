@@ -58,10 +58,12 @@ public class QueryToElasticTest {
     queryables.getProperties().put(pname, property);
 
     QueryablesService queryablesService = new QueryablesService() {
+      @Override
       public JsonSchema buildQueryables(String collectionId) {
         return queryables;
       }
 
+      @Override
       public JsonSchema getFullQueryables(String collectionId){
         return queryables;
       }
