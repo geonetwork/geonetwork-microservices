@@ -5,6 +5,8 @@
 
 package org.fao.geonet.ogcapi.records.service;
 
+import static org.fao.geonet.common.search.ElasticSearchProxy.ACCEPT_OVERRIDE_ATTRIBUTE;
+import static org.fao.geonet.common.search.GnMediaType.APPLICATION_ELASTICJSON;
 import static org.fao.geonet.ogcapi.records.controller.ItemApiController.EXCEPTION_COLLECTION_ITEM_NOT_FOUND;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -112,7 +114,7 @@ public class RecordService {
     try {
       var info = getRecordAsJson(mainPortal.getUuid(),
           uuid, request, mainPortal,
-          "json")
+          APPLICATION_ELASTICJSON.toString())
           .get("_source");
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> result = mapper.convertValue(info,
@@ -135,7 +137,7 @@ public class RecordService {
    *
    * @param collectionId which collection is the record apart of
    * @param recordId     which uuid to get
-   * @param request      incomming user request (for security)
+   * @param request      incoming user request (for security)
    * @param source       from the GN DB "source" table for this collectionId
    * @param type         what type of record
    * @return parsed as a JSON object
@@ -151,7 +153,17 @@ public class RecordService {
     String collectionFilter = collectionService.retrieveCollectionFilter(source, true);
     String query = recordsEsQueryBuilder.buildQuerySingleRecord(recordId, collectionFilter, null);
 
-    String queryResponse = proxy.searchAndGetResult(request.getSession(), request, query, null);
+    String queryResponse = null;
+    try {
+      var accepts = type;
+      request.setAttribute(ACCEPT_OVERRIDE_ATTRIBUTE,accepts);
+      queryResponse= proxy.searchAndGetResult(request.getSession(), request, query, null);
+    }
+    finally {
+      request.setAttribute(ACCEPT_OVERRIDE_ATTRIBUTE,null);
+
+
+    }
 
     ObjectMapper mapper = new ObjectMapper();
     JsonFactory factory = mapper.getFactory();
@@ -159,7 +171,10 @@ public class RecordService {
     JsonNode actualObj = mapper.readTree(parser);
 
     JsonNode totalValue =
-        "json".equals(type)
+        (APPLICATION_ELASTICJSON.toString().equals(type)
+            || (APPLICATION_ELASTICJSON.getSubtype().equals(type))
+            || (APPLICATION_ELASTICJSON.getSubtype()
+                  .replace("+json","").equals(type)))
             ? actualObj.get("hits").get("total").get("value")
             : actualObj.get("numberMatched");
 
@@ -170,7 +185,10 @@ public class RecordService {
               request.getLocale()));
     }
 
-    if ("json".equals(type)) {
+    if (APPLICATION_ELASTICJSON.toString().equals(type)
+        || (APPLICATION_ELASTICJSON.getSubtype().equals(type))
+        || (APPLICATION_ELASTICJSON.getSubtype()
+                .replace("+json","").equals(type))) {
       return actualObj.get("hits").get("hits").get(0);
     } else {
       String elementName = "schema.org".equals(type) ? "dataFeedElement" : "features";

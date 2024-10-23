@@ -162,16 +162,30 @@ public class ItemApiController {
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
             MediaTypeUtil.ldSupportedMediaTypes);
     allowedMediaTypes.add(GnMediaType.APPLICATION_GEOJSON);
+    allowedMediaTypes.add(GnMediaType.APPLICATION_ELASTICJSON);
 
     MediaType mediaType =
         mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     if (mediaType.equals(MediaType.APPLICATION_JSON)
-        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
+        || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
       try {
-        String type = mediaType.equals(MediaType.APPLICATION_JSON) ? "json" : "geojson";
+        String type = null;
+        if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+          type = "json";
+        } else {
+          if (mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+            type = "geojson";
+          } else {
+            if (mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
+              type = "gnindex";
+            }
+          }
+        }
+
         JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
-            request, source, type);
+          request, source, type);
 
         streamResult(response,
             recordAsJson.toPrettyString(),

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.fao.geonet.common.search.GnMediaType;
 import org.fao.geonet.common.search.SearchConfiguration;
 import org.fao.geonet.common.search.SearchConfiguration.Operations;
 import org.fao.geonet.domain.Source;

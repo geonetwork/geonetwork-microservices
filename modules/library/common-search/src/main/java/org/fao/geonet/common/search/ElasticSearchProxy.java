@@ -55,6 +55,15 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "org.fao.geonet.searching")
 public class ElasticSearchProxy {
 
+  /**
+   * ACCEPT_OVERRIDE_ATTRIBUTE.
+   *
+   * <p>request.setVariable(ACCEPT_OVERRIDE_ATTRIBUTE, "gnindex");
+   * This will force this to return the underlying gnindex json instead of the format in the
+   * request.
+   * This allows a GeoJSON to still get the underlying gnindex json.
+   */
+  public static String ACCEPT_OVERRIDE_ATTRIBUTE = "accepts-override";
   public static final String[] validContentTypes = {
       "application/json", "text/plain", "application/rss+xml"
   };
@@ -745,6 +754,9 @@ public class ElasticSearchProxy {
 
     // TODO: Header can contain a list of ... So get the first which match a processor
     String acceptHeader = getAcceptValue(request);
+    if (request.getAttribute(ACCEPT_OVERRIDE_ATTRIBUTE) != null) {
+      acceptHeader = request.getAttribute(ACCEPT_OVERRIDE_ATTRIBUTE).toString();
+    }
 
     boolean isDcatOnItem =
         request.getRequestURI().matches(".*/collections/.*/items/.*")

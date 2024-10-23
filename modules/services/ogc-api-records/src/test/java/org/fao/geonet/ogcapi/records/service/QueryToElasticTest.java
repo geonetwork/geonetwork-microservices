@@ -61,7 +61,12 @@ public class QueryToElasticTest {
       public JsonSchema buildQueryables(String collectionId) {
         return queryables;
       }
+
+      public JsonSchema getFullQueryables(String collectionId){
+        return queryables;
+      }
     };
+
 
 
 

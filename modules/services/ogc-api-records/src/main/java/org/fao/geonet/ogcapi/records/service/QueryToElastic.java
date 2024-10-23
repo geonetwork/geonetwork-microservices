@@ -70,7 +70,7 @@ public class QueryToElastic {
     }
     var boolQuery = (BoolQueryBuilder) mainQuery;
 
-    var jsonSchema = queryablesService.buildQueryables(query.getCollectionId());
+    var jsonSchema = queryablesService.getFullQueryables(query.getCollectionId());
 
     for (var prop : query.getPropValues().entrySet()) {
       var jsonProp = jsonSchema.getProperties().get(prop.getKey());
