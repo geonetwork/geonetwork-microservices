@@ -196,9 +196,9 @@ public class QueryToElastic {
 
     Rectangle rectangle = new Rectangle(
         Double.parseDouble(nums[0]),
-        Double.parseDouble(nums[1]),
+        Double.parseDouble(nums[2]),
         Double.parseDouble(nums[3]),
-        Double.parseDouble(nums[2]));
+        Double.parseDouble(nums[1]));
 
     try {
       var geoQuery = QueryBuilders
