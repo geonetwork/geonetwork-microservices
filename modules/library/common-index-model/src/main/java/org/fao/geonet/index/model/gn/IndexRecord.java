@@ -210,7 +210,7 @@ public class IndexRecord extends IndexDocument {
    */
   public List<String> getGeometriesAsJsonString() {
     if (geometries == null || geometries.isEmpty()) {
-      return null;
+      return new ArrayList<>();
     }
     List<String> result = new ArrayList<>();
 
