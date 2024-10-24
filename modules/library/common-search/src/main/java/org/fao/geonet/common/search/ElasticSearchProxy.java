@@ -63,7 +63,7 @@ public class ElasticSearchProxy {
    * request.
    * This allows a GeoJSON to still get the underlying gnindex json.
    */
-  public static String ACCEPT_OVERRIDE_ATTRIBUTE = "accepts-override";
+  public static final String ACCEPT_OVERRIDE_ATTRIBUTE = "accepts-override";
   public static final String[] validContentTypes = {
       "application/json", "text/plain", "application/rss+xml"
   };
