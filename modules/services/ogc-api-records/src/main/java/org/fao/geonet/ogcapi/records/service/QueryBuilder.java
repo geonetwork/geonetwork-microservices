@@ -93,7 +93,7 @@ public class QueryBuilder {
    */
   private void injectExtraFromRequest(String collectionId, Query result,
       Map<String, String[]> parameterMap) {
-    var queryables = queryablesService.buildQueryables(collectionId)
+    var queryables = queryablesService.getFullQueryables(collectionId)
         .getProperties();
 
     result.setPropValues(new LinkedHashMap<>());

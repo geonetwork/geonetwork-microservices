@@ -162,14 +162,17 @@ public class ItemApiController {
         ListUtils.union(MediaTypeUtil.defaultSupportedMediaTypes,
             MediaTypeUtil.ldSupportedMediaTypes);
     allowedMediaTypes.add(GnMediaType.APPLICATION_GEOJSON);
+    allowedMediaTypes.add(GnMediaType.APPLICATION_ELASTICJSON);
 
     MediaType mediaType =
         mediaTypeUtil.calculatePriorityMediaTypeFromRequest(request, allowedMediaTypes);
 
     if (mediaType.equals(MediaType.APPLICATION_JSON)
-        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+        || mediaType.equals(GnMediaType.APPLICATION_GEOJSON)
+        || mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
       try {
-        String type = mediaType.equals(MediaType.APPLICATION_JSON) ? "json" : "geojson";
+        String type = getSimplifiedMediaType(mediaType);
+
         JsonNode recordAsJson = recordService.getRecordAsJson(collectionId, recordId,
             request, source, type);
 
@@ -196,6 +199,22 @@ public class ItemApiController {
       return collectionsCollectionIdItemsRecordIdGetAsHtml(collectionId, recordId,
           request, response, model);
     }
+  }
+
+  private String getSimplifiedMediaType(MediaType mediaType) {
+    String type = "gnindex";
+    if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+      type = "json";
+    } else {
+      if (mediaType.equals(GnMediaType.APPLICATION_GEOJSON)) {
+        type = "geojson";
+      } else {
+        if (mediaType.equals(GnMediaType.APPLICATION_ELASTICJSON)) {
+          type = "gnindex";
+        }
+      }
+    }
+    return type;
   }
 
 

@@ -70,7 +70,7 @@ public class QueryToElastic {
     }
     var boolQuery = (BoolQueryBuilder) mainQuery;
 
-    var jsonSchema = queryablesService.buildQueryables(query.getCollectionId());
+    var jsonSchema = queryablesService.getFullQueryables(query.getCollectionId());
 
     for (var prop : query.getPropValues().entrySet()) {
       var jsonProp = jsonSchema.getProperties().get(prop.getKey());
@@ -196,9 +196,9 @@ public class QueryToElastic {
 
     Rectangle rectangle = new Rectangle(
         Double.parseDouble(nums[0]),
-        Double.parseDouble(nums[1]),
+        Double.parseDouble(nums[2]),
         Double.parseDouble(nums[3]),
-        Double.parseDouble(nums[2]));
+        Double.parseDouble(nums[1]));
 
     try {
       var geoQuery = QueryBuilders

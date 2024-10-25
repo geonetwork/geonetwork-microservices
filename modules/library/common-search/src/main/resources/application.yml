@@ -111,7 +111,7 @@ gn:
         responseProcessor: RssResponseProcessorImpl
         operations:
           - items
-      - name : gnindex-json
+      - name : gnindex
         mimeType : application/gnindex+json
         responseProcessor : JsonUserAndSelectionAwareResponseProcessorImpl
         operations :

@@ -1,3 +1,8 @@
+/**
+ * (c) 2024 Open Source Geospatial Foundation - all rights reserved This code is licensed under the
+ * GPL 2.0 license, available at the root application directory.
+ */
+
 package util;
 
 import static org.fao.geonet.index.model.dcat2.Dataset.ACCRUAL_PERIODICITY_TO_ISO;
@@ -37,7 +42,6 @@ import org.fao.geonet.index.model.dcat2.Subject;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.junit.Test;
 
-;
 
 public class DcatTest {
 
