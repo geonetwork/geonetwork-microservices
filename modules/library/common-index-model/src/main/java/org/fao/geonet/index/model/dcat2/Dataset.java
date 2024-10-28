@@ -74,7 +74,7 @@ public class Dataset extends Resource {
   //   * identifier scheme; an optional identifier for the agency that manages the identifier scheme
   //   */
   //  @XmlElement(name = "identifier", namespace = ADMS_URI)
-  //  List<AdmsIdentifier> admsIdentifier = new ArrayList();
+  //  List<AdmsIdentifier> admsIdentifier = new ArrayList<>();
   // TODO: adms:identifier, adms:sample
 
   /**
@@ -82,7 +82,7 @@ public class Dataset extends Resource {
    * version of the Dataset.
    */
   @XmlElement(namespace = ADMS_URI)
-  List<String> versionNotes = new ArrayList();
+  List<String> versionNotes = new ArrayList<>();
 
   @XmlElement(namespace = FOAF_URI)
   List<DcatDocument> page;
@@ -91,7 +91,7 @@ public class Dataset extends Resource {
    * An available distribution of the dataset.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatDistributionContainer> distribution = new ArrayList();
+  List<DcatDistributionContainer> distribution = new ArrayList<>();
 
 
   @XmlElement(namespace = DCT_URI)
@@ -129,6 +129,6 @@ public class Dataset extends Resource {
    * An activity that generated, or provides the business context for, the creation of the dataset.
    */
   @XmlElement(namespace = PROV_URI)
-  List<DcatActivity> wasGeneratedBy = new ArrayList();
+  List<DcatActivity> wasGeneratedBy = new ArrayList<>();
 
 }

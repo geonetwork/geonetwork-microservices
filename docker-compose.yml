@@ -15,7 +15,7 @@ services:
   # Rationale is to lower the barrier for developers to get started with this project, and to have the indexing-service
   # services dependencies in the same network
   geonetwork:
-    image: geonetwork:4.0.0
+    image: geonetwork:4.2.11
     restart: always
     ports:
       - 8080:8080
@@ -52,7 +52,7 @@ services:
       - gn-cloud-network
 
   elasticsearch:
-    image: elasticsearch:7.9.2
+    image: elasticsearch:7.17.15
     ulimits:
       memlock:
         soft: -1
@@ -71,7 +71,7 @@ services:
       - "9200:9200"
 
   kibana:
-    image: kibana:7.9.2
+    image: kibana:7.17.15
     environment:
       SERVER_NAME: 'kibana'
       ELASTICSEARCH_URL: http://elasticsearch:9200/

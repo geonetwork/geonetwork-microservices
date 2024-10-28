@@ -35,13 +35,13 @@ public class Resource extends Base {
   // "Replaced by dcat:theme."
   @Deprecated
   @XmlElement(namespace = DCT_URI)
-  List<Subject> subject = new ArrayList();
+  List<Subject> subject = new ArrayList<>();
 
   @XmlElement(namespace = DCAT_URI)
-  List<Subject> keyword = new ArrayList();
+  List<Subject> keyword = new ArrayList<>();
 
   @XmlElement(namespace = DCAT_URI)
-  List<Subject> theme = new ArrayList();
+  List<Subject> theme = new ArrayList<>();
 
   /**
    * This property refers to the type of the Dataset. A controlled vocabulary for the values has not
@@ -58,7 +58,7 @@ public class Resource extends Base {
   List<Object> type;
 
   @XmlElement(namespace = DCAT_URI)
-  List<DcatDocument> landingPage = new ArrayList();
+  List<DcatDocument> landingPage = new ArrayList<>();
 
   @XmlElement(namespace = DCT_URI)
   List<RdfResource> isReferencedBy = new ArrayList<>();
@@ -75,7 +75,7 @@ public class Resource extends Base {
    * access" code list operated by the INSPIRE Registry</p>
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatAccessRights> accessRights = new ArrayList();
+  List<DcatAccessRights> accessRights = new ArrayList<>();
 
   @XmlElement(namespace = DCT_URI)
   DcatLicenseDocumentContainer license;
@@ -85,7 +85,7 @@ public class Resource extends Base {
    * Resources.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatRelationship> qualifiedRelation = new ArrayList();
+  List<DcatRelationship> qualifiedRelation = new ArrayList<>();
 
 
   /**
@@ -96,7 +96,7 @@ public class Resource extends Base {
    * between items in the dataset.</p>
    */
   @XmlElement(namespace = DCAT_URI)
-  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
+  List<BigDecimal> spatialResolutionInMeters = new ArrayList<>();
 
   /**
    * Minimum time period resolvable in the dataset.
@@ -108,7 +108,7 @@ public class Resource extends Base {
    */
   // TODO: Adapter
   @XmlElement(namespace = DCAT_URI)
-  List<Duration> temporalResolution = new ArrayList();
+  List<Duration> temporalResolution = new ArrayList<>();
 
 
   /**
@@ -131,11 +131,11 @@ public class Resource extends Base {
   //   */
   // TODO
   //  @XmlElement(namespace = DQV_URI)
-  //  QualityMeasurement hasQualityMeasurement = new ArrayList();
+  //  QualityMeasurement hasQualityMeasurement = new ArrayList<>();
 
   @XmlElement(namespace = PROV_URI)
-  List<DcatActivity> wasUsedBy = new ArrayList();
+  List<DcatActivity> wasUsedBy = new ArrayList<>();
 
   @XmlElement(namespace = RDFS_URI)
-  List<String> comment = new ArrayList();
+  List<String> comment = new ArrayList<>();
 }
