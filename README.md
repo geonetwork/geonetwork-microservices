@@ -20,7 +20,7 @@ Those components are created with the following requirements:
 * Java 11 JDK
 * Maven 3.6.3
 * Docker (optional)
-* [core-geonetwork:4.0.0](https://github.com/geonetwork/core-geonetwork/releases/tag/4.0.0), might need a local build, it's not available on any published maven repository?
+* [core-geonetwork:4.2.11](https://github.com/geonetwork/core-geonetwork/releases/tag/4.2.11), might need a local build, it's not available on any published maven repository?
 
 ### Building
 To build the services:

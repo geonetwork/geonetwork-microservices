@@ -38,15 +38,15 @@ public abstract class Base {
   String about;
 
   @XmlElement(namespace = DCT_URI)
-  List<String> title = new ArrayList();
+  List<String> title = new ArrayList<>();
 
   @XmlElement(namespace = DCT_URI)
-  List<String> description = new ArrayList();
+  List<String> description = new ArrayList<>();
   /**
    * A unique identifier of the item.
    */
   @XmlElement(namespace = DCT_URI)
-  List<String> identifier = new ArrayList();
+  List<String> identifier = new ArrayList<>();
 
   /**
    * An established standard to which the described resource conforms.
@@ -86,21 +86,21 @@ public abstract class Base {
   List<Language> language = new ArrayList<>();
 
   @XmlElement(namespace = PROV_URI)
-  List<DcatQualifiedAttribution> qualifiedAttribution = new ArrayList();
+  List<DcatQualifiedAttribution> qualifiedAttribution = new ArrayList<>();
 
 
   @XmlElement(namespace = DCAT_URI)
-  List<DcatContactPoint> contactPoint = new ArrayList();
+  List<DcatContactPoint> contactPoint = new ArrayList<>();
 
   @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> creator = new ArrayList();
+  List<FoafOrganization> creator = new ArrayList<>();
 
   @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> rightsHolder = new ArrayList();
+  List<FoafOrganization> rightsHolder = new ArrayList<>();
 
   /**
    * A type of organisation that acts as a publisher.
    */
   @XmlElement(namespace = DCT_URI)
-  List<FoafOrganization> publisher = new ArrayList();
+  List<FoafOrganization> publisher = new ArrayList<>();
 }

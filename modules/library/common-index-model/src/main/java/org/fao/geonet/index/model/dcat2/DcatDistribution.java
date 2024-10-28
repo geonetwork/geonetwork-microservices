@@ -54,25 +54,25 @@ public class DcatDistribution {
    * indicated by the distribution's dct:format and/or dcat:mediaType
    */
   @XmlElement(name = "downloadURL", namespace = DCAT_URI)
-  List<String> downloadUrl = new ArrayList();
+  List<String> downloadUrl = new ArrayList<>();
 
   /**
    * A data service that gives access to the distribution of the dataset.
    */
   @XmlElement(name = "accessService", namespace = DCAT_URI)
-  List<RdfResource> accessService = new ArrayList();
+  List<RdfResource> accessService = new ArrayList<>();
 
   /**
    * A name given to the distribution.
    */
   @XmlElement(namespace = DCT_URI)
-  List<String> title = new ArrayList();
+  List<String> title = new ArrayList<>();
 
   /**
    * A free-text account of the distribution.
    */
   @XmlElement(namespace = DCT_URI)
-  List<String> description = new ArrayList();
+  List<String> description = new ArrayList<>();
 
   @XmlElement(namespace = ADMS_URI)
   Subject representationTechnique;
@@ -91,7 +91,7 @@ public class DcatDistribution {
   BigInteger byteSize;
 
   @XmlElement(namespace = DCAT_URI)
-  List<RdfResource> compressFormat = new ArrayList();
+  List<RdfResource> compressFormat = new ArrayList<>();
 
   /**
    * A value that allows the contents of a file to be authenticated. This class allows the results
@@ -113,28 +113,28 @@ public class DcatDistribution {
 
   // TODO
   @XmlElement(namespace = DCAT_URI)
-  List<String> packageFormat = new ArrayList();
+  List<String> packageFormat = new ArrayList<>();
 
   /**
    * The file format of the distribution.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<RdfResource> format = new ArrayList();
+  List<RdfResource> format = new ArrayList<>();
 
 
   @XmlElement(namespace = DCAT_URI)
-  List<BigDecimal> spatialResolutionInMeters = new ArrayList();
+  List<BigDecimal> spatialResolutionInMeters = new ArrayList<>();
 
   // TODO: Adapter
   @XmlElement(namespace = DCAT_URI)
-  List<Duration> temporalResolution = new ArrayList();
+  List<Duration> temporalResolution = new ArrayList<>();
 
 
   /**
    * A rights statement that concerns how the distribution is accessed.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatAccessRights> accessRights = new ArrayList();
+  List<DcatAccessRights> accessRights = new ArrayList<>();
 
 
   /**
@@ -166,14 +166,14 @@ public class DcatDistribution {
    * Information about rights held in and over the distribution.
    */
   @XmlElement(namespace = DCAT_URI)
-  List<DcatAccessRights> rights = new ArrayList();
+  List<DcatAccessRights> rights = new ArrayList<>();
 
   @XmlElement(namespace = RDFS_URI)
-  List<String> comment = new ArrayList();
+  List<String> comment = new ArrayList<>();
 
   // TODO
   //  @XmlElement(namespace = DQV_URI)
-  //  QualityMeasurement hasQualityMeasurement = new ArrayList();
+  //  QualityMeasurement hasQualityMeasurement = new ArrayList<>();
 
   @XmlElement(namespace = FOAF_URI)
   List<DcatDocument> page;

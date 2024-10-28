@@ -150,7 +150,7 @@ public class IndexRecord extends IndexDocument {
   private List<String> geometries = new ArrayList<>();
 
   @JsonProperty(IndexRecordFieldNames.specificationConformance)
-  private List<SpecificationConformance> specificationConformance = new ArrayList();
+  private List<SpecificationConformance> specificationConformance = new ArrayList<>();
 
   //  @JsonAnyGetter
   private Map<String, ArrayList<String>> otherProperties = new HashMap<>();
