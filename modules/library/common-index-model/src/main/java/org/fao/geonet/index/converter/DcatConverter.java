@@ -123,9 +123,13 @@ public class DcatConverter {
     Dataset dcatDataset = null;
     DataService dcatService = null;
     try {
+      JsonNode indexSource = doc.get(IndexRecordFieldNames.source);
+
       IndexRecord record = new ObjectMapper()
           .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-          .readValue(doc.get(IndexRecordFieldNames.source).toString(), IndexRecord.class);
+          .readValue(
+              indexSource != null ? indexSource.toString() :
+              doc.get("properties").get("gn-elastic-index-record").toString(), IndexRecord.class);
 
       String recordIdentifier = record.getMetadataIdentifier();
       String recordUri = formatterConfiguration.buildLandingPageLink(
