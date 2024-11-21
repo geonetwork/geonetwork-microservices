@@ -12,13 +12,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 import org.fao.geonet.index.JsonUtils;
+import org.fao.geonet.index.model.geojson.Address;
+import org.fao.geonet.index.model.geojson.Contact;
 import org.fao.geonet.index.model.geojson.Geometry;
 import org.fao.geonet.index.model.geojson.Link;
 import org.fao.geonet.index.model.geojson.Link.LinkBuilder;
 import org.fao.geonet.index.model.geojson.Record;
 import org.fao.geonet.index.model.geojson.Record.RecordBuilder;
-import org.fao.geonet.index.model.gn.Contact;
+import org.fao.geonet.index.model.geojson.Role;
 import org.fao.geonet.index.model.gn.IndexRecord;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames.CommonField;
 import org.fao.geonet.index.model.gn.ResourceDate;
@@ -77,12 +80,12 @@ public class GeoJsonConverter implements IGeoJsonConverter {
 
     // record updated
     if (record.getChangeDate() != null) {
-      geojsonRecord.getProperties().put("recordUpdated", record.getChangeDate());
+      geojsonRecord.getProperties().put("updated", record.getChangeDate());
     }
 
     // record created
     if (record.getCreateDate() != null) {
-      geojsonRecord.getProperties().put("recordCreated", record.getCreateDate());
+      geojsonRecord.getProperties().put("created", record.getCreateDate());
     }
 
     // title
@@ -118,13 +121,38 @@ public class GeoJsonConverter implements IGeoJsonConverter {
     }
 
     // providers
-    List<String> providers = new ArrayList<>();
-    for (Contact contact : record.getContact()) {
-      providers.add(String.format("%s, %s, %s", contact.getIndividual(), contact.getEmail(),
-          contact.getOrganisation()));
-    }
+    List<Contact> recordContacts = new ArrayList<>();
 
-    geojsonRecord.getProperties().put("providers", providers);
+    record.getContact().stream().forEach(contact -> {
+
+      Contact geojsonContact = Contact.builder()
+          .email(contact.getEmail())
+          .phone(contact.getPhone())
+          .address(Address.builder().deliveryPoint(List.of(contact.getAddress())).build())
+          .build();
+
+      if (StringUtils.isNotEmpty(contact.getRole())) {
+        org.fao.geonet.index.model.geojson.Role.RoleBuilder roleBuilder = Role.builder()
+            .name(contact.getRole());
+
+        geojsonContact.setRoles(List.of(roleBuilder.build()));
+      }
+
+      if (StringUtils.isNotEmpty(contact.getIndividual())) {
+        geojsonContact.setName(contact.getIndividual());
+        if (StringUtils.isNotEmpty((contact.getOrganisation().get("default")))) {
+          geojsonContact.setOrganization(contact.getOrganisation().get("default"));
+        }
+      } else if (StringUtils.isNotEmpty((contact.getOrganisation().get("default")))) {
+        geojsonContact.setName(contact.getOrganisation().get("default"));
+      }
+
+      recordContacts.add(geojsonContact);
+
+    });
+
+    // contacts
+    geojsonRecord.getProperties().put("contacts", recordContacts);
 
     // type
     geojsonRecord.getProperties()
