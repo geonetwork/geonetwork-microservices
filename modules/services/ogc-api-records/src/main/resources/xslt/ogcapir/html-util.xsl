@@ -21,7 +21,7 @@
 
   <xsl:template name="render-record-preview-title">
     <div class="w-full border-b hover:bg-gray-100 border-gray-200">
-      <a href="items/{uuid}">
+      <a href="{$requestUrl}/{uuid}">
         <div class="h-full flex flex-row items-center px-3 py-3 sm:px-5">
           <div class="h-10 w-10 relative flex-shrink-0 overflow-hidden">
             <xsl:choose>
