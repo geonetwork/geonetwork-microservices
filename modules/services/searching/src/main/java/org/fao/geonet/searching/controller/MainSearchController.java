@@ -60,4 +60,37 @@ public class MainSearchController {
           HttpEntity<String> httpEntity) throws Exception {
     proxy.search(httpSession, request, response, body, bucket);
   }
+
+  /**
+   * provides an API endpoint for a GeoRSS endpoint, also sorts the records
+   * by changeDate (descending), and limits the results to the first 10.
+   *
+   * @param bucket the bucket where to search
+   * @param httpSession the http session object
+   * @param request the HTTTP request object
+   * @param response the HTTP response object
+   * @param httpEntity the http entity object
+   * @throws Exception the exception being thrown.
+   */
+  @RequestMapping(value = "/search/records/rss.search",
+      method = {
+          RequestMethod.GET
+      })
+  @Produces(value = "application/xml")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ResponseBody
+  public void rssSearch(
+          @RequestParam(defaultValue = Constants.Selection.DEFAULT_SELECTION_METADATA_BUCKET)
+          String bucket,
+          HttpSession httpSession,
+          HttpServletRequest request,
+          HttpServletResponse response,
+          HttpEntity<String> httpEntity) throws Exception {
+    String body;
+    body = "{\"from\": 0, \"size\": 10,\"query\": {\"query_string\": {\"query\": \"+isTemplate:n\"}"
+        + "}, \"sort\": [{ \"changeDate\": {\"order\": \"desc\", \"unmapped_type\" : \"date\" }}]}";
+    proxy.search(httpSession, request, response, body, bucket);
+  }
+
+
 }
