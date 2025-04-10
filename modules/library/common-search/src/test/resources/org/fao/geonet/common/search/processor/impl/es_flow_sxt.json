@@ -370,9 +370,18 @@
           "linkUrlProtocolWWWLINK" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
           "link" : [ {
             "protocol" : "WWW:LINK",
-            "url" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
-            "name" : "Site web du LERN - projet OGIVE",
-            "description" : "Page internet du projet OGIVE",
+            "urlObject" : {
+              "default" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm",
+              "langfre" : "http://www.ifremer.fr/lern/Pages/programme/ogive.htm"
+            },
+            "nameObject" : {
+              "default" : "Site web du LERN - projet OGIVE",
+              "langfre" : "Site web du LERN - projet OGIVE"
+            },
+            "descriptionObject" : {
+              "default" : "Page internet du projet OGIVE",
+              "langfre" : "Page internet du projet OGIVE"
+            },
             "function" : "",
             "applicationProfile" : "",
             "group" : 0
