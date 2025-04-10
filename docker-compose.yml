@@ -15,7 +15,7 @@ services:
   # Rationale is to lower the barrier for developers to get started with this project, and to have the indexing-service
   # services dependencies in the same network
   geonetwork:
-    image: geonetwork:4.4.6
+    image: geonetwork:4.4.7
     restart: always
     ports:
       - 8080:8080
