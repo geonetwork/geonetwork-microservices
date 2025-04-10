@@ -1,9 +1,13 @@
 package org.fao.geonet.authorizing;
 
+import org.fao.geonet.auditable.UsernameAuditorAware;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -17,7 +21,9 @@ import java.util.Properties;
 @Configuration
 @EnableJpaRepositories(
     basePackages = "org.fao.geonet.repository",
-    repositoryBaseClass = GeonetRepositoryImpl.class)
+    repositoryBaseClass = GeonetRepositoryImpl.class,
+    repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
+@EnableJpaAuditing(auditorAwareRef = "auditingProvider", setDates = true)
 public class H2JpaConfig {
 
   @Bean
@@ -53,6 +59,12 @@ public class H2JpaConfig {
 
     return em;
   }
+
+  @Bean
+  public AuditorAware<String> auditingProvider() {
+    return new UsernameAuditorAware();
+  }
+
 
   private Properties additionalProperties() {
     Properties properties = new Properties();

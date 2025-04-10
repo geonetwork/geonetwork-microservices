@@ -7,23 +7,28 @@ package org.fao.geonet.persistence;
 
 import java.util.Properties;
 import javax.sql.DataSource;
+import org.fao.geonet.auditable.UsernameAuditorAware;
 import org.fao.geonet.repository.GeonetRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
     basePackages = "org.fao.geonet.repository",
     entityManagerFactoryRef = "gnEntityManager",
-    repositoryBaseClass = GeonetRepositoryImpl.class)
+    repositoryBaseClass = GeonetRepositoryImpl.class,
+    repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @Profile("!withoutSql")
 public class PersistenceConfig {
 
@@ -53,5 +58,10 @@ public class PersistenceConfig {
     em.setJpaProperties(jpaProperties);
 
     return em;
+  }
+
+  @Bean
+  public AuditorAware<String> auditingProvider() {
+    return new UsernameAuditorAware();
   }
 }
