@@ -36,7 +36,7 @@
     <camel.version>3.5.0</camel.version>
     <swagger.version>2.1.2</swagger.version>
     <joda-time.version>2.10.6</joda-time.version>
-    <jackson.version>2.11.4</jackson.version>
+    <jackson.version>2.14.2</jackson.version>
     <jts.version>1.18.1</jts.version>
     <rdf4j.version>3.5.0</rdf4j.version>
 
