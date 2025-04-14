@@ -12,6 +12,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import org.fao.geonet.common.search.domain.UserInfo;
+import org.fao.geonet.common.xml.XsltTransformerFactory;
 import org.fao.geonet.common.xml.XsltUtil;
 import org.fao.geonet.domain.Metadata;
 import org.fao.geonet.index.model.gn.IndexRecordFieldNames;
@@ -34,7 +35,7 @@ public class XmlResponseProcessorImpl extends AbstractResponseProcessor {
       InputStream streamFromServer, OutputStream streamToClient,
       UserInfo userInfo, String bucket, Boolean addPermissions) throws Exception {
 
-    Processor p = new Processor(false);
+    Processor p = XsltTransformerFactory.getProcessor();
     Serializer s = p.newSerializer();
     s.setOutputProperty(Property.INDENT, "no");
     s.setOutputStream(streamToClient);
@@ -65,7 +66,9 @@ public class XmlResponseProcessorImpl extends AbstractResponseProcessor {
         records.forEach(r -> {
           String xsltFileName = String.format(
               "xslt/ogcapir/formats/%s/%s-%s.xsl",
-              transformation, transformation, r.getDataInfo().getSchemaId(), transformation);
+              transformation,
+              transformation,
+              r.getDataInfo().getSchemaId());
           try (InputStream xsltFile =
               new ClassPathResource(xsltFileName).getInputStream()) {
             //  if (!xsltFile.exists()) {
@@ -77,7 +80,8 @@ public class XmlResponseProcessorImpl extends AbstractResponseProcessor {
             XsltUtil.transformAndStreamInDocument(
                 r.getData(),
                 xsltFile,
-                generator
+                generator,
+                null
             );
           } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
