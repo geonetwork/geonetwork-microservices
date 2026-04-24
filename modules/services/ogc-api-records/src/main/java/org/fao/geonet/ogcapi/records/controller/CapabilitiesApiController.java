@@ -125,7 +125,9 @@ public class CapabilitiesApiController {
       addOpenApiLinks(root, requestBaseUrl);
       addConformanceLinks(root, requestBaseUrl);
 
-      return ResponseEntity.ok(root);
+      return ResponseEntity.ok()
+        .contentType(mediaType)
+        .body(root);
     } else {
       List<Source> sources = sourceRepository.findAll();
       XsltModel modelSource = new XsltModel();
@@ -205,7 +207,10 @@ public class CapabilitiesApiController {
         ));
 
     if (!mediaType.equals(MediaType.TEXT_HTML)) {
-      return ResponseEntity.ok(conformance);
+      ResponseEntity.ok();
+      return ResponseEntity.ok()
+        .contentType(mediaType)
+        .body(conformance);
     } else {
       List<Source> sources = sourceRepository.findAll();
       XsltModel modelSource = new XsltModel();
@@ -264,7 +269,9 @@ public class CapabilitiesApiController {
           configuration.getFormat(mediaType), requestBaseUrl, language, configuration);
       linkList.forEach(content::addLinksItem);
 
-      return ResponseEntity.ok(content);
+      return ResponseEntity.ok()
+        .contentType(mediaType)
+        .body(content);
     } else {
       List<Source> sources = sourceRepository.findAll();
       XsltModel modelSource = new XsltModel();

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.fao.geonet.common.search.domain.ReservedOperation;
@@ -36,6 +38,8 @@ public class GeoJsonResponseProcessorImpl
     JsonParser parser = parserForStream(streamFromServer);
     JsonGenerator generator = ResponseParser.jsonFactory.createGenerator(streamToClient);
 
+    AtomicInteger numberReturned = new AtomicInteger(0);
+
     try {
       ResponseParser responseParser = new ResponseParser();
       generator.writeStartObject();
@@ -59,6 +63,7 @@ public class GeoJsonResponseProcessorImpl
             try {
               Record geojsonRecord = geoJsonConverter.convert(indexRecord);
               generator.writeRawValue(objectMapper.writeValueAsString(geojsonRecord));
+              numberReturned.incrementAndGet();
             } catch (Exception ex) {
               log.error(String.format(
                   "GeoJSON conversion returned null result for uuid %s. Check http://localhost:9901/collections/main/items/%s?f=geojson",
@@ -69,6 +74,10 @@ public class GeoJsonResponseProcessorImpl
       }
       generator.writeEndArray();
       generator.writeNumberField("size", responseParser.total);
+      // Conform to OGC API - Features as per
+      // https://docs.ogc.org/is/20-004r1/20-004r1.html#dependencies-overview
+      generator.writeNumberField("numberReturned", numberReturned.get());
+      generator.writeNumberField("numberMatched", responseParser.total);
       generator.writeEndObject();
       generator.flush();
     } finally {

@@ -130,7 +130,9 @@ public class CollectionApiController {
             .buildFromSource(source, language, requestBaseUrl,
                 configuration.getFormat(mediaType), configuration);
 
-        return ResponseEntity.ok(collectionInfo);
+        return ResponseEntity.ok()
+          .contentType(mediaType)
+          .body(collectionInfo);
 
       } else {
         XsltModel modelSource = new XsltModel();

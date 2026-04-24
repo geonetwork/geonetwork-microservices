@@ -23,6 +23,8 @@ public class Link {
 
   @JsonProperty(LinkField.description)
   private Map<String, String> description = new HashMap<>();
+  private String idx;
+  private String hash;
   private String function;
   private String applicationProfile;
   private String group;
