@@ -19,6 +19,7 @@ NEXT_PATCH=$((PATCH + 1))
 NEXT_SNAPSHOT="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
 
 CURRENT_SNAPSHOT=$(grep -m1 '<version>' pom.xml | sed 's/.*<version>\(.*\)<\/version>/\1/' | tr -d ' ')
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "Current version : $CURRENT_SNAPSHOT"
 echo "Release version : $RELEASE_VERSION"
@@ -40,7 +41,7 @@ git add docker-compose.yml
 git commit -m "Update GN version"
 
 # Step 3: push commits and tag
-git push origin main
+git push origin "${CURRENT_BRANCH}"
 git tag -a "${RELEASE_VERSION}" -m "Release v${RELEASE_VERSION}"
 git push origin "${RELEASE_VERSION}"
 
@@ -53,7 +54,7 @@ sed -i '' "s/TAG=${RELEASE_VERSION}/TAG=${NEXT_SNAPSHOT}/" .env
 
 git add pom.xml .env $(find . -path ./target -prune -o -name "pom.xml" -print | grep -v "^\./pom.xml")
 git commit -m "Update version to ${NEXT_SNAPSHOT}"
-git push origin main
+git push origin "${CURRENT_BRANCH}"
 
 echo ""
 echo "Released ${RELEASE_VERSION}: https://github.com/geonetwork/geonetwork-microservices/releases/tag/${RELEASE_VERSION}"
