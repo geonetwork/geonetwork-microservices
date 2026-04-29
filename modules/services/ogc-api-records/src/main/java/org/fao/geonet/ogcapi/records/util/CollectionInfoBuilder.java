@@ -78,7 +78,7 @@ public class CollectionInfoBuilder {
     CollectionInfo collectionInfo = new CollectionInfo();
 
     collectionInfo.setId(name);
-    String label = source.getLabel(language);
+    String label = Optional.ofNullable(source.getLabel(language)).orElse("");
     // The source label may contain a description
     // eg. "INSPIRE|Data sets and services for the environment"
     String[] titleAndDescription = label.split("\\|");
